@@ -1,4 +1,5 @@
 #include "beisbol.h"
+#include "start.c"
 
 void main () {
     cgb_compatibility();
@@ -12,6 +13,5 @@ void main () {
     SHOW_BKG;
     while (1) {
         start_screen();
-        game_loop();
     }
 }

@@ -6,23 +6,13 @@ import math
 from PIL import Image
 
 def main():
-  header_map = {}
   for root, folders, files in os.walk("./res"):
-    if root not in header_map:
-      header_map[root] = []
-
     for name in files:
       path = os.path.join(root, name)
       base, ext = os.path.splitext(path)
       if ext == ".png":
-        header_map[root].extend(generate_c_file(base))
-  
-  for path in header_map.keys():
-    name = os.path.basename(path)
-    with open(os.path.join(path, name + ".h"), "w+") as h_file:
-      h_file.write("#ifndef " + name.upper() + "\n#define " + name.upper() + "\n")
-      h_file.write("\n".join(header_map[path]))
-      h_file.write("\n#endif\n")
+        generate_c_file(base)
+
 
 def generate_c_file (base):
   img = Image.open(base + ".png")
@@ -30,11 +20,6 @@ def generate_c_file (base):
 
   rows = int(img.height / 8)
   cols = int(img.width / 8)
-
-  header_data = []
-  header_data.append("#define _" + name.upper() + "_ROWS " + str(rows))
-  header_data.append("#define _" + name.upper() + "_COLUMNS " + str(cols))
-  header_data.append("extern const unsigned char _" + name + "[];")
 
   hex_vals = []
   pixels = list(img.getdata())
@@ -64,12 +49,14 @@ def generate_c_file (base):
       c_file.write("    " + "".join(map(px2block, line)) + "\n");
     c_file.write("*/\n")
 
+    c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
+    c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
+    c_file.write("#define _" + name.upper() + "_SIZE " + str(rows*cols) + "\n")
+
     c_file.write("const unsigned char _" + name + "[] = {\n")
     for i in range(0, len(hex_vals), 16):
       c_file.write("    " + ",".join(hex_vals[i:i+16]) + ",\n")
-    c_file.write("}\n")
-
-  return header_data
+    c_file.write("};\n")
 
 if __name__ == "__main__":
     main()

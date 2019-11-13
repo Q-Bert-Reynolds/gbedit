@@ -1,6 +1,10 @@
+#ifndef BEISBOL
+#define BEISBOL
+
 #include <gb/gb.h>
 #include <gb/cgb.h>
 #include <stdio.h>
+#include "audio.c"
 
 // GameBoy palettes
 #define PALETTE_0 0xE0
@@ -11,9 +15,6 @@
 #define RGB_DK_YELLOW RGB(30, 28, 17)
 #define RGB_MUTE_RED  RGB(23, 14, 14)
 #define RBG_LT_BLUE   RGB(18, 21, 28)
-extern UWORD menu_palette[];
-extern UWORD game_palette[];
-extern UWORD sprite_palette[];
 
 // sprite props
 #define USE_PAL 0x10
@@ -21,3 +22,11 @@ extern UWORD sprite_palette[];
 #define FLIP_Y_PAL (S_FLIPY | USE_PAL)
 #define FLIP_XY_PAL (FLIP_X_PAL | FLIP_Y_PAL)
 #define FLIP_XY (S_FLIPX | S_FLIPY)
+
+// audio
+void setup_audio();
+void update_audio();
+
+// start screen
+void start_screen();
+#endif

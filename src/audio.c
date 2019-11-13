@@ -265,7 +265,7 @@ void setup_audio () {
     NR50_REG = 0x77U;
 }
 
-void update_audio() {
+void update_audio () {
     if (music_timer == 0) {
         play_music();
         beat++;

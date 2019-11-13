@@ -23,7 +23,6 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -Wa-l -c -o $@ $<
 
-
 build: 	$(ROM_FILE)
 
 clean:

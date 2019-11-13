@@ -6,9 +6,9 @@ void main () {
     DISPLAY_OFF;
     setup_audio();
     SPRITES_8x16;
-    OBP0_REG = PALETTE_0;
-    OBP1_REG = PALETTE_1;
-    // set_sprite_palette(0, 7, sprite_palette);
+    BGP_REG = BG_PALETTE;
+    OBP0_REG = SPR_PALETTE_0;
+    OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
     while (1) {

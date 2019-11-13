@@ -1,5 +1,6 @@
 #TODO: commandline options (1bpp, 2bpp, rle)
-#TODO: only update .c file when png changes
+#      only update .c file when png changes
+#      remove duplicate tiles, add tilemap
 
 import os
 import math
@@ -35,20 +36,13 @@ def generate_c_file (base):
           px = px if isinstance(px, int) else px[0]
           px = int(math.floor(float(px) / 64.0))
           pixels[y*img.width+x] = px
-          upper_binary += str(1-int(px/2))
-          lower_binary += str(1-int(px%2))
-        hex_vals.append("0x{:02x}".format(int(upper_binary, 2)))
-        hex_vals.append("0x{:02x}".format(int(lower_binary, 2)))
+          upper_binary += str(1-int(px%2))
+          lower_binary += str(1-int(px/2))
+        hex_vals.append("0x{:02X}".format(int(upper_binary, 2)))
+        hex_vals.append("0x{:02X}".format(int(lower_binary, 2)))
 
-  blocks = ["  ","░░","▒▒","██"]
-  px2block = lambda px : blocks[px]
   with open(base + ".c", "w+") as c_file:
-    c_file.write("/*\n")
-    for y in range(img.height):
-      line = pixels[y*img.width : (y+1)*img.width]
-      c_file.write("    " + "".join(map(px2block, line)) + "\n");
-    c_file.write("*/\n")
-
+    c_file.write("#ifndef _" + name.upper() + "_SIZE\n")
     c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
     c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
     c_file.write("#define _" + name.upper() + "_SIZE " + str(rows*cols) + "\n")
@@ -57,6 +51,7 @@ def generate_c_file (base):
     for i in range(0, len(hex_vals), 16):
       c_file.write("    " + ",".join(hex_vals[i:i+16]) + ",\n")
     c_file.write("};\n")
+    c_file.write("#endif\n")
 
 if __name__ == "__main__":
     main()

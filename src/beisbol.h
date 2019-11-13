@@ -7,8 +7,9 @@
 #include "audio.c"
 
 // GameBoy palettes
-#define PALETTE_0 0xE0
-#define PALETTE_1 0xD0
+#define BG_PALETTE    0xE4
+#define SPR_PALETTE_0 0xE0
+#define SPR_PALETTE_1 0xD0
 
 // GB color palettes
 #define RGB_LT_YELLOW RGB(31, 31, 20)

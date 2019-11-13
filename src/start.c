@@ -16,7 +16,10 @@ void start_screen () {
     HIDE_BKG;
     VBK_REG = 0;
     set_bkg_data(0, _BEISBOL_LOGO_SIZE, _beisbol_logo);
-    set_bkg_tiles(2, 2, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, beisbol_logo_map);
+    set_bkg_tiles(2, 1, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, beisbol_logo_map);
     SHOW_BKG;
     DISPLAY_ON;
+    while (1) {
+        wait_vbl_done();
+    }
 }

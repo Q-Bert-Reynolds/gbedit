@@ -24,6 +24,9 @@
 #define FLIP_XY_PAL (FLIP_X_PAL | FLIP_Y_PAL)
 #define FLIP_XY (S_FLIPX | S_FLIPY)
 
+// global vars
+int i, j, k, x, y, z;
+
 // audio
 void setup_audio();
 void update_audio();

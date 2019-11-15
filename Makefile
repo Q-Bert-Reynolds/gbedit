@@ -1,4 +1,5 @@
-ROM_NAME = beisbol.gbc
+VERSION = HOME
+ROM_NAME = BEISBOL_$(VERSION).gbc
 
 # Directories
 SRC_DIR = ./src
@@ -6,7 +7,7 @@ DIST_DIR = ./bin
 OBJ_DIR = ./build
 
 # Binaries
-CC	= lcc
+CC	= lcc -Dname=$(VERSION)
 
 # Files
 ROM_FILE = $(DIST_DIR)/$(ROM_NAME)

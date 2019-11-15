@@ -8,7 +8,7 @@ from PIL import Image
 def main():
   for root, folders, files in os.walk("./res"):
     name = os.path.basename(root)
-    if name == "players":
+    if name in ["players"]:
       for name in files:
         path = os.path.join(root, name)
         png_to_c(path)
@@ -60,7 +60,7 @@ def folder_to_c (root, files):
         tileset.append(tile)
       tilemaps[img_name].append("0x{:02X}".format(tileset.index(tile)))
         
-
+  name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".c"), "w+") as c_file:
     c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
     c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(len(tileset)) + "\n")

@@ -3,6 +3,7 @@
 #include "../res/title/lights/lights.c"
 #include "../res/title/pitch/pitch.c"
 #include "../res/title/title/title.c"
+#include "../res/title/title/sprites/sprites.c"
 
 #ifdef HOME
     #include "../res/home_version/version.c"
@@ -40,41 +41,41 @@
     #include "../res/players/137Polygon.c"
     #include "../res/players/094Macobb.c"
     #include "../res/players/026Rai.c"
-    const int (*intro_player_tiles)[] = {
-        _007Squirt_tiles,
-        _004Ginger_tiles,
-        _001Bubbi_tiles,
-        _056Man_tiles,
-        _106Bruce_tiles,
-        _037Vulfpek_tiles,
-        _113Chance_tiles,
-        _142Arrowhead_tiles,
-        _135Jolt_tiles,
-        _143Bear_tiles,
-        _044Gloomy_tiles,
-        _060Polly_tiles,
-        _084Duce_tiles,
-        _137Polygon_tiles,
-        _094Macobb_tiles,
-        _026Rai_tiles,
+    const char* intro_player_tiles[] = {
+        &_007Squirt_tiles,
+        &_004Ginger_tiles,
+        &_001Bubbi_tiles,
+        &_056Man_tiles,
+        &_106Bruce_tiles,
+        &_037Vulfpek_tiles,
+        &_113Chance_tiles,
+        &_142Arrowhead_tiles,
+        &_135Jolt_tiles,
+        &_143Bear_tiles,
+        &_044Gloomy_tiles,
+        &_060Polly_tiles,
+        &_084Duce_tiles,
+        &_137Polygon_tiles,
+        &_094Macobb_tiles,
+        &_026Rai_tiles,
     };
-    const int (*intro_player_maps)[] = {
-        _007Squirt_map,
-        _004Ginger_map,
-        _001Bubbi_map,
-        _056Man_map,
-        _106Bruce_map,
-        _037Vulfpek_map,
-        _113Chance_map,
-        _142Arrowhead_map,
-        _135Jolt_map,
-        _143Bear_map,
-        _044Gloomy_map,
-        _060Polly_map,
-        _084Duce_map,
-        _137Polygon_map,
-        _094Macobb_map,
-        _026Rai_map,
+    const char* intro_player_maps[] = {
+        &_007Squirt_map,
+        &_004Ginger_map,
+        &_001Bubbi_map,
+        &_056Man_map,
+        &_106Bruce_map,
+        &_037Vulfpek_map,
+        &_113Chance_map,
+        &_142Arrowhead_map,
+        &_135Jolt_map,
+        &_143Bear_map,
+        &_044Gloomy_map,
+        &_060Polly_map,
+        &_084Duce_map,
+        &_137Polygon_map,
+        &_094Macobb_map,
+        &_026Rai_map,
     };
     const int intro_player_columns[] = {
         _007SQUIRT_COLUMNS,
@@ -143,22 +144,22 @@ void show_title () {
     HIDE_BKG;
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
+    
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     for (i = 0; i < _VERSION_COLUMNS; i++) tiles[i] = _version_map[i] + _TITLE_TILE_COUNT;
     set_bkg_tiles(7,8,_VERSION_COLUMNS,_VERSION_ROWS,tiles);
+
     SHOW_BKG;
     DISPLAY_ON;
-    delay(1000);
     while (1) {
-        // for (i = 0; i < 16; i++) {
-            set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, _007SQUIRT_TILE_COUNT, _007Squirt_tiles);
-            for (j = 0; j < _007SQUIRT_TILE_COUNT; j++) tiles[j] = _007Squirt_map[j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
-            set_bkg_tiles(5,10,_007SQUIRT_COLUMNS,_007SQUIRT_ROWS, tiles);
-            // set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[0], &intro_player_tiles[0]);
-            // for (j = 0; j < intro_player_tile_count[i]; j++) tiles[j] = (intro_player_maps[j])[i]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
-            // set_bkg_tiles(5, 10, intro_player_columns[i], intro_player_columns[i], tiles);
-            delay(1000);
-        // }
+        for (i = 0; i < 16; i++) {
+            set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[i], intro_player_tiles[i]);
+            for (j = 0; j < intro_player_tile_count[i]; j++) tiles[j] = intro_player_maps[i][j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
+            x = intro_player_columns[i];
+            set_bkg_tiles(11-x, 17-x, x, x, tiles);
+            delay(2000);
+            wait_vbl_done();
+        }
     }
 }
 

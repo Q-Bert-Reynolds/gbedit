@@ -1,3 +1,13 @@
+TODO:
+    banking
+    Intro
+        add sprites
+        add line interrupt for bg scroll fx
+    Battle
+    Walking
+    Text
+    Roledex
+
 Controller - MCB5
 
 ROM Bank Layout:

@@ -115,6 +115,20 @@
     };
 #endif
 
+void drop_title_lcd_interrupt(void) {
+    if (LY_REG < 64) SCY_REG = y;
+    else SCY_REG = 0;
+}
+
+void show_version_lcd_interrupt(void) {
+    if (LY_REG >= 64 && LY_REG < 72) SCX_REG = x;
+    else SCX_REG = 0;
+}
+
+void cycle_players_lcd_interrupt(void) {
+    if (LY_REG >= 72 && LY_REG < 136) SCX_REG = x;
+    else SCX_REG = 0;
+}
 
 void show_copyrights () {
     HIDE_BKG;
@@ -140,26 +154,57 @@ void show_pitch_sequence () {
     delay(3000);
 }
 
-void show_title () {
+void show_title () {    
     HIDE_BKG;
+    STAT_REG = 8;
+    disable_interrupts();
+    add_LCD(drop_title_lcd_interrupt);
+    enable_interrupts();
+    
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
-    
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
-    for (i = 0; i < _VERSION_COLUMNS; i++) tiles[i] = _version_map[i] + _TITLE_TILE_COUNT;
-    set_bkg_tiles(7,8,_VERSION_COLUMNS,_VERSION_ROWS,tiles);
-
+    y = 64;
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    
     SHOW_BKG;
     DISPLAY_ON;
+    for (i = 0; i < 64; ++i) {
+        y = 64-i;
+        wait_vbl_done();
+    }
+
+    disable_interrupts();
+    remove_LCD(drop_title_lcd_interrupt);
+    add_LCD(show_version_lcd_interrupt);
+    enable_interrupts();
+    x = 64;
+
+    for (i = 0; i < _VERSION_COLUMNS; ++i) tiles[i] = _version_map[i] + _TITLE_TILE_COUNT;
+    wait_vbl_done();
+    set_bkg_tiles(7,8,_VERSION_COLUMNS,_VERSION_ROWS,tiles);
+    for (i = 0; i < 64; ++i) {
+        x  = 64-i;
+        wait_vbl_done();
+    }
+
     while (1) {
-        for (i = 0; i < 16; i++) {
-            set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[i], intro_player_tiles[i]);
-            for (j = 0; j < intro_player_tile_count[i]; j++) tiles[j] = intro_player_maps[i][j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
-            x = intro_player_columns[i];
-            set_bkg_tiles(11-x, 17-x, x, x, tiles);
+        set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, _007SQUIRT_TILE_COUNT, _007Squirt_tiles);
+        for (j = 0; j < _007SQUIRT_TILE_COUNT; ++j) tiles[j] = _007Squirt_map[j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
+        k = _007SQUIRT_COLUMNS;
+        set_bkg_tiles(11-k, 17-k, k, k, tiles);
+        for (i = 1; i < 16; ++i) {
             delay(2000);
-            wait_vbl_done();
+            for (j = 0; j < 49; ++j) tiles[j] = 0;
+            set_bkg_tiles(4, 10, 7, 7, tiles);
+            set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[i], intro_player_tiles[i]);
+            for (j = 0; j < intro_player_tile_count[i]; ++j) tiles[j] = intro_player_maps[i][j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
+            k = intro_player_columns[i];
+            set_bkg_tiles(11-k, 17-k, k, k, tiles);
         }
+        delay(2000);
+        for (j = 0; j < 49; ++j) tiles[j] = 0;
+        set_bkg_tiles(4, 10, 7, 7, tiles);
     }
 }
 

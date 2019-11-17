@@ -26,7 +26,7 @@
 
 // global vars
 int i, j, k, x, y, z;
-UBYTE tiles[256];
+unsigned char tiles[256];
 
 // audio
 void setup_audio();

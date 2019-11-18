@@ -1,7 +1,6 @@
 #include "beisbol.h"
 #include "../res/title/copyrights/copyrights.c"
-#include "../res/title/lights/lights.c"
-#include "../res/title/pitch/pitch.c"
+#include "../res/title/intro/intro.c"
 #include "../res/title/title/title.c"
 #include "../res/title/title/sprites/sprites.c"
 
@@ -115,19 +114,51 @@
     };
 #endif
 
-void drop_title_lcd_interrupt(void) {
-    if (LY_REG < 64) SCY_REG = y;
-    else SCY_REG = 0;
+void slide_pitcher_lcd_interrupt(void) {
+    if (LY_REG == 0) {
+        LYC_REG = 47;
+        SCX_REG = 0;
+        SCY_REG = 0;
+    }
+    else if (LY_REG == 47) {
+        LYC_REG = 111;
+        SCX_REG = x;
+        SCY_REG = 0;
+    }
+    else if (LY_REG == 111) {
+        LYC_REG = 47;
+        SCX_REG = 0;
+        SCY_REG = 0;
+    }
 }
 
-void show_version_lcd_interrupt(void) {
-    if (LY_REG >= 64 && LY_REG < 72) SCX_REG = x;
-    else SCX_REG = 0;
+void show_title_lcd_interrupt(void) {
+    if (LY_REG == 0) {
+        LYC_REG = 63;
+        SCX_REG = 0;
+        SCY_REG = y;
+    }
+    else if (LY_REG == 63) {
+        LYC_REG = 71;
+        SCX_REG = x;
+        SCY_REG = 0;
+    }
+    else if (LY_REG == 71) {
+        LYC_REG = 0;
+        SCX_REG = 0;
+        SCY_REG = 0;
+    }
 }
 
 void cycle_players_lcd_interrupt(void) {
-    if (LY_REG >= 72 && LY_REG < 136) SCX_REG = x;
-    else SCX_REG = 0;
+    if (LY_REG == 72){
+        LYC_REG = 135;
+        SCX_REG = x;
+    }
+    else if (LY_REG == 135) {
+        LYC_REG = 72;
+        SCX_REG = 0;
+    }
 }
 
 void show_copyrights () {
@@ -139,72 +170,94 @@ void show_copyrights () {
     delay(3000);
 }
 
-void show_lights_sequence () {
+void show_intro_sequence () {
+    DISPLAY_OFF;
     HIDE_BKG;
-    set_bkg_data(0, _LIGHTS_TILE_COUNT, _lights_tiles);
+    set_bkg_data(0, _INTRO_TILE_COUNT, _intro_tiles);
     set_bkg_tiles(0, 0, _INTRO_LIGHTS_COLUMNS, _INTRO_LIGHTS_ROWS, _intro_lights_map);
+    DISPLAY_ON;
     SHOW_BKG;
     // show ball hitting light
-    delay(3000);
-}
-
-void show_pitch_sequence () {
-    set_bkg_data(0, _PITCH_TILE_COUNT, _pitch_tiles);
-    set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
-    delay(3000);
-}
-
-void show_title () {    
-    HIDE_BKG;
-    STAT_REG = 8;
+    delay(1000);
+    x = -120;
     disable_interrupts();
-    add_LCD(drop_title_lcd_interrupt);
+    add_LCD(slide_pitcher_lcd_interrupt);
     enable_interrupts();
-    
+    wait_vbl_done();
+    set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
+    for (j = 0; j < 120; j+=2) {
+        x = -120+j;
+        wait_vbl_done();
+    }
+    disable_interrupts();
+    delay(1000);
+}
+
+void show_player (int p) {
+    DISPLAY_OFF;
+    set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[p], intro_player_tiles[p]);
+    a = intro_player_columns[p];
+    b = 7-a;
+    k = 0;
+    for (j = 0; j < 7; ++j) {
+        for (i = 0; i < 7; ++i) {
+            if (i < b || j < b) tiles[j*7+i] = 0;
+            else tiles[j*7+i] = intro_player_maps[p][k++]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
+        }
+    }
+    set_bkg_tiles(4, 10, 7, 7, tiles);
+    DISPLAY_ON;
+}
+
+void show_title () {
+    DISPLAY_OFF;
+    HIDE_BKG;
+    disable_interrupts();
+    remove_LCD(slide_pitcher_lcd_interrupt);
+    add_LCD(show_title_lcd_interrupt);
+    enable_interrupts();
+    wait_vbl_done();
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     y = 64;
-    set_interrupts(LCD_IFLAG|VBL_IFLAG);
-    
+    x = 64;
     SHOW_BKG;
     DISPLAY_ON;
-    for (i = 0; i < 64; ++i) {
+    for (i = 0; i <= 64; i+=2) {
         y = 64-i;
         wait_vbl_done();
     }
 
-    disable_interrupts();
-    remove_LCD(drop_title_lcd_interrupt);
-    add_LCD(show_version_lcd_interrupt);
-    enable_interrupts();
-    x = 64;
-
     for (i = 0; i < _VERSION_COLUMNS; ++i) tiles[i] = _version_map[i] + _TITLE_TILE_COUNT;
-    wait_vbl_done();
+
     set_bkg_tiles(7,8,_VERSION_COLUMNS,_VERSION_ROWS,tiles);
-    for (i = 0; i < 64; ++i) {
-        x  = 64-i;
+    for (i = 0; i <= 64; i+=2) {
+        x = -64+i;
         wait_vbl_done();
     }
 
+    disable_interrupts();
+    remove_LCD(show_title_lcd_interrupt);
+    add_LCD(cycle_players_lcd_interrupt);
+    enable_interrupts();
+
     while (1) {
-        set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, _007SQUIRT_TILE_COUNT, _007Squirt_tiles);
-        for (j = 0; j < _007SQUIRT_TILE_COUNT; ++j) tiles[j] = _007Squirt_map[j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
-        k = _007SQUIRT_COLUMNS;
-        set_bkg_tiles(11-k, 17-k, k, k, tiles);
-        for (i = 1; i < 16; ++i) {
-            delay(2000);
-            for (j = 0; j < 49; ++j) tiles[j] = 0;
-            set_bkg_tiles(4, 10, 7, 7, tiles);
-            set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[i], intro_player_tiles[i]);
-            for (j = 0; j < intro_player_tile_count[i]; ++j) tiles[j] = intro_player_maps[i][j]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
-            k = intro_player_columns[i];
-            set_bkg_tiles(11-k, 17-k, k, k, tiles);
+        for (z = 0; z < 16; ++z) {
+            x = -120;
+            show_player(z);
+            for (j = 0; j <= 120; j+=6) {
+                x = -120+j;
+                wait_vbl_done();
+            }
+            for (j = 0; j < 256; ++j) {
+                wait_vbl_done();
+            }
+            for (j = 0; j < 120; j+=6) {
+                x = j;
+                wait_vbl_done();
+            }
         }
-        delay(2000);
-        for (j = 0; j < 49; ++j) tiles[j] = 0;
-        set_bkg_tiles(4, 10, 7, 7, tiles);
     }
 }
 
@@ -214,10 +267,11 @@ void show_start_menu () {
 
 void start_screen () {
     VBK_REG = 0;
-    set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
+    STAT_REG = 72;
+    LYC_REG = 0;
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
     // show_copyrights();
-    // show_lights_sequence();
-    // show_pitch_sequence();
+    // show_intro_sequence();
     show_title();
     show_start_menu();
 }

@@ -25,7 +25,7 @@
 #define FLIP_XY (S_FLIPX | S_FLIPY)
 
 // global vars
-int i, j, k, x, y, z;
+int a, b, c, i, j, k, x, y, z;
 unsigned char tiles[256];
 
 // audio

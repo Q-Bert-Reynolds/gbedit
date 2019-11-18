@@ -8,7 +8,7 @@
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
-#define SPR_PALETTE_0 0xE0
+#define SPR_PALETTE_0 0xE4
 #define SPR_PALETTE_1 0xD0
 
 // GB color palettes
@@ -26,7 +26,10 @@
 
 // global vars
 int a, b, c, i, j, k, x, y, z;
-unsigned char tiles[256];
+unsigned char tiles[1024];
+
+// utils
+void clear_screen ();
 
 // audio
 void setup_audio();

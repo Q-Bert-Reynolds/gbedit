@@ -1,6 +1,11 @@
 #include "beisbol.h"
 #include "start.c"
 
+void clear_screen () {
+    for (i = 0; i < 1024; ++i) tiles[i] = 0;
+    set_bkg_tiles(0,0,32,32,tiles);
+}
+
 void main () {
     cgb_compatibility();
     DISPLAY_OFF;

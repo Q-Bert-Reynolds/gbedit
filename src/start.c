@@ -7,24 +7,98 @@
 
 #ifdef HOME
     #include "../res/home_version/version.c"
+    #include "../res/home_version/version_sprites/version_sprites.c"
     #include "../res/players/004Ginger.c"
-	#include "../res/players/007Squirt.c"
-	#include "../res/players/001Bubbi.c"
-	#include "../res/players/013Weeds.c"
-	#include "../res/players/032Chico.c"
-	#include "../res/players/123Scissors.c"
-	#include "../res/players/025Chu.c"
-	#include "../res/players/035Fairy.c"
-	#include "../res/players/112Don.c"
-	#include "../res/players/063Bruh.c"
-	#include "../res/players/092Gas.c"
-	#include "../res/players/132YeahYeah.c"
-	#include "../res/players/017Gio.c"
-	#include "../res/players/095Onyx.c"
-	#include "../res/players/077Pinto.c"
-	#include "../res/players/129Fish.c"
+    #include "../res/players/007Squirt.c"
+    #include "../res/players/001Bubbi.c"
+    #include "../res/players/013Weeds.c"
+    #include "../res/players/032Chico.c"
+    #include "../res/players/123Scissors.c"
+    #include "../res/players/025Chu.c"
+    #include "../res/players/035Fairy.c"
+    #include "../res/players/112Don.c"
+    #include "../res/players/063Bruh.c"
+    #include "../res/players/092Gas.c"
+    #include "../res/players/132YeahYeah.c"
+    #include "../res/players/017Gio.c"
+    #include "../res/players/095Onyx.c"
+    #include "../res/players/077Pinto.c"
+    #include "../res/players/129Fish.c"
+    const char* intro_player_tiles[] = {
+        &_004Ginger_tiles,
+        &_007Squirt_tiles,
+        &_001Bubbi_tiles,
+        &_013Weeds_tiles,
+        &_032Chico_tiles,
+        &_123Scissors_tiles,
+        &_025Chu_tiles,
+        &_035Fairy_tiles,
+        &_112Don_tiles,
+        &_063Bruh_tiles,
+        &_092Gas_tiles,
+        &_132YeahYeah_tiles,
+        &_017Gio_tiles,
+        &_095Onyx_tiles,
+        &_077Pinto_tiles,
+        &_129Fish_tiles,
+    };
+    const char* intro_player_maps[] = {
+        &_004Ginger_map,
+        &_007Squirt_map,
+        &_001Bubbi_map,
+        &_013Weeds_map,
+        &_032Chico_map,
+        &_123Scissors_map,
+        &_025Chu_map,
+        &_035Fairy_map,
+        &_112Don_map,
+        &_063Bruh_map,
+        &_092Gas_map,
+        &_132YeahYeah_map,
+        &_017Gio_map,
+        &_095Onyx_map,
+        &_077Pinto_map,
+        &_129Fish_map,
+    };
+    const int intro_player_columns[] = {
+        _004GINGER_COLUMNS,
+        _007SQUIRT_COLUMNS,
+        _001BUBBI_COLUMNS,
+        _013WEEDS_COLUMNS,
+        _032CHICO_COLUMNS,
+        _123SCISSORS_COLUMNS,
+        _025CHU_COLUMNS,
+        _035FAIRY_COLUMNS,
+        _112DON_COLUMNS,
+        _063BRUH_COLUMNS,
+        _092GAS_COLUMNS,
+        _132YEAHYEAH_COLUMNS,
+        _017GIO_COLUMNS,
+        _095ONYX_COLUMNS,
+        _077PINTO_COLUMNS,
+        _129FISH_COLUMNS,
+    };
+    const int intro_player_tile_count[] = {
+        _004GINGER_TILE_COUNT,
+        _007SQUIRT_TILE_COUNT,
+        _001BUBBI_TILE_COUNT,
+        _013WEEDS_TILE_COUNT,
+        _032CHICO_TILE_COUNT,
+        _123SCISSORS_TILE_COUNT,
+        _025CHU_TILE_COUNT,
+        _035FAIRY_TILE_COUNT,
+        _112DON_TILE_COUNT,
+        _063BRUH_TILE_COUNT,
+        _092GAS_TILE_COUNT,
+        _132YEAHYEAH_TILE_COUNT,
+        _017GIO_TILE_COUNT,
+        _095ONYX_TILE_COUNT,
+        _077PINTO_TILE_COUNT,
+        _129FISH_TILE_COUNT,
+    };
 #else
     #include "../res/away_version/version.c"
+    #include "../res/away_version/version_sprites/version_sprites.c"
     #include "../res/players/007Squirt.c"
     #include "../res/players/004Ginger.c"
     #include "../res/players/001Bubbi.c"
@@ -117,24 +191,6 @@
 
 #define PLAYER_INDEX _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
-void slide_pitcher_lcd_interrupt(void) {
-    if (LY_REG == 0) {
-        LYC_REG = 47;
-        SCX_REG = 0;
-        SCY_REG = 0;
-    }
-    else if (LY_REG == 47) {
-        LYC_REG = 111;
-        SCX_REG = x;
-        SCY_REG = 0;
-    }
-    else if (LY_REG == 111) {
-        LYC_REG = 47;
-        SCX_REG = 0;
-        SCY_REG = 0;
-    }
-}
-
 void show_title_lcd_interrupt(void) {
     switch (LY_REG) {
         case 0:
@@ -178,46 +234,70 @@ void show_copyrights () {
     set_bkg_tiles(0, 0, _COPYRIGHT_COLUMNS, _COPYRIGHT_ROWS, _copyright_map);
     SHOW_BKG;
     DISPLAY_ON;
-    delay(3000);
+    delay(1500);
 }
 
+const unsigned char lights_pal_seq[] = {
+    0xE0, 0xE0, 0xE0, 0xE0, 0xE8, 0xE8, 0xE8, 0xE8, 0xE0, 0xE0,
+    0xE0, 0xE0, 0xE8, 0xE8, 0xE8, 0xE8, 0xE0, 0xE0, 0xE0, 0xE0,
+    0xE8, 0xE8, 0xE8, 0xE8, 0xE0, 0xE0, 0xE0, 0xE0, 0xE8, 0xE8,
+    0xE8, 0xE8, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC,
+};
 void show_intro_sequence () {
     DISPLAY_OFF;
     HIDE_BKG;
+    BGP_REG = 0xE0;
     set_bkg_data(0, _INTRO_TILE_COUNT, _intro_tiles);
     set_bkg_tiles(0, 0, _INTRO_LIGHTS_COLUMNS, _INTRO_LIGHTS_ROWS, _intro_lights_map);
     set_sprite_data(0, _INTRO_SPRITES_TILE_COUNT, _intro_sprites_tiles);
+    set_sprite_data(_INTRO_SPRITES_TILE_COUNT, _VERSION_SPRITES_TILE_COUNT, _version_sprites_tiles);
     set_sprite_tile(0, 0);
     move_sprite(0, 152,0);
     DISPLAY_ON;
     SHOW_BKG;
+    delay(1000);
     y = 0;
     for (x = 152; x > 88; x-=2) {
         move_sprite(0, x, y+=3);
         wait_vbl_done();
     }
-    for (x = 88; x < 120; x+=1) {
-        move_sprite(0, x, y+=4);
+    set_bkg_tiles(10, 8, _INTRO_LIGHT_OUT_COLUMNS, _INTRO_LIGHT_OUT_ROWS, _intro_light_out_map);
+    // start playing stars animation
+    for (x = 0; x < 40; ++x) {
+        move_sprite(0, x+88, y+=4);
+        BGP_REG = lights_pal_seq[x];
         wait_vbl_done();
     }
+    delay(1000);
 
-    x = -128;
-    disable_interrupts();
-    add_LCD(slide_pitcher_lcd_interrupt);
-    enable_interrupts();
+    BGP_REG = BG_PALETTE;
     wait_vbl_done();
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
-    for (j = 0; j <= 128; j+=2) {
-        x = -128+j;
-        wait_vbl_done();
+    for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
+        set_sprite_tile(i, _intro0_map[i]+_INTRO_SPRITES_TILE_COUNT);
+        set_sprite_prop(i, S_PRIORITY);
     }
+    for (k = 0; k <= 128; k+=2) {
+        move_bkg(k+32, 0);
+        a = 0;
+        for (j = 0; j < _INTRO0_ROWS; j++) {
+            for (i = 0; i < _INTRO0_COLUMNS; i++) {
+                move_sprite(a++, k+i*8-32, j*8+80);
+            }
+        }
+    }
+    delay(1000);
+
     disable_interrupts();
     delay(200);
     BGP_REG = 0x90;
+    OBP0_REG = 0x90;
     delay(200);
     BGP_REG = 0x40;
+    OBP0_REG = 0x40;
     delay(200);
     BGP_REG = 0x00;
+    OBP0_REG = 0x00;
 }
 
 void show_player (int p) {
@@ -242,9 +322,24 @@ void cycle_players_vbl_interrupt(void) {
 
 void show_title () {
     DISPLAY_OFF;
+    clear_screen();
     BGP_REG = BG_PALETTE;
+    OBP0_REG = SPR_PALETTE_0;
+
+    set_sprite_data(0, _TITLE_SPRITES_TILE_COUNT, _title_sprites_tiles);
+    a = 0;
+    for (j = 0; j < _CALVIN_TITLE_ROWS; ++j) {
+        for (i = 0; i < _CALVIN_TITLE_COLUMNS; ++i) {
+            b = _calvin_title_map[j*_CALVIN_TITLE_COLUMNS+i];
+            if (b == 0) continue;
+            set_sprite_tile(a, b);
+            set_sprite_prop(a, 0);
+            move_sprite(a, i*8+96, j*8+96);
+            a++;
+        }
+    }
+
     disable_interrupts();
-    remove_LCD(slide_pitcher_lcd_interrupt);
     add_LCD(show_title_lcd_interrupt);
     enable_interrupts();
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
@@ -281,13 +376,12 @@ void show_title () {
             x = j+128;
             wait_vbl_done();
         }
-        // show_player(z);
         z++;
+        if (z == 16) z = 0;
         for (j = 0; j <= 128; j+=6) {
             x = j;
             wait_vbl_done();
         }
-        if (z == 16) z = 0;
     }
 }
 
@@ -300,7 +394,7 @@ void start_screen () {
     STAT_REG = 72;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     // show_copyrights();
-    show_intro_sequence();
+    // show_intro_sequence();
     show_title();
     show_start_menu();
 }

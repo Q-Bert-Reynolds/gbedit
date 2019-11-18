@@ -1,15 +1,16 @@
 TODO:
     banking
+    Main
+        fade in/out func
     Intro
         sfx
         sparks after ball hits light
-        light goes out
-        batter sprite
-        Calvin sprite
-        ball toss anim
+        pitch/bat anim
+        add joypad input
+    New Game
+        Text
     Battle
     Walking
-    Text
     Roledex
 
 Controller - MCB5

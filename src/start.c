@@ -190,7 +190,12 @@ void show_intro_sequence () {
         wait_vbl_done();
     }
     disable_interrupts();
-    delay(1000);
+    delay(200);
+    BGP_REG = 0x90;
+    delay(200);
+    BGP_REG = 0x40;
+    delay(200);
+    BGP_REG = 0x00;
 }
 
 void show_player (int p) {
@@ -211,7 +216,7 @@ void show_player (int p) {
 
 void show_title () {
     DISPLAY_OFF;
-    HIDE_BKG;
+    BGP_REG = BG_PALETTE;
     disable_interrupts();
     remove_LCD(slide_pitcher_lcd_interrupt);
     add_LCD(show_title_lcd_interrupt);
@@ -222,7 +227,6 @@ void show_title () {
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     y = 64;
     x = 64;
-    SHOW_BKG;
     DISPLAY_ON;
     for (i = 0; i <= 64; i+=2) {
         y = 64-i;
@@ -271,7 +275,7 @@ void start_screen () {
     LYC_REG = 0;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     // show_copyrights();
-    // show_intro_sequence();
+    show_intro_sequence();
     show_title();
     show_start_menu();
 }

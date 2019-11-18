@@ -114,6 +114,8 @@
     };
 #endif
 
+#define PLAYER_INDEX _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
+
 void slide_pitcher_lcd_interrupt(void) {
     if (LY_REG == 0) {
         LYC_REG = 47;
@@ -133,20 +135,28 @@ void slide_pitcher_lcd_interrupt(void) {
 }
 
 void show_title_lcd_interrupt(void) {
-    if (LY_REG == 0) {
-        LYC_REG = 63;
-        SCX_REG = 0;
-        SCY_REG = y;
-    }
-    else if (LY_REG == 63) {
-        LYC_REG = 71;
-        SCX_REG = x;
-        SCY_REG = 0;
-    }
-    else if (LY_REG == 71) {
-        LYC_REG = 0;
-        SCX_REG = 0;
-        SCY_REG = 0;
+    switch (LY_REG) {
+        case 0:
+        case 255:
+            LYC_REG = 63;
+            SCX_REG = 0;
+            SCY_REG = y;
+            break;
+        case 63:
+            LYC_REG = 71;
+            SCX_REG = x;
+            SCY_REG = 0;
+            break;
+        case 71:
+            LYC_REG = 135;
+            SCX_REG = 128;
+            SCY_REG = 0;
+            break;
+        case 135:
+            LYC_REG = 0;
+            SCX_REG = 0;
+            SCY_REG = 0;
+            break;
     }
 }
 
@@ -179,14 +189,14 @@ void show_intro_sequence () {
     SHOW_BKG;
     // show ball hitting light
     delay(1000);
-    x = -120;
+    x = -128;
     disable_interrupts();
     add_LCD(slide_pitcher_lcd_interrupt);
     enable_interrupts();
     wait_vbl_done();
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
-    for (j = 0; j < 120; j+=2) {
-        x = -120+j;
+    for (j = 0; j <= 128; j+=2) {
+        x = -128+j;
         wait_vbl_done();
     }
     disable_interrupts();
@@ -199,19 +209,23 @@ void show_intro_sequence () {
 }
 
 void show_player (int p) {
-    DISPLAY_OFF;
-    set_bkg_data(_TITLE_TILE_COUNT+_VERSION_TILE_COUNT, intro_player_tile_count[p], intro_player_tiles[p]);
+    set_bkg_data(PLAYER_INDEX, intro_player_tile_count[p], intro_player_tiles[p]);
     a = intro_player_columns[p];
     b = 7-a;
     k = 0;
     for (j = 0; j < 7; ++j) {
         for (i = 0; i < 7; ++i) {
             if (i < b || j < b) tiles[j*7+i] = 0;
-            else tiles[j*7+i] = intro_player_maps[p][k++]+_TITLE_TILE_COUNT+_VERSION_TILE_COUNT;
+            else tiles[j*7+i] = intro_player_maps[p][k++]+PLAYER_INDEX;
         }
     }
-    set_bkg_tiles(4, 10, 7, 7, tiles);
-    DISPLAY_ON;
+    set_bkg_tiles(20, 10, 7, 7, tiles);
+}
+
+void cycle_players_vbl_interrupt(void) {
+    if (c==z) return;
+    show_player(z);
+    c=z;
 }
 
 void show_title () {
@@ -221,10 +235,10 @@ void show_title () {
     remove_LCD(slide_pitcher_lcd_interrupt);
     add_LCD(show_title_lcd_interrupt);
     enable_interrupts();
-    wait_vbl_done();
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
+    show_player(0);
     y = 64;
     x = 64;
     DISPLAY_ON;
@@ -243,25 +257,25 @@ void show_title () {
 
     disable_interrupts();
     remove_LCD(show_title_lcd_interrupt);
+    x = 128;
     add_LCD(cycle_players_lcd_interrupt);
+    add_VBL(cycle_players_vbl_interrupt);
     enable_interrupts();
-
+    z = 0;
+    c = 0;
     while (1) {
-        for (z = 0; z < 16; ++z) {
-            x = -120;
-            show_player(z);
-            for (j = 0; j <= 120; j+=6) {
-                x = -120+j;
-                wait_vbl_done();
-            }
-            for (j = 0; j < 256; ++j) {
-                wait_vbl_done();
-            }
-            for (j = 0; j < 120; j+=6) {
-                x = j;
-                wait_vbl_done();
-            }
+        delay(100);
+        for (j = 0; j <= 128; j+=6) {
+            x = j+128;
+            wait_vbl_done();
         }
+        // show_player(z);
+        z++;
+        for (j = 0; j <= 128; j+=6) {
+            x = j;
+            wait_vbl_done();
+        }
+        if (z == 16) z = 0;
     }
 }
 
@@ -272,10 +286,9 @@ void show_start_menu () {
 void start_screen () {
     VBK_REG = 0;
     STAT_REG = 72;
-    LYC_REG = 0;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     // show_copyrights();
-    show_intro_sequence();
+    // show_intro_sequence();
     show_title();
     show_start_menu();
 }

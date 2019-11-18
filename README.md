@@ -1,8 +1,12 @@
 TODO:
     banking
     Intro
-        add sprites
-        add line interrupt for bg scroll fx
+        sfx
+        sparks after ball hits light
+        light goes out
+        batter sprite
+        Calvin sprite
+        ball toss anim
     Battle
     Walking
     Text

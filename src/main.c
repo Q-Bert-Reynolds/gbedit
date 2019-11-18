@@ -5,7 +5,7 @@ void main () {
     cgb_compatibility();
     DISPLAY_OFF;
     setup_audio();
-    SPRITES_8x16;
+    SPRITES_8x8;
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;

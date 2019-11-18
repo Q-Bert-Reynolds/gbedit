@@ -1,8 +1,9 @@
 #include "beisbol.h"
 #include "../res/title/copyrights/copyrights.c"
 #include "../res/title/intro/intro.c"
+#include "../res/title/intro/intro_sprites/intro_sprites.c"
 #include "../res/title/title/title.c"
-#include "../res/title/title/sprites/sprites.c"
+#include "../res/title/title/title_sprites/title_sprites.c"
 
 #ifdef HOME
     #include "../res/home_version/version.c"
@@ -185,10 +186,21 @@ void show_intro_sequence () {
     HIDE_BKG;
     set_bkg_data(0, _INTRO_TILE_COUNT, _intro_tiles);
     set_bkg_tiles(0, 0, _INTRO_LIGHTS_COLUMNS, _INTRO_LIGHTS_ROWS, _intro_lights_map);
+    set_sprite_data(0, _INTRO_SPRITES_TILE_COUNT, _intro_sprites_tiles);
+    set_sprite_tile(0, 0);
+    move_sprite(0, 152,0);
     DISPLAY_ON;
     SHOW_BKG;
-    // show ball hitting light
-    delay(1000);
+    y = 0;
+    for (x = 152; x > 88; x-=2) {
+        move_sprite(0, x, y+=3);
+        wait_vbl_done();
+    }
+    for (x = 88; x < 120; x+=1) {
+        move_sprite(0, x, y+=4);
+        wait_vbl_done();
+    }
+
     x = -128;
     disable_interrupts();
     add_LCD(slide_pitcher_lcd_interrupt);
@@ -288,7 +300,7 @@ void start_screen () {
     STAT_REG = 72;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     // show_copyrights();
-    // show_intro_sequence();
+    show_intro_sequence();
     show_title();
     show_start_menu();
 }

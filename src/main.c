@@ -1,9 +1,12 @@
 #include "beisbol.h"
 #include "start.c"
 
+const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 void clear_screen () {
+    set_bkg_data(0, 1, blank_tile);
     for (i = 0; i < 1024; ++i) tiles[i] = 0;
     set_bkg_tiles(0,0,32,32,tiles);
+    for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
 }
 
 void main () {

@@ -24,8 +24,32 @@
 #define FLIP_XY_PAL (FLIP_X_PAL | FLIP_Y_PAL)
 #define FLIP_XY (S_FLIPX | S_FLIPY)
 
+// character constants
+#define SOH '▛'
+#define STX '▜'
+#define ETX '▙'
+#define EOT '▟'
+#define ENQ '▄'
+#define ACK '▌'
+#define DC1 'ℙ' // pitcher
+#define DC2 'ℂ' // catcher
+#define DC3 '𝟙' // first
+#define DC4 '𝟚' // second
+#define NAK '𝟛' // third
+#define SYN '𝕊' // short
+#define ETB '𝕃' // left
+#define CAN 'ℭ' // center
+#define EM 'ℝ' // right
+#define SUB '◌' // dotted circle
+#define ESC '⚾︎' // ball
+#define FS '◇' // empty base
+#define GS '◆' // occupied base
+#define RS '𝐊' // strikeout swinging
+#define US 'ꓘ' // strikeout looking
+
 // global vars
-int a, b, c, i, j, k, x, y, z;
+int a, b, c, d, i, j, k, l, w, x, y, z;
+extern const unsigned char blank_tile[];
 unsigned char tiles[1024];
 
 // utils

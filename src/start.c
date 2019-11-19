@@ -4,6 +4,7 @@
 #include "../res/title/intro/intro_sprites/intro_sprites.c"
 #include "../res/title/title/title.c"
 #include "../res/title/title/title_sprites/title_sprites.c"
+#include "../res/font.c"
 
 #ifdef HOME
     #include "../res/home_version/version.c"
@@ -243,22 +244,15 @@ const unsigned char lights_pal_seq[] = {
     0xE8, 0xE8, 0xE8, 0xE8, 0xE0, 0xE0, 0xE0, 0xE0, 0xE8, 0xE8,
     0xE8, 0xE8, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC, 0xEC,
 };
-void show_intro_sequence () {
-    DISPLAY_OFF;
-    HIDE_BKG;
-    BGP_REG = 0xE0;
-    set_bkg_data(0, _INTRO_TILE_COUNT, _intro_tiles);
-    set_bkg_tiles(0, 0, _INTRO_LIGHTS_COLUMNS, _INTRO_LIGHTS_ROWS, _intro_lights_map);
-    set_sprite_data(0, _INTRO_SPRITES_TILE_COUNT, _intro_sprites_tiles);
-    set_sprite_data(_INTRO_SPRITES_TILE_COUNT, _VERSION_SPRITES_TILE_COUNT, _version_sprites_tiles);
-    set_sprite_tile(0, 0);
-    move_sprite(0, 152,0);
-    DISPLAY_ON;
-    SHOW_BKG;
-    delay(1000);
+void lights_sequence () {
+    for (i = 0; i < 60; i++) {
+        if (joypad() & (J_START | J_A)) return;
+        wait_vbl_done();
+    }
     y = 0;
     for (x = 152; x > 88; x-=2) {
         move_sprite(0, x, y+=3);
+        if (joypad() & (J_START | J_A)) return;
         wait_vbl_done();
     }
     set_bkg_tiles(10, 8, _INTRO_LIGHT_OUT_COLUMNS, _INTRO_LIGHT_OUT_ROWS, _intro_light_out_map);
@@ -266,10 +260,16 @@ void show_intro_sequence () {
     for (x = 0; x < 40; ++x) {
         move_sprite(0, x+88, y+=4);
         BGP_REG = lights_pal_seq[x];
+        if (joypad() & (J_START | J_A)) return;
         wait_vbl_done();
     }
-    delay(1000);
+    for (i = 0; i < 60; i++) {
+        if (joypad() & (J_START | J_A)) return;
+        wait_vbl_done();
+    }
+}
 
+void pitch_sequence () {
     BGP_REG = BG_PALETTE;
     wait_vbl_done();
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
@@ -283,10 +283,29 @@ void show_intro_sequence () {
         for (j = 0; j < _INTRO0_ROWS; j++) {
             for (i = 0; i < _INTRO0_COLUMNS; i++) {
                 move_sprite(a++, k+i*8-32, j*8+80);
+                if (joypad() & (J_START | J_A)) return;
             }
         }
     }
-    delay(1000);
+    for (i = 0; i < 60; i++) {
+        if (joypad() & (J_START | J_A)) return;
+        wait_vbl_done();
+    }
+}
+
+void show_intro_sequence () {
+    DISPLAY_OFF;
+    BGP_REG = 0xE0;
+    set_bkg_data(0, _INTRO_TILE_COUNT, _intro_tiles);
+    set_bkg_tiles(0, 0, _INTRO_LIGHTS_COLUMNS, _INTRO_LIGHTS_ROWS, _intro_lights_map);
+    set_sprite_data(0, _INTRO_SPRITES_TILE_COUNT, _intro_sprites_tiles);
+    set_sprite_data(_INTRO_SPRITES_TILE_COUNT, _VERSION_SPRITES_TILE_COUNT, _version_sprites_tiles);
+    set_sprite_tile(0, 0);
+    move_sprite(0, 152,0);
+    DISPLAY_ON;
+
+    lights_sequence();
+    pitch_sequence();
 
     disable_interrupts();
     delay(200);
@@ -371,30 +390,74 @@ void show_title () {
     z = 0;
     c = 0;
     while (1) {
-        delay(100);
+        for (i = 0; i < 60; i++) {
+            if (joypad() & (J_START | J_A)) return;
+            wait_vbl_done();
+        }
         for (j = 0; j <= 128; j+=6) {
             x = j+128;
+            if (joypad() & (J_START | J_A)) return;
             wait_vbl_done();
         }
         z++;
         if (z == 16) z = 0;
         for (j = 0; j <= 128; j+=6) {
             x = j;
+            if (joypad() & (J_START | J_A)) return;
             wait_vbl_done();
         }
     }
 }
 
-void show_start_menu () {
+int show_start_menu () {
+    DISPLAY_OFF;
+    disable_interrupts();
+    remove_LCD(cycle_players_lcd_interrupt);
+    // remove_VBL(cycle_players_vbl_interrupt);
+    enable_interrupts();
+    clear_screen();
 
+    set_bkg_data(0, _FONT_TILE_COUNT, _font_tiles);
+    set_bkg_tiles(0, 0, 15, 8, 
+        // "▛▄▄▄▄▄▄▄▄▄▄▄▄▄▜"
+        // "▌             ▌"
+        // "▌ CONTINUE    ▌"
+        // "▌             ▌"
+        // "▌ NEW GAME    ▌"
+        // "▌             ▌"
+        // "▌ OPTION      ▌"
+        // "▙▄▄▄▄▄▄▄▄▄▄▄▄▄▟"
+
+        "               "
+        "               "
+        "  CONTINUE     "
+        "               "
+        "  NEW GAME     "
+        "               "
+        "  OPTION       "
+        "               " 
+    );
+
+    DISPLAY_ON;
+    waitpadup();
+    while (1) {
+        k = joypad();
+        if (k & (J_START | J_A)) return 1;
+        else if (k & J_B) return 0;
+        wait_vbl_done(); 
+    }
+    return 0;
 }
 
 void start_screen () {
     VBK_REG = 0;
     STAT_REG = 72;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
-    // show_copyrights();
-    // show_intro_sequence();
-    show_title();
-    show_start_menu();
+    show_copyrights();
+    show_intro_sequence();
+    d = 0;
+    while (d == 0) {
+        show_title();
+        d = show_start_menu();
+    }
 }

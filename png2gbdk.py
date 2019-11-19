@@ -8,7 +8,7 @@ from PIL import Image
 def main():
   for root, folders, files in os.walk("./res"):
     name = os.path.basename(root)
-    if name in ["players"]:
+    if name in ["players", "res"]:
       for name in files:
         path = os.path.join(root, name)
         png_to_c(path)

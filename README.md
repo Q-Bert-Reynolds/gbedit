@@ -6,7 +6,10 @@ TODO:
         sfx
         sparks after ball hits light
         pitch/bat anim
-        add joypad input
+        bounce title
+        delay version slide
+        randomize players
+        calvin ball toss anim
     New Game
         Text
     Battle

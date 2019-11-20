@@ -334,12 +334,7 @@ void show_player (int p) {
     set_bkg_tiles(20, 10, 7, 7, tiles);
 }
 
-void cycle_players_vbl_interrupt(void) {
-    if (c==z) return;
-    show_player(z);
-    c=z;
-}
-
+const unsigned char ball_toss[] = {16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15};
 void show_title () {
     DISPLAY_OFF;
     clear_screen();
@@ -358,6 +353,7 @@ void show_title () {
             a++;
         }
     }
+    move_sprite(5, 94, 117); // move ball to hand
 
     disable_interrupts();
     add_LCD(show_title_lcd_interrupt);
@@ -381,15 +377,13 @@ void show_title () {
         x = -64+i;
         wait_vbl_done();
     }
-
+    wait_vbl_done();
     disable_interrupts();
     remove_LCD(show_title_lcd_interrupt);
     x = 128;
     add_LCD(cycle_players_lcd_interrupt);
-    add_VBL(cycle_players_vbl_interrupt);
     enable_interrupts();
     z = 0;
-    c = 0;
     while (1) {
         for (i = 0; i < 60; i++) {
             if (joypad() & (J_START | J_A)) return;
@@ -398,10 +392,14 @@ void show_title () {
         for (j = 0; j <= 128; j+=6) {
             x = j+128;
             if (joypad() & (J_START | J_A)) return;
+            if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
             wait_vbl_done();
         }
         z++;
         if (z == 16) z = 0;
+        disable_interrupts();
+        show_player(z);
+        enable_interrupts();
         for (j = 0; j <= 128; j+=6) {
             x = j;
             if (joypad() & (J_START | J_A)) return;
@@ -423,8 +421,8 @@ int show_start_menu () {
     DISPLAY_OFF;
     disable_interrupts();
     remove_LCD(cycle_players_lcd_interrupt);
-    // remove_VBL(cycle_players_vbl_interrupt);
     enable_interrupts();
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
     clear_screen();
 
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
@@ -458,12 +456,16 @@ int show_start_menu () {
     y = 0;
     while (1) {
         k = joypad();
-        if (k & J_DOWN && y > 0) {
-            move_arrow(y--);
+        if (k & J_UP && y > 0) {
+            y--;
+            wait_vbl_done(); 
+            move_arrow(y);
             waitpadup();
         }
-        else if (k & J_UP && y < c-1) {
-            move_arrow(y++);
+        else if (k & J_DOWN && y < c-1) {
+            y++;
+            wait_vbl_done(); 
+            move_arrow(y);
             waitpadup();
         }
         if (k & (J_START | J_A)) return 1;
@@ -476,12 +478,12 @@ int show_start_menu () {
 void start_screen () {
     VBK_REG = 0;
     STAT_REG = 72;
-    // set_interrupts(LCD_IFLAG|VBL_IFLAG);
-    // show_copyrights();
-    // show_intro_sequence();
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    show_copyrights();
+    show_intro_sequence();
     d = 0;
-    while (d == 0) {
-        // show_title();
+    while (1) {//d == 0) {
+        show_title();
         d = show_start_menu();
     }
 }

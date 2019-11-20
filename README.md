@@ -9,7 +9,6 @@ TODO:
         bounce title
         delay version slide
         randomize players
-        calvin ball toss anim
     New Game
         Text
     Battle

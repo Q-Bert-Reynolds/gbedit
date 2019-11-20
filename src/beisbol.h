@@ -26,6 +26,7 @@
 
 // global vars
 int save_data;
+int_handler vblank_handler;
 int a, b, c, d, i, j, k, l, w, x, y, z;
 extern const unsigned char blank_tile[];
 unsigned char tiles[1024];

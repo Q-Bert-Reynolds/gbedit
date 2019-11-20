@@ -20,7 +20,7 @@ $(ROM_FILE): $(OBJ_FILES)
 	@mkdir -p $(DIST_DIR)
 	$(CC) -Wl-m -Wl-yp0x143=0x80 -o $@ $^
 
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c 
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -Wa-l -c -o $@ $<
 

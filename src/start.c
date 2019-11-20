@@ -5,6 +5,7 @@
 #include "../res/title/title/title.c"
 #include "../res/title/title/title_sprites/title_sprites.c"
 #include "../res/font.c"
+#include "../res/ui.c"
 
 #ifdef HOME
     #include "../res/home_version/version.c"
@@ -270,9 +271,9 @@ void lights_sequence () {
 }
 
 void pitch_sequence () {
-    BGP_REG = BG_PALETTE;
     wait_vbl_done();
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
+    BGP_REG = BG_PALETTE;
     for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
         set_sprite_tile(i, _intro0_map[i]+_INTRO_SPRITES_TILE_COUNT);
         set_sprite_prop(i, S_PRIORITY);
@@ -409,6 +410,15 @@ void show_title () {
     }
 }
 
+void move_arrow (int y) {
+    for (i = 0; i < c; i++) {
+        tiles[i*2] = 0;
+        if (i == y) tiles[i*2+1] = 13;
+        else tiles[i*2+1] = 0;
+    }
+    set_bkg_tiles(1,1,1,c*2,tiles);
+}
+
 int show_start_menu () {
     DISPLAY_OFF;
     disable_interrupts();
@@ -417,31 +427,45 @@ int show_start_menu () {
     enable_interrupts();
     clear_screen();
 
-    set_bkg_data(0, _FONT_TILE_COUNT, _font_tiles);
-    set_bkg_tiles(0, 0, 15, 8, 
-        // "▛▄▄▄▄▄▄▄▄▄▄▄▄▄▜"
-        // "▌             ▌"
-        // "▌ CONTINUE    ▌"
-        // "▌             ▌"
-        // "▌ NEW GAME    ▌"
-        // "▌             ▌"
-        // "▌ OPTION      ▌"
-        // "▙▄▄▄▄▄▄▄▄▄▄▄▄▄▟"
+    set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
+    set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
 
-        "               "
-        "               "
-        "  CONTINUE     "
-        "               "
-        "  NEW GAME     "
-        "               "
-        "  OPTION       "
-        "               " 
-    );
-
+    if (save_data) {
+        c = 3;
+        draw_ui_box(0,0,15,8);
+        set_bkg_tiles(2,2,8,5,
+            "CONTINUE"
+            "        "
+            "NEW GAME"
+            "        "
+            "OPTION  "
+        );
+    }
+    else {
+        c = 2;
+        draw_ui_box(0,0,15,6);
+        set_bkg_tiles(2,2,8,3,
+            "NEW GAME"
+            "        "
+            "OPTION  "
+        );
+    }
+    tiles[0] = 13;
+    set_bkg_tiles(1,2,1,1,tiles);
     DISPLAY_ON;
+    
     waitpadup();
+    y = 0;
     while (1) {
         k = joypad();
+        if (k & J_DOWN && y > 0) {
+            move_arrow(y--);
+            waitpadup();
+        }
+        else if (k & J_UP && y < c-1) {
+            move_arrow(y++);
+            waitpadup();
+        }
         if (k & (J_START | J_A)) return 1;
         else if (k & J_B) return 0;
         wait_vbl_done(); 
@@ -452,12 +476,12 @@ int show_start_menu () {
 void start_screen () {
     VBK_REG = 0;
     STAT_REG = 72;
-    set_interrupts(LCD_IFLAG|VBL_IFLAG);
-    show_copyrights();
-    show_intro_sequence();
+    // set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    // show_copyrights();
+    // show_intro_sequence();
     d = 0;
     while (d == 0) {
-        show_title();
+        // show_title();
         d = show_start_menu();
     }
 }

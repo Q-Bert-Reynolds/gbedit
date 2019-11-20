@@ -89,33 +89,50 @@ def png_to_c (path):
   name = os.path.basename(base)
   rows, cols, hex_vals = gb_encode(img)
 
-  tileset = []
-  tilemap = []
-  for i in range(0, len(hex_vals), 16):
-    tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
-    if tile in tileset:
-      tilemap.append("0x{:02X}".format(tileset.index(tile)))
-    else:
-      tilemap.append("0x{:02X}".format(len(tileset)))
+  if name in ["font", "ui"]:
+    tileset = []
+    for i in range(0, len(hex_vals), 16):
+      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
       tileset.append(tile)
 
-  with open(base + ".c", "w+") as c_file:
-    c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
-    c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
-    c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
-    c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
+    with open(base + ".c", "w+") as c_file:
+      c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
+      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
 
-    c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
-    for tile in tileset:
-      c_file.write(tile)
-    c_file.write("};\n")
+      c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
+      for tile in tileset:
+        c_file.write(tile)
+      c_file.write("};\n")
 
-    c_file.write("const unsigned char _" + name + "_map[] = {\n")
-    for i in range(0, len(tilemap), cols):
-      c_file.write("    " + ",".join(tilemap[i:i+cols]) + ",\n")
-    c_file.write("};\n")
+      c_file.write("#endif\n")
+  else:
+    tileset = []
+    tilemap = []
+    for i in range(0, len(hex_vals), 16):
+      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
+      if tile in tileset:
+        tilemap.append("0x{:02X}".format(tileset.index(tile)))
+      else:
+        tilemap.append("0x{:02X}".format(len(tileset)))
+        tileset.append(tile)
 
-    c_file.write("#endif\n")
+    with open(base + ".c", "w+") as c_file:
+      c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
+      c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
+      c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
+      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
+
+      c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
+      for tile in tileset:
+        c_file.write(tile)
+      c_file.write("};\n")
+
+      c_file.write("const unsigned char _" + name + "_map[] = {\n")
+      for i in range(0, len(tilemap), cols):
+        c_file.write("    " + ",".join(tilemap[i:i+cols]) + ",\n")
+      c_file.write("};\n")
+
+      c_file.write("#endif\n")
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 #include "beisbol.h"
-#include "start.c"
+
+#include "start.c" // TODO: bank instead of include
 
 const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 void clear_screen () {
@@ -41,7 +42,5 @@ void main () {
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
-    while (1) {
-        start_screen();
-    }
+    start_screen();
 }

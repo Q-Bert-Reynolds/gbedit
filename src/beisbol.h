@@ -31,6 +31,11 @@ int a, b, c, d, i, j, k, l, w, x, y, z;
 extern const unsigned char blank_tile[];
 unsigned char tiles[1024];
 
+// options
+unsigned char text_speed;
+unsigned char animation_style;
+unsigned char coaching_style;
+
 // drawing
 void clear_screen();
 void draw_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);

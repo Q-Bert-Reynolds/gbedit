@@ -408,7 +408,7 @@ void show_title () {
     }
 }
 
-void move_arrow (int y) {
+void move_start_arrow (int y) {
     for (i = 0; i < c; i++) {
         tiles[i*2] = 0;
         if (i == y) tiles[i*2+1] = 13;
@@ -457,22 +457,99 @@ int show_start_menu () {
     while (1) {
         k = joypad();
         if (k & J_UP && y > 0) {
-            y--;
             wait_vbl_done(); 
-            move_arrow(y);
+            move_start_arrow(--y);
             waitpadup();
         }
         else if (k & J_DOWN && y < c-1) {
-            y++;
             wait_vbl_done(); 
-            move_arrow(y);
+            move_start_arrow(++y);
             waitpadup();
         }
-        if (k & (J_START | J_A)) return 1;
+        if (k & (J_START | J_A)) return y+1;
         else if (k & J_B) return 0;
         wait_vbl_done(); 
     }
     return 0;
+}
+
+void move_options_arrow (int y) {
+    tiles[0] = 0;
+    tiles[1] = 13;
+    tiles[2] = 14;
+    set_bkg_tiles(1,3,1,1,tiles + (text_speed==0 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(7,3,1,1,tiles + (text_speed==1 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(14,3,1,1,tiles + (text_speed==2 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(1,8,1,1,tiles + (animation_style==0 ? 2 : 0) - (y==1 ? 1 : 0));
+    set_bkg_tiles(10,8,1,1,tiles + (animation_style==1 ? 2 : 0) - (y==1 ? 1 : 0));
+    set_bkg_tiles(1,13,1,1,tiles + (coaching_style==0 ? 2 : 0) - (y==2 ? 1 : 0));
+    set_bkg_tiles(10,13,1,1,tiles + (coaching_style==1 ? 2 : 0) - (y==2 ? 1 : 0));
+    set_bkg_tiles(1,16,1,1,tiles + (y==3 ? 1 : 2));
+}
+
+void show_options () {
+    DISPLAY_OFF;
+    draw_ui_box(0,0,20,5);
+    set_bkg_tiles(1,1,18,3,
+        "TEXT SPEED        "
+        "                  "
+        " FAST  MEDIUM SLOW"
+    );
+
+    draw_ui_box(0,5,20,5);
+    set_bkg_tiles(1,6,18,3,
+        "AT-BAT ANIMATIONS "
+        "                  "
+        " ON       OFF     "
+    );
+
+    draw_ui_box(0,10,20,5);
+    set_bkg_tiles(1,11,18,3,
+        "COACHING STYLE    "
+        "                  "
+        " SHIFT    SET     "
+    );
+    set_bkg_tiles(2,16,6,1,
+        "CANCEL"
+    );
+
+    DISPLAY_ON;
+    waitpadup();
+    y = 0;
+    move_options_arrow(y);
+    while (1) {
+        k = joypad();
+        if (k & J_UP && y > 0) {
+            wait_vbl_done(); 
+            move_options_arrow(--y);
+            waitpadup();
+        }
+        else if (k & J_DOWN && y < 3) {
+            wait_vbl_done(); 
+            move_options_arrow(++y);
+            waitpadup();
+        }
+        else if (k & J_LEFT && y < 3) {
+            wait_vbl_done(); 
+            if (y == 0 && text_speed > 0) --text_speed;
+            else if (y == 1 && animation_style > 0) --animation_style;
+            else if (y == 2 && coaching_style > 0) --coaching_style;
+            move_options_arrow(y);
+            waitpadup();
+        }
+        else if (k & J_RIGHT && y < 3) {
+            wait_vbl_done(); 
+            if (y == 0 && text_speed < 2) ++text_speed;
+            else if (y == 1 && animation_style < 1) ++animation_style;
+            else if (y == 2 && coaching_style < 1) ++coaching_style;
+            move_options_arrow(y);
+            waitpadup();
+        }
+
+        if (k & (J_START | J_A) && y == 3) return;
+        else if (k & J_B) return;
+        wait_vbl_done(); 
+    }
 }
 
 void start_screen () {
@@ -482,8 +559,13 @@ void start_screen () {
     show_copyrights();
     show_intro_sequence();
     d = 0;
-    while (1) {//d == 0) {
-        show_title();
+    while (d == 0 || d == c) {
+        if (d == 0) show_title();
+        else if (d == c) {
+            show_options();
+            d = 0;
+        }
         d = show_start_menu();
     }
+    // return d;
 }

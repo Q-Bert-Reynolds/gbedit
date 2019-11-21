@@ -401,7 +401,7 @@ void show_title () {
 void move_start_arrow (int y) {
     for (i = 0; i < c; i++) {
         tiles[i*2] = 0;
-        if (i == y) tiles[i*2+1] = 13;
+        if (i == y) tiles[i*2+1] = ARROW_RIGHT;
         else tiles[i*2+1] = 0;
     }
     set_bkg_tiles(1,1,1,c*2,tiles);
@@ -465,8 +465,8 @@ int show_start_menu () {
 
 void move_options_arrow (int y) {
     tiles[0] = 0;
-    tiles[1] = 13;
-    tiles[2] = 14;
+    tiles[1] = ARROW_RIGHT;
+    tiles[2] = ARROW_RIGHT_BLANK;
     set_bkg_tiles(1,3,1,1,tiles + (text_speed==0 ? 2 : 0) - (y==0 ? 1 : 0));
     set_bkg_tiles(7,3,1,1,tiles + (text_speed==1 ? 2 : 0) - (y==0 ? 1 : 0));
     set_bkg_tiles(14,3,1,1,tiles + (text_speed==2 ? 2 : 0) - (y==0 ? 1 : 0));

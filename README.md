@@ -8,6 +8,8 @@ TODO:
         intro
         new game
     Main
+        generalize selectable list
+        create text input
     Intro
         sfx
         sparks after ball hits light
@@ -16,7 +18,6 @@ TODO:
         delay version slide
         randomize players
     New Game
-        flash next arrow
         choose and store names
         use names in text
     Battle

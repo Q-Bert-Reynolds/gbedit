@@ -20,10 +20,25 @@
 
 // sprite props
 #define USE_PAL 0x10
-#define FLIP_X_PAL (S_FLIPX | USE_PAL)
-#define FLIP_Y_PAL (S_FLIPY | USE_PAL)
+#define FLIP_X_PAL  (S_FLIPX    | USE_PAL   )
+#define FLIP_Y_PAL  (S_FLIPY    | USE_PAL   )
 #define FLIP_XY_PAL (FLIP_X_PAL | FLIP_Y_PAL)
-#define FLIP_XY (S_FLIPX | S_FLIPY)
+#define FLIP_XY     (S_FLIPX    | S_FLIPY   )
+
+// UI Tiles
+#define ARROW_LEFT        12
+#define ARROW_RIGHT       13
+#define ARROW_RIGHT_BLANK 14
+#define ARROW_DOWN        28
+#define ARROW_UP          29
+
+#define BOX_UPPER_LEFT    17
+#define BOX_UPPER_RIGHT   18
+#define BOX_LOWER_LEFT    19
+#define BOX_LOWER_RIGHT   20
+#define BOX_HORIZONTAL    21
+#define BOX_VERTICAL      22
+
 
 // global vars
 int save_data;
@@ -31,6 +46,8 @@ int_handler vblank_handler;
 int a, b, c, d, i, j, k, l, w, x, y, z;
 extern const UBYTE blank_tile[];
 UBYTE tiles[1024];
+char *user_name;
+char *rival_name;
 
 // options
 UBYTE text_speed;

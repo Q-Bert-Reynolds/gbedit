@@ -17,21 +17,39 @@ void draw_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
         for (i = 0; i < w; i++) {
             k = 0;
             if (j == 0) {
-                if (i == 0) k = 17;
-                else if (i == w-1) k = 18;
-                else k = 21;
+                if (i == 0) k = BOX_UPPER_LEFT;
+                else if (i == w-1) k = BOX_UPPER_RIGHT;
+                else k = BOX_HORIZONTAL;
             }
             else if (j == h-1) {
-                if (i == 0) k = 19;
-                else if (i == w-1) k = 20;
-                else k = 21;
+                if (i == 0) k = BOX_LOWER_LEFT;
+                else if (i == w-1) k = BOX_LOWER_RIGHT;
+                else k = BOX_HORIZONTAL;
             }
-            else if (i == 0 || i == w-1) k = 22;
+            else if (i == 0 || i == w-1) k = BOX_VERTICAL;
 
             tiles[j*w+i] = k;
         }
     }
     set_bkg_tiles(x,y,w,h,tiles);
+}
+
+void flash_next_arrow (UBYTE x, UBYTE y) {
+    while (1) {
+        tiles[0] = ARROW_DOWN;
+        set_bkg_tiles(x, y, 1, 1, tiles);
+        waitpadup();
+        for (a = 0; a < 20; a++) {
+            if (joypad() & J_A) return;
+            wait_vbl_done();
+        }
+        tiles[0] = 0;
+        set_bkg_tiles(x, y, 1, 1, tiles);
+        for (a = 0; a < 20; a++) {
+            if (joypad() & J_A) return;
+            wait_vbl_done();
+        }
+    }
 }
 
 void display_text (unsigned char *text) {
@@ -45,7 +63,7 @@ void display_text (unsigned char *text) {
             ++y;
             if (y == 2) {
                 y = 1;
-                waitpad(J_A);
+                flash_next_arrow(18,16);
                 get_bkg_tiles(1, 16, 17, 1, tiles);
                 set_bkg_tiles(1, 14, 17, 1, tiles);
                 for (j = 0; j < 17; ++j) tiles[j] = 0;
@@ -56,8 +74,9 @@ void display_text (unsigned char *text) {
             set_bkg_tiles(x+1,y*2+14,1,1,text+i);
             x++;
         }        
-        delay(100);
+        delay(10);
     }
+    flash_next_arrow(18,16);
 }
 
 void fade_out () {

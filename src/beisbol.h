@@ -4,6 +4,7 @@
 #include <gb/gb.h>
 #include <gb/cgb.h>
 #include <stdio.h>
+#include <string.h>
 #include "audio.c"
 
 // GameBoy palettes
@@ -28,17 +29,20 @@
 int save_data;
 int_handler vblank_handler;
 int a, b, c, d, i, j, k, l, w, x, y, z;
-extern const unsigned char blank_tile[];
-unsigned char tiles[1024];
+extern const UBYTE blank_tile[];
+UBYTE tiles[1024];
 
 // options
-unsigned char text_speed;
-unsigned char animation_style;
-unsigned char coaching_style;
+UBYTE text_speed;
+UBYTE animation_style;
+UBYTE coaching_style;
 
 // drawing
 void clear_screen();
 void draw_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void display_text (UBYTE *text);
+void fade_out();
+void fade_in();
 
 // audio
 void setup_audio();

@@ -5,8 +5,9 @@ Compiling:
 
 TODO:
     banking (ROM and SRAM)
+        intro
+        new game
     Main
-        fade in/out func
     Intro
         sfx
         sparks after ball hits light
@@ -15,19 +16,21 @@ TODO:
         delay version slide
         randomize players
     New Game
-        Text
+        flash next arrow
+        choose and store names
+        use names in text
     Battle
     Walking
     Roledex
 
-Controller - MCB5
+Cart - MCB5, 2M ROM (128 banks), 128K RAM (16 banks)
 
 ROM Banks:
     main.c (bank0) - movement, font, menus, bank switching
     start.c (bank1) - startup stuff (copyrights, intro, title, new game/continue)
-    players.c (bank2) - player images
-    battle.c (bank3) - battle code
-    roledex.c (bank4) - rolédex
+    battle.c (bank2) - battle code
+    roledex.c (bank3) - rolédex descriptions
+    players_a.c, players_b.c, etc (bank10 - 18) - player images
 
 RAM Banks
     main.c (bank0) - global vars

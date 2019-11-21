@@ -307,17 +307,7 @@ void show_intro_sequence () {
 
     lights_sequence();
     pitch_sequence();
-
-    disable_interrupts();
-    delay(200);
-    BGP_REG = 0x90;
-    OBP0_REG = 0x90;
-    delay(200);
-    BGP_REG = 0x40;
-    OBP0_REG = 0x40;
-    delay(200);
-    BGP_REG = 0x00;
-    OBP0_REG = 0x00;
+    fade_out();
 }
 
 void show_player (int p) {
@@ -552,7 +542,7 @@ void show_options () {
     }
 }
 
-void start_screen () {
+UBYTE start () {
     VBK_REG = 0;
     STAT_REG = 72;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
@@ -567,5 +557,5 @@ void start_screen () {
         }
         d = show_start_menu();
     }
-    // return d;
+    return (UBYTE)(c-d-1);
 }

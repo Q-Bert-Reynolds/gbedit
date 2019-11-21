@@ -13,18 +13,15 @@ CC	= lcc -D$(VERSION)=def
 ROM_FILE = $(DIST_DIR)/$(ROM_NAME)
 OBJ_FILES = $(OBJ_DIR)/main.o
 
-all: $(ROM_FILE)
-	open $(ROM_FILE)
-
-$(ROM_FILE): $(OBJ_FILES)
-	@mkdir -p $(DIST_DIR)
-	$(CC) -Wl-m -Wl-yp0x143=0x80 -o $@ $^
-
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c 
+all: 
 	@mkdir -p $(OBJ_DIR)
-	$(CC) -Wa-l -c -o $@ $<
-
-build: 	$(ROM_FILE)
+	$(CC) -Wa-l -Wf-bo1 -c -o $(OBJ_DIR)/start.o $(SRC_DIR)/start.c
+	$(CC) -Wa-l -Wf-bo2 -c -o $(OBJ_DIR)/title.o $(SRC_DIR)/title.c
+	$(CC) -Wa-l -Wf-bo3 -c -o $(OBJ_DIR)/new_game.o $(SRC_DIR)/new_game.c
+	$(CC) -Wa-l -c -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.c
+	@mkdir -p $(DIST_DIR)
+	$(CC) -Wl-m -Wl-yp0x143=0x80 -Wl-yt0x01 -Wl-yo0x04 -o $(ROM_FILE) $(OBJ_DIR)/*.o
+	open $(ROM_FILE)
 
 clean:
 	@rm -rf $(DIST_DIR)

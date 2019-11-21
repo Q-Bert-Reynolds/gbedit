@@ -95,9 +95,16 @@ def png_to_c (path):
       tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
       tileset.append(tile)
 
-    with open(base + ".c", "w+") as c_file:
+    with open(base + ".h", "w+") as c_file:
       c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
       c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
+
+      c_file.write("extern const unsigned char _" + name + "_tiles[];\n")
+      c_file.write("#endif\n")
+
+    with open(base + ".c", "w+") as c_file:
+      c_file.write("#ifndef _" + name.upper() + "_TILES\n")
+      c_file.write("#define _" + name.upper() + "_TILES\n")
 
       c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
       for tile in tileset:

@@ -1,8 +1,6 @@
 #include "beisbol.h"
-
-// TODO: bank instead of include
-#include "start.c"
-#include "new_game.c"
+#include "../res/font.c"
+#include "../res/ui.c"
 
 const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 void clear_screen () {
@@ -108,19 +106,21 @@ void fade_in () {
 void main () {
     cgb_compatibility();
     DISPLAY_OFF;
-    setup_audio();
+    // setup_audio();
     SPRITES_8x8;
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
-    // TODO: switch to start screen bank
-    if (start()) {
+    SWITCH_ROM_MBC5(START_BANK);
+    start();
+    SWITCH_ROM_MBC5(TITLE_BANK);
+    if (title()) {
         // continue
     }
     else {
-        // TODO: switch to new game bank
+        SWITCH_ROM_MBC5(NEW_GAME_BANK);
         new_game();
     }
 }

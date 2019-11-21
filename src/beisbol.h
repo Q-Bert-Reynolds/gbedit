@@ -5,7 +5,16 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
-#include "audio.c"
+#include "../res/font.h"
+#include "../res/ui.h"
+
+// banks
+#define START_BANK    1
+#define TITLE_BANK    2
+#define NEW_GAME_BANK 3
+void start();
+UBYTE title();
+void new_game();
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
@@ -39,7 +48,6 @@
 #define BOX_HORIZONTAL    21
 #define BOX_VERTICAL      22
 
-
 // global vars
 int save_data;
 int_handler vblank_handler;
@@ -65,6 +73,4 @@ void fade_in();
 void setup_audio();
 void update_audio();
 
-// start screen
-void start_screen();
 #endif

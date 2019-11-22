@@ -5,10 +5,7 @@ Compiling:
 
 TODO:
     banking (ROM and SRAM)
-        intro
-        new game
     Main
-        create text input
     Intro
         sfx
         sparks after ball hits light
@@ -17,8 +14,7 @@ TODO:
         delay version slide
         randomize players
     New Game
-        choose and store names
-        use names in text
+        shrink Calvin image and start game
     Battle
     Walking
     Roledex

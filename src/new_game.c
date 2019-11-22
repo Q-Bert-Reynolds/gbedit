@@ -14,38 +14,38 @@ void new_game() {
     move_bkg(48,0);
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
-    // set_bkg_data(32+_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
-    // for (i = 0; i < _DOC_HICKORY_ROWS*_DOC_HICKORY_COLUMNS; ++i) {
-    //     tiles[i] = _doc_hickory_map[i]+32+_FONT_TILE_COUNT;
-    // }
-    // set_bkg_tiles(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,tiles);
-    // DISPLAY_ON;
+    set_bkg_data(32+_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
+    for (i = 0; i < _DOC_HICKORY_ROWS*_DOC_HICKORY_COLUMNS; ++i) {
+        tiles[i] = _doc_hickory_map[i]+32+_FONT_TILE_COUNT;
+    }
+    set_bkg_tiles(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,tiles);
+    DISPLAY_ON;
 
-    // fade_in();
-    // display_text("Hello there!\nWelcome to the\nworld of B\x7FiSBOL.");
-    // display_text("My name is DOC!\nPeople call me\nthe B\x7FiSBOL PROF!");
-    // fade_out();
+    fade_in();
+    display_text("Hello there!\nWelcome to the\nworld of B\x7FiSBOL.");
+    display_text("My name is DOC!\nPeople call me\nthe B\x7FiSBOL PROF!");
+    fade_out();
 
-    // // set image to Muchacho
-    // DISPLAY_OFF;
-    // clear_screen();
-    // set_bkg_data(32+_FONT_TILE_COUNT, _033MUCHACHO_TILE_COUNT, _033Muchacho_tiles);
-    // for (i = 0; i < _033MUCHACHO_ROWS*_033MUCHACHO_COLUMNS; ++i) {
-    //     tiles[i] = _033Muchacho_map[i]+32+_FONT_TILE_COUNT;
-    // }
-    // set_bkg_tiles(13,4,_033MUCHACHO_COLUMNS,_033MUCHACHO_ROWS,tiles);
-    // DISPLAY_ON;
+    // set image to Muchacho
+    DISPLAY_OFF;
+    clear_screen();
+    set_bkg_data(32+_FONT_TILE_COUNT, _033MUCHACHO_TILE_COUNT, _033Muchacho_tiles);
+    for (i = 0; i < _033MUCHACHO_ROWS*_033MUCHACHO_COLUMNS; ++i) {
+        tiles[i] = _033Muchacho_map[i]+32+_FONT_TILE_COUNT;
+    }
+    set_bkg_tiles(13,4,_033MUCHACHO_COLUMNS,_033MUCHACHO_ROWS,tiles);
+    DISPLAY_ON;
 
-    // fade_in();
-    // display_text("This world is\ninhabited by\nathletes called\nPLAYERS!");
-    // display_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams");
-    // display_text("Myself...");
-    // display_text("I study B\x7FiSBOL\nas a profession.");
-    // fade_out();
+    fade_in();
+    display_text("This world is\ninhabited by\nathletes called\nPLAYERS!");
+    display_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams");
+    display_text("Myself...");
+    display_text("I study B\x7FiSBOL\nas a profession.");
+    fade_out();
 
-    // // set image to Calvin
-    // DISPLAY_OFF;
-    // clear_screen();
+    // set image to Calvin
+    DISPLAY_OFF;
+    clear_screen();
     set_bkg_data(32+_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
     for (i = 0; i < _CALVIN_ROWS*_CALVIN_COLUMNS; ++i) {
         tiles[i] = _calvin_map[i]+32+_FONT_TILE_COUNT;
@@ -82,8 +82,19 @@ void new_game() {
     if (d == 1) {
         move_bkg(48,0);
         show_text_entry(user_name, 7);
-    }
-    else {
+    }else {
+        d -= 1;
+        j = 0;
+        l = strlen(str_buff);
+        for (i = 0; i < l; i++) {
+            if (str_buff[i] == '\0' || str_buff[i] == '\n') {
+                --d;
+            }
+            else if (d == 0) {
+                user_name[j] = str_buff[i];
+                ++j;
+            }
+        }
         for (i = 0; i <= 48; i+=2) {
             move_bkg(i,0);
             wait_vbl_done();
@@ -134,6 +145,18 @@ void new_game() {
         show_text_entry(rival_name, 7);
     }
     else {
+        d -= 1;
+        j = 0;
+        l = strlen(str_buff);
+        for (i = 0; i < l; i++) {
+            if (str_buff[i] == '\0' || str_buff[i] == '\n') {
+                --d;
+            }
+            else if (d == 0) {
+                rival_name[j] = str_buff[i];
+                ++j;
+            }
+        }
         for (i = 0; i <= 48; i+=2) {
             move_bkg(i,0);
             wait_vbl_done();
@@ -156,9 +179,10 @@ void new_game() {
     fade_in();
 
     // transition to game
-    display_text("CALVIN!");
-    display_text("Your very own\B\x7FiSBOL legend is\nabout to unfold!");
-    display_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits!Let's go!"); //don't wait for input at the end
+    sprintf(str_buff, "%s!", user_name);
+    display_text(str_buff);
+    display_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!");
+    display_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!"); //don't wait for input at the end
     //shrink image
     fade_out();
     // load bedroom

@@ -51,14 +51,14 @@ void new_game();
 #define BOX_VERTICAL      22
 
 // global vars
-int save_data;
-int_handler vblank_handler;
 int a, b, c, d, i, j, k, l, w, x, y, z;
-extern const UBYTE blank_tile[];
 UBYTE tiles[1024];
-char *str_buff;
-char *user_name;
-char *rival_name;
+char str_buff[256];
+
+// save data
+int save_data;
+char user_name[7];
+char rival_name[7];
 
 // options
 UBYTE text_speed;
@@ -71,6 +71,7 @@ void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
+char *show_text_entry (char *title, UBYTE max_len);
 void display_text (UBYTE *text);
 void fade_out();
 void fade_in();

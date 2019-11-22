@@ -50,7 +50,6 @@ void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     set_win_tiles(x,y,w,h,tiles);
 }
 
-
 void flash_next_arrow (UBYTE x, UBYTE y) {
     while (1) {
         tiles[0] = ARROW_DOWN;
@@ -141,7 +140,7 @@ UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *tex
         i = (w-l)/2;
         set_bkg_tiles(x+i,y,l,1,title);
     }
-    
+
     waitpadup();
     j = 0;
     while (1) {
@@ -161,6 +160,115 @@ UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *tex
         wait_vbl_done(); 
     }
     return -1;
+}
+
+void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) {
+    wait_vbl_done();
+    tiles[0] = 0;
+    if (from_y == 5) {
+        set_win_tiles(1,15,1,1,tiles);
+    }
+    else {
+        set_win_tiles(from_x*2+1,from_y*2+5,1,1,tiles);
+    }
+    tiles[0] = ARROW_RIGHT;
+    if (to_y == 5) {
+        set_win_tiles(1,15,1,1,tiles);
+    }
+    else {
+        set_win_tiles(to_x*2+1,to_y*2+5,1,1,tiles);
+    }
+    waitpadup();
+}
+
+void update_text_entry_display (char *text, UBYTE max_len) {
+    w = strlen(text);
+    for (i = 0; i < max_len; ++i) {
+        if (i < w) tiles[i] = text[i];
+        else if (i == w) tiles[i] = '-';
+        else tiles[i] = '_';
+    }
+    set_win_tiles(10,3,max_len,1,tiles);
+    waitpadup();
+}
+
+char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
+char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
+char *show_text_entry (char *dest, UBYTE max_len) {
+    DISPLAY_OFF;
+    clear_screen();
+    move_win(0,0);
+    set_win_tiles(0,1,10,1,"YOUR NAME?");
+    draw_win_ui_box(0,4,20,11);
+    DISPLAY_ON;
+    
+    x = 0;
+    y = 0;
+    c = 0;
+    l = 0;
+    while (1) {
+        if (c == 0) {
+            strcpy(str_buff, upper_case);
+            set_win_tiles(2,15,10,1,"lower case");
+        }
+        else {
+            strcpy(str_buff, lower_case);
+            set_win_tiles(2,15,10,1,"UPPER CASE");
+        }
+        for (j = 0; j < 5; ++j) {
+            for (i = 0; i < 9; ++i) {
+                tiles[j*2*18+i*2]   = (x==i && y==j) ? ARROW_RIGHT : 0;
+                tiles[j*2*18+i*2+1] = str_buff[j*9+i];
+            }
+            for (i = 0; i < 9; ++i) {
+                tiles[(j*2+1)*18+i*2]   = 0;
+                tiles[(j*2+1)*18+i*2+1] = 0;
+            }
+        }
+        set_win_tiles(1,5,18,9,tiles);
+
+        waitpadup();
+        while (1) {
+            k = joypad();
+            if (k & J_UP && y > 0) {
+                move_text_entry_arrow(x,y,x,y-1);
+                --y;
+            }
+            else if (k & J_DOWN && y < 5) {
+                move_text_entry_arrow(x,y,x,y+1);
+                ++y;
+            }
+            else if (k & J_LEFT && x > 0 && y < 5) {
+                move_text_entry_arrow(x,y,x-1,y);
+                --x;
+            }
+            else if (k & J_RIGHT && x < 8 && y < 5) {
+                move_text_entry_arrow(x,y,x+1,y);
+                ++x;
+            }
+
+            if (k & (J_START | J_A)) {
+                if (y == 5) {
+                    c = 1-c;
+                    break;
+                }
+                else if (str_buff[y*9+x] == '\x1E' && l > 0) {
+                    return dest;
+                }
+                else if (l < max_len) {
+                    dest[l++] = str_buff[y*9+x];
+                    update_text_entry_display(dest, max_len);
+                }
+            }
+            else if (k & J_B && l > 0) {
+                dest[--l] = '\0';
+                update_text_entry_display(dest, max_len);
+            }
+            wait_vbl_done(); 
+        }
+    }
+
+    return dest;
 }
 
 void fade_out () {
@@ -199,14 +307,14 @@ void main () {
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
-    SWITCH_ROM_MBC5(START_BANK);
-    start();
-    SWITCH_ROM_MBC5(TITLE_BANK);
-    if (title()) {
-        // continue
-    }
-    else {
+    // SWITCH_ROM_MBC5(START_BANK);
+    // start();
+    // SWITCH_ROM_MBC5(TITLE_BANK);
+    // if (title()) {
+    //     // continue
+    // }
+    // else {
         SWITCH_ROM_MBC5(NEW_GAME_BANK);
         new_game();
-    }
+    // }
 }

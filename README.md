@@ -23,7 +23,7 @@ TODO:
     Walking
     Roledex
 
-Cart - MCB5, 2M ROM (128 banks), 128K RAM (16 banks)
+Cart - MCB5, 4M ROM (256 banks), 32K SRAM (4 banks)
 
 ROM Banks:
     main.c (bank0) - movement, font, menus, bank switching

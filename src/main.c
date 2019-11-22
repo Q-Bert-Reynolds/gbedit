@@ -181,24 +181,27 @@ void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) 
     waitpadup();
 }
 
-void update_text_entry_display (char *text, UBYTE max_len) {
-    w = strlen(text);
+void update_text_entry_display (char *str, int max_len) {
+    w = strlen(str);
     for (i = 0; i < max_len; ++i) {
-        if (i < w) tiles[i] = text[i];
-        else if (i == w) tiles[i] = '-';
-        else tiles[i] = '_';
+        tiles[i] = ' ';
+        if (i != w) tiles[i+max_len] = '-';
+        else tiles[i+max_len] = '^';
     }
-    set_win_tiles(10,3,max_len,1,tiles);
+    set_win_tiles(10,2,max_len,2,tiles);
+    
+    if (w > 0) set_win_tiles(10,2,w,1,str);
     waitpadup();
 }
 
 char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
 char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
-char *show_text_entry (char *dest, UBYTE max_len) {
+char *show_text_entry (char *str, int max_len) {
     DISPLAY_OFF;
     clear_screen();
     move_win(0,0);
     set_win_tiles(0,1,10,1,"YOUR NAME?");
+    update_text_entry_display(str, max_len);
     draw_win_ui_box(0,4,20,11);
     DISPLAY_ON;
     
@@ -215,6 +218,7 @@ char *show_text_entry (char *dest, UBYTE max_len) {
             strcpy(str_buff, lower_case);
             set_win_tiles(2,15,10,1,"UPPER CASE");
         }
+
         for (j = 0; j < 5; ++j) {
             for (i = 0; i < 9; ++i) {
                 tiles[j*2*18+i*2]   = (x==i && y==j) ? ARROW_RIGHT : 0;
@@ -253,22 +257,23 @@ char *show_text_entry (char *dest, UBYTE max_len) {
                     break;
                 }
                 else if (str_buff[y*9+x] == '\x1E' && l > 0) {
-                    return dest;
+                    return str;
                 }
                 else if (l < max_len) {
-                    dest[l++] = str_buff[y*9+x];
-                    update_text_entry_display(dest, max_len);
+                    str[l++] = str_buff[y*9+x];
+                    set_win_tiles(10,3,max_len,1,str);
+                    update_text_entry_display(str, max_len);
                 }
             }
             else if (k & J_B && l > 0) {
-                dest[--l] = '\0';
-                update_text_entry_display(dest, max_len);
+                str[--l] = '\0';
+                update_text_entry_display(str, max_len);
             }
             wait_vbl_done(); 
         }
     }
 
-    return dest;
+    return str;
 }
 
 void fade_out () {

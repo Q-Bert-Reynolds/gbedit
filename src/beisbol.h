@@ -71,7 +71,7 @@ void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
-char *show_text_entry (char *title, UBYTE max_len);
+char *show_text_entry (char *str, int max_len);
 void display_text (UBYTE *text);
 void fade_out();
 void fade_in();

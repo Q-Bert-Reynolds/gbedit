@@ -89,8 +89,7 @@ void new_game() {
             wait_vbl_done();
         }
     }
-
-    strcpy(str_buff, strcat(strcat("Right! So your\nname is !", user_name),"!"));
+    sprintf(str_buff, "Right! So your\nname is %s!", user_name);
     display_text(str_buff);
     fade_out();
 
@@ -119,7 +118,6 @@ void new_game() {
     }
     
     // ask for rival's name
-    // ask for user's name
 #ifdef HOME
     strcpy(str_buff, away_names);
 #else
@@ -142,7 +140,7 @@ void new_game() {
         }
     }
     
-    strcpy(str_buff, strcat(strcat("That's right! I\nremember now! His\nname is ", rival_name),"!"));
+    sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", rival_name);
     display_text(str_buff);
     fade_out();
 

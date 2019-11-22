@@ -29,8 +29,8 @@ void lights_sequence () {
         if (joypad() & (J_START | J_A)) return;
         wait_vbl_done();
     }
-    y = 0;
-    for (x = 152; x > 88; x-=2) {
+    y = -8;
+    for (x = 156; x > 94; x-=2) {
         move_sprite(0, x, y+=3);
         if (joypad() & (J_START | J_A)) return;
         wait_vbl_done();
@@ -38,7 +38,7 @@ void lights_sequence () {
     set_bkg_tiles(10, 8, _INTRO_LIGHT_OUT_COLUMNS, _INTRO_LIGHT_OUT_ROWS, _intro_light_out_map);
     // start playing stars animation
     for (x = 0; x < 40; ++x) {
-        move_sprite(0, x+88, y+=4);
+        move_sprite(0, x+94, y+=4);
         BGP_REG = lights_pal_seq[x];
         if (joypad() & (J_START | J_A)) return;
         wait_vbl_done();

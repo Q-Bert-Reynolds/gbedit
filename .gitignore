@@ -7,6 +7,7 @@ res/**/*.h
 *.gbc
 *.map
 *.lst
+*.sav
 
 # macOS Desktop Services file
 .DS_Store

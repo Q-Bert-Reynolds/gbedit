@@ -1,5 +1,9 @@
 VERSION = AWAY
 ROM_NAME = BEISBOL_$(VERSION).gbc
+CART = 0x1B #ROM+MBC5+RAM+BATT
+ROM_BANKS = 0x80
+RAM_BANKS = 0x04
+ROM_FLAGS = -Wl-yt$(CART) -Wl-yo$(ROM_BANKS) -Wl-ya$(RAM_BANKS)
 
 # Directories
 SRC_DIR = ./src
@@ -20,7 +24,7 @@ all:
 	$(CC) -Wa-l -Wf-bo3 -c -o $(OBJ_DIR)/new_game.o $(SRC_DIR)/new_game.c
 	$(CC) -Wa-l -c -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.c
 	@mkdir -p $(DIST_DIR)
-	$(CC) -Wl-m -Wl-yp0x143=0x80 -Wl-yt0x01 -Wl-yo0x04 -o $(ROM_FILE) $(OBJ_DIR)/*.o
+	$(CC) -Wl-m -Wl-yp0x143=0x80 $(ROM_FLAGS) -o $(ROM_FILE) $(OBJ_DIR)/*.o
 	open $(ROM_FILE)
 
 clean:

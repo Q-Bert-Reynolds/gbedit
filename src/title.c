@@ -311,69 +311,25 @@ void show_title () {
     }
 }
 
-void move_start_arrow (int y) {
-    for (i = 0; i < c; i++) {
-        tiles[i*2] = 0;
-        if (i == y) tiles[i*2+1] = ARROW_RIGHT;
-        else tiles[i*2+1] = 0;
-    }
-    set_bkg_tiles(1,1,1,c*2,tiles);
-}
-
-int show_start_menu () {
+UBYTE show_start_menu () {
     DISPLAY_OFF;
     disable_interrupts();
     remove_LCD(cycle_players_lcd_interrupt);
     enable_interrupts();
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     clear_screen();
-
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
-
+    DISPLAY_ON;
+    
     if (save_data) {
-        c = 3;
-        draw_ui_box(0,0,15,8);
-        set_bkg_tiles(2,2,8,5,
-            "CONTINUE"
-            "        "
-            "NEW GAME"
-            "        "
-            "OPTION  "
-        );
+        c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
+        return show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION");
     }
     else {
         c = 2;
-        draw_ui_box(0,0,15,6);
-        set_bkg_tiles(2,2,8,3,
-            "NEW GAME"
-            "        "
-            "OPTION  "
-        );
+        return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION");
     }
-    tiles[0] = 13;
-    set_bkg_tiles(1,2,1,1,tiles);
-    DISPLAY_ON;
-    
-    waitpadup();
-    y = 0;
-    while (1) {
-        k = joypad();
-        if (k & J_UP && y > 0) {
-            wait_vbl_done(); 
-            move_start_arrow(--y);
-            waitpadup();
-        }
-        else if (k & J_DOWN && y < c-1) {
-            wait_vbl_done(); 
-            move_start_arrow(++y);
-            waitpadup();
-        }
-        if (k & (J_START | J_A)) return y+1;
-        else if (k & J_B) return 0;
-        wait_vbl_done(); 
-    }
-    return 0;
 }
 
 void move_options_arrow (int y) {
@@ -392,21 +348,21 @@ void move_options_arrow (int y) {
 
 void show_options () {
     DISPLAY_OFF;
-    draw_ui_box(0,0,20,5);
+    draw_bkg_ui_box(0,0,20,5);
     set_bkg_tiles(1,1,18,3,
         "TEXT SPEED        "
         "                  "
         " FAST  MEDIUM SLOW"
     );
 
-    draw_ui_box(0,5,20,5);
+    draw_bkg_ui_box(0,5,20,5);
     set_bkg_tiles(1,6,18,3,
         "AT-BAT ANIMATIONS "
         "                  "
         " ON       OFF     "
     );
 
-    draw_ui_box(0,10,20,5);
+    draw_bkg_ui_box(0,10,20,5);
     set_bkg_tiles(1,11,18,3,
         "COACHING STYLE    "
         "                  "

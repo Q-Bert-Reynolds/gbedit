@@ -12,6 +12,8 @@
 #define START_BANK    1
 #define TITLE_BANK    2
 #define NEW_GAME_BANK 3
+
+// bank entry points
 void start();
 UBYTE title();
 void new_game();
@@ -54,6 +56,7 @@ int_handler vblank_handler;
 int a, b, c, d, i, j, k, l, w, x, y, z;
 extern const UBYTE blank_tile[];
 UBYTE tiles[1024];
+char *str_buff;
 char *user_name;
 char *rival_name;
 
@@ -64,7 +67,10 @@ UBYTE coaching_style;
 
 // drawing
 void clear_screen();
-void draw_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
 void display_text (UBYTE *text);
 void fade_out();
 void fade_in();

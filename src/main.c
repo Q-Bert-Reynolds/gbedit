@@ -7,10 +7,19 @@ void clear_screen () {
     set_bkg_data(0, 1, blank_tile);
     for (i = 0; i < 1024; ++i) tiles[i] = 0;
     set_bkg_tiles(0,0,32,32,tiles);
+    set_win_tiles(0,0,20,18,tiles);
+    move_win(160,144);
     for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
 }
 
-void draw_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+    set_bkg_data(0, 1, blank_tile);
+    l = w*h;
+    for (i = 0; i < l; ++i) tiles[i] = 0;
+    set_bkg_tiles(x,y,w,h,tiles);
+}
+
+void draw_ui_box (UBYTE w, UBYTE h) {
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
             k = 0;
@@ -29,20 +38,30 @@ void draw_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
             tiles[j*w+i] = k;
         }
     }
+}
+
+void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+    draw_ui_box(w,h);
     set_bkg_tiles(x,y,w,h,tiles);
 }
+
+void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+    draw_ui_box(w,h);
+    set_win_tiles(x,y,w,h,tiles);
+}
+
 
 void flash_next_arrow (UBYTE x, UBYTE y) {
     while (1) {
         tiles[0] = ARROW_DOWN;
-        set_bkg_tiles(x, y, 1, 1, tiles);
+        set_win_tiles(x, y, 1, 1, tiles);
         waitpadup();
         for (a = 0; a < 20; a++) {
             if (joypad() & J_A) return;
             wait_vbl_done();
         }
         tiles[0] = 0;
-        set_bkg_tiles(x, y, 1, 1, tiles);
+        set_win_tiles(x, y, 1, 1, tiles);
         for (a = 0; a < 20; a++) {
             if (joypad() & J_A) return;
             wait_vbl_done();
@@ -51,7 +70,9 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
 }
 
 void display_text (unsigned char *text) {
-    draw_ui_box(0,12,20,6);
+    SHOW_WIN;
+    move_win(0,96);
+    draw_win_ui_box(0,0,20,6);
     x = 0;
     y = 0;
     l = strlen(text);
@@ -62,19 +83,84 @@ void display_text (unsigned char *text) {
             if (y == 2) {
                 y = 1;
                 flash_next_arrow(18,16);
-                get_bkg_tiles(1, 16, 17, 1, tiles);
-                set_bkg_tiles(1, 14, 17, 1, tiles);
+                get_win_tiles(1, 4, 17, 1, tiles);
+                set_win_tiles(1, 2, 17, 1, tiles);
                 for (j = 0; j < 17; ++j) tiles[j] = 0;
-                set_bkg_tiles(1, 16, 17, 1, tiles);
+                set_win_tiles(1, 4, 17, 1, tiles);
             }
         }
         else {
-            set_bkg_tiles(x+1,y*2+14,1,1,text+i);
+            set_win_tiles(x+1,y*2+2,1,1,text+i);
             x++;
         }        
         delay(10);
     }
-    flash_next_arrow(18,16);
+    flash_next_arrow(18,4);
+}
+
+void move_menu_arrow (int y) {
+    for (i = 0; i < c; i++) {
+        tiles[i*2] = 0;
+        if (i == y) tiles[i*2+1] = ARROW_RIGHT;
+        else tiles[i*2+1] = 0;
+    }
+    set_bkg_tiles(1,1,1,c*2,tiles);
+}
+
+UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text) {
+    draw_bkg_ui_box(x,y,w,h);
+
+    l = 0;
+    j = y+2;
+    c = 0;
+    k = 0;
+    while (1) {
+        if (text[k] == '\n') {
+            set_bkg_tiles(x+2,j,l,1,tiles);
+            l = 0;
+            j += 2;
+            ++c;
+        }
+        else if (text[k] == '\0') {
+            set_bkg_tiles(x+2,j,l,1,tiles);
+            ++c;
+            break;
+        }
+        else {
+            tiles[l] = text[k];
+            ++l;
+        }
+        ++k;
+    }
+
+    tiles[0] = ARROW_RIGHT;
+    set_bkg_tiles(x+1,y+2,1,1,tiles);
+    
+    l = strlen(title);
+    if (l > 0) {
+        i = (w-l)/2;
+        set_bkg_tiles(x+i,y,l,1,title);
+    }
+    
+    waitpadup();
+    j = 0;
+    while (1) {
+        k = joypad();
+        if (k & J_UP && j > 0) {
+            wait_vbl_done(); 
+            move_menu_arrow(--j);
+            waitpadup();
+        }
+        else if (k & J_DOWN && j < c-1) {
+            wait_vbl_done(); 
+            move_menu_arrow(++j);
+            waitpadup();
+        }
+        if (k & (J_START | J_A)) return j+1;
+        else if (k & J_B) return 0;
+        wait_vbl_done(); 
+    }
+    return -1;
 }
 
 void fade_out () {

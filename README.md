@@ -8,7 +8,6 @@ TODO:
         intro
         new game
     Main
-        generalize selectable list
         create text input
     Intro
         sfx

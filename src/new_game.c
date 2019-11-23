@@ -67,6 +67,7 @@ void new_game() {
     }
 
     // ask for user's name
+    strcpy(name_buff, "");
 #ifdef HOME
     strcpy(str_buff, home_names);
 #else
@@ -81,7 +82,7 @@ void new_game() {
     clear_bkg_area(0,0,12,12);
     if (d == 1) {
         move_bkg(48,0);
-        show_text_entry(user_name, 7);
+        show_text_entry("YOUR NAME?", name_buff, 7);
     }else {
         d -= 1;
         j = 0;
@@ -91,7 +92,7 @@ void new_game() {
                 --d;
             }
             else if (d == 0) {
-                user_name[j] = str_buff[i];
+                name_buff[j] = str_buff[i];
                 ++j;
             }
         }
@@ -100,9 +101,16 @@ void new_game() {
             wait_vbl_done();
         }
     }
-    sprintf(str_buff, "Right! So your\nname is %s!", user_name);
+    sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
     display_text(str_buff);
     fade_out();
+
+    // save user name
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
+    memcpy(user_name, name_buff, 8);
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
 
     // set image to Nolan
     DISPLAY_OFF;
@@ -129,6 +137,7 @@ void new_game() {
     }
     
     // ask for rival's name
+    strcpy(name_buff, "");
 #ifdef HOME
     strcpy(str_buff, away_names);
 #else
@@ -140,9 +149,10 @@ void new_game() {
     }
 
     clear_bkg_area(0,0,12,12);
+
     if (d == 1) {
         move_bkg(48,0);
-        show_text_entry(rival_name, 7);
+        show_text_entry("RIVAL's NAME?", name_buff, 7);
     }
     else {
         d -= 1;
@@ -153,7 +163,7 @@ void new_game() {
                 --d;
             }
             else if (d == 0) {
-                rival_name[j] = str_buff[i];
+                name_buff[j] = str_buff[i];
                 ++j;
             }
         }
@@ -163,9 +173,16 @@ void new_game() {
         }
     }
     
-    sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", rival_name);
+    sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
     display_text(str_buff);
     fade_out();
+
+    // save rival name
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
+    memcpy(rival_name, name_buff, 8);
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
 
     // set image to Calvin
     DISPLAY_OFF;
@@ -179,7 +196,12 @@ void new_game() {
     fade_in();
 
     // transition to game
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
     sprintf(str_buff, "%s!", user_name);
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
+
     display_text(str_buff);
     display_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!");
     display_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!"); //don't wait for input at the end

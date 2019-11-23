@@ -316,13 +316,18 @@ UBYTE show_start_menu () {
     disable_interrupts();
     remove_LCD(cycle_players_lcd_interrupt);
     enable_interrupts();
-    set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    set_interrupts(VBL_IFLAG);
     clear_screen();
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
     DISPLAY_ON;
-    
-    if (save_data) {
+
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
+    memcpy(name_buff, user_name, 8);
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
+    if (name_buff[0] > 0) {
         c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
         return show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION");
     }

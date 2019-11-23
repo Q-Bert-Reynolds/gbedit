@@ -196,11 +196,12 @@ void update_text_entry_display (char *str, int max_len) {
 
 char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
 char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
-char *show_text_entry (char *str, int max_len) {
+char *show_text_entry (char *title, char *str, int max_len) {
     DISPLAY_OFF;
     clear_screen();
     move_win(0,0);
-    set_win_tiles(0,1,10,1,"YOUR NAME?");
+    l = strlen(title);
+    if (l > 0) set_win_tiles(0,1,l,1,title);
     update_text_entry_display(str, max_len);
     draw_win_ui_box(0,4,20,11);
     DISPLAY_ON;
@@ -256,8 +257,8 @@ char *show_text_entry (char *str, int max_len) {
                     c = 1-c;
                     break;
                 }
-                else if (str_buff[y*9+x] == '\x1E' && l > 0) {
-                    return str;
+                else if (str_buff[y*9+x] == '\x1E') {
+                    if (l > 0) return str;
                 }
                 else if (l < max_len) {
                     str[l++] = str_buff[y*9+x];
@@ -316,6 +317,7 @@ void main () {
     start();
     SWITCH_ROM_MBC5(TITLE_BANK);
     if (!title()) {
+        SWITCH_RAM_MBC5(0);
         SWITCH_ROM_MBC5(NEW_GAME_BANK);
         new_game();
     }

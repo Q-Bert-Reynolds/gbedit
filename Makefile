@@ -2,7 +2,7 @@ VERSION = AWAY
 ROM_NAME = BEISBOL_$(VERSION).gbc
 CART = 0x1B #ROM+MBC5+RAM+BATT
 ROM_BANKS = 0x80
-RAM_BANKS = 0x04
+RAM_BANKS = 4
 ROM_FLAGS = -Wl-yt$(CART) -Wl-yo$(ROM_BANKS) -Wl-ya$(RAM_BANKS)
 
 # Directories
@@ -19,6 +19,7 @@ OBJ_FILES = $(OBJ_DIR)/main.o
 
 all: 
 	@mkdir -p $(OBJ_DIR)
+	$(CC) -Wa-l -Wf-ba0 -c -o $(OBJ_DIR)/save0.o $(SRC_DIR)/save0.c
 	$(CC) -Wa-l -Wf-bo1 -c -o $(OBJ_DIR)/start.o $(SRC_DIR)/start.c
 	$(CC) -Wa-l -Wf-bo2 -c -o $(OBJ_DIR)/title.o $(SRC_DIR)/title.c
 	$(CC) -Wa-l -Wf-bo3 -c -o $(OBJ_DIR)/new_game.o $(SRC_DIR)/new_game.c

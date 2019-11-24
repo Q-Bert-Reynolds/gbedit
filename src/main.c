@@ -313,14 +313,14 @@ void main () {
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
-    SWITCH_ROM_MBC5(START_BANK);
-    start();
-    SWITCH_ROM_MBC5(TITLE_BANK);
-    if (!title()) {
+    // SWITCH_ROM_MBC5(START_BANK);
+    // start();
+    // SWITCH_ROM_MBC5(TITLE_BANK);
+    // if (!title()) {
         SWITCH_RAM_MBC5(0);
-        SWITCH_ROM_MBC5(NEW_GAME_BANK);
-        new_game();
-    }
-
-    // load game
+    //     SWITCH_ROM_MBC5(NEW_GAME_BANK);
+    //     new_game();
+    // }
+    SWITCH_ROM_MBC5(GAME_BANK);
+    start_game();
 }

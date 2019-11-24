@@ -12,11 +12,13 @@
 #define START_BANK    1
 #define TITLE_BANK    2
 #define NEW_GAME_BANK 3
+#define GAME_BANK     4
 
 // bank entry points
 void start();
 UBYTE title();
 void new_game();
+void start_game();
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
@@ -37,6 +39,8 @@ void new_game();
 #define FLIP_XY     (S_FLIPX    | S_FLIPY   )
 
 // UI Tiles
+#define DOTTED_CIRCLE     10
+#define BASEBALL          11
 #define ARROW_LEFT        12
 #define ARROW_RIGHT       13
 #define ARROW_RIGHT_BLANK 14
@@ -49,6 +53,12 @@ void new_game();
 #define BOX_LOWER_RIGHT   20
 #define BOX_HORIZONTAL    21
 #define BOX_VERTICAL      22
+
+#define LEVEL             16
+#define EARNED_RUN_AVG    25
+#define BATTING_AVG       26
+#define INNING_BOTTOM     28
+#define INNING_TOP        29
 
 // global vars
 int a, b, c, d, i, j, k, l, w, x, y, z;

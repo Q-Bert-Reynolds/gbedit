@@ -67,7 +67,6 @@ void new_game() {
     }
 
     // ask for user's name
-    strcpy(name_buff, "");
 #ifdef HOME
     strcpy(str_buff, home_names);
 #else
@@ -108,7 +107,7 @@ void new_game() {
     // save user name
     disable_interrupts();
     ENABLE_RAM_MBC5;
-    memcpy(user_name, name_buff, 8);
+    memcpy(user_name, name_buff, 7);
     DISABLE_RAM_MBC5;
     enable_interrupts();
 
@@ -137,7 +136,6 @@ void new_game() {
     }
     
     // ask for rival's name
-    strcpy(name_buff, "");
 #ifdef HOME
     strcpy(str_buff, away_names);
 #else
@@ -205,8 +203,6 @@ void new_game() {
     display_text(str_buff);
     display_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!");
     display_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!"); //don't wait for input at the end
-    //shrink image
+    //TODO: shrink image
     fade_out();
-    // load bedroom
-    while(1);
 }

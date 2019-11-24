@@ -324,7 +324,7 @@ UBYTE show_start_menu () {
 
     disable_interrupts();
     ENABLE_RAM_MBC5;
-    memcpy(name_buff, user_name, 8);
+    memcpy(name_buff, user_name, 7);
     DISABLE_RAM_MBC5;
     enable_interrupts();
     while (name_buff[0] > 0) {

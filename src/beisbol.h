@@ -9,10 +9,10 @@
 #include "../res/ui.h"
 
 // banks
-#define START_BANK    1
-#define TITLE_BANK    2
-#define NEW_GAME_BANK 3
-#define GAME_BANK     4
+#define START_BANK     1
+#define TITLE_BANK     2
+#define NEW_GAME_BANK  3
+#define PLAY_BALL_BANK 4
 
 // bank entry points
 void start();
@@ -46,19 +46,22 @@ void start_game();
 #define ARROW_RIGHT_BLANK 14
 #define ARROW_DOWN        28
 #define ARROW_UP          29
-
+#define NUMBERS           48
 #define BOX_UPPER_LEFT    17
 #define BOX_UPPER_RIGHT   18
 #define BOX_LOWER_LEFT    19
 #define BOX_LOWER_RIGHT   20
 #define BOX_HORIZONTAL    21
 #define BOX_VERTICAL      22
-
 #define LEVEL             16
 #define EARNED_RUN_AVG    25
 #define BATTING_AVG       26
 #define INNING_BOTTOM     28
 #define INNING_TOP        29
+
+// save data
+extern char user_name[8];
+extern char rival_name[8];
 
 // global vars
 int a, b, c, d, i, j, k, l, w, x, y, z;
@@ -66,9 +69,45 @@ UBYTE tiles[1024];
 char str_buff[256];
 char name_buff[16];
 
-// save data
-extern char user_name[8];
-extern char rival_name[8];
+// baseball
+#define BALLS_MASK   0x70
+#define STRIKES_MASK 0x0C
+#define OUTS_MASK    0x03
+UBYTE balls_strikes_outs; //0bxBBBSSOO
+
+#define FIRST_BASE_MASK  0x000F
+#define SECOND_BASE_MASK 0x00F0
+#define THIRD_BASE_MASK  0x0F00
+#define HOME_MASK        0xF000
+UWORD runners_on_base; //0bHHHHTTTTSSSSFFFF
+
+UBYTE frame;
+UBYTE home_team;
+UBYTE home_score;
+UBYTE away_score;
+
+// player
+struct base_player {
+    char name[10];
+    UBYTE hp, bat, field, speed, throw;
+    UBYTE bank;
+    UBYTE *tile_data;
+    UBYTE *tile_map;
+};
+struct player {
+    char nickname[10];
+    struct base_player *base;
+    UBYTE level, hp;
+    UBYTE position, batting_order;
+    UWORD hits, at_bats;//, plate_appearances, walks;
+    UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
+};
+char *health_pct (struct player *p);
+char *batting_avg (struct player *p);
+char *earned_run_avg (struct player *p);
+
+struct player test_player; //TODO: remove me
+
 
 // options
 UBYTE text_speed;

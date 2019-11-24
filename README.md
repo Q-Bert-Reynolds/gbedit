@@ -14,9 +14,15 @@ TODO:
         delay version slide
         randomize players
     New Game
-        shrink Calvin image and start game
+        shrink Calvin image
     Battle
-        layout
+        intro animation
+        move selection
+        opponent pitching
+        user batting
+        opponent batting
+        user pitching
+    Team Menu
     Walking
     Roledex
 

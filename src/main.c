@@ -198,6 +198,7 @@ char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
 char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
 char *show_text_entry (char *title, char *str, int max_len) {
     DISPLAY_OFF;
+    for (i = 0; i <= max_len; ++i) str[i] = 0;
     clear_screen();
     move_win(0,0);
     l = strlen(title);
@@ -303,6 +304,32 @@ void fade_in () {
     delay(200);
 }
 
+char *health_pct (struct player *p) {
+    a = p->hp; // * 100 / max_hp; 
+    if (a >= 100) strcpy(str_buff, "100");
+    if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
+    else sprintf(str_buff, "%d%c", a, '%');
+    return str_buff;
+}
+
+char *batting_avg (struct player *p) {
+    a = p->hits * 1000 / p->at_bats;
+    if (a >= 1000) strcpy(str_buff, "1.000");
+    else if (a < 10) sprintf(str_buff, ".00%d", a);
+    else if (a < 100) sprintf(str_buff, ".0%d", a);
+    else sprintf(str_buff, ".%d", a);
+    return str_buff;
+}
+
+char *earned_run_avg (struct player *p) {
+    a = p->runs_allowed * 2700 / p->outs_recorded;
+    b = a/100;
+    c = a%100;
+    if (b >= 1000) sprintf(str_buff, "%d", b);
+    else sprintf(str_buff, "%d.%d", b, c);
+    return str_buff;
+}
+
 void main () {
     cgb_compatibility();
     DISPLAY_OFF;
@@ -317,10 +344,10 @@ void main () {
     // start();
     // SWITCH_ROM_MBC5(TITLE_BANK);
     // if (!title()) {
-        SWITCH_RAM_MBC5(0);
+    //     SWITCH_RAM_MBC5(0);
     //     SWITCH_ROM_MBC5(NEW_GAME_BANK);
     //     new_game();
     // }
-    SWITCH_ROM_MBC5(GAME_BANK);
+    SWITCH_ROM_MBC5(PLAY_BALL_BANK);
     start_game();
 }

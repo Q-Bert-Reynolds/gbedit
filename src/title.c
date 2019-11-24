@@ -327,14 +327,38 @@ UBYTE show_start_menu () {
     memcpy(name_buff, user_name, 8);
     DISABLE_RAM_MBC5;
     enable_interrupts();
-    if (name_buff[0] > 0) {
+    while (name_buff[0] > 0) {
         c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
-        return show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION");
+        y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION");
+        if (y == 1) {
+            wait_vbl_done();
+            draw_bkg_ui_box(4,7,16,10);
+            set_bkg_tiles(5,9,5,1,"COACH");
+            set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
+            set_bkg_tiles(5,11,8,1,"PENNANTS");
+            set_bkg_tiles(18,11,1,1,"0");//+penant_count);
+            set_bkg_tiles(5,13,7,1, "ROLeDEX"); // "ROL\x7FDEX" draws trash here for some reason
+            set_bkg_tiles(8,13,1,1,"\x7F"); // HACK: wouldn't be necessary if "ROL\x7FDEX" worked above
+            sprintf(str_buff, "%d", 151);
+            set_bkg_tiles(16,13,3,1,str_buff);
+            set_bkg_tiles(5,15,4,1,"TIME");
+            sprintf(str_buff, "%d:%d", 999, 59);
+            l = strlen(str_buff);
+            set_bkg_tiles(19-l,15,l,1,str_buff);
+            waitpadup();
+            while (1) {
+                if (joypad() & J_A) return y;
+                else if (joypad() & J_B) {
+                    clear_bkg_area(4,7,16,10);
+                    break;
+                }
+                wait_vbl_done();
+            }
+        }
+        else return y;
     }
-    else {
-        c = 2;
-        return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION");
-    }
+    c = 2;
+    return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION");
 }
 
 void move_options_arrow (int y) {

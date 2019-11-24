@@ -2,7 +2,7 @@ VERSION = AWAY
 ROM_NAME = BEISBOL_$(VERSION).gbc
 CART = 0x1B #ROM+MBC5+RAM+BATT
 ROM_BANKS = 0x80
-RAM_BANKS = 4
+RAM_BANKS = 0x04
 ROM_FLAGS = -Wl-yt$(CART) -Wl-yo$(ROM_BANKS) -Wl-ya$(RAM_BANKS)
 
 # Directories
@@ -29,5 +29,5 @@ all:
 	open $(ROM_FILE)
 
 clean:
-	@rm -rf $(DIST_DIR)
+	# @rm -rf $(DIST_DIR)
 	@rm -rf $(OBJ_DIR)

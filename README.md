@@ -16,6 +16,7 @@ TODO:
     New Game
         shrink Calvin image and start game
     Battle
+        layout
     Walking
     Roledex
 

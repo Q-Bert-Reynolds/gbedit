@@ -19,16 +19,6 @@ void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
-// void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data) {
-//     for (i = 0; i < nb_tiles; ++i) {
-//         tiles[i*4] = tile_buff;
-//         tiles[i*4+1] = tile_buff;
-//         tiles[i*4+2] = tile_buff;
-//         tiles[i*4+3] = tile_buff;
-//     }
-//     set_bkg_data(first_tile, nb_tiles*4, tiles);
-// }
-
 void draw_ui_box (UBYTE w, UBYTE h) {
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
@@ -314,32 +304,6 @@ void fade_in () {
     delay(200);
 }
 
-char *health_pct (struct player *p) {
-    a = p->hp; // * 100 / max_hp; 
-    if (a >= 100) strcpy(str_buff, "100");
-    if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
-    else sprintf(str_buff, "%d%c", a, '%');
-    return str_buff;
-}
-
-char *batting_avg (struct player *p) {
-    a = p->hits * 1000 / p->at_bats;
-    if (a >= 1000) strcpy(str_buff, "1.000");
-    else if (a < 10) sprintf(str_buff, ".00%d", a);
-    else if (a < 100) sprintf(str_buff, ".0%d", a);
-    else sprintf(str_buff, ".%d", a);
-    return str_buff;
-}
-
-char *earned_run_avg (struct player *p) {
-    a = p->runs_allowed * 2700 / p->outs_recorded;
-    b = a/100;
-    c = a%100;
-    if (b >= 1000) sprintf(str_buff, "%d", b);
-    else sprintf(str_buff, "%d.%d", b, c);
-    return str_buff;
-}
-
 void main () {
     cgb_compatibility();
     DISPLAY_OFF;
@@ -350,14 +314,14 @@ void main () {
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
-    // SWITCH_ROM_MBC5(START_BANK);
-    // start();
-    // SWITCH_ROM_MBC5(TITLE_BANK);
-    // if (!title()) {
-    //     SWITCH_RAM_MBC5(0);
-    //     SWITCH_ROM_MBC5(NEW_GAME_BANK);
-    //     new_game();
-    // }
+    SWITCH_ROM_MBC5(START_BANK);
+    start();
+    SWITCH_ROM_MBC5(TITLE_BANK);
+    if (!title()) {
+        SWITCH_RAM_MBC5(0);
+        SWITCH_ROM_MBC5(NEW_GAME_BANK);
+        new_game();
+    }
     SWITCH_ROM_MBC5(PLAY_BALL_BANK);
     start_game();
 }

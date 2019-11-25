@@ -68,7 +68,6 @@ extern char rival_name[8];
 // global vars
 int a, b, c, d, i, j, k, l, w, x, y, z;
 UBYTE tiles[1024];
-UBYTE tile_buff;
 char str_buff[256];
 char name_buff[16];
 
@@ -105,10 +104,6 @@ struct player {
     UWORD hits, at_bats;//, plate_appearances, walks;
     UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
 };
-char *health_pct (struct player *p);
-char *batting_avg (struct player *p);
-char *earned_run_avg (struct player *p);
-
 struct player test_player; //TODO: remove me
 
 // options, TODO: move to save file
@@ -119,7 +114,6 @@ UBYTE coaching_style;
 // drawing
 void clear_screen();
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-// void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);

@@ -5,27 +5,81 @@ UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
-// void slide_in_players(void) {
-//     if (LY_REG == 72){
-//         LYC_REG = 135;
-//         SCX_REG = x;
-//     }
-//     else if (LY_REG == 135) {
-//         LYC_REG = 72;
-//         SCX_REG = 0;
-//     }
-// }
+void slide_in_players(void) {
+    if (LY_REG == 72){
+        LYC_REG = 135;
+        SCX_REG = x;
+    }
+    else if (LY_REG == 135) {
+        LYC_REG = 72;
+        SCX_REG = 0;
+    }
+}
+
+char *health_pct (struct player *p) {
+    a = p->hp; // * 100 / max_hp; 
+    if (a >= 100) strcpy(str_buff, "100");
+    if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
+    else sprintf(str_buff, "%d%c", a, '%');
+    return str_buff;
+}
+
+char *batting_avg (struct player *p) {
+    a = p->hits * 1000 / p->at_bats;
+    if (a >= 1000) strcpy(str_buff, "1.000");
+    else if (a < 10) sprintf(str_buff, ".00%d", a);
+    else if (a < 100) sprintf(str_buff, ".0%d", a);
+    else sprintf(str_buff, ".%d", a);
+    return str_buff;
+}
+
+char *earned_run_avg (struct player *p) {
+    a = p->runs_allowed * 2700 / p->outs_recorded;
+    b = a/100;
+    c = a%100;
+    if (b >= 1000) sprintf(str_buff, "%d", b);
+    else sprintf(str_buff, "%d.%d", b, c);
+    return str_buff;
+}
+
+// TODO: this can probably be cleaned up a bit
+void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data) {
+    for (i = 0; i < nb_tiles*16; i+=16) {
+        for (j = 0; j < 8; j+=2) {
+            b = data[i+j];
+            tiles[i*4+j*2]    = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+            tiles[i*4+j*2+16] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+            tiles[i*4+j*2+2]  = tiles[i*4+j*2];
+            tiles[i*4+j*2+18] = tiles[i*4+j*2+16];
+            b = data[i+j+1];
+            tiles[i*4+j*2+1]  = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+            tiles[i*4+j*2+17] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+            tiles[i*4+j*2+3]  = tiles[i*4+j*2+1];
+            tiles[i*4+j*2+19] = tiles[i*4+j*2+17];
+            b = data[i+j+8];
+            tiles[i*4+j*2+32] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+            tiles[i*4+j*2+48] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+            tiles[i*4+j*2+34] = tiles[i*4+j*2+32];
+            tiles[i*4+j*2+50] = tiles[i*4+j*2+48];
+            b = data[i+j+9];
+            tiles[i*4+j*2+33] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+            tiles[i*4+j*2+49] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+            tiles[i*4+j*2+35] = tiles[i*4+j*2+33];
+            tiles[i*4+j*2+51] = tiles[i*4+j*2+49];
+        }
+    }
+    set_bkg_data(first_tile, nb_tiles*4, tiles);
+}
 
 void play_intro () {
-    set_bkg_data(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
+    set_bkg_data_doubled(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
     draw_bkg_ui_box(0,12,20,6);
     for (j = 0; j < _CALVIN_BACK_ROWS; ++j) {
         for (i = 0; i < _CALVIN_BACK_COLUMNS; ++i) {
             tiles[j*_CALVIN_BACK_COLUMNS+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
         }
     }
-    set_bkg_tiles(0,12-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS,_CALVIN_BACK_ROWS,tiles);
-    // set_bkg_data_doubled()
+    set_bkg_tiles(1,13-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS,_CALVIN_BACK_ROWS-1,tiles);
     DISPLAY_ON;
     waitpad(J_A);
     waitpadup();

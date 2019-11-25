@@ -52,24 +52,13 @@ def folder_to_c (root, files):
     img_name = os.path.basename(base)
     rows, cols, hex_vals = gb_encode(img)
 
-  tilemaps[img_name] = []
-  is_2x = "back" in img_name
-  dimensions[img_name] = (rows, cols)
-  for i in range(0, len(hex_vals), 16):
-    tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
-    if tile not in tileset:
-      tileset.append(tile)
-    tilemaps[img_name].append("0x{:02X}".format(tileset.index(tile)))
-
-  if is_2x:
-    dimensions[img_name] = (rows*2, cols*2)
-    tilemap_2x = []
-    for i in range(len(tilemaps[img_name])):
-      tilemap_2x[i*4] = tilemaps[img_name][i]*4;
-      tilemap_2x[i*4+1] = tilemaps[img_name][i]*4+1;
-      tilemap_2x[i*4+2] = tilemaps[img_name][i]*4+2;
-      tilemap_2x[i*4+3] = tilemaps[img_name][i]*4+3;
-    tilemaps[img_name] = tilemap_2x
+    tilemaps[img_name] = []
+    dimensions[img_name] = (rows, cols)
+    for i in range(0, len(hex_vals), 16):
+      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
+      if tile not in tileset:
+        tileset.append(tile)
+      tilemaps[img_name].append("0x{:02X}".format(tileset.index(tile)))
         
   name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".c"), "w+") as c_file:
@@ -99,6 +88,7 @@ def png_to_c (path):
   img = Image.open(path)
   name = os.path.basename(base)
   rows, cols, hex_vals = gb_encode(img)
+  tile_count = rows*cols
 
   if name in ["font", "ui"]:
     tileset = []
@@ -108,7 +98,7 @@ def png_to_c (path):
 
     with open(base + ".h", "w+") as c_file:
       c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
-      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
+      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(tile_count) + "\n")
 
       c_file.write("extern const unsigned char _" + name + "_tiles[];\n")
       c_file.write("#endif\n")
@@ -134,11 +124,35 @@ def png_to_c (path):
         tilemap.append("0x{:02X}".format(len(tileset)))
         tileset.append(tile)
 
+    is_2x = "_back" in name
+    for i in range(0, len(hex_vals), 16):
+      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
+      if tile not in tileset:
+        tileset.append(tile)
+      tilemap.append("0x{:02X}".format(tileset.index(tile)))
+
+    if is_2x:
+      tilemap_2x = []
+      for i in range(len(tilemap)):
+        tile = int(tilemap[i], 16)
+        tilemap_2x.append(tile*4)
+        tilemap_2x.append(tile*4+1)
+      tilemap = tilemap_2x
+      tilemap_2x = []
+      for i in range(rows):
+        row = tilemap[i*cols*2:(i+1)*cols*2]
+        tilemap_2x.extend(map(lambda n : "0x{:02X}".format(n), row))
+        tilemap_2x.extend(map(lambda n : "0x{:02X}".format(n+2), row))
+      tilemap = tilemap_2x
+      rows*=2
+      cols*=2
+
+
     with open(base + ".c", "w+") as c_file:
       c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
       c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
       c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
-      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(rows*cols) + "\n")
+      c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(tile_count) + "\n")
 
       c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
       for tile in tileset:

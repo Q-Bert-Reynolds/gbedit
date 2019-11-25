@@ -53,6 +53,8 @@ void start_game();
 #define BOX_LOWER_RIGHT   20
 #define BOX_HORIZONTAL    21
 #define BOX_VERTICAL      22
+#define EMPTY_BASE        23
+#define OCCUPIED_BASE     24
 #define LEVEL             16
 #define EARNED_RUN_AVG    25
 #define BATTING_AVG       26
@@ -66,6 +68,7 @@ extern char rival_name[8];
 // global vars
 int a, b, c, d, i, j, k, l, w, x, y, z;
 UBYTE tiles[1024];
+UBYTE tile_buff;
 char str_buff[256];
 char name_buff[16];
 
@@ -108,8 +111,7 @@ char *earned_run_avg (struct player *p);
 
 struct player test_player; //TODO: remove me
 
-
-// options
+// options, TODO: move to save file
 UBYTE text_speed;
 UBYTE animation_style;
 UBYTE coaching_style;
@@ -117,6 +119,7 @@ UBYTE coaching_style;
 // drawing
 void clear_screen();
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+// void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);

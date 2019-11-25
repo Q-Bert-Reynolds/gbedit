@@ -52,13 +52,24 @@ def folder_to_c (root, files):
     img_name = os.path.basename(base)
     rows, cols, hex_vals = gb_encode(img)
 
-    tilemaps[img_name] = []
-    dimensions[img_name] = (rows, cols)
-    for i in range(0, len(hex_vals), 16):
-      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
-      if tile not in tileset:
-        tileset.append(tile)
-      tilemaps[img_name].append("0x{:02X}".format(tileset.index(tile)))
+  tilemaps[img_name] = []
+  is_2x = "back" in img_name
+  dimensions[img_name] = (rows, cols)
+  for i in range(0, len(hex_vals), 16):
+    tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
+    if tile not in tileset:
+      tileset.append(tile)
+    tilemaps[img_name].append("0x{:02X}".format(tileset.index(tile)))
+
+  if is_2x:
+    dimensions[img_name] = (rows*2, cols*2)
+    tilemap_2x = []
+    for i in range(len(tilemaps[img_name])):
+      tilemap_2x[i*4] = tilemaps[img_name][i]*4;
+      tilemap_2x[i*4+1] = tilemaps[img_name][i]*4+1;
+      tilemap_2x[i*4+2] = tilemaps[img_name][i]*4+2;
+      tilemap_2x[i*4+3] = tilemaps[img_name][i]*4+3;
+    tilemaps[img_name] = tilemap_2x
         
   name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".c"), "w+") as c_file:

@@ -1,11 +1,34 @@
 #include "beisbol.h"
+#include "../res/coaches/calvin_back.c"
 
 UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
+// void slide_in_players(void) {
+//     if (LY_REG == 72){
+//         LYC_REG = 135;
+//         SCX_REG = x;
+//     }
+//     else if (LY_REG == 135) {
+//         LYC_REG = 72;
+//         SCX_REG = 0;
+//     }
+// }
+
 void play_intro () {
-    
+    set_bkg_data(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
+    draw_bkg_ui_box(0,12,20,6);
+    for (j = 0; j < _CALVIN_BACK_ROWS; ++j) {
+        for (i = 0; i < _CALVIN_BACK_COLUMNS; ++i) {
+            tiles[j*_CALVIN_BACK_COLUMNS+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
+        }
+    }
+    set_bkg_tiles(0,12-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS,_CALVIN_BACK_ROWS,tiles);
+    // set_bkg_data_doubled()
+    DISPLAY_ON;
+    waitpad(J_A);
+    waitpadup();
 }
 
 void draw_player_ui (UBYTE team, struct player *p) {
@@ -37,10 +60,10 @@ void draw_player_ui (UBYTE team, struct player *p) {
 }
 
 void draw_bases () {
-    for (i = 0; i < 3; i++) {
-        tiles[i*2] = 0;
-        tiles[i*2+1] = 23;
-    }
+    for (i = 0; i < 5; i+=2) tiles[i] = 0;
+    tiles[5] = (runners_on_base & FIRST_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
+    tiles[1] = (runners_on_base & SECOND_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
+    tiles[3] = (runners_on_base & THIRD_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
     set_bkg_tiles(9,0,3,2,tiles);
 }
 
@@ -98,6 +121,7 @@ void draw_ui () {
         "          "
         "ITEM  RUN "
     );
+    DISPLAY_ON;
 }
 
 void start_game () {
@@ -110,6 +134,7 @@ void start_game () {
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
 
     balls_strikes_outs = (3 << 4) | (2 << 2) | 1;
+    runners_on_base = (9 << 8) | 5;
     frame = 0;
     home_team = 0;
     home_score = 1;
@@ -125,5 +150,4 @@ void start_game () {
 
     play_intro();
     draw_ui();
-    DISPLAY_ON;
 }

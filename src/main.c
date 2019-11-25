@@ -19,6 +19,16 @@ void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
+// void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data) {
+//     for (i = 0; i < nb_tiles; ++i) {
+//         tiles[i*4] = tile_buff;
+//         tiles[i*4+1] = tile_buff;
+//         tiles[i*4+2] = tile_buff;
+//         tiles[i*4+3] = tile_buff;
+//     }
+//     set_bkg_data(first_tile, nb_tiles*4, tiles);
+// }
+
 void draw_ui_box (UBYTE w, UBYTE h) {
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {

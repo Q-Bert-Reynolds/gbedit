@@ -2,14 +2,25 @@
 #include "../res/font.c"
 #include "../res/ui.c"
 
+const UBYTE *types[15] = { 
+    "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
+    "ICE", "FIGHTING", "POISON", "GROUND", "FLYING", 
+    "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON",
+};
+
 const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+void hide_sprites () {
+    for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
+}
+
 void clear_screen () {
     set_bkg_data(0, 1, blank_tile);
     for (i = 0; i < 1024; ++i) tiles[i] = 0;
     set_bkg_tiles(0,0,32,32,tiles);
     set_win_tiles(0,0,20,18,tiles);
     move_win(160,144);
-    for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
+    hide_sprites();
 }
 
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
@@ -57,36 +68,37 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
         waitpadup();
         for (a = 0; a < 20; a++) {
             if (joypad() & J_A) return;
-            wait_vbl_done();
+            delay(10);
         }
         tiles[0] = 0;
         set_win_tiles(x, y, 1, 1, tiles);
         for (a = 0; a < 20; a++) {
             if (joypad() & J_A) return;
-            wait_vbl_done();
+            delay(10);
         }
     }
 }
 
 void display_text (unsigned char *text) {
-    SHOW_WIN;
-    move_win(0,96);
     draw_win_ui_box(0,0,20,6);
+    move_win(0,96);
+    SHOW_WIN;
     x = 0;
     y = 0;
     l = strlen(text);
+    w = 0;
     for (i = 0; i < l; i++) {
         if (text[i] == '\n') {
-            x = 0;
             ++y;
+            memcpy(str_buff,text+w,i-w);
             if (y == 2) {
                 y = 1;
-                flash_next_arrow(18,16);
-                get_win_tiles(1, 4, 17, 1, tiles);
-                set_win_tiles(1, 2, 17, 1, tiles);
-                for (j = 0; j < 17; ++j) tiles[j] = 0;
-                set_win_tiles(1, 4, 17, 1, tiles);
+                flash_next_arrow(18,4);
+                set_win_tiles(1, 2, 17, 1, str_buff);
+                set_win_tiles(1, 4, 17, 1, "                 ");
             }
+            x = 0;
+            w = i+1;
         }
         else {
             set_win_tiles(x+1,y*2+2,1,1,text+i);
@@ -159,7 +171,7 @@ UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *tex
         else if (k & J_B) return 0;
         wait_vbl_done(); 
     }
-    return -1;
+    return 0;
 }
 
 void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) {

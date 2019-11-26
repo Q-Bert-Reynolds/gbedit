@@ -68,6 +68,7 @@ extern char rival_name[8];
 // global vars
 int a, b, c, d, i, j, k, l, w, x, y, z;
 UBYTE tiles[1024];
+UBYTE bkg_buff[1024];
 char str_buff[256];
 char name_buff[16];
 
@@ -83,12 +84,19 @@ UBYTE balls_strikes_outs; //0bxBBBSSOO
 #define HOME_MASK        0xF000
 UWORD runners_on_base; //0bHHHHTTTTSSSSFFFF
 
+UBYTE move_choice;
 UBYTE frame;
 UBYTE home_team;
 UBYTE home_score;
 UBYTE away_score;
 
-// player
+extern const UBYTE *types[15];
+
+struct move {
+    char name[10];
+    UBYTE pp;
+    UBYTE type;
+};
 struct base_player {
     char name[10];
     UBYTE hp, bat, field, speed, throw;
@@ -99,12 +107,12 @@ struct base_player {
 struct player {
     char nickname[10];
     struct base_player *base;
+    struct move *moves[4];
     UBYTE level, hp;
     UBYTE position, batting_order;
     UWORD hits, at_bats;//, plate_appearances, walks;
     UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
 };
-struct player test_player; //TODO: remove me
 
 // options, TODO: move to save file
 UBYTE text_speed;
@@ -112,6 +120,7 @@ UBYTE animation_style;
 UBYTE coaching_style;
 
 // drawing
+void hide_sprites();
 void clear_screen();
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);

@@ -16,7 +16,7 @@ TODO:
     New Game
         shrink Calvin image
     Battle
-        move selection
+        slide coaches off screen
         opponent pitching
         user batting
         opponent batting

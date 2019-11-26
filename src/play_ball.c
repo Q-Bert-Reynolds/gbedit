@@ -2,6 +2,10 @@
 #include "../res/coaches/calvin_back.c"
 #include "../res/players/080Laggard.c"
 
+struct player test_player;
+struct move move1;
+struct move move2;
+
 UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
@@ -13,10 +17,10 @@ void slide_in_lcd_interrupt(void) {
     }
     else if (LY_REG == 56) {
         LYC_REG = 0;
-        SCX_REG = 255-x;
+        SCX_REG = 256-x;
         for (j = 0; j < 3; ++j) {
             for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-                move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+17, j*8+56);
+                move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
             }
         }
     }
@@ -116,15 +120,22 @@ void play_intro () {
     for (x = 160; x >= 0; x-=2) {
         wait_vbl_done();
     }
-    wait_vbl_done();
     disable_interrupts();
     remove_LCD(slide_in_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
+
+    hide_sprites();
+    for (j = 0; j < 3; ++j) {
+        for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+            tiles[j*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
+        }
+    }
+    set_bkg_tiles(1,13-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,3,tiles);
     
     sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
     display_text(str_buff);
-    move_win(160,144);
+    HIDE_WIN;
 }
 
 void draw_player_ui (UBYTE team, struct player *p) {
@@ -234,6 +245,111 @@ void draw_ui () {
     DISPLAY_ON;
 }
 
+void move_play_menu_arrow () {
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            tiles[0] = (x==i && y==j) ? ARROW_RIGHT : 0;
+            set_bkg_tiles(i*6+8,j*2+14,1,1,tiles);
+        }
+    }
+}
+
+UBYTE select_play_menu_item () {
+    move_play_menu_arrow();
+    waitpadup();
+    while (1) {
+        k = joypad();
+        if (k & J_UP && y == 1) { y = 0; move_play_menu_arrow(); }
+        else if (k & J_DOWN && y == 0) { y = 1; move_play_menu_arrow(); }
+        else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
+        else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
+
+        if (k & J_A) return x * 2 + y;
+    }
+    return 0;
+}
+
+void move_move_menu_arrow (int y) {
+    for (i = 0; i < 4; i++) {
+        tiles[i] = (i == y) ? ARROW_RIGHT : 0;
+    }
+    set_bkg_tiles(6,13,1,4,tiles);
+}
+
+void show_move_info () {//struct move *m) {
+    draw_bkg_ui_box(0,8,11,5);
+    set_bkg_tiles(1,9,5,1,"TYPE/");
+    strcpy(name_buff, types[0]);//m->type]);
+    set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
+    set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
+}
+
+UBYTE select_move_menu_item (struct player *p) { // input should be move struct
+    get_bkg_tiles(0,8,20,10,bkg_buff);
+    draw_bkg_ui_box(5,12,15,6);
+
+    c = 4;
+    for (i = 0; i < 4; ++i) {
+        if ((p->moves)[i] == NULL) { c = i; break; }
+        memcpy(name_buff, (p->moves)[i]->name, 16);
+        set_bkg_tiles(7,13+i,strlen(name_buff),1,name_buff);
+    }
+    if (c < 4) set_bkg_tiles(7,c+13,2,4-c,"--------");
+
+    tiles[0] = ARROW_RIGHT;
+    set_bkg_tiles(6,13,1,1,tiles);
+
+    show_move_info();//p->moves[move_choice]);
+
+    waitpadup();
+    while (1) {
+        k = joypad();
+        if (k & J_UP && move_choice > 0) {
+            wait_vbl_done();
+            --move_choice;
+            move_move_menu_arrow(move_choice);
+            show_move_info();//p->moves[move_choice]);
+            waitpadup();
+        }
+        else if (k & J_DOWN && move_choice < c-1) {
+            wait_vbl_done();
+            ++move_choice;
+            move_move_menu_arrow(move_choice);
+            show_move_info();//p->moves[move_choice]);
+            waitpadup();
+        }
+        if (k & (J_START | J_A)) {
+            set_bkg_tiles(0,8,20,10,bkg_buff);
+            return move_choice+1;
+        }
+        else if (k & J_B) break;
+        wait_vbl_done(); 
+    }
+    set_bkg_tiles(0,8,20,10,bkg_buff);
+    return 0;
+}
+
+void pitch () {
+
+}
+
+void bat () {
+    
+}
+
+void play_ball (struct player *p, int move) {
+    if (home_team == (frame % 2)) {
+        sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
+        bat();
+    }
+    else {
+        sprintf(str_buff, "%s sets.", p->nickname);
+        pitch();
+    }
+    display_text(str_buff);
+    HIDE_WIN;
+}
+
 void start_game () {
     DISPLAY_OFF;
     BGP_REG = BG_PALETTE;
@@ -249,6 +365,7 @@ void start_game () {
     home_team = 0;
     home_score = 1;
     away_score = 3;
+    move_choice = 0;
 
     test_player.position = 1;
     test_player.batting_order = 3;
@@ -256,8 +373,32 @@ void start_game () {
     test_player.hp = 97;
     test_player.at_bats = 100;
     test_player.hits = 32;
+    test_player.moves[0] = &move1;
+    test_player.moves[1] = &move2;
+    strcpy(move1.name, "FASTBALL");
+    strcpy(move2.name, "BUNT");
     strcpy(test_player.nickname, "TEST");
 
     play_intro();
     draw_ui();
+
+    x = 0;
+    y = 0;
+    while (1) {
+        a = select_play_menu_item();
+        switch (a) {
+            case 0:
+                b = select_move_menu_item(&test_player);
+                if (b > 0) play_ball(&test_player, b-1);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                display_text("Quitting is\nnot an option!");
+                HIDE_WIN;
+                break;
+        }
+    }
 }

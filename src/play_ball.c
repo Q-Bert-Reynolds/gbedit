@@ -121,8 +121,10 @@ void play_intro () {
     remove_LCD(slide_in_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
-    waitpad(J_A);
-    waitpadup();
+    
+    sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
+    display_text(str_buff);
+    move_win(160,144);
 }
 
 void draw_player_ui (UBYTE team, struct player *p) {

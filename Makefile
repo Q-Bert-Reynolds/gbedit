@@ -30,5 +30,5 @@ all:
 	open $(ROM_FILE)
 
 clean:
-	@rm -rf $(DIST_DIR)
+	# @rm -rf $(DIST_DIR)
 	@rm -rf $(OBJ_DIR)

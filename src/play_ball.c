@@ -1,18 +1,24 @@
 #include "beisbol.h"
 #include "../res/coaches/calvin_back.c"
+#include "../res/players/080Laggard.c"
 
 UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
-void slide_in_players(void) {
-    if (LY_REG == 72){
-        LYC_REG = 135;
+void slide_in_lcd_interrupt(void) {
+    if (LY_REG == 0){
+        LYC_REG = 56;
         SCX_REG = x;
     }
-    else if (LY_REG == 135) {
-        LYC_REG = 72;
-        SCX_REG = 0;
+    else if (LY_REG == 56) {
+        LYC_REG = 0;
+        SCX_REG = 255-x;
+        for (j = 0; j < 3; ++j) {
+            for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+                move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+17, j*8+56);
+            }
+        }
     }
 }
 
@@ -73,14 +79,48 @@ void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data
 
 void play_intro () {
     set_bkg_data_doubled(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
-    draw_bkg_ui_box(0,12,20,6);
-    for (j = 0; j < _CALVIN_BACK_ROWS; ++j) {
-        for (i = 0; i < _CALVIN_BACK_COLUMNS; ++i) {
-            tiles[j*_CALVIN_BACK_COLUMNS+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
+    set_bkg_data(192, _080LAGGARD_TILE_COUNT, _080Laggard_tiles);
+    draw_win_ui_box(0,0,20,6);
+    move_win(0,96);
+    SHOW_WIN;
+
+    for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
+        for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+            if (j < 3) {
+                set_sprite_tile(
+                    j*(_CALVIN_BACK_COLUMNS-1)+i, 
+                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT
+                );
+            }
+            else {
+                tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = 
+                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
+            }
         }
     }
-    set_bkg_tiles(1,13-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS,_CALVIN_BACK_ROWS-1,tiles);
+    set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
+    
+    for (i = 0; i < _080LAGGARD_TILE_COUNT; ++i) {
+        tiles[i] = _080Laggard_map[i]+192;
+    }
+    set_bkg_tiles(19-_080LAGGARD_COLUMNS,7-_080LAGGARD_ROWS,_080LAGGARD_COLUMNS,_080LAGGARD_ROWS,tiles);
+
+    move_bkg(160,0);
+    VBK_REG = 0;
+    STAT_REG = 72;
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    disable_interrupts();
+    add_LCD(slide_in_lcd_interrupt);
+    enable_interrupts();
     DISPLAY_ON;
+    for (x = 160; x >= 0; x-=2) {
+        wait_vbl_done();
+    }
+    wait_vbl_done();
+    disable_interrupts();
+    remove_LCD(slide_in_lcd_interrupt);
+    enable_interrupts();
+    set_interrupts(VBL_IFLAG);
     waitpad(J_A);
     waitpadup();
 }
@@ -96,8 +136,22 @@ void draw_player_ui (UBYTE team, struct player *p) {
     l = strlen(p->nickname);
     w = 1+(12-l)/2;
     for (i = 0; i < l; i++) tiles[w+i] = p->nickname[i];
-    tiles[12] = LEVEL;
-    tiles[13] = 48+p->level; // this won't work for lvl > 9
+    if (p->level == 100) {
+        tiles[12] = 49; 
+        tiles[13] = 48; 
+        tiles[14] = 48;
+    }
+    else {
+        tiles[12] = LEVEL;
+        if (p->level < 10) {
+            tiles[13] = 48+p->level;
+            tiles[14] = 0;
+        }
+        else {
+            tiles[13] = 48+p->level/10;
+            tiles[14] = 48+p->level%10;
+        }
+    }
     if (b) {
         tiles[1] = NUMBERS + p->batting_order;
         tiles[15] = BATTING_AVG;
@@ -196,7 +250,7 @@ void start_game () {
 
     test_player.position = 1;
     test_player.batting_order = 3;
-    test_player.level = 7;
+    test_player.level = 77;
     test_player.hp = 97;
     test_player.at_bats = 100;
     test_player.hits = 32;

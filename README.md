@@ -4,7 +4,7 @@ Compiling:
     `make`
 
 TODO:
-    banking (ROM and SRAM)
+    LOAD PLAYER SPRITES CORRECTLY!!!!
     Main
     Intro
         sfx
@@ -16,7 +16,6 @@ TODO:
     New Game
         shrink Calvin image
     Battle
-        intro animation
         move selection
         opponent pitching
         user batting

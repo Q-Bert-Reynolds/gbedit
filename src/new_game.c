@@ -19,8 +19,8 @@ void new_game() {
     DISPLAY_ON;
 
     fade_in();
-    display_text("Hello there!\nWelcome to the\nworld of B\x7FiSBOL.");
-    display_text("My name is DOC!\nPeople call me\nthe B\x7FiSBOL PROF!");
+    reveal_text("Hello there!\nWelcome to the\nworld of B\x7FiSBOL.");
+    reveal_text("My name is DOC!\nPeople call me\nthe B\x7FiSBOL PROF!");
     fade_out();
 
     // set image to Muchacho
@@ -31,10 +31,10 @@ void new_game() {
     DISPLAY_ON;
 
     fade_in();
-    display_text("This world is\ninhabited by\nathletes called\nPLAYERS!");
-    display_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams");
-    display_text("Myself...");
-    display_text("I study B\x7FiSBOL\nas a profession.");
+    reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!");
+    reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams");
+    reveal_text("Myself...");
+    reveal_text("I study B\x7FiSBOL\nas a profession.");
     fade_out();
 
     // set image to Calvin
@@ -51,7 +51,7 @@ void new_game() {
         move_bkg(i,0);
         wait_vbl_done();
     }
-    display_text("First, what is\nyour name?");
+    reveal_text("First, what is\nyour name?");
     for (i = 48; i >= 0; i-=2) {
         move_bkg(i,0);
         wait_vbl_done();
@@ -92,7 +92,7 @@ void new_game() {
         }
     }
     sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
-    display_text(str_buff);
+    reveal_text(str_buff);
     fade_out();
 
     // save user name
@@ -116,8 +116,8 @@ void new_game() {
         move_bkg(i,0);
         wait_vbl_done();
     }
-    display_text("This is my grand-\nson. He's been\nyour rival since\nyou were a rookie");
-    display_text("...Erm, what is\nhis name again?");
+    reveal_text("This is my grand-\nson. He's been\nyour rival since\nyou were a rookie");
+    reveal_text("...Erm, what is\nhis name again?");
     for (i = 48; i >= 0; i-=2) {
         move_bkg(i,0);
         wait_vbl_done();
@@ -160,7 +160,7 @@ void new_game() {
     }
     
     sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
-    display_text(str_buff);
+    reveal_text(str_buff);
     fade_out();
 
     // save rival name
@@ -185,9 +185,9 @@ void new_game() {
     DISABLE_RAM_MBC5;
     enable_interrupts();
 
-    display_text(str_buff);
-    display_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!");
-    display_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!"); //don't wait for input at the end
+    reveal_text(str_buff);
+    reveal_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!");
+    reveal_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!"); //don't wait for input at the end
     //TODO: shrink image
     fade_out();
 }

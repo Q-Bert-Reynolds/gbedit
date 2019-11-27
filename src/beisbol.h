@@ -9,12 +9,12 @@
 #include "../res/ui.h"
 
 // banks
-#define START_BANK     1
-#define TITLE_BANK     2
-#define NEW_GAME_BANK  3
-#define PLAY_BALL_BANK 4
+#define START_BANK     2
+#define TITLE_BANK     3
+#define NEW_GAME_BANK  4
+#define PLAY_BALL_BANK 5
 
-// bank entry points
+// banked entry points
 void start();
 UBYTE title();
 void new_game();
@@ -91,7 +91,6 @@ UBYTE home_score;
 UBYTE away_score;
 
 extern const UBYTE *types[15];
-
 struct move {
     char name[10];
     UBYTE pp;
@@ -128,12 +127,13 @@ void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
 char *show_text_entry (char *title, char *str, int max_len);
+void reveal_text (UBYTE *text);
 void display_text (UBYTE *text);
 void fade_out();
 void fade_in();
 
 // audio
-void setup_audio();
-void update_audio();
+// void setup_audio();
+// void update_audio();
 
 #endif

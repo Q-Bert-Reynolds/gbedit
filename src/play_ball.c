@@ -136,7 +136,7 @@ void play_intro () {
     set_interrupts(VBL_IFLAG);
     
     sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
-    display_text(str_buff);
+    reveal_text(str_buff);
 
     disable_interrupts();
     add_LCD(slide_out_lcd_interrupt);
@@ -154,7 +154,7 @@ void play_intro () {
     wait_vbl_done();
     move_bkg(0,0);
 
-    display_text("Let's go!");
+    reveal_text("Let's go!");
     HIDE_WIN;
 }
 
@@ -371,7 +371,7 @@ void move_aim_circle (UBYTE x, UBYTE y) {
 
 void pitch (struct player *p, int move) {
     sprintf(str_buff, "%s sets.", p->nickname);
-    display_text(str_buff);
+    reveal_text(str_buff);
     show_aim_circle(3);
     move_aim_circle(96,32);
 }
@@ -384,9 +384,22 @@ void show_batter_user () {
 void bat (struct player *p, int move) {
     show_batter_user();
     show_aim_circle(7);
-    move_aim_circle(49,85);
+    move_aim_circle(49,85); //TODO: handle lefty batters
     sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
     display_text(str_buff);
+    // sprintf(str_buff, "%s sets.", "LAGGARD");
+    // display_text(str_buff);
+    a = 49<<1;
+    b = 85<<1;
+    for (i = 0; i < 600; ++i) {
+        k = joypad();
+        if (k & J_RIGHT) ++a;
+        else if (k & J_LEFT) --a;
+        if (k & J_DOWN) ++b;
+        else if (k & J_UP) --b;
+        move_aim_circle(a>>1, b>>1);
+        wait_vbl_done();
+    }
 }
 
 void play_ball (struct player *p, int move) {
@@ -443,7 +456,7 @@ void start_game () {
             case 2:
                 break;
             case 3:
-                display_text("Quitting is\nnot an option!");
+                reveal_text("Quitting is\nnot an option!");
                 HIDE_WIN;
                 break;
         }

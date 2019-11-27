@@ -9,7 +9,6 @@ const UBYTE *types[15] = {
 };
 
 const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-
 void hide_sprites () {
     for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
 }
@@ -84,7 +83,7 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
     }
 }
 
-void display_text (unsigned char *text) {
+void reveal_text (unsigned char *text) {
     draw_win_ui_box(0,0,20,6);
     move_win(0,96);
     SHOW_WIN;
@@ -112,6 +111,24 @@ void display_text (unsigned char *text) {
         delay(10);
     }
     flash_next_arrow(18,4);
+}
+
+void display_text (unsigned char *text) {
+    draw_win_ui_box(0,0,20,6);
+    l = strlen(text);
+    w = 0;
+    y = 0;
+    for (i = 0; i < l; i++) {
+        if (text[i] == '\n') {
+            memcpy(str_buff,text+w,i-w);
+            set_win_tiles(1, 2+y, 17, 1, str_buff);
+            ++y;
+            if (y == 2) break;
+            w = i+1;
+        }
+    }
+    move_win(0,96);
+    SHOW_WIN;
 }
 
 void move_menu_arrow (int y) {
@@ -332,13 +349,14 @@ void main () {
     SHOW_SPRITES;
     SHOW_BKG;
     SWITCH_ROM_MBC5(START_BANK);
-    start();
+    start();    
     SWITCH_ROM_MBC5(TITLE_BANK);
     if (!title()) {
         SWITCH_RAM_MBC5(0);
         SWITCH_ROM_MBC5(NEW_GAME_BANK);
         new_game();
     }
+
     SWITCH_ROM_MBC5(PLAY_BALL_BANK);
     start_game();
 }

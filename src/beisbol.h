@@ -123,6 +123,7 @@ UBYTE coaching_style;
 void hide_sprites();
 void clear_screen();
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *tiles);
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);

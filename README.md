@@ -5,6 +5,9 @@ Compiling:
 
 TODO:
     LOAD PLAYER SPRITES CORRECTLY!!!!
+        function in main
+        changes bank, loads tiles into vram & map into buffer, changes bank back
+    merge UI & Font tiles into single sheet to avoid addition everywhere
     Main
     Intro
         sfx
@@ -16,7 +19,7 @@ TODO:
     New Game
         shrink Calvin image
     Battle
-        slide coaches off screen
+        doubled back & player front images should be different batting/pitching images
         opponent pitching
         user batting
         opponent batting

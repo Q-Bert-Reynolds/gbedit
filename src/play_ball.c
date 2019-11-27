@@ -1,4 +1,8 @@
 #include "beisbol.h"
+#include "../res/baseball.c"
+#include "../res/circle.c"
+#include "../res/play/righty_batter_user/righty_batter_user.c"
+#include "../res/play/lefty_batter_user/lefty_batter_user.c"
 #include "../res/coaches/calvin_back.c"
 #include "../res/players/080Laggard.c"
 
@@ -10,20 +14,30 @@ UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
+void move_coach () {
+    LYC_REG = 0;
+    SCX_REG = 256-x;
+    for (j = 0; j < 3; ++j) {
+        for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+            move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
+        }
+    }
+}
+
 void slide_in_lcd_interrupt(void) {
     if (LY_REG == 0){
         LYC_REG = 56;
         SCX_REG = x;
     }
-    else if (LY_REG == 56) {
-        LYC_REG = 0;
-        SCX_REG = 256-x;
-        for (j = 0; j < 3; ++j) {
-            for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-                move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
-            }
-        }
+    else if (LY_REG == 56) move_coach();
+}
+
+void slide_out_lcd_interrupt(void) {
+    if (LY_REG == 0){
+        LYC_REG = 56;
+        SCX_REG = 0;
     }
+    else if (LY_REG == 56) move_coach();
 }
 
 char *health_pct (struct player *p) {
@@ -103,11 +117,7 @@ void play_intro () {
         }
     }
     set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
-    
-    for (i = 0; i < _080LAGGARD_TILE_COUNT; ++i) {
-        tiles[i] = _080Laggard_map[i]+192;
-    }
-    set_bkg_tiles(19-_080LAGGARD_COLUMNS,7-_080LAGGARD_ROWS,_080LAGGARD_COLUMNS,_080LAGGARD_ROWS,tiles);
+    set_bkg_tiles_with_offset(19-_080LAGGARD_COLUMNS,7-_080LAGGARD_ROWS,_080LAGGARD_COLUMNS,_080LAGGARD_ROWS,192,_080Laggard_map);
 
     move_bkg(160,0);
     VBK_REG = 0;
@@ -124,17 +134,27 @@ void play_intro () {
     remove_LCD(slide_in_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
-
-    hide_sprites();
-    for (j = 0; j < 3; ++j) {
-        for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-            tiles[j*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
-        }
-    }
-    set_bkg_tiles(1,13-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,3,tiles);
     
     sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
     display_text(str_buff);
+
+    disable_interrupts();
+    add_LCD(slide_out_lcd_interrupt);
+    enable_interrupts();
+    set_interrupts(VBL_IFLAG | LCD_IFLAG);
+    for (x = 0; x > -80; x-=2) {
+        wait_vbl_done();
+    }
+    disable_interrupts();
+    remove_LCD(slide_out_lcd_interrupt);
+    clear_bkg_area(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4);
+    enable_interrupts();
+    set_interrupts(VBL_IFLAG);
+    hide_sprites();
+    wait_vbl_done();
+    move_bkg(0,0);
+
+    display_text("Let's go!");
     HIDE_WIN;
 }
 
@@ -329,24 +349,49 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     return 0;
 }
 
-void pitch () {
-
+void show_aim_circle (UBYTE size) {
+    SPRITES_8x8;
+    i = (size%8)+_BASEBALL_TILE_COUNT;
+    set_sprite_tile(0, i);
+    set_sprite_prop(0, USE_PAL);
+    set_sprite_tile(1, i);
+    set_sprite_prop(1, FLIP_X_PAL);
+    set_sprite_tile(2, i);
+    set_sprite_prop(2, FLIP_Y_PAL);
+    set_sprite_tile(3, i);
+    set_sprite_prop(3, FLIP_XY_PAL);
 }
 
-void bat () {
-    
+void move_aim_circle (UBYTE x, UBYTE y) {
+    move_sprite(0, x,   y);
+    move_sprite(1, x+8, y);
+    move_sprite(2, x,   y+8);
+    move_sprite(3, x+8, y+8);
+}
+
+void pitch (struct player *p, int move) {
+    sprintf(str_buff, "%s sets.", p->nickname);
+    display_text(str_buff);
+    show_aim_circle(3);
+    move_aim_circle(96,32);
+}
+
+void show_batter_user () {
+    set_bkg_data(32+_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER_COLUMNS,_RIGHTY_BATTER_USER_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user_map);
+}
+
+void bat (struct player *p, int move) {
+    show_batter_user();
+    show_aim_circle(7);
+    move_aim_circle(49,85);
+    sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
+    display_text(str_buff);
 }
 
 void play_ball (struct player *p, int move) {
-    if (home_team == (frame % 2)) {
-        sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
-        bat();
-    }
-    else {
-        sprintf(str_buff, "%s sets.", p->nickname);
-        pitch();
-    }
-    display_text(str_buff);
+    if (home_team == (frame % 2)) bat(p, move);
+    else pitch(p, move);
     HIDE_WIN;
 }
 
@@ -358,6 +403,8 @@ void start_game () {
     clear_screen();
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
+    set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
+    set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
 
     balls_strikes_outs = (3 << 4) | (2 << 2) | 1;
     runners_on_base = (9 << 8) | 5;

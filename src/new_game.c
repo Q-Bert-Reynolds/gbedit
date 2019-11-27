@@ -15,10 +15,7 @@ void new_game() {
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
     set_bkg_data(32+_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
-    for (i = 0; i < _DOC_HICKORY_ROWS*_DOC_HICKORY_COLUMNS; ++i) {
-        tiles[i] = _doc_hickory_map[i]+32+_FONT_TILE_COUNT;
-    }
-    set_bkg_tiles(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,tiles);
+    set_bkg_tiles_with_offset(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,32+_FONT_TILE_COUNT,_doc_hickory_map);
     DISPLAY_ON;
 
     fade_in();
@@ -30,10 +27,7 @@ void new_game() {
     DISPLAY_OFF;
     clear_screen();
     set_bkg_data(32+_FONT_TILE_COUNT, _033MUCHACHO_TILE_COUNT, _033Muchacho_tiles);
-    for (i = 0; i < _033MUCHACHO_ROWS*_033MUCHACHO_COLUMNS; ++i) {
-        tiles[i] = _033Muchacho_map[i]+32+_FONT_TILE_COUNT;
-    }
-    set_bkg_tiles(13,4,_033MUCHACHO_COLUMNS,_033MUCHACHO_ROWS,tiles);
+    set_bkg_tiles_with_offset(13,4,_033MUCHACHO_COLUMNS,_033MUCHACHO_ROWS,32+_FONT_TILE_COUNT,_033Muchacho_map);
     DISPLAY_ON;
 
     fade_in();
@@ -47,10 +41,7 @@ void new_game() {
     DISPLAY_OFF;
     clear_screen();
     set_bkg_data(32+_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
-    for (i = 0; i < _CALVIN_ROWS*_CALVIN_COLUMNS; ++i) {
-        tiles[i] = _calvin_map[i]+32+_FONT_TILE_COUNT;
-    }
-    set_bkg_tiles(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,tiles);
+    set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,32+_FONT_TILE_COUNT,_calvin_map);
     move_bkg(-56,0);
     DISPLAY_ON;
     fade_in();
@@ -115,10 +106,7 @@ void new_game() {
     DISPLAY_OFF;
     clear_screen();
     set_bkg_data(32+_FONT_TILE_COUNT, _NOLAN0_TILE_COUNT, _nolan0_tiles);
-    for (i = 0; i < _NOLAN0_ROWS*_NOLAN0_COLUMNS; ++i) {
-        tiles[i] = _nolan0_map[i]+32+_FONT_TILE_COUNT;
-    }
-    set_bkg_tiles(13,4,_NOLAN0_COLUMNS,_NOLAN0_ROWS,tiles);
+    set_bkg_tiles_with_offset(13,4,_NOLAN0_COLUMNS,_NOLAN0_ROWS,32+_FONT_TILE_COUNT,_nolan0_map);
     move_bkg(-56,0);
     DISPLAY_ON;
     fade_in();
@@ -186,10 +174,7 @@ void new_game() {
     DISPLAY_OFF;
     clear_screen();
     set_bkg_data(32+_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
-    for (i = 0; i < _CALVIN_ROWS*_CALVIN_COLUMNS; ++i) {
-        tiles[i] = _calvin_map[i]+32+_FONT_TILE_COUNT;
-    }
-    set_bkg_tiles(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,tiles);
+    set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,32+_FONT_TILE_COUNT,_calvin_map);
     DISPLAY_ON;
     fade_in();
 

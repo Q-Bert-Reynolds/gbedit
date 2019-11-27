@@ -30,6 +30,11 @@ void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
+void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *tiles) {
+    for (i = 0; i < w*h; ++i) bkg_buff[i] = tiles[i]+offset;
+    set_bkg_tiles(x,y,w,h,bkg_buff);
+}
+
 void draw_ui_box (UBYTE w, UBYTE h) {
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {

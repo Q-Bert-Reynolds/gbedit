@@ -273,9 +273,7 @@ void show_title () {
         wait_vbl_done();
     }
 
-    for (i = 0; i < _VERSION_COLUMNS; ++i) tiles[i] = _version_map[i] + _TITLE_TILE_COUNT;
-
-    set_bkg_tiles(7,8,_VERSION_COLUMNS,_VERSION_ROWS,tiles);
+    set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
     for (i = 0; i <= 64; i+=2) {
         x = -64+i;
         wait_vbl_done();

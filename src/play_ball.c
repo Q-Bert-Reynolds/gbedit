@@ -352,22 +352,32 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
 void show_aim_circle (UBYTE size) {
     SPRITES_8x8;
     i = (size%8)+_BASEBALL_TILE_COUNT;
-    set_sprite_tile(1, i);
-    set_sprite_prop(1, USE_PAL);
     set_sprite_tile(2, i);
-    set_sprite_prop(2, FLIP_X_PAL);
+    set_sprite_prop(2, 0);
     set_sprite_tile(3, i);
-    set_sprite_prop(3, FLIP_Y_PAL);
+    set_sprite_prop(3, S_FLIPX);
     set_sprite_tile(4, i);
-    set_sprite_prop(4, FLIP_XY_PAL);
+    set_sprite_prop(4, S_FLIPY);
+    set_sprite_tile(5, i);
+    set_sprite_prop(5, FLIP_XY);
+}
+
+void move_baseball (UBYTE x, UBYTE y, UBYTE tile) {
+    move_sprite(0, x, y);
+    set_sprite_tile(0, 1);
+    set_sprite_prop(0, 0);
+    move_sprite(1, x, y);
+    set_sprite_tile(1, tile);
+    set_sprite_prop(1, S_PALETTE);
 }
 
 void move_aim_circle (UBYTE x, UBYTE y) {
-    move_sprite(1, x,   y);
-    move_sprite(2, x+8, y);
-    move_sprite(3, x,   y+8);
-    move_sprite(4, x+8, y+8);
+    move_sprite(2, x,   y);
+    move_sprite(3, x+8, y);
+    move_sprite(4, x,   y+8);
+    move_sprite(5, x+8, y+8);
 }
+
 
 void pitch (struct player *p, int move) {
     sprintf(str_buff, "%s sets.", p->nickname);
@@ -412,7 +422,7 @@ void bat (struct player *p, int move) {
     for (i = 0; i < 150; ++i) {
         // bat
         k = joypad();
-        if (c == 0 && i > 0) {
+        if (c == 0 && i > 0 && i < 148) {
             if (k & J_RIGHT) ++a;
             else if (k & J_LEFT) --a;
             if (k & J_DOWN) ++b;
@@ -422,6 +432,7 @@ void bat (struct player *p, int move) {
             if (k & J_A) {
                 c = i;
                 set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user1_map);
+                move_aim_circle(-8,-8);
             }
         }
         else if (i == c + 2) {
@@ -431,10 +442,10 @@ void bat (struct player *p, int move) {
         // pitch
         x -= 4;
         y += 3;
-        set_sprite_tile(0, 6 + (i/10)%4);
-        move_sprite(0, x>>1, y>>1);
+        move_baseball(x>>1, y>>1,6+(i/10)%4);
         wait_vbl_done();
     }
+    move_aim_circle(-8,-8);
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
 }
 
@@ -448,12 +459,15 @@ void start_game () {
     DISPLAY_OFF;
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
+    OBP1_REG = SPR_PALETTE_1;
     move_bkg(0,0);
     clear_screen();
     set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
     set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
     set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
+    set_sprite_tile(0, 1);
+    set_sprite_prop(0, 0);
 
     balls_strikes_outs = (3 << 4) | (2 << 2) | 1;
     runners_on_base = (9 << 8) | 5;

@@ -335,6 +335,7 @@ void fade_in () {
     delay(200);
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
+    OBP1_REG = SPR_PALETTE_1;
     delay(200);
 }
 

@@ -243,6 +243,7 @@ void show_title () {
     clear_screen();
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
+    OBP1_REG = SPR_PALETTE_1;
 
     set_sprite_data(0, _TITLE_SPRITES_TILE_COUNT, _title_sprites_tiles);
     a = 0;

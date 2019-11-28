@@ -22,8 +22,8 @@ void start_game();
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
-#define SPR_PALETTE_0 0xE4
-#define SPR_PALETTE_1 0xD0
+#define SPR_PALETTE_0 0xE4 
+#define SPR_PALETTE_1 0x90
 
 // GB color palettes
 #define RGB_LT_YELLOW RGB(31, 31, 20)
@@ -32,9 +32,8 @@ void start_game();
 #define RBG_LT_BLUE   RGB(18, 21, 28)
 
 // sprite props
-#define USE_PAL 0x10
-#define FLIP_X_PAL  (S_FLIPX    | USE_PAL   )
-#define FLIP_Y_PAL  (S_FLIPY    | USE_PAL   )
+#define FLIP_X_PAL  (S_FLIPX    | S_PALETTE )
+#define FLIP_Y_PAL  (S_FLIPY    | S_PALETTE )
 #define FLIP_XY_PAL (FLIP_X_PAL | FLIP_Y_PAL)
 #define FLIP_XY     (S_FLIPX    | S_FLIPY   )
 

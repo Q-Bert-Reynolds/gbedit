@@ -97,7 +97,7 @@ void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data
 
 void play_intro () {
     set_bkg_data_doubled(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
-    set_bkg_data(192, _080LAGGARD_TILE_COUNT, _080Laggard_tiles);
+    set_bkg_data(207, _080LAGGARD_TILE_COUNT, _080Laggard_tiles);
     draw_win_ui_box(0,0,20,6);
     move_win(0,96);
     SHOW_WIN;
@@ -117,7 +117,7 @@ void play_intro () {
         }
     }
     set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
-    set_bkg_tiles_with_offset(19-_080LAGGARD_COLUMNS,7-_080LAGGARD_ROWS,_080LAGGARD_COLUMNS,_080LAGGARD_ROWS,192,_080Laggard_map);
+    set_bkg_tiles_with_offset(19-_080LAGGARD_COLUMNS,7-_080LAGGARD_ROWS,_080LAGGARD_COLUMNS,_080LAGGARD_ROWS,207,_080Laggard_map);
 
     move_bkg(160,0);
     VBK_REG = 0;
@@ -154,6 +154,8 @@ void play_intro () {
     wait_vbl_done();
     move_bkg(0,0);
 
+    set_bkg_data(32+_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
     reveal_text("Let's go!");
     HIDE_WIN;
 }
@@ -316,9 +318,7 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     }
     if (c < 4) set_bkg_tiles(7,c+13,2,4-c,"--------");
 
-    tiles[0] = ARROW_RIGHT;
-    set_bkg_tiles(6,13,1,1,tiles);
-
+    move_move_menu_arrow(move_choice);
     show_move_info();//p->moves[move_choice]);
 
     waitpadup();
@@ -352,21 +352,21 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
 void show_aim_circle (UBYTE size) {
     SPRITES_8x8;
     i = (size%8)+_BASEBALL_TILE_COUNT;
-    set_sprite_tile(0, i);
-    set_sprite_prop(0, USE_PAL);
     set_sprite_tile(1, i);
-    set_sprite_prop(1, FLIP_X_PAL);
+    set_sprite_prop(1, USE_PAL);
     set_sprite_tile(2, i);
-    set_sprite_prop(2, FLIP_Y_PAL);
+    set_sprite_prop(2, FLIP_X_PAL);
     set_sprite_tile(3, i);
-    set_sprite_prop(3, FLIP_XY_PAL);
+    set_sprite_prop(3, FLIP_Y_PAL);
+    set_sprite_tile(4, i);
+    set_sprite_prop(4, FLIP_XY_PAL);
 }
 
 void move_aim_circle (UBYTE x, UBYTE y) {
-    move_sprite(0, x,   y);
-    move_sprite(1, x+8, y);
-    move_sprite(2, x,   y+8);
-    move_sprite(3, x+8, y+8);
+    move_sprite(1, x,   y);
+    move_sprite(2, x+8, y);
+    move_sprite(3, x,   y+8);
+    move_sprite(4, x+8, y+8);
 }
 
 void pitch (struct player *p, int move) {
@@ -376,22 +376,15 @@ void pitch (struct player *p, int move) {
     move_aim_circle(96,32);
 }
 
-void show_batter_user () {
-    set_bkg_data(32+_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
-    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER_COLUMNS,_RIGHTY_BATTER_USER_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user_map);
-}
-
 void bat (struct player *p, int move) {
-    show_batter_user();
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
     show_aim_circle(7);
     move_aim_circle(49,85); //TODO: handle lefty batters
-    sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
+    sprintf(str_buff, "%s steps\ninto the box.\0", p->nickname);
     display_text(str_buff);
-    // sprintf(str_buff, "%s sets.", "LAGGARD");
-    // display_text(str_buff);
     a = 49<<1;
     b = 85<<1;
-    for (i = 0; i < 600; ++i) {
+    for (i = 0; i < 60; ++i) {
         k = joypad();
         if (k & J_RIGHT) ++a;
         else if (k & J_LEFT) --a;
@@ -400,6 +393,49 @@ void bat (struct player *p, int move) {
         move_aim_circle(a>>1, b>>1);
         wait_vbl_done();
     }
+    sprintf(str_buff, "%s sets.\0", "LAGGARD");
+    display_text(str_buff);
+    for (i = 0; i < 60; ++i) { // TODO: quick pitch should decrease this time
+        k = joypad();
+        if (k & J_RIGHT) ++a;
+        else if (k & J_LEFT) --a;
+        if (k & J_DOWN) ++b;
+        else if (k & J_UP) --b;
+        move_aim_circle(a>>1, b>>1);
+        wait_vbl_done();
+    }
+    display_text("And the pitch.");
+    x = 144<<1;
+    y = 16<<1;
+
+    c = 0;
+    for (i = 0; i < 150; ++i) {
+        // bat
+        k = joypad();
+        if (c == 0 && i > 0) {
+            if (k & J_RIGHT) ++a;
+            else if (k & J_LEFT) --a;
+            if (k & J_DOWN) ++b;
+            else if (k & J_UP) --b;
+            move_aim_circle(a>>1, b>>1);
+
+            if (k & J_A) {
+                c = i;
+                set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user1_map);
+            }
+        }
+        else if (i == c + 2) {
+            set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user2_map);
+        }
+        
+        // pitch
+        x -= 4;
+        y += 3;
+        set_sprite_tile(0, 6 + (i/10)%4);
+        move_sprite(0, x>>1, y>>1);
+        wait_vbl_done();
+    }
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
 }
 
 void play_ball (struct player *p, int move) {
@@ -441,7 +477,7 @@ void start_game () {
 
     play_intro();
     draw_ui();
-
+    
     x = 0;
     y = 0;
     while (1) {
@@ -450,6 +486,8 @@ void start_game () {
             case 0:
                 b = select_move_menu_item(&test_player);
                 if (b > 0) play_ball(&test_player, b-1);
+                x = 0;
+                y = 0;
                 break;
             case 1:
                 break;

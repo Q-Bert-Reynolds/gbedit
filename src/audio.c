@@ -181,7 +181,7 @@ const BYTE drum_loop3[] = {
     2,1,2,2,
 };
 
-void set_note(int channel, note *n){
+void set_note(UBYTE channel, note *n){
     if ((*n).pitch == SILENCE) return;
 
     switch(channel){

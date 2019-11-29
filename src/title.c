@@ -56,7 +56,7 @@
         &_077Pinto_map,
         &_129Fish_map,
     };
-    const int intro_player_columns[] = {
+    const UBYTE intro_player_columns[] = {
         _004GINGER_COLUMNS,
         _007SQUIRT_COLUMNS,
         _001BUBBI_COLUMNS,
@@ -74,7 +74,7 @@
         _077PINTO_COLUMNS,
         _129FISH_COLUMNS,
     };
-    const int intro_player_tile_count[] = {
+    const UBYTE intro_player_tile_count[] = {
         _004GINGER_TILE_COUNT,
         _007SQUIRT_TILE_COUNT,
         _001BUBBI_TILE_COUNT,
@@ -146,7 +146,7 @@
         &_094Macobb_map,
         &_026Rai_map,
     };
-    const int intro_player_columns[] = {
+    const UBYTE intro_player_columns[] = {
         _007SQUIRT_COLUMNS,
         _004GINGER_COLUMNS,
         _001BUBBI_COLUMNS,
@@ -164,7 +164,7 @@
         _094MACOBB_COLUMNS,
         _026RAI_COLUMNS,
     };
-    const int intro_player_tile_count[] = {
+    const UBYTE intro_player_tile_count[] = {
         _007SQUIRT_TILE_COUNT,
         _004GINGER_TILE_COUNT,
         _001BUBBI_TILE_COUNT,
@@ -223,7 +223,7 @@ void cycle_players_lcd_interrupt(void) {
     }
 }
 
-void show_player (int p) {
+void show_player (UBYTE p) {
     set_bkg_data(PLAYER_INDEX, intro_player_tile_count[p], intro_player_tiles[p]);
     a = intro_player_columns[p];
     b = 7-a;
@@ -243,7 +243,7 @@ void show_title () {
     clear_screen();
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
-    OBP1_REG = SPR_PALETTE_1;
+    OBP1_REG = 0xE0;
 
     set_sprite_data(0, _TITLE_SPRITES_TILE_COUNT, _title_sprites_tiles);
     a = 0;
@@ -258,6 +258,7 @@ void show_title () {
         }
     }
     move_sprite(5, 94, 117); // move ball to hand
+    set_sprite_prop(5, S_PALETTE);
 
     disable_interrupts();
     add_LCD(show_title_lcd_interrupt);
@@ -360,7 +361,7 @@ UBYTE show_start_menu () {
     return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION");
 }
 
-void move_options_arrow (int y) {
+void move_options_arrow (UBYTE y) {
     tiles[0] = 0;
     tiles[1] = ARROW_RIGHT;
     tiles[2] = ARROW_RIGHT_BLANK;

@@ -130,7 +130,7 @@ void display_text (unsigned char *text) {
     SHOW_WIN;
 }
 
-void move_menu_arrow (int y) {
+void move_menu_arrow (UBYTE y) {
     for (i = 0; i < c; i++) {
         tiles[i*2] = 0;
         if (i == y) tiles[i*2+1] = ARROW_RIGHT;
@@ -214,7 +214,7 @@ void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) 
     waitpadup();
 }
 
-void update_text_entry_display (char *str, int max_len) {
+void update_text_entry_display (char *str, WORD max_len) {
     w = strlen(str);
     for (i = 0; i < max_len; ++i) {
         tiles[i] = ' ';
@@ -229,9 +229,9 @@ void update_text_entry_display (char *str, int max_len) {
 
 const char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
 const char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
-char *show_text_entry (char *title, char *str, int max_len) {
+char *show_text_entry (char *title, char *str, WORD max_len) {
     DISPLAY_OFF;
-    for (i = 0; i <= max_len; ++i) str[i] = 0;
+    for (i = 0; i != max_len; ++i) str[i] = 0;
     clear_screen();
     move_win(0,0);
     l = strlen(title);
@@ -246,11 +246,11 @@ char *show_text_entry (char *title, char *str, int max_len) {
     l = 0;
     while (1) {
         if (c == 0) {
-            strcpy(str_buff, upper_case);
+            memcpy(str_buff, upper_case, 46);
             set_win_tiles(2,15,10,1,"lower case");
         }
         else {
-            strcpy(str_buff, lower_case);
+            memcpy(str_buff, lower_case, 46);
             set_win_tiles(2,15,10,1,"UPPER CASE");
         }
 

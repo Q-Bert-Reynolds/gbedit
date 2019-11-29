@@ -291,7 +291,7 @@ UBYTE select_play_menu_item () {
     return 0;
 }
 
-void move_move_menu_arrow (int y) {
+void move_move_menu_arrow (UBYTE y) {
     for (i = 0; i < 4; i++) {
         tiles[i] = (i == y) ? ARROW_RIGHT : 0;
     }
@@ -390,14 +390,14 @@ void move_aim_circle (UBYTE x, UBYTE y) {
     move_sprite(6, x+8, y+8);
 }
 
-void pitch (struct player *p, int move) {
+void pitch (struct player *p, UBYTE move) {
     sprintf(str_buff, "%s sets.", p->nickname);
     reveal_text(str_buff);
     show_aim_circle(3);
     move_aim_circle(96,32);
 }
 
-void bat (struct player *p, int move) {
+void bat (struct player *p, UBYTE move) {
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     show_aim_circle(7);
     move_aim_circle(49,85); //TODO: handle lefty batters
@@ -458,7 +458,7 @@ void bat (struct player *p, int move) {
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
 }
 
-void play_ball (struct player *p, int move) {
+void play_ball (struct player *p, UBYTE move) {
     if (home_team == (frame % 2)) bat(p, move);
     else pitch(p, move);
     HIDE_WIN;

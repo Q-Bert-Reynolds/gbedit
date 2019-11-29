@@ -5,8 +5,7 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
-#include "../res/font.h"
-#include "../res/ui.h"
+#include "../res/ui_font.h"
 
 // banks
 #define START_BANK     2

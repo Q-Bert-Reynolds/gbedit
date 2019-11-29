@@ -96,7 +96,7 @@ void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data
 }
 
 void play_intro () {
-    set_bkg_data_doubled(32+_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
+    set_bkg_data_doubled(_UI_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
     set_bkg_data(207, _080LAGGARD_TILE_COUNT, _080Laggard_tiles);
     draw_win_ui_box(0,0,20,6);
     move_win(0,96);
@@ -107,12 +107,12 @@ void play_intro () {
             if (j < 3) {
                 set_sprite_tile(
                     j*(_CALVIN_BACK_COLUMNS-1)+i, 
-                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT
+                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
                 );
             }
             else {
                 tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = 
-                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+32+_FONT_TILE_COUNT;
+                    _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
             }
         }
     }
@@ -154,8 +154,8 @@ void play_intro () {
     wait_vbl_done();
     move_bkg(0,0);
 
-    set_bkg_data(32+_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
-    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
+    set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     reveal_text("Let's go!");
     HIDE_WIN;
 }
@@ -362,6 +362,12 @@ void show_aim_circle (UBYTE size) {
     set_sprite_prop(6, FLIP_XY);
 }
 
+void hide_baseball () {
+    move_sprite(0,0,0);
+    move_sprite(1,0,0);
+    move_sprite(2,0,0);
+}
+
 void move_baseball (UBYTE i) {
     x = (126*(128-i)+52*i)>>7;
     y = (13*(128-i)+87*i)>>7;
@@ -392,7 +398,7 @@ void pitch (struct player *p, int move) {
 }
 
 void bat (struct player *p, int move) {
-    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     show_aim_circle(7);
     move_aim_circle(49,85); //TODO: handle lefty batters
     sprintf(str_buff, "%s steps\ninto the box.\0", p->nickname);
@@ -434,12 +440,12 @@ void bat (struct player *p, int move) {
 
             if (k & J_A) {
                 c = i;
-                set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user1_map);
+                set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user1_map);
                 move_aim_circle(-8,-8);
             }
         }
         else if (i == c+2*s) {
-            set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user2_map);
+            set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user2_map);
         }
         
         // pitch
@@ -447,8 +453,9 @@ void bat (struct player *p, int move) {
         move_baseball(i);
         wait_vbl_done();
     }
+    hide_baseball();
     move_aim_circle(-8,-8);
-    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user0_map);
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
 }
 
 void play_ball (struct player *p, int move) {
@@ -464,8 +471,7 @@ void start_game () {
     OBP1_REG = SPR_PALETTE_1;
     move_bkg(0,0);
     clear_screen();
-    set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
-    set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
+    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
     set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
     set_sprite_tile(0, 1);

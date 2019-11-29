@@ -1,6 +1,3 @@
-#TODO: commandline options (1bpp, 2bpp, rle)
-#      only update .c file when png changes
-
 import os
 import math
 from PIL import Image
@@ -90,7 +87,7 @@ def png_to_c (path):
   rows, cols, hex_vals = gb_encode(img)
   tile_count = rows*cols
 
-  if name in ["font", "ui"]:
+  if name in ["ui_font"]:
     tileset = []
     for i in range(0, len(hex_vals), 16):
       tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"

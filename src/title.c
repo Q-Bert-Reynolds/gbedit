@@ -317,8 +317,7 @@ UBYTE show_start_menu () {
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     clear_screen();
-    set_bkg_data(0, _UI_TILE_COUNT, _ui_tiles);
-    set_bkg_data(32, _FONT_TILE_COUNT, _font_tiles);
+    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
     DISPLAY_ON;
 
     disable_interrupts();

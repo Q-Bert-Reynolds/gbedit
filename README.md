@@ -7,7 +7,10 @@ TODO:
     LOAD PLAYER SPRITES CORRECTLY!!!!
         function in main
         changes bank, loads tiles into vram & map into buffer, changes bank back
-    merge UI & Font tiles into single sheet to avoid addition everywhere
+    python script
+        handle 1bpp and rle
+        only update .c file when png changes
+        identify animations - same size, numbered names (name0, name1, etc)
     Main
     Intro
         sfx
@@ -20,10 +23,18 @@ TODO:
         shrink Calvin image
     Battle
         doubled back & player front images should be different batting/pitching images
+        hit the ball
         opponent pitching
+            animation
+            handle different moves
         user batting
+            make contact
+            handle different moves
         opponent batting
+            animation
         user pitching
+            animation
+            move ball
     Team Menu
     Walking
     Roledex

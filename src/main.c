@@ -1,6 +1,5 @@
 #include "beisbol.h"
-#include "../res/font.c"
-#include "../res/ui.c"
+#include "../res/ui_font.c"
 
 const UBYTE *types[15] = { 
     "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
@@ -228,8 +227,8 @@ void update_text_entry_display (char *str, int max_len) {
     waitpadup();
 }
 
-char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
-char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
+const char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
+const char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
 char *show_text_entry (char *title, char *str, int max_len) {
     DISPLAY_OFF;
     for (i = 0; i <= max_len; ++i) str[i] = 0;

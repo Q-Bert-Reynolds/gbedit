@@ -352,32 +352,37 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
 void show_aim_circle (UBYTE size) {
     SPRITES_8x8;
     i = (size%8)+_BASEBALL_TILE_COUNT;
-    set_sprite_tile(2, i);
-    set_sprite_prop(2, 0);
     set_sprite_tile(3, i);
-    set_sprite_prop(3, S_FLIPX);
+    set_sprite_prop(3, 0);
     set_sprite_tile(4, i);
-    set_sprite_prop(4, S_FLIPY);
+    set_sprite_prop(4, S_FLIPX);
     set_sprite_tile(5, i);
-    set_sprite_prop(5, FLIP_XY);
+    set_sprite_prop(5, S_FLIPY);
+    set_sprite_tile(6, i);
+    set_sprite_prop(6, FLIP_XY);
 }
 
-void move_baseball (UBYTE x, UBYTE y, UBYTE tile) {
+void move_baseball (UBYTE i) {
+    x = (126*(128-i)+52*i)>>7;
+    y = (13*(128-i)+87*i)>>7;
+    t = 6+(i/10)%4;
     move_sprite(0, x, y);
     set_sprite_tile(0, 1);
     set_sprite_prop(0, 0);
     move_sprite(1, x, y);
-    set_sprite_tile(1, tile);
+    set_sprite_tile(1, t);
     set_sprite_prop(1, S_PALETTE);
+    move_sprite(2, 52, 87);
+    set_sprite_tile(2, 4);
+    set_sprite_prop(2, 0);
 }
 
 void move_aim_circle (UBYTE x, UBYTE y) {
-    move_sprite(2, x,   y);
-    move_sprite(3, x+8, y);
-    move_sprite(4, x,   y+8);
-    move_sprite(5, x+8, y+8);
+    move_sprite(3, x,   y);
+    move_sprite(4, x+8, y);
+    move_sprite(5, x,   y+8);
+    move_sprite(6, x+8, y+8);
 }
-
 
 void pitch (struct player *p, int move) {
     sprintf(str_buff, "%s sets.", p->nickname);
@@ -415,14 +420,12 @@ void bat (struct player *p, int move) {
         wait_vbl_done();
     }
     display_text("And the pitch.");
-    x = 144<<1;
-    y = 16<<1;
-
     c = 0;
-    for (i = 0; i < 150; ++i) {
+    s = 4; // speed
+    for (i = 0; i < 200; i+=s) {
         // bat
         k = joypad();
-        if (c == 0 && i > 0 && i < 148) {
+        if (c == 0 && i > 0) {
             if (k & J_RIGHT) ++a;
             else if (k & J_LEFT) --a;
             if (k & J_DOWN) ++b;
@@ -435,14 +438,13 @@ void bat (struct player *p, int move) {
                 move_aim_circle(-8,-8);
             }
         }
-        else if (i == c + 2) {
+        else if (i == c+2*s) {
             set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,32+_FONT_TILE_COUNT,_righty_batter_user2_map);
         }
         
         // pitch
-        x -= 4;
-        y += 3;
-        move_baseball(x>>1, y>>1,6+(i/10)%4);
+        // pos = (start_pos * (256-i) + end_pos * i) >> 7;
+        move_baseball(i);
         wait_vbl_done();
     }
     move_aim_circle(-8,-8);

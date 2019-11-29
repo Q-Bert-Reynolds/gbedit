@@ -65,7 +65,7 @@ extern char user_name[8];
 extern char rival_name[8];
 
 // global vars
-int a, b, c, d, i, j, k, l, w, x, y, z;
+int a, b, c, d, i, j, k, l, s, t, w, x, y, z;
 UBYTE tiles[1024];
 UBYTE bkg_buff[1024];
 char str_buff[256];

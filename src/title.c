@@ -262,6 +262,7 @@ void show_title () {
     disable_interrupts();
     add_LCD(show_title_lcd_interrupt);
     enable_interrupts();
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);

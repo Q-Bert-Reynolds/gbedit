@@ -4,184 +4,10 @@
 
 #ifdef HOME
     #include "../res/home_version/version.c"
-    #include "../res/players/004Ginger.c"
-    #include "../res/players/007Squirt.c"
-    #include "../res/players/001Bubbi.c"
-    #include "../res/players/013Weeds.c"
-    #include "../res/players/032Chico.c"
-    #include "../res/players/123Scissors.c"
-    #include "../res/players/025Chu.c"
-    #include "../res/players/035Fairy.c"
-    #include "../res/players/112Don.c"
-    #include "../res/players/063Bruh.c"
-    #include "../res/players/092Gas.c"
-    #include "../res/players/132YeahYeah.c"
-    #include "../res/players/017Gio.c"
-    #include "../res/players/095Onyx.c"
-    #include "../res/players/077Pinto.c"
-    #include "../res/players/129Fish.c"
-    const char* intro_player_tiles[] = {
-        &_004Ginger_tiles,
-        &_007Squirt_tiles,
-        &_001Bubbi_tiles,
-        &_013Weeds_tiles,
-        &_032Chico_tiles,
-        &_123Scissors_tiles,
-        &_025Chu_tiles,
-        &_035Fairy_tiles,
-        &_112Don_tiles,
-        &_063Bruh_tiles,
-        &_092Gas_tiles,
-        &_132YeahYeah_tiles,
-        &_017Gio_tiles,
-        &_095Onyx_tiles,
-        &_077Pinto_tiles,
-        &_129Fish_tiles,
-    };
-    const char* intro_player_maps[] = {
-        &_004Ginger_map,
-        &_007Squirt_map,
-        &_001Bubbi_map,
-        &_013Weeds_map,
-        &_032Chico_map,
-        &_123Scissors_map,
-        &_025Chu_map,
-        &_035Fairy_map,
-        &_112Don_map,
-        &_063Bruh_map,
-        &_092Gas_map,
-        &_132YeahYeah_map,
-        &_017Gio_map,
-        &_095Onyx_map,
-        &_077Pinto_map,
-        &_129Fish_map,
-    };
-    const UBYTE intro_player_columns[] = {
-        _004GINGER_COLUMNS,
-        _007SQUIRT_COLUMNS,
-        _001BUBBI_COLUMNS,
-        _013WEEDS_COLUMNS,
-        _032CHICO_COLUMNS,
-        _123SCISSORS_COLUMNS,
-        _025CHU_COLUMNS,
-        _035FAIRY_COLUMNS,
-        _112DON_COLUMNS,
-        _063BRUH_COLUMNS,
-        _092GAS_COLUMNS,
-        _132YEAHYEAH_COLUMNS,
-        _017GIO_COLUMNS,
-        _095ONYX_COLUMNS,
-        _077PINTO_COLUMNS,
-        _129FISH_COLUMNS,
-    };
-    const UBYTE intro_player_tile_count[] = {
-        _004GINGER_TILE_COUNT,
-        _007SQUIRT_TILE_COUNT,
-        _001BUBBI_TILE_COUNT,
-        _013WEEDS_TILE_COUNT,
-        _032CHICO_TILE_COUNT,
-        _123SCISSORS_TILE_COUNT,
-        _025CHU_TILE_COUNT,
-        _035FAIRY_TILE_COUNT,
-        _112DON_TILE_COUNT,
-        _063BRUH_TILE_COUNT,
-        _092GAS_TILE_COUNT,
-        _132YEAHYEAH_TILE_COUNT,
-        _017GIO_TILE_COUNT,
-        _095ONYX_TILE_COUNT,
-        _077PINTO_TILE_COUNT,
-        _129FISH_TILE_COUNT,
-    };
+    const unsigned char intro_player_nums[] = { 4, 7, 1, 13, 32, 123, 25, 35, 112, 63, 092, 132, 17, 095, 77, 129, };
 #else
     #include "../res/away_version/version.c"
-    #include "../res/players/007Squirt.c"
-    #include "../res/players/004Ginger.c"
-    #include "../res/players/001Bubbi.c"
-    #include "../res/players/056Man.c"
-    #include "../res/players/106Bruce.c"
-    #include "../res/players/037Vulfpek.c"
-    #include "../res/players/113Chance.c"
-    #include "../res/players/142Arrowhead.c"
-    #include "../res/players/135Jolt.c"
-    #include "../res/players/143Bear.c"
-    #include "../res/players/044Gloomy.c"
-    #include "../res/players/060Polly.c"
-    #include "../res/players/084Duce.c"
-    #include "../res/players/137Polygon.c"
-    #include "../res/players/094Macobb.c"
-    #include "../res/players/026Rai.c"
-    const char* intro_player_tiles[] = {
-        &_007Squirt_tiles,
-        &_004Ginger_tiles,
-        &_001Bubbi_tiles,
-        &_056Man_tiles,
-        &_106Bruce_tiles,
-        &_037Vulfpek_tiles,
-        &_113Chance_tiles,
-        &_142Arrowhead_tiles,
-        &_135Jolt_tiles,
-        &_143Bear_tiles,
-        &_044Gloomy_tiles,
-        &_060Polly_tiles,
-        &_084Duce_tiles,
-        &_137Polygon_tiles,
-        &_094Macobb_tiles,
-        &_026Rai_tiles,
-    };
-    const char* intro_player_maps[] = {
-        &_007Squirt_map,
-        &_004Ginger_map,
-        &_001Bubbi_map,
-        &_056Man_map,
-        &_106Bruce_map,
-        &_037Vulfpek_map,
-        &_113Chance_map,
-        &_142Arrowhead_map,
-        &_135Jolt_map,
-        &_143Bear_map,
-        &_044Gloomy_map,
-        &_060Polly_map,
-        &_084Duce_map,
-        &_137Polygon_map,
-        &_094Macobb_map,
-        &_026Rai_map,
-    };
-    const UBYTE intro_player_columns[] = {
-        _007SQUIRT_COLUMNS,
-        _004GINGER_COLUMNS,
-        _001BUBBI_COLUMNS,
-        _056MAN_COLUMNS,
-        _106BRUCE_COLUMNS,
-        _037VULFPEK_COLUMNS,
-        _113CHANCE_COLUMNS,
-        _142ARROWHEAD_COLUMNS,
-        _135JOLT_COLUMNS,
-        _143BEAR_COLUMNS,
-        _044GLOOMY_COLUMNS,
-        _060POLLY_COLUMNS,
-        _084DUCE_COLUMNS,
-        _137POLYGON_COLUMNS,
-        _094MACOBB_COLUMNS,
-        _026RAI_COLUMNS,
-    };
-    const UBYTE intro_player_tile_count[] = {
-        _007SQUIRT_TILE_COUNT,
-        _004GINGER_TILE_COUNT,
-        _001BUBBI_TILE_COUNT,
-        _056MAN_TILE_COUNT,
-        _106BRUCE_TILE_COUNT,
-        _037VULFPEK_TILE_COUNT,
-        _113CHANCE_TILE_COUNT,
-        _142ARROWHEAD_TILE_COUNT,
-        _135JOLT_TILE_COUNT,
-        _143BEAR_TILE_COUNT,
-        _044GLOOMY_TILE_COUNT,
-        _060POLLY_TILE_COUNT,
-        _084DUCE_TILE_COUNT,
-        _137POLYGON_TILE_COUNT,
-        _094MACOBB_TILE_COUNT,
-        _026RAI_TILE_COUNT,
-    };
+    const unsigned char intro_player_nums[] = { 7, 4, 1, 56, 106, 37, 113, 142, 135, 143, 44, 60, 84, 137, 94, 26 };
 #endif
 
 #define PLAYER_INDEX _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
@@ -224,17 +50,10 @@ void cycle_players_lcd_interrupt(void) {
 }
 
 void show_player (UBYTE p) {
-    set_bkg_data(PLAYER_INDEX, intro_player_tile_count[p], intro_player_tiles[p]);
-    a = intro_player_columns[p];
-    b = 7-a;
-    k = 0;
-    for (j = 0; j < 7; ++j) {
-        for (i = 0; i < 7; ++i) {
-            if (i < b || j < b) tiles[j*7+i] = 0;
-            else tiles[j*7+i] = intro_player_maps[p][k++]+PLAYER_INDEX;
-        }
-    }
-    set_bkg_tiles(20, 10, 7, 7, tiles);
+    load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+    a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
+    clear_bkg_area(20, 10, 7, 7);
+    set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
 }
 
 const unsigned char ball_toss[] = {16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15};

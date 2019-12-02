@@ -5,7 +5,7 @@
 #include "../res/play/righty_batter_user/righty_batter_user.c"
 #include "../res/play/righty_pitcher_opponent/righty_pitcher_opponent.c"
 #include "../res/coaches/calvin_back.c"
-#include "../res/players/080Laggard.c"
+// #include "../res/players/080Laggard.c"
 
 struct player test_player;
 struct move move1;
@@ -98,7 +98,7 @@ void set_bkg_data_doubled (UINT8 first_tile, UINT8 nb_tiles, unsigned char *data
 
 void play_intro () {
     set_bkg_data_doubled(_UI_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
-    set_bkg_data(_UI_FONT_TILE_COUNT+64, _080LAGGARD_TILE_COUNT, _080Laggard_tiles);
+    load_player_bkg_data(80, _UI_FONT_TILE_COUNT+64, PLAY_BALL_BANK);
     draw_win_ui_box(0,0,20,6);
     move_win(0,96);
     SHOW_WIN;
@@ -118,14 +118,8 @@ void play_intro () {
         }
     }
     set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
-    set_bkg_tiles_with_offset(
-        19-_080LAGGARD_COLUMNS,
-        7-_080LAGGARD_ROWS,
-        _080LAGGARD_COLUMNS,
-        _080LAGGARD_ROWS,
-        _UI_FONT_TILE_COUNT+64,
-        _080Laggard_map
-    );
+    c = get_player_img_columns(80, PLAY_BALL_BANK);
+    set_player_bkg_tiles(19-c, 7-c, 80, _UI_FONT_TILE_COUNT+64, PLAY_BALL_BANK);
 
     move_bkg(160,0);
     VBK_REG = 0;

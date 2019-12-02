@@ -2,7 +2,7 @@
 #include "../res/coaches/doc_hickory.c"
 #include "../res/coaches/calvin.c"
 #include "../res/coaches/nolan0.c"
-#include "../res/players/033Muchacho.c"
+// #include "../res/players/033Muchacho.c"
 
 char *home_names = "NEW NAME\nRED\nCALVIN\nHOMER";
 char *away_names = "NEW NAME\nBLUE\nNOLAN\nMIKE";
@@ -25,8 +25,8 @@ void new_game() {
     // set image to Muchacho
     DISPLAY_OFF;
     clear_screen();
-    set_bkg_data(_UI_FONT_TILE_COUNT, _033MUCHACHO_TILE_COUNT, _033Muchacho_tiles);
-    set_bkg_tiles_with_offset(13,4,_033MUCHACHO_COLUMNS,_033MUCHACHO_ROWS,_UI_FONT_TILE_COUNT,_033Muchacho_map);
+    load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+    set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
     DISPLAY_ON;
 
     fade_in();

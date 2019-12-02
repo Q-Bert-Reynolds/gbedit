@@ -8,10 +8,11 @@
 #include "../res/ui_font.h"
 
 // banks
-#define START_BANK     2
-#define TITLE_BANK     3
-#define NEW_GAME_BANK  4
-#define PLAY_BALL_BANK 5
+#define START_BANK      2
+#define TITLE_BANK      3
+#define NEW_GAME_BANK   4
+#define PLAY_BALL_BANK  5
+#define PLAYER_IMG_BANK 10 
 
 // banked entry points
 void start();
@@ -134,10 +135,33 @@ void fade_out ();
 void fade_in ();
 
 // images
-void load_player_front_pitching (UBYTE number);
-void load_player_front_batting (UBYTE number);
-void load_player_back_pitching (UBYTE number);
-void load_player_back_batting (UBYTE number);
+extern const char* player_tiles0[];
+extern const char* player_tiles1[];
+extern const char* player_tiles2[];
+extern const char* player_tiles3[];
+extern const char* player_tiles4[];
+extern const char* player_tiles5[];
+extern const unsigned char player_tile_counts0[];
+extern const unsigned char player_tile_counts1[];
+extern const unsigned char player_tile_counts2[];
+extern const unsigned char player_tile_counts3[];
+extern const unsigned char player_tile_counts4[];
+extern const unsigned char player_tile_counts5[];
+extern const unsigned char player_columns0[];
+extern const unsigned char player_columns1[];
+extern const unsigned char player_columns2[];
+extern const unsigned char player_columns3[];
+extern const unsigned char player_columns4[];
+extern const unsigned char player_columns5[];
+extern const char* player_maps0[];
+extern const char* player_maps1[];
+extern const char* player_maps2[];
+extern const char* player_maps3[];
+extern const char* player_maps4[];
+extern const char* player_maps5[];
+void load_player_bkg_data (UBYTE number, UBYTE vram_offset, WORD return_bank);
+UBYTE get_player_img_columns (UBYTE number, WORD return_bank);
+void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WORD return_bank);
 
 // audio
 // void setup_audio();

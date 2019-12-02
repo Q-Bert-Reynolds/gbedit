@@ -4,9 +4,7 @@ Compiling:
     `make`
 
 TODO:
-    LOAD PLAYER SPRITES CORRECTLY!!!!
-        function in main
-        changes bank, loads tiles into vram & map into buffer, changes bank back
+    fix
     player images:
         batting/pitching -> front/back -> ready/action (8 each)
     python script

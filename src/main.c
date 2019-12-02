@@ -120,12 +120,13 @@ void display_text (unsigned char *text) {
     for (i = 0; i < l; i++) {
         if (text[i] == '\n') {
             memcpy(str_buff,text+w,i-w);
-            set_win_tiles(1, 2+y, 17, 1, str_buff);
+            set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
             ++y;
-            if (y == 2) break;
             w = i+1;
         }
     }
+    memcpy(str_buff,text+w,i-w);
+    set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
     move_win(0,96);
     SHOW_WIN;
 }

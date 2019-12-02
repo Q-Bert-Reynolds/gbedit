@@ -7,6 +7,8 @@ TODO:
     LOAD PLAYER SPRITES CORRECTLY!!!!
         function in main
         changes bank, loads tiles into vram & map into buffer, changes bank back
+    player images:
+        batting/pitching -> front/back -> ready/action (8 each)
     python script
         handle 1bpp and rle
         only update .c file when png changes
@@ -25,10 +27,8 @@ TODO:
         doubled back & player front images should be different batting/pitching images
         hit the ball
         opponent pitching
-            animation
             handle different moves
         user batting
-            make contact
             handle different moves
         opponent batting
             animation

@@ -120,18 +120,24 @@ UBYTE animation_style;
 UBYTE coaching_style;
 
 // drawing
-void hide_sprites();
-void clear_screen();
+void hide_sprites ();
+void clear_screen ();
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *tiles);
-void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
 char *show_text_entry (char *title, char *str, WORD max_len);
 void reveal_text (UBYTE *text);
 void display_text (UBYTE *text);
-void fade_out();
-void fade_in();
+void fade_out ();
+void fade_in ();
+
+// images
+void load_player_front_pitching (UBYTE number);
+void load_player_front_batting (UBYTE number);
+void load_player_back_pitching (UBYTE number);
+void load_player_back_batting (UBYTE number);
 
 // audio
 // void setup_audio();

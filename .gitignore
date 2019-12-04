@@ -24,6 +24,7 @@ res/**/*.h
 # Linker output
 *.ilk
 *.map
+*.sym
 *.exp
 
 # Precompiled Headers

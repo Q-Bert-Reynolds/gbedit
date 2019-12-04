@@ -8,6 +8,8 @@ char *home_names = "NEW NAME\nRED\nCALVIN\nHOMER";
 char *away_names = "NEW NAME\nBLUE\nNOLAN\nMIKE";
 
 void new_game() {
+    set_interrupts(VBL_IFLAG);
+
     // set image to Doc
     DISPLAY_OFF;
     move_bkg(48,0);

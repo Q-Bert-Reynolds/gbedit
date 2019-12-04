@@ -16,7 +16,7 @@ void clear_screen (UBYTE tile) {
     for (i = 0; i < 1024; ++i) tiles[i] = tile;
     set_bkg_tiles(0,0,32,32,tiles);
     set_win_tiles(0,0,20,18,tiles);
-    move_win(160,144);
+    move_win(167,144);
     hide_sprites();
 }
 
@@ -89,7 +89,7 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
 
 void reveal_text (unsigned char *text) {
     draw_win_ui_box(0,0,20,6);
-    move_win(0,96);
+    move_win(7,96);
     SHOW_WIN;
     x = 0;
     y = 0;
@@ -133,7 +133,7 @@ void display_text (unsigned char *text) {
     }
     memcpy(str_buff,text+w,i-w);
     set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
-    move_win(0,96);
+    move_win(7,96);
     SHOW_WIN;
 }
 
@@ -229,9 +229,7 @@ void update_text_entry_display (char *str, WORD max_len) {
         else tiles[i+max_len] = '^';
     }
     set_win_tiles(10,2,max_len,2,tiles);
-    
     if (w > 0) set_win_tiles(10,2,w,1,str);
-    waitpadup();
 }
 
 const char *lower_case = "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,\x1E";
@@ -240,7 +238,7 @@ char *show_text_entry (char *title, char *str, WORD max_len) {
     DISPLAY_OFF;
     for (i = 0; i != max_len; ++i) str[i] = 0;
     clear_win_area(0,0,20,4,' ');
-    move_win(0,0);
+    move_win(7,0);
     l = strlen(title);
     if (l > 0) set_win_tiles(0,1,l,1,title);
     update_text_entry_display(str, max_len);
@@ -305,11 +303,13 @@ char *show_text_entry (char *title, char *str, WORD max_len) {
                     str[l++] = str_buff[y*9+x];
                     set_win_tiles(10,3,max_len,1,str);
                     update_text_entry_display(str, max_len);
+                    waitpadup();
                 }
             }
             else if (k & J_B && l > 0) {
                 str[--l] = '\0';
                 update_text_entry_display(str, max_len);
+                waitpadup();
             }
             wait_vbl_done(); 
         }
@@ -432,8 +432,11 @@ void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WOR
 }
 
 void main () {
-    cgb_compatibility();
     DISPLAY_OFF;
+    disable_interrupts();
+    cgb_compatibility();
+    cpu_fast();
+    enable_interrupts();
     // setup_audio();
     SPRITES_8x8;
     BGP_REG = BG_PALETTE;
@@ -441,15 +444,14 @@ void main () {
     OBP1_REG = SPR_PALETTE_1;
     SHOW_SPRITES;
     SHOW_BKG;
+    SWITCH_RAM_MBC5(0);
     SWITCH_ROM_MBC5(START_BANK);
     start();    
     SWITCH_ROM_MBC5(TITLE_BANK);
     if (!title()) {
-        SWITCH_RAM_MBC5(0);
         SWITCH_ROM_MBC5(NEW_GAME_BANK);
         new_game();
     }
-
     SWITCH_ROM_MBC5(PLAY_BALL_BANK);
     start_game();
 }

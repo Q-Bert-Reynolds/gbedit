@@ -66,6 +66,7 @@ void pitch_sequence () {
                 if (joypad() & (J_START | J_A)) return;
             }
         }
+        wait_vbl_done();
     }
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
@@ -91,8 +92,8 @@ void show_intro_sequence () {
 
 void start () {
     VBK_REG = 0;
-    STAT_REG = 72;
-    set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    STAT_REG = 0;
+    set_interrupts(VBL_IFLAG);
     show_copyrights();
     show_intro_sequence();
 }

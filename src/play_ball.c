@@ -99,7 +99,7 @@ void play_intro () {
     set_bkg_data_doubled(_UI_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
     load_player_bkg_data(80, _UI_FONT_TILE_COUNT+64, PLAY_BALL_BANK);
     draw_win_ui_box(0,0,20,6);
-    move_win(0,96);
+    move_win(7,96);
     SHOW_WIN;
 
     for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {

@@ -52,14 +52,14 @@ void cycle_players_lcd_interrupt(void) {
 void show_player (UBYTE p) {
     load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
     a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
-    clear_bkg_area(20, 10, 7, 7);
+    clear_bkg_area(20,10,7,7,0);
     set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
 }
 
 const unsigned char ball_toss[] = {16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15};
 void show_title () {
     DISPLAY_OFF;
-    clear_screen();
+    clear_screen(0);
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = 0xE0;
@@ -137,7 +137,7 @@ UBYTE show_start_menu () {
     remove_LCD(cycle_players_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
-    clear_screen();
+    clear_screen(0);
     set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
     DISPLAY_ON;
 
@@ -168,7 +168,7 @@ UBYTE show_start_menu () {
             while (1) {
                 if (joypad() & J_A) return y;
                 else if (joypad() & J_B) {
-                    clear_bkg_area(4,7,16,10);
+                    clear_bkg_area(4,7,16,10,0);
                     break;
                 }
                 wait_vbl_done();

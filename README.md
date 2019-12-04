@@ -1,10 +1,12 @@
-Compiling:
+# Compiling:
     `python3 png2gbdk.py`
     `make clean`
     `make`
 
-TODO:
-    fix
+# TODO:
+    get_bkg_data function broken
+        doesn't store tiles in array
+        often causes "Wrote XX to XXXX (RAM Mirror)" error
     player images:
         batting/pitching -> front/back -> ready/action (8 each)
     python script
@@ -12,6 +14,7 @@ TODO:
         only update .c file when png changes
         identify animations - same size, numbered names (name0, name1, etc)
     Main
+        move UI functions to separate script
     Intro
         sfx
         sparks after ball hits light
@@ -20,35 +23,31 @@ TODO:
         delay version slide
         randomize players
     New Game
-        shrink Calvin image
+        shrink Calvin image, transition to bedroom
     Battle
         doubled back & player front images should be different batting/pitching images
         hit the ball
-        opponent pitching
-            handle different moves
-        user batting
-            handle different moves
-        opponent batting
-            animation
-        user pitching
+        handle different moves
+        batting             
+        opponent batting / user pitching
             animation
             move ball
     Team Menu
     Walking
     Roledex
 
-Cart - MCB5, 4M ROM (256 banks), 32K SRAM (4 banks)
+# Cart
+MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
 ROM Banks:
-    main.c (bank0) - movement, font, menus, bank switching
-    start.c (bank1) - startup stuff (copyrights, intro, title, new game/continue)
-    battle.c (bank2) - battle code
-    roledex.c (bank3) - rolédex descriptions
-    players_a.c, players_b.c, etc (bank10 - 18) - player images
+    main.c         ( bank0 ) - movement/collisions, font, UI, bank switching
+    start.c        ( bank2 ) - copyrights & intro
+    title.c        ( bank3 ) - title, new game/continue menu
+    new_game.c     ( bank4 ) - prologue, name entry
+    play_ball.c    ( bank5 ) - baseball
+    roledex.c      ( bank6 ) - rolédex descriptions
+    lineup.c       ( bank7 ) - change batting order & positions
+    players_imgX.c ( bank1X) - player images
 
 RAM Banks
-    main.c (bank0) - global vars
-    save.c (bank1) - name, money, progress
-    party.c (bank2) - party players
-    items.c (bank3) - carried items
-    farm1.c, farm2.c, etc - equivalent to pkmn boxes
+    save0.c (bank0) - main save file

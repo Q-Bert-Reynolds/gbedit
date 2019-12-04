@@ -9,33 +9,38 @@ const UBYTE *types[15] = {
 
 const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 void hide_sprites () {
-    for (i = 0; i < 40; i++) move_sprite(i, 0, 0);
+    for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);
 }
 
-void clear_screen () {
-    set_bkg_data(0, 1, blank_tile);
-    for (i = 0; i < 1024; ++i) tiles[i] = 0;
+void clear_screen (UBYTE tile) {
+    for (i = 0; i < 1024; ++i) tiles[i] = tile;
     set_bkg_tiles(0,0,32,32,tiles);
     set_win_tiles(0,0,20,18,tiles);
     move_win(160,144);
     hide_sprites();
 }
 
-void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
-    set_bkg_data(0, 1, blank_tile);
+void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile) {
     l = w*h;
-    for (i = 0; i < l; ++i) tiles[i] = 0;
+    for (i = 0; i < l; ++i) tiles[i] = tile;
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
-void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *tiles) {
-    for (i = 0; i < w*h; ++i) bkg_buff[i] = tiles[i]+offset;
-    set_bkg_tiles(x,y,w,h,bkg_buff);
+void clear_win_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile) {
+    l = w*h;
+    for (i = 0; i < l; ++i) tiles[i] = tile;
+    set_win_tiles(x,y,w,h,tiles);
+}
+
+
+void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles) {
+    for (i = 0; i < w*h; ++i) tiles[i] = in_tiles[i]+offset;
+    set_bkg_tiles(x,y,w,h,tiles);
 }
 
 void draw_ui_box (UBYTE w, UBYTE h) {
-    for (j = 0; j < h; j++) {
-        for (i = 0; i < w; i++) {
+    for (j = 0; j < h; ++j) {
+        for (i = 0; i < w; ++i) {
             k = 0;
             if (j == 0) {
                 if (i == 0) k = BOX_UPPER_LEFT;
@@ -69,13 +74,13 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
         tiles[0] = ARROW_DOWN;
         set_win_tiles(x, y, 1, 1, tiles);
         waitpadup();
-        for (a = 0; a < 20; a++) {
+        for (a = 0; a < 20; ++a) {
             if (joypad() & J_A) return;
             delay(10);
         }
         tiles[0] = 0;
         set_win_tiles(x, y, 1, 1, tiles);
-        for (a = 0; a < 20; a++) {
+        for (a = 0; a < 20; ++a) {
             if (joypad() & J_A) return;
             delay(10);
         }
@@ -90,9 +95,10 @@ void reveal_text (unsigned char *text) {
     y = 0;
     l = strlen(text);
     w = 0;
-    for (i = 0; i < l; i++) {
+    for (i = 0; i < l; ++i) {
         if (text[i] == '\n') {
             ++y;
+            memcpy(str_buff,"                 ",17);
             memcpy(str_buff,text+w,i-w);
             if (y == 2) {
                 y = 1;
@@ -117,7 +123,7 @@ void display_text (unsigned char *text) {
     l = strlen(text);
     w = 0;
     y = 0;
-    for (i = 0; i < l; i++) {
+    for (i = 0; i < l; ++i) {
         if (text[i] == '\n') {
             memcpy(str_buff,text+w,i-w);
             set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
@@ -132,7 +138,7 @@ void display_text (unsigned char *text) {
 }
 
 void move_menu_arrow (UBYTE y) {
-    for (i = 0; i < c; i++) {
+    for (i = 0; i < c; ++i) {
         tiles[i*2] = 0;
         if (i == y) tiles[i*2+1] = ARROW_RIGHT;
         else tiles[i*2+1] = 0;
@@ -233,7 +239,7 @@ const char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
 char *show_text_entry (char *title, char *str, WORD max_len) {
     DISPLAY_OFF;
     for (i = 0; i != max_len; ++i) str[i] = 0;
-    clear_screen();
+    clear_win_area(0,0,20,4,' ');
     move_win(0,0);
     l = strlen(title);
     if (l > 0) set_win_tiles(0,1,l,1,title);

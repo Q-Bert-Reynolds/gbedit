@@ -69,9 +69,9 @@ WORD a, b, c, d;
 WORD i, j, k, l;
 WORD s, t, u, v;
 WORD w, x, y, z;
-UBYTE tiles[1024];
-UBYTE bkg_buff[1024];
-char str_buff[256];
+unsigned char tiles[1024];
+unsigned char bkg_buff[1024];
+char str_buff[64];
 char name_buff[16];
 
 // baseball
@@ -122,9 +122,10 @@ UBYTE coaching_style;
 
 // drawing
 void hide_sprites ();
-void clear_screen ();
-void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *tiles);
+void clear_screen (UBYTE tile);
+void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
+void clear_win_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
+void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
 void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);

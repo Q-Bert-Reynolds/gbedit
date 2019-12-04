@@ -5,7 +5,6 @@
 #include "../res/play/righty_batter_user/righty_batter_user.c"
 #include "../res/play/righty_pitcher_opponent/righty_pitcher_opponent.c"
 #include "../res/coaches/calvin_back.c"
-// #include "../res/players/080Laggard.c"
 
 struct player test_player;
 struct move move1;
@@ -149,7 +148,7 @@ void play_intro () {
     }
     disable_interrupts();
     remove_LCD(slide_out_lcd_interrupt);
-    clear_bkg_area(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4);
+    clear_bkg_area(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     hide_sprites();
@@ -311,7 +310,6 @@ void show_move_info () {//struct move *m) {
 UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     get_bkg_tiles(0,8,20,10,bkg_buff);
     draw_bkg_ui_box(5,12,15,6);
-
     c = 4;
     for (i = 0; i < 4; ++i) {
         if ((p->moves)[i] == NULL) { c = i; break; }
@@ -382,6 +380,13 @@ void show_strike_zone (UBYTE x, UBYTE y) {
     move_sprite(13, x+16, y+20);
 }
 
+void hide_strike_zone () {
+    move_sprite(10, 0, 0);
+    move_sprite(11, 0, 0);
+    move_sprite(12, 0, 0);
+    move_sprite(13, 0, 0);
+}
+
 void hide_baseball () {
     move_sprite(0,0,0);
     move_sprite(1,0,0);
@@ -425,6 +430,7 @@ WORD swing_diff_y;
 WORD swing_diff_z;
 void swing (WORD x, WORD y, WORD z) {
     move_aim_circle(-8,-8);
+    hide_strike_zone();
     swing_diff_x = x - ball_x;
     swing_diff_y = y - ball_y;
     swing_diff_z = z - 128;
@@ -534,8 +540,8 @@ void start_game () {
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;
     move_bkg(0,0);
-    clear_screen();
     set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
+    clear_screen(' ');
     set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT, _STRIKE_ZONE_TILE_COUNT, _strike_zone_tiles);

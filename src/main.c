@@ -7,7 +7,6 @@ const UBYTE *types[15] = {
     "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON",
 };
 
-const unsigned char blank_tile[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 void hide_sprites () {
     for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);
 }
@@ -316,6 +315,105 @@ char *show_text_entry (char *title, char *str, WORD max_len) {
     }
 
     return str;
+}
+
+void move_options_arrow (UBYTE y) {
+    tiles[0] = 0;
+    tiles[1] = ARROW_RIGHT;
+    tiles[2] = ARROW_RIGHT_BLANK;
+    set_bkg_tiles(1,3,1,1,tiles + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(7,3,1,1,tiles + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(14,3,1,1,tiles + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
+    set_bkg_tiles(1,8,1,1,tiles + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
+    set_bkg_tiles(10,8,1,1,tiles + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
+    set_bkg_tiles(1,13,1,1,tiles + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
+    set_bkg_tiles(10,13,1,1,tiles + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
+    set_bkg_tiles(1,16,1,1,tiles + (y==3 ? 1 : 2));
+}
+
+void show_options () {
+    DISPLAY_OFF;
+
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
+    a = text_speed;
+    b = animation_style;
+    c = coaching_style;
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
+
+    if (a > 2) a = 0;
+    if (b > 1) b = 0;
+    if (c > 1) c = 0;
+
+    draw_bkg_ui_box(0,0,20,5);
+    set_bkg_tiles(1,1,18,3,
+        "TEXT SPEED        "
+        "                  "
+        " FAST  MEDIUM SLOW"
+    );
+
+    draw_bkg_ui_box(0,5,20,5);
+    set_bkg_tiles(1,6,18,3,
+        "AT-BAT ANIMATIONS "
+        "                  "
+        " ON       OFF     "
+    );
+
+    draw_bkg_ui_box(0,10,20,5);
+    set_bkg_tiles(1,11,18,3,
+        "COACHING STYLE    "
+        "                  "
+        " SHIFT    SET     "
+    );
+    set_bkg_tiles(2,16,6,1,
+        "CANCEL"
+    );
+
+    DISPLAY_ON;
+    waitpadup();
+    y = 0;
+    move_options_arrow(y);
+    while (1) {
+        k = joypad();
+        if (k & J_UP && y > 0) {
+            wait_vbl_done(); 
+            move_options_arrow(--y);
+            waitpadup();
+        }
+        else if (k & J_DOWN && y < 3) {
+            wait_vbl_done(); 
+            move_options_arrow(++y);
+            waitpadup();
+        }
+        else if (k & J_LEFT && y < 3) {
+            wait_vbl_done(); 
+            if (y == 0 && a > 0) --a;
+            else if (y == 1 && b > 0) --b;
+            else if (y == 2 && c > 0) --c;
+            move_options_arrow(y);
+            waitpadup();
+        }
+        else if (k & J_RIGHT && y < 3) {
+            wait_vbl_done(); 
+            if (y == 0 && a < 2) ++a;
+            else if (y == 1 && b < 1) ++b;
+            else if (y == 2 && c < 1) ++c;
+            move_options_arrow(y);
+            waitpadup();
+        }
+
+        if (k & (J_START | J_A) && y == 3) break;
+        else if (k & J_B) break;
+        wait_vbl_done(); 
+    }
+    disable_interrupts();
+    ENABLE_RAM_MBC5;
+    text_speed = a;
+    animation_style = b;
+    coaching_style = c;
+    DISABLE_RAM_MBC5;
+    enable_interrupts();
 }
 
 void fade_out () {

@@ -63,6 +63,9 @@ void start_game();
 // save data
 extern char user_name[8];
 extern char rival_name[8];
+extern unsigned char text_speed;
+extern unsigned char animation_style;
+extern unsigned char coaching_style;
 
 // global vars
 WORD a, b, c, d;
@@ -86,7 +89,6 @@ UBYTE balls_strikes_outs; //0bxBBBSSOO
 #define HOME_MASK        0xF000
 UWORD runners_on_base; //0bHHHHTTTTSSSSFFFF
 
-UBYTE move_choice;
 UBYTE frame;
 UBYTE home_team;
 UBYTE home_score;
@@ -115,23 +117,23 @@ struct player {
     UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
 };
 
-// options, TODO: move to save file
-UBYTE text_speed;
-UBYTE animation_style;
-UBYTE coaching_style;
-
 // drawing
 void hide_sprites ();
 void clear_screen (UBYTE tile);
 void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
 void clear_win_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
 void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
+
+// ui
 void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
 char *show_text_entry (char *title, char *str, WORD max_len);
 void reveal_text (UBYTE *text);
 void display_text (UBYTE *text);
+void show_options ();
+
+// fx
 void fade_out ();
 void fade_in ();
 

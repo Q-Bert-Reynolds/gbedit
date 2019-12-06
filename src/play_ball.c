@@ -277,7 +277,10 @@ void move_play_menu_arrow () {
     }
 }
 
-UBYTE select_play_menu_item () {
+UBYTE play_menu_selection;
+void select_play_menu_item () {
+    x = play_menu_selection % 2;
+    y = (play_menu_selection & 2) >> 1;
     move_play_menu_arrow();
     waitpadup();
     while (1) {
@@ -287,9 +290,9 @@ UBYTE select_play_menu_item () {
         else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
         else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
 
-        if (k & J_A) return x * 2 + y;
+        if (k & J_A) break;
     }
-    return 0;
+    play_menu_selection = x * 2 + y;
 }
 
 void move_move_menu_arrow (UBYTE y) {
@@ -307,6 +310,7 @@ void show_move_info () {//struct move *m) {
     set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
 }
 
+UBYTE move_choice;
 UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     get_bkg_tiles(0,8,20,10,bkg_buff);
     draw_bkg_ui_box(5,12,15,6);
@@ -562,23 +566,19 @@ void start_game () {
     test_player.hits = 32;
     test_player.moves[0] = &move1;
     test_player.moves[1] = &move2;
-    strcpy(move1.name, "FASTBALL");
+    strcpy(move1.name, "SWING");
     strcpy(move2.name, "BUNT");
     strcpy(test_player.nickname, "TEST");
 
     play_intro();
     draw_ui();
-    
-    x = 0;
-    y = 0;
+    play_menu_selection = 0;
     while (1) {
-        a = select_play_menu_item();
-        switch (a) {
+        select_play_menu_item();
+        switch (play_menu_selection) {
             case 0:
                 b = select_move_menu_item(&test_player);
                 if (b > 0) play_ball(&test_player, b-1);
-                x = 0;
-                y = 0;
                 break;
             case 1:
                 break;

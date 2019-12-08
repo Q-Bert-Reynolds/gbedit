@@ -75,12 +75,23 @@ void reveal_text (unsigned char *text, WORD return_bank) {
     SWITCH_ROM_MBC5(return_bank);
 }
 
-void ui_display_text (unsigned char *text);
-void display_text (unsigned char *text, WORD return_bank) {
-    strcpy(str_buff, text);
-    SWITCH_ROM_MBC5(UI_BANK);
-    ui_reveal_text(str_buff);
-    SWITCH_ROM_MBC5(return_bank);
+void display_text (unsigned char *text) {
+    draw_win_ui_box(0,0,20,6);
+    l = strlen(text);
+    w = 0;
+    y = 0;
+    for (i = 0; i < l; ++i) {
+        if (text[i] == '\n') {
+            memcpy(str_buff,text+w,i-w);
+            set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+            ++y;
+            w = i+1;
+        }
+    }
+    memcpy(str_buff,text+w,i-w);
+    set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+    move_win(7,96);
+    SHOW_WIN;
 }
 
 UBYTE ui_show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);

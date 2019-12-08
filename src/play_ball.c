@@ -443,19 +443,19 @@ void swing (WORD x, WORD y, WORD z) {
     if (swing_diff_z < 20 && swing_diff_z > -20) {
         if (d) {
             if (swing_diff_z == 0 && swing_diff_x == 0 && swing_diff_y == 0/* && rand < batting avg */) {
-                display_text("Critical hit!", PLAY_BALL_BANK);
+                display_text("Critical hit!");
             }
             else {
-                display_text("Solid contact", PLAY_BALL_BANK);
+                display_text("Solid contact");
             }
         }
-        else display_text("Swing and a miss.", PLAY_BALL_BANK);
+        else display_text("Swing and a miss.");
     }
     else if (swing_diff_z >= 20) {
-        display_text("Late swing.", PLAY_BALL_BANK);
+        display_text("Late swing.");
     }
     else {
-        display_text("Early swing.", PLAY_BALL_BANK);
+        display_text("Early swing.");
     }
 }
 
@@ -467,7 +467,7 @@ void bat (struct player *p, UBYTE move) {
     move_aim_circle(49,85); //TODO: handle lefty batters
     show_strike_zone(49,85);
     sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
-    display_text(str_buff, PLAY_BALL_BANK);
+    display_text(str_buff);
     a = 49<<1;
     b = 85<<1;
     swing_diff_x = 0;
@@ -482,7 +482,7 @@ void bat (struct player *p, UBYTE move) {
         wait_vbl_done();
     }
     sprintf(str_buff, "%s sets.", "LAGGARD");
-    display_text(str_buff, PLAY_BALL_BANK);
+    display_text(str_buff);
     for (i = 0; i < 60; ++i) { // TODO: quick pitch should decrease this time
         k = joypad();
         if (k & J_RIGHT) ++a;
@@ -497,7 +497,7 @@ void bat (struct player *p, UBYTE move) {
         wait_vbl_done();
     }
     set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent2_map);
-    display_text("And the pitch.", PLAY_BALL_BANK);
+    display_text("And the pitch.");
     c = 0;
     s = 4; // speed
     for (i = 0; i < 200; i+=s) {

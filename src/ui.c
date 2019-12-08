@@ -49,25 +49,6 @@ void ui_reveal_text (unsigned char *text) {
     flash_next_arrow(18,4);
 }
 
-void ui_display_text (unsigned char *text) {
-    draw_win_ui_box(0,0,20,6);
-    l = strlen(text);
-    w = 0;
-    y = 0;
-    for (i = 0; i < l; ++i) {
-        if (text[i] == '\n') {
-            memcpy(str_buff,text+w,i-w);
-            set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
-            ++y;
-            w = i+1;
-        }
-    }
-    memcpy(str_buff,text+w,i-w);
-    set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
-    move_win(7,96);
-    SHOW_WIN;
-}
-
 void move_options_arrow (UBYTE y) {
     tiles[0] = 0;
     tiles[1] = ARROW_RIGHT;

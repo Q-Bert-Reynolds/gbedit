@@ -67,8 +67,8 @@ WORD a, b, c, d;
 WORD i, j, k, l;
 WORD s, t, u, v;
 WORD w, x, y, z;
-unsigned char tiles[1024];
-unsigned char bkg_buff[1024];
+unsigned char tiles[512];
+unsigned char bkg_buff[512];
 char str_buff[64];
 char name_buff[16];
 
@@ -124,7 +124,7 @@ void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank);
 void reveal_text (UBYTE *text, WORD return_bank);
-void display_text (UBYTE *text, WORD return_bank);
+void display_text (UBYTE *text);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
 void show_options (WORD return_bank);
 

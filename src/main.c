@@ -443,6 +443,30 @@ void fade_in () {
     delay(200);
 }
 
+extern const char* player_tiles0[];
+extern const char* player_tiles1[];
+extern const char* player_tiles2[];
+extern const char* player_tiles3[];
+extern const char* player_tiles4[];
+extern const char* player_tiles5[];
+extern const unsigned char player_tile_counts0[];
+extern const unsigned char player_tile_counts1[];
+extern const unsigned char player_tile_counts2[];
+extern const unsigned char player_tile_counts3[];
+extern const unsigned char player_tile_counts4[];
+extern const unsigned char player_tile_counts5[];
+extern const unsigned char player_columns0[];
+extern const unsigned char player_columns1[];
+extern const unsigned char player_columns2[];
+extern const unsigned char player_columns3[];
+extern const unsigned char player_columns4[];
+extern const unsigned char player_columns5[];
+extern const char* player_maps0[];
+extern const char* player_maps1[];
+extern const char* player_maps2[];
+extern const char* player_maps3[];
+extern const char* player_maps4[];
+extern const char* player_maps5[];
 void load_player_bkg_data (UBYTE number, UBYTE vram_offset, WORD return_bank) {
     if (number <= 25) {
         SWITCH_ROM_MBC5(PLAYER_IMG_BANK);

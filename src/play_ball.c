@@ -544,7 +544,7 @@ void start_game () {
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;
     move_bkg(0,0);
-    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
+    load_font_tiles(PLAY_BALL_BANK);
     clear_screen(' ');
     set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);

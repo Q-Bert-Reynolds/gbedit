@@ -120,6 +120,7 @@ void clear_win_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
 void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
 
 // ui
+void load_font_tiles (WORD return_bank);
 void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank);

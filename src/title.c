@@ -138,7 +138,7 @@ UBYTE show_start_menu () {
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     clear_screen(0);
-    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
+    load_font_tiles(TITLE_BANK);
     DISPLAY_ON;
 
     disable_interrupts();

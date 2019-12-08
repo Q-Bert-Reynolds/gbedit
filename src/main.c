@@ -1,11 +1,17 @@
 #include "beisbol.h"
-#include "../res/ui_font.c"
 
 const UBYTE *types[15] = { 
     "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
     "ICE", "FIGHTING", "POISON", "GROUND", "FLYING", 
     "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON",
 };
+
+void ui_load_font_tiles ();
+void load_font_tiles (WORD return_bank) {
+    SWITCH_ROM_MBC5(UI_BANK);
+    ui_load_font_tiles();
+    SWITCH_ROM_MBC5(return_bank);
+}
 
 void hide_sprites () {
     for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);

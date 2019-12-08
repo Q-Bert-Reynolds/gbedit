@@ -13,7 +13,7 @@ void new_game() {
     // set image to Doc
     DISPLAY_OFF;
     move_bkg(48,0);
-    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
+    load_font_tiles(NEW_GAME_BANK);
     set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
     clear_screen(' ');
     set_bkg_tiles_with_offset(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,_UI_FONT_TILE_COUNT,_doc_hickory_map);

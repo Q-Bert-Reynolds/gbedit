@@ -1,4 +1,9 @@
 #include "beisbol.h"
+#include "../res/ui_font.c"
+
+void ui_load_font_tiles () {
+    set_bkg_data(0, _UI_FONT_TILE_COUNT, _ui_font_tiles);
+}
 
 void flash_next_arrow (UBYTE x, UBYTE y) {
     while (1) {

@@ -40,13 +40,20 @@
 MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
 ROM Banks:
-    main.c         ( bank0 ) - movement/collisions, font, UI, bank switching
-    start.c        ( bank2 ) - copyrights & intro
-    title.c        ( bank3 ) - title, new game/continue menu
-    new_game.c     ( bank4 ) - prologue, name entry
-    play_ball.c    ( bank5 ) - baseball
-    roledex.c      ( bank6 ) - rolédex descriptions
-    lineup.c       ( bank7 ) - change batting order & positions
+2 -c -o $(OBJ_DIR)/ui.o           $(SRC_DIR)/ui.c	
+3 -c -o $(OBJ_DIR)/start.o        $(SRC_DIR)/start.c
+4 -c -o $(OBJ_DIR)/title.o        $(SRC_DIR)/title.c
+5 -c -o $(OBJ_DIR)/new_game.o     $(SRC_DIR)/new_game.c
+6 -c -o $(OBJ_DIR)/play_ball.o    $(SRC_DIR)/play_ball.c
+
+    main.c         ( bank0 ) - movement/collisions, bank switching
+    ui.c           ( bank2 ) - font, non-realtime UI functions, options
+    start.c        ( bank3 ) - copyrights & intro
+    title.c        ( bank4 ) - title, new game/continue menu
+    new_game.c     ( bank5 ) - prologue, name entry
+    play_ball.c    ( bank6 ) - baseball
+    roledex.c      ( bank7 ) - rolédex descriptions
+    lineup.c       ( bank8 ) - change batting order & positions
     players_imgX.c ( bank1X) - player images
 
 RAM Banks

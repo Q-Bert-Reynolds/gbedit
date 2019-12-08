@@ -137,7 +137,7 @@ void play_intro () {
     set_interrupts(VBL_IFLAG);
     
     sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
-    reveal_text(str_buff);
+    reveal_text(str_buff, PLAY_BALL_BANK);
 
     disable_interrupts();
     add_LCD(slide_out_lcd_interrupt);
@@ -157,7 +157,7 @@ void play_intro () {
 
     set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
-    reveal_text("Let's go!");
+    reveal_text("Let's go!", PLAY_BALL_BANK);
     HIDE_WIN;
 }
 
@@ -424,7 +424,7 @@ void move_aim_circle (UBYTE x, UBYTE y) {
 
 void pitch (struct player *p, UBYTE move) {
     sprintf(str_buff, "%s sets.", p->nickname);
-    reveal_text(str_buff);
+    reveal_text(str_buff, PLAY_BALL_BANK);
     show_aim_circle(3);
     move_aim_circle(96,32);
 }
@@ -443,19 +443,19 @@ void swing (WORD x, WORD y, WORD z) {
     if (swing_diff_z < 20 && swing_diff_z > -20) {
         if (d) {
             if (swing_diff_z == 0 && swing_diff_x == 0 && swing_diff_y == 0/* && rand < batting avg */) {
-                display_text("Critical hit!");
+                display_text("Critical hit!", PLAY_BALL_BANK);
             }
             else {
-                display_text("Solid contact");
+                display_text("Solid contact", PLAY_BALL_BANK);
             }
         }
-        else display_text("Swing and a miss.");
+        else display_text("Swing and a miss.", PLAY_BALL_BANK);
     }
     else if (swing_diff_z >= 20) {
-        display_text("Late swing.");
+        display_text("Late swing.", PLAY_BALL_BANK);
     }
     else {
-        display_text("Early swing.");
+        display_text("Early swing.", PLAY_BALL_BANK);
     }
 }
 
@@ -467,7 +467,7 @@ void bat (struct player *p, UBYTE move) {
     move_aim_circle(49,85); //TODO: handle lefty batters
     show_strike_zone(49,85);
     sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
-    display_text(str_buff);
+    display_text(str_buff, PLAY_BALL_BANK);
     a = 49<<1;
     b = 85<<1;
     swing_diff_x = 0;
@@ -482,7 +482,7 @@ void bat (struct player *p, UBYTE move) {
         wait_vbl_done();
     }
     sprintf(str_buff, "%s sets.", "LAGGARD");
-    display_text(str_buff);
+    display_text(str_buff, PLAY_BALL_BANK);
     for (i = 0; i < 60; ++i) { // TODO: quick pitch should decrease this time
         k = joypad();
         if (k & J_RIGHT) ++a;
@@ -497,7 +497,7 @@ void bat (struct player *p, UBYTE move) {
         wait_vbl_done();
     }
     set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent2_map);
-    display_text("And the pitch.");
+    display_text("And the pitch.", PLAY_BALL_BANK);
     c = 0;
     s = 4; // speed
     for (i = 0; i < 200; i+=s) {
@@ -585,7 +585,7 @@ void start_game () {
             case 2:
                 break;
             case 3:
-                reveal_text("Quitting is\nnot an option!");
+                reveal_text("Quitting is\nnot an option!", PLAY_BALL_BANK);
                 HIDE_WIN;
                 break;
         }

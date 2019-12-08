@@ -8,17 +8,12 @@
 #include "../res/ui_font.h"
 
 // banks
-#define START_BANK      2
-#define TITLE_BANK      3
-#define NEW_GAME_BANK   4
-#define PLAY_BALL_BANK  5
+#define UI_BANK         2
+#define START_BANK      3
+#define TITLE_BANK      4
+#define NEW_GAME_BANK   5
+#define PLAY_BALL_BANK  6
 #define PLAYER_IMG_BANK 10 
-
-// banked entry points
-void start();
-UBYTE title();
-void new_game();
-void start_game();
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
@@ -127,11 +122,11 @@ void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset
 // ui
 void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
 void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
-char *show_text_entry (char *title, char *str, WORD max_len);
-void reveal_text (UBYTE *text);
-void display_text (UBYTE *text);
-void show_options ();
+void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank);
+void reveal_text (UBYTE *text, WORD return_bank);
+void display_text (UBYTE *text, WORD return_bank);
+UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
+void show_options (WORD return_bank);
 
 // fx
 void fade_out ();
@@ -145,5 +140,11 @@ void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WOR
 // audio
 // void setup_audio();
 // void update_audio();
+
+// banked entry points
+void start();
+UBYTE title();
+void new_game();
+void start_game();
 
 #endif

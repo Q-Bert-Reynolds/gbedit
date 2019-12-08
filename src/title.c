@@ -148,7 +148,7 @@ UBYTE show_start_menu () {
     enable_interrupts();
     while (name_buff[0] > 0) {
         c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
-        y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION");
+        y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
         if (y == 1) {
             wait_vbl_done();
             draw_bkg_ui_box(4,7,16,10);
@@ -177,7 +177,7 @@ UBYTE show_start_menu () {
         else return y;
     }
     c = 2;
-    return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION");
+    return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
 }
 
 UBYTE title () {
@@ -188,7 +188,7 @@ UBYTE title () {
     while (d == 0 || d == c) {
         if (d == 0) show_title();
         else if (d == c) {
-            show_options();
+            show_options(TITLE_BANK);
             d = 0;
         }
         d = show_start_menu();

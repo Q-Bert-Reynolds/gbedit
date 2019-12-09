@@ -122,12 +122,6 @@ def png_to_c (path):
         tileset.append(tile)
 
     is_2x = "_back" in name
-    for i in range(0, len(hex_vals), 16):
-      tile = "    " + ",".join(hex_vals[i:i+16]) + ",\n"
-      if tile not in tileset:
-        tileset.append(tile)
-      tilemap.append("0x{:02X}".format(tileset.index(tile)))
-
     if is_2x:
       tilemap_2x = []
       for i in range(len(tilemap)):

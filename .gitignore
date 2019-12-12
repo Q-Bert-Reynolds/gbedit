@@ -1,6 +1,6 @@
-# C files created in /res
-res/**/*.c
-res/**/*.h
+# C files created in /img
+img/**/*.c
+img/**/*.h
 
 # generated GameBoy files
 *.gb

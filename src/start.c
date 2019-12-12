@@ -1,12 +1,12 @@
 #include "beisbol.h"
-#include "../res/title/copyrights/copyrights.c"
-#include "../res/title/intro/intro.c"
-#include "../res/title/intro/intro_sprites/intro_sprites.c"
+#include "../img/title/copyrights/copyrights.c"
+#include "../img/title/intro/intro.c"
+#include "../img/title/intro/intro_sprites/intro_sprites.c"
 
 #ifdef HOME
-    #include "../res/home_version/version_sprites/version_sprites.c"
+    #include "../img/home_version/version_sprites/version_sprites.c"
 #else
-    #include "../res/away_version/version_sprites/version_sprites.c"
+    #include "../img/away_version/version_sprites/version_sprites.c"
 #endif
 
 void show_copyrights () {

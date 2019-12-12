@@ -1,12 +1,12 @@
 #include "beisbol.h"
-#include "../res/title/title/title.c"
-#include "../res/title/title/title_sprites/title_sprites.c"
+#include "../img/title/title/title.c"
+#include "../img/title/title/title_sprites/title_sprites.c"
 
 #ifdef HOME
-    #include "../res/home_version/version.c"
+    #include "../img/home_version/version.c"
     const unsigned char intro_player_nums[] = { 4, 7, 1, 13, 32, 123, 25, 35, 112, 63, 092, 132, 17, 095, 77, 129, };
 #else
-    #include "../res/away_version/version.c"
+    #include "../img/away_version/version.c"
     const unsigned char intro_player_nums[] = { 7, 4, 1, 56, 106, 37, 113, 142, 135, 143, 44, 60, 84, 137, 94, 26 };
 #endif
 

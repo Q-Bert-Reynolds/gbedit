@@ -1,10 +1,10 @@
 #include "beisbol.h"
-#include "../res/baseball.c"
-#include "../res/circle.c"
-#include "../res/strike_zone.c"
-#include "../res/play/righty_batter_user/righty_batter_user.c"
-#include "../res/play/righty_pitcher_opponent/righty_pitcher_opponent.c"
-#include "../res/coaches/calvin_back.c"
+#include "../img/baseball.c"
+#include "../img/circle.c"
+#include "../img/strike_zone.c"
+#include "../img/play/righty_batter_user/righty_batter_user.c"
+#include "../img/play/righty_pitcher_opponent/righty_pitcher_opponent.c"
+#include "../img/coaches/calvin_back.c"
 
 struct player test_player;
 struct move move1;

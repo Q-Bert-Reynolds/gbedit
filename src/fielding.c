@@ -1,1 +1,1 @@
-#include "../res/field.c"
+#include "../img/field.c"

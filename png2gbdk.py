@@ -3,9 +3,9 @@ import math
 from PIL import Image
 
 def main():
-  for root, folders, files in os.walk("./res"):
+  for root, folders, files in os.walk("./img"):
     name = os.path.basename(root)
-    if name in ["res", "players", "coaches"]:
+    if name in ["img", "players", "coaches"]:
       for name in files:
         path = os.path.join(root, name)
         png_to_c(path)

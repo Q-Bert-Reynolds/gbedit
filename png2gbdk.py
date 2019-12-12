@@ -121,6 +121,7 @@ def png_to_c (path):
         tilemap.append("0x{:02X}".format(len(tileset)))
         tileset.append(tile)
 
+    tile_count = len(tileset)
     is_2x = "_back" in name
     if is_2x:
       tilemap_2x = []
@@ -140,9 +141,12 @@ def png_to_c (path):
 
 
     with open(base + ".c", "w+") as c_file:
+      has_map = (name not in ["health_bar"]) and ("sprites" not in name)
+
       c_file.write("#ifndef _" + name.upper() + "_TILE_COUNT\n")
-      c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
-      c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
+      if has_map:
+        c_file.write("#define _" + name.upper() + "_ROWS " + str(rows) + "\n")
+        c_file.write("#define _" + name.upper() + "_COLUMNS " + str(cols) + "\n")
       c_file.write("#define _" + name.upper() + "_TILE_COUNT " + str(tile_count) + "\n")
 
       c_file.write("const unsigned char _" + name + "_tiles[] = {\n")
@@ -150,10 +154,11 @@ def png_to_c (path):
         c_file.write(tile)
       c_file.write("};\n")
 
-      c_file.write("const unsigned char _" + name + "_map[] = {\n")
-      for i in range(0, len(tilemap), cols):
-        c_file.write("    " + ",".join(tilemap[i:i+cols]) + ",\n")
-      c_file.write("};\n")
+      if has_map:
+        c_file.write("const unsigned char _" + name + "_map[] = {\n")
+        for i in range(0, len(tilemap), cols):
+          c_file.write("    " + ",".join(tilemap[i:i+cols]) + ",\n")
+        c_file.write("};\n")
 
       c_file.write("#endif\n")
 

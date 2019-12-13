@@ -10,6 +10,12 @@ def main():
   file_count = 6
   players_per_file = int(151 / file_count)
 
+  generate_header()
+  generate_main(file_count, players_per_file)
+  for i in range(file_count):
+    generate_banks(roledex, i, players_per_file)
+
+def generate_header ():
   with open("./data/roledex.h", "w+") as h_file:
     h_file.write("#ifndef ROLEDEX\n")
     h_file.write("#define ROLEDEX\n\n")
@@ -20,6 +26,7 @@ def main():
     h_file.write("void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WORD return_bank);\n\n")
     h_file.write("#endif\n")
 
+def generate_main (file_count, players_per_file):
   with open("./data/roledex.c", "w+") as c_file:
     c_file.write("#include \"../src/beisbol.h\"\n\n")
 
@@ -76,42 +83,37 @@ def main():
         c_file.write("    else ")
     c_file.write("    SWITCH_ROM_MBC5(return_bank);\n}\n")
 
-  for i in range(file_count):
-    with open("./data/roledex"+str(i)+".c", "w+") as c_file:
-      for n in range(players_per_file):
-        player = roledex[i*players_per_file+n]
-        name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
-        c_file.write("#include \"../img/players/"+name+".c\"\n")
+def generate_banks(roledex, i, players_per_file):
+  with open("./data/roledex"+str(i)+".c", "w+") as c_file:
+    for n in range(players_per_file):
+      player = roledex[i*players_per_file+n]
+      name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
+      c_file.write("#include \"../img/players/"+name+".c\"\n")
 
-      c_file.write("\nconst char* player_tiles"+str(i)+"[] = {\n")
-      for n in range(players_per_file):
-        player = roledex[i*players_per_file+n]
-        name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
-        c_file.write("    &_"+name+"_tiles,\n")
+    c_file.write("\nconst char* player_tiles"+str(i)+"[] = {\n")
+    for n in range(players_per_file):
+      player = roledex[i*players_per_file+n]
+      name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
+      c_file.write("    &_"+name+"_tiles,\n")
 
-      c_file.write("};\n\nconst unsigned char player_tile_counts"+str(i)+"[] = {\n")
-      for n in range(players_per_file):
-        player = roledex[i*players_per_file+n]
-        name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
-        c_file.write("    _"+name.upper()+"_TILE_COUNT,\n")
+    c_file.write("};\n\nconst unsigned char player_tile_counts"+str(i)+"[] = {\n")
+    for n in range(players_per_file):
+      player = roledex[i*players_per_file+n]
+      name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
+      c_file.write("    _"+name.upper()+"_TILE_COUNT,\n")
 
-      c_file.write("};\n\nconst unsigned char player_columns"+str(i)+"[] = {\n")
-      for n in range(players_per_file):
-        player = roledex[i*players_per_file+n]
-        name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
-        c_file.write("    _"+name.upper()+"_COLUMNS,\n")
+    c_file.write("};\n\nconst unsigned char player_columns"+str(i)+"[] = {\n")
+    for n in range(players_per_file):
+      player = roledex[i*players_per_file+n]
+      name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
+      c_file.write("    _"+name.upper()+"_COLUMNS,\n")
 
-      c_file.write("};\n\nconst char* player_maps"+str(i)+"[] = {\n")
-      for n in range(players_per_file):
-        player = roledex[i*players_per_file+n]
-        name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
-        c_file.write("    &_"+name+"_map,\n")
-      c_file.write("};\n")
+    c_file.write("};\n\nconst char* player_maps"+str(i)+"[] = {\n")
+    for n in range(players_per_file):
+      player = roledex[i*players_per_file+n]
+      name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
+      c_file.write("    &_"+name+"_map,\n")
+    c_file.write("};\n")
 
 if __name__ == "__main__":
   main()
-
-
-# const char* player_maps0[] = {
-#     &_001Bubbi_map,
-# };

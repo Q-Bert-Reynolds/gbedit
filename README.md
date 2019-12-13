@@ -24,12 +24,11 @@ You've finally been granted your Béisbol coaching license. Now, it's time to he
     make
 
 # TODO:
-Player images:
 
-- batting/pitching -> front/back -> ready/action (8 each)
+Python scripts
 
-Python script
-
+- add and parse moves csv
+- generate all player data
 - handle 1bpp and rle
 - only update .c file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
@@ -49,6 +48,7 @@ New Game
 
 Battle
 
+- FIX doubled back image
 - doubled back & player front images should be different batting/pitching images
 - hit the ball
 - handle different moves
@@ -59,24 +59,53 @@ Battle
 
 Team Menu
 
-Walking
+- layout
+
+Overworld
+
+- walking
+- collisions
 
 Rolédex
+
+- layout
+- scrolling
+- details
+
+Music:
+
+- intro
+- title
+- Billet Town
+- play ball
+
+SFX:
+
+- pitch
+- hit
+- wiff
+- catch
+- select
+- confirm
+- cancel
+
+Player images:
+
+- batting/pitching -> front/back -> ready/action (8 each)
 
 # Cart
 MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
 ROM Banks:
 
-    main.c         ( bank0 ) - movement/collisions, bank switching
-    ui.c           ( bank2 ) - font, non-realtime UI functions, options
-    start.c        ( bank3 ) - copyrights & intro
-    title.c        ( bank4 ) - title, new game/continue menu
-    new_game.c     ( bank5 ) - prologue, name entry
-    play_ball.c    ( bank6 ) - baseball
-    roledex.c      ( bank7 ) - rolédex descriptions
-    lineup.c       ( bank8 ) - change batting order & positions
-    players_imgX.c ( bank1X) - player images
+    main.c      ( bank0 ) - movement/collisions, bank switching
+    ui.c        ( bank2 ) - font, non-realtime UI functions, options
+    start.c     ( bank3 ) - copyrights & intro
+    title.c     ( bank4 ) - title, new game/continue menu
+    new_game.c  ( bank5 ) - prologue, name entry
+    play_ball.c ( bank6 ) - baseball
+    lineup.c    ( bank8 ) - change batting order & positions
+    roledexX.c  ( bank1X) - player images, descriptions, base stats
 
 RAM Banks
 

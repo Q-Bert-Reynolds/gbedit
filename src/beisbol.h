@@ -5,6 +5,7 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
+#include "../data/roledex.h"
 #include "../img/ui_font.h"
 
 // banks
@@ -13,7 +14,7 @@
 #define TITLE_BANK      4
 #define NEW_GAME_BANK   5
 #define PLAY_BALL_BANK  6
-#define PLAYER_IMG_BANK 10 
+// #define PLAYER_IMG_BANK 10 // defined in data/roledex.c
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
@@ -92,22 +93,22 @@ UBYTE away_score;
 extern const UBYTE *types[15];
 struct move {
     char name[10];
-    UBYTE pp;
-    UBYTE type;
+    UBYTE pp, type, effect, accuracy, power;
 };
 struct base_player {
     char name[10];
+    char *description;
+    UBYTE num, type1, type2;
+    UBYTE evolves_to, evolve_type;
     UBYTE hp, bat, field, speed, throw;
-    UBYTE bank;
-    UBYTE *tile_data;
-    UBYTE *tile_map;
+    UBYTE lineup_body, lineup_head, lineup_hat;
 };
 struct player {
     char nickname[10];
-    struct base_player *base;
-    struct move *moves[4];
-    UBYTE level, hp;
-    UBYTE position, batting_order;
+    UBYTE num;
+    UBYTE move_ids[4];
+    UBYTE move_pp[4];
+    UBYTE level, hp, position, batting_order;
     UWORD hits, at_bats;//, plate_appearances, walks;
     UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
 };
@@ -132,11 +133,6 @@ void show_options (WORD return_bank);
 // fx
 void fade_out ();
 void fade_in ();
-
-// images
-void load_player_bkg_data (UBYTE number, UBYTE vram_offset, WORD return_bank);
-UBYTE get_player_img_columns (UBYTE number, WORD return_bank);
-void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WORD return_bank);
 
 // audio
 // void setup_audio();

@@ -19,6 +19,7 @@ You've finally been granted your Béisbol coaching license. Now, it's time to he
 
 # Compiling:
     python3 png2gbdk.py
+    python3 roledex.py
     make clean
     make
 

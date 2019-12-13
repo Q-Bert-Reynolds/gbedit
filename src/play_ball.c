@@ -9,6 +9,8 @@
 struct player test_player;
 struct move move1;
 struct move move2;
+struct move *moves[4];
+
 
 UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
@@ -316,8 +318,8 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     draw_bkg_ui_box(5,12,15,6);
     c = 4;
     for (i = 0; i < 4; ++i) {
-        if ((p->moves)[i] == NULL) { c = i; break; }
-        memcpy(name_buff, (p->moves)[i]->name, 16);
+        if (moves[i] == NULL) { c = i; break; }
+        memcpy(name_buff, moves[i]->name, 16);
         set_bkg_tiles(7,13+i,strlen(name_buff),1,name_buff);
     }
     if (c < 4) set_bkg_tiles(7,c+13,2,4-c,"--------");
@@ -564,11 +566,12 @@ void start_game () {
     test_player.hp = 97;
     test_player.at_bats = 100;
     test_player.hits = 32;
-    test_player.moves[0] = &move1;
-    test_player.moves[1] = &move2;
+    strcpy(test_player.nickname, "TEST");
+
+    moves[0] = &move1;
+    moves[1] = &move2;
     strcpy(move1.name, "SWING");
     strcpy(move2.name, "BUNT");
-    strcpy(test_player.nickname, "TEST");
 
     play_intro();
     draw_ui();

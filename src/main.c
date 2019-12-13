@@ -1,4 +1,5 @@
 #include "beisbol.h"
+#include "../data/roledex.c"
 
 const UBYTE *types[15] = { 
     "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
@@ -119,7 +120,6 @@ void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank) {
     SWITCH_ROM_MBC5(return_bank);
     strcpy(title, str_buff);
     strcpy(str, name_buff);
-    
 }
 
 void ui_show_options ();
@@ -154,116 +154,6 @@ void fade_in () {
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;
     delay(200);
-}
-
-extern const char* player_tiles0[];
-extern const char* player_tiles1[];
-extern const char* player_tiles2[];
-extern const char* player_tiles3[];
-extern const char* player_tiles4[];
-extern const char* player_tiles5[];
-extern const unsigned char player_tile_counts0[];
-extern const unsigned char player_tile_counts1[];
-extern const unsigned char player_tile_counts2[];
-extern const unsigned char player_tile_counts3[];
-extern const unsigned char player_tile_counts4[];
-extern const unsigned char player_tile_counts5[];
-extern const unsigned char player_columns0[];
-extern const unsigned char player_columns1[];
-extern const unsigned char player_columns2[];
-extern const unsigned char player_columns3[];
-extern const unsigned char player_columns4[];
-extern const unsigned char player_columns5[];
-extern const char* player_maps0[];
-extern const char* player_maps1[];
-extern const char* player_maps2[];
-extern const char* player_maps3[];
-extern const char* player_maps4[];
-extern const char* player_maps5[];
-void load_player_bkg_data (UBYTE number, UBYTE vram_offset, WORD return_bank) {
-    if (number <= 25) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK);
-        set_bkg_data(vram_offset, player_tile_counts0[number-1], player_tiles0[number-1]);
-    }
-    else if (number <= 50) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+1);
-        set_bkg_data(vram_offset, player_tile_counts1[number-26], player_tiles1[number-26]);
-    }
-    else if (number <= 75) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+2);
-        set_bkg_data(vram_offset, player_tile_counts2[number-51], player_tiles2[number-51]);
-    }
-    else if (number <= 100) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+3);
-        set_bkg_data(vram_offset, player_tile_counts3[number-76], player_tiles3[number-76]);
-    }
-    else if (number <= 125) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+4);
-        set_bkg_data(vram_offset, player_tile_counts4[number-101], player_tiles4[number-101]);
-    }
-    else {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+5);
-        set_bkg_data(vram_offset, player_tile_counts5[number-126], player_tiles5[number-126]);
-    }
-    SWITCH_ROM_MBC5(return_bank);
-}
-
-UBYTE get_player_img_columns (UBYTE number, WORD return_bank) {
-    i = 0;
-    if (number <= 25) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK);
-        i = player_columns0[number-1];
-    }
-    else if (number <= 50) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+1);
-        i = player_columns1[number-26];
-    }
-    else if (number <= 75) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+2);
-        i = player_columns2[number-51];
-    }
-    else if (number <= 100) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+3);
-        i = player_columns3[number-76];
-    }
-    else if (number <= 125) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+4);
-        i = player_columns4[number-101];
-    }
-    else {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+5);
-        i = player_columns5[number-126];
-    }
-    SWITCH_ROM_MBC5(return_bank);
-    return i;
-}
-
-void set_player_bkg_tiles(UBYTE x, UBYTE y, UBYTE number, UBYTE vram_offset, WORD return_bank) {
-    if (number <= 25) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK);
-        set_bkg_tiles_with_offset(x, y, player_columns0[number-1], player_columns0[number-1], vram_offset, player_maps0[number-1]);
-    }
-    else if (number <= 50) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+1);
-        set_bkg_tiles_with_offset(x, y, player_columns1[number-26], player_columns1[number-26], vram_offset, player_maps1[number-26]);
-    }
-    else if (number <= 75) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+2);
-        set_bkg_tiles_with_offset(x, y, player_columns2[number-51], player_columns2[number-51], vram_offset, player_maps2[number-51]);
-    }
-    else if (number <= 100) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+3);
-        set_bkg_tiles_with_offset(x, y, player_columns3[number-76], player_columns3[number-76], vram_offset, player_maps3[number-76]);
-    }
-    else if (number <= 125) {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+4);
-        set_bkg_tiles_with_offset(x, y, player_columns4[number-101], player_columns4[number-101], vram_offset, player_maps4[number-101]);
-    }
-    else {
-        SWITCH_ROM_MBC5(PLAYER_IMG_BANK+5);
-        set_bkg_tiles_with_offset(x, y, player_columns5[number-126], player_columns5[number-126], vram_offset, player_maps5[number-126]);
-    }
-    SWITCH_ROM_MBC5(return_bank);
 }
 
 void main () {

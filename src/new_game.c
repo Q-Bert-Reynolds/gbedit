@@ -2,7 +2,6 @@
 #include "../img/coaches/doc_hickory.c"
 #include "../img/coaches/calvin.c"
 #include "../img/coaches/nolan0.c"
-// #include "../img/players/033Muchacho.c"
 
 char *home_names = "NEW NAME\nRED\nCALVIN\nHOMER";
 char *away_names = "NEW NAME\nBLUE\nNOLAN\nMIKE";

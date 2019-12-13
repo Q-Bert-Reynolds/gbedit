@@ -188,7 +188,7 @@ const char *upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,\x1E";
 void ui_show_text_entry (char *title, char *str, WORD max_len) {
     DISPLAY_OFF;
     for (i = 0; i != max_len; ++i) str[i] = 0;
-    clear_win_area(0,0,20,4,' ');
+    CLEAR_WIN_AREA(0,0,20,4,' ');
     move_win(7,0);
     l = strlen(title);
     if (l > 0) set_win_tiles(0,1,l,1,title);

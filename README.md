@@ -1,5 +1,5 @@
 # From the back of the box:
-You've finally been granted your Béisbol coaching license. Now, it's time to head out to become the world's greatest baseball coach. It's going to take all you've got to recruit 150 Players in this enormous world. Recruit and train Players like the shockingly-cute Chu. Face off against Yogi's torrential cannons. Stand strong when facing OT's stormy Gust. Trade with friends and watch your Players grow. Important - no single Player can win it all. Can you develop the ultimate Béisbol strategy to defeat the eight League Leaders and become the greatest Béisbol Team of all time?
+You've finally been granted your Béisbol coach's license. Now, it's time to head out to become the world's greatest baseball coach. It's going to take all you've got to recruit 150 Players in this enormous world. Recruit and train Players like the shockingly-cute Chu. Face off against Yogi's torrential cannons. Stand strong when facing OT's stormy Gust. Trade with friends and watch your Players grow. Important - no single Player can win it all. Can you develop the ultimate Béisbol strategy to defeat the eight League Leaders and become the greatest Béisbol Team of all time?
 
 - Recruit up to 139 different Players playing the Home version. Using the Game Link cable (sold separately), trade with a friend who has the Away version to recruit all 150.
 - You'll need to use both versions (Home and Away) to recruit all of the Players.
@@ -48,7 +48,6 @@ New Game
 
 Battle
 
-- FIX doubled back image
 - doubled back & player front images should be different batting/pitching images
 - hit the ball
 - handle different moves
@@ -74,8 +73,9 @@ Rolédex
 
 Music:
 
-- intro
-- title
+- implement gbt player
+- Charge (intro anim)
+- Take Me Out to the Ball Game (title screen)
 - Billet Town
 - play ball
 

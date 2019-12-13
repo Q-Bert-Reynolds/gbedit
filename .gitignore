@@ -1,3 +1,6 @@
+# all bin files
+bin/*
+
 # C files created in /img and /data
 img/**/*.c
 img/**/*.h

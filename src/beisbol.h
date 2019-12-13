@@ -5,6 +5,7 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
+// #include "gbt_player.h"
 #include "../data/roledex.h"
 #include "../img/ui_font.h"
 
@@ -114,10 +115,30 @@ struct player {
 };
 
 // drawing
-void hide_sprites ();
-void clear_screen (UBYTE tile);
-void clear_bkg_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
-void clear_win_area (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE tile);
+#define HIDE_SPRITES() {\
+    for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);\
+}
+
+#define CLEAR_SCREEN(tile) {\
+    for (i = 0; i < 512; ++i) tiles[i] = tile;\
+    set_bkg_tiles(0,0,32,32,tiles);\
+    set_win_tiles(0,0,20,18,tiles);\
+    move_win(167,144);\
+    HIDE_SPRITES();\
+}
+
+#define CLEAR_BKG_AREA(x, y, w, h, tile) {\
+    l = w*h;\
+    for (i = 0; i < l; ++i) tiles[i] = tile;\
+    set_bkg_tiles(x,y,w,h,tiles);\
+}
+
+#define CLEAR_WIN_AREA(x, y, w, h, tile) {\
+    l = w*h;\
+    for (i = 0; i < l; ++i) tiles[i] = tile;\
+    set_win_tiles(x,y,w,h,tiles);\
+}
+
 void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
 
 // ui
@@ -131,8 +152,32 @@ UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *tex
 void show_options (WORD return_bank);
 
 // fx
-void fade_out ();
-void fade_in ();
+#define fade_out() {\
+    disable_interrupts();\
+    BGP_REG = 0x90;\
+    OBP0_REG = 0x90;\
+    delay(200);\
+    BGP_REG = 0x40;\
+    OBP0_REG = 0x40;\
+    delay(200);\
+    BGP_REG = 0x00;\
+    OBP0_REG = 0x00;\
+    delay(200);\
+}
+
+#define fade_in() {\
+    disable_interrupts();\
+    BGP_REG = 0x40;\
+    OBP0_REG = 0x40;\
+    delay(200);\
+    BGP_REG = 0x90;\
+    OBP0_REG = 0x90;\
+    delay(200);\
+    BGP_REG = BG_PALETTE;\
+    OBP0_REG = SPR_PALETTE_0;\
+    OBP1_REG = SPR_PALETTE_1;\
+    delay(200);\
+}
 
 // audio
 // void setup_audio();

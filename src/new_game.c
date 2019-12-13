@@ -14,7 +14,7 @@ void new_game() {
     move_bkg(48,0);
     load_font_tiles(NEW_GAME_BANK);
     set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
-    clear_screen(' ');
+    CLEAR_SCREEN(' ');
     set_bkg_tiles_with_offset(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,_UI_FONT_TILE_COUNT,_doc_hickory_map);
     DISPLAY_ON;
 
@@ -25,7 +25,7 @@ void new_game() {
 
     // set image to Muchacho
     DISPLAY_OFF;
-    clear_screen(0);
+    CLEAR_SCREEN(0);
     load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
     set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
     DISPLAY_ON;
@@ -39,7 +39,7 @@ void new_game() {
 
     // set image to Calvin
     DISPLAY_OFF;
-    clear_screen(0);
+    CLEAR_SCREEN(0);
     set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
     set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
     move_bkg(-56,0);
@@ -69,7 +69,7 @@ void new_game() {
     }
     
     // show text entry
-    clear_bkg_area(0,0,12,12,' ');
+    CLEAR_BKG_AREA(0,0,12,12,' ');
     if (d == 1) {
         move_bkg(48,0);
         show_text_entry("YOUR NAME?", name_buff, 7, NEW_GAME_BANK);
@@ -105,7 +105,7 @@ void new_game() {
 
     // set image to Nolan
     DISPLAY_OFF;
-    clear_screen(' ');
+    CLEAR_SCREEN(' ');
     set_bkg_data(_UI_FONT_TILE_COUNT, _NOLAN0_TILE_COUNT, _nolan0_tiles);
     set_bkg_tiles_with_offset(13,4,_NOLAN0_COLUMNS,_NOLAN0_ROWS,_UI_FONT_TILE_COUNT,_nolan0_map);
     move_bkg(-56,0);
@@ -135,7 +135,7 @@ void new_game() {
         d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
     }
 
-    clear_bkg_area(0,0,12,12,' ');
+    CLEAR_BKG_AREA(0,0,12,12,' ');
 
     if (d == 1) {
         move_bkg(48,0);
@@ -173,7 +173,7 @@ void new_game() {
 
     // set image to Calvin
     DISPLAY_OFF;
-    clear_screen(' ');
+    CLEAR_SCREEN(' ');
     set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
     set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
     DISPLAY_ON;

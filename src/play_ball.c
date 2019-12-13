@@ -150,10 +150,10 @@ void play_intro () {
     }
     disable_interrupts();
     remove_LCD(slide_out_lcd_interrupt);
-    clear_bkg_area(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
+    CLEAR_BKG_AREA(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
-    hide_sprites();
+    HIDE_SPRITES();
     wait_vbl_done();
     move_bkg(0,0);
 
@@ -547,7 +547,7 @@ void start_game () {
     OBP1_REG = SPR_PALETTE_1;
     move_bkg(0,0);
     load_font_tiles(PLAY_BALL_BANK);
-    clear_screen(' ');
+    CLEAR_SCREEN(' ');
     set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
     set_sprite_data(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT, _STRIKE_ZONE_TILE_COUNT, _strike_zone_tiles);

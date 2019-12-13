@@ -121,7 +121,6 @@ def png_to_c (path):
         tilemap.append("0x{:02X}".format(len(tileset)))
         tileset.append(tile)
 
-    tile_count = len(tileset)
     is_2x = "_back" in name
     if is_2x:
       tilemap_2x = []
@@ -138,7 +137,8 @@ def png_to_c (path):
       tilemap = tilemap_2x
       rows*=2
       cols*=2
-
+    else:
+      tile_count = len(tileset)
 
     with open(base + ".c", "w+") as c_file:
       has_map = (name not in ["health_bar"]) and ("sprites" not in name)

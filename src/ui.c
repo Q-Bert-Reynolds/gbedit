@@ -9,16 +9,16 @@ void flash_next_arrow (UBYTE x, UBYTE y) {
     while (1) {
         tiles[0] = ARROW_DOWN;
         set_win_tiles(x, y, 1, 1, tiles);
-        waitpadup();
+        update_waitpadup(UI_BANK);
         for (a = 0; a < 20; ++a) {
             if (joypad() & J_A) return;
-            delay(10);
+            update_delay(10, UI_BANK);
         }
         tiles[0] = 0;
         set_win_tiles(x, y, 1, 1, tiles);
         for (a = 0; a < 20; ++a) {
             if (joypad() & J_A) return;
-            delay(10);
+            update_delay(10, UI_BANK);
         }
     }
 }
@@ -49,7 +49,7 @@ void ui_reveal_text (unsigned char *text) {
             set_win_tiles(x+1,y*2+2,1,1,text+i);
             x++;
         }        
-        delay(10);
+        update_delay(10, UI_BANK);
     }
     flash_next_arrow(18,4);
 }
@@ -108,41 +108,41 @@ void ui_show_options () {
     );
 
     DISPLAY_ON;
-    waitpadup();
+    update_waitpadup(UI_BANK);
     y = 0;
     move_options_arrow(y);
     while (1) {
         k = joypad();
         if (k & J_UP && y > 0) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             move_options_arrow(--y);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
         else if (k & J_DOWN && y < 3) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             move_options_arrow(++y);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
         else if (k & J_LEFT && y < 3) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             if (y == 0 && a > 0) --a;
             else if (y == 1 && b > 0) --b;
             else if (y == 2 && c > 0) --c;
             move_options_arrow(y);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
         else if (k & J_RIGHT && y < 3) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             if (y == 0 && a < 2) ++a;
             else if (y == 1 && b < 1) ++b;
             else if (y == 2 && c < 1) ++c;
             move_options_arrow(y);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
 
         if (k & (J_START | J_A) && y == 3) break;
         else if (k & J_B) break;
-        wait_vbl_done(); 
+        update_vbl(UI_BANK); 
     }
     disable_interrupts();
     ENABLE_RAM_MBC5;
@@ -154,7 +154,7 @@ void ui_show_options () {
 }
 
 void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) {
-    wait_vbl_done();
+    update_vbl(UI_BANK);
     tiles[0] = 0;
     if (from_y == 5) {
         set_win_tiles(1,15,1,1,tiles);
@@ -169,7 +169,7 @@ void move_text_entry_arrow (UBYTE from_x, UBYTE from_y, UBYTE to_x, UBYTE to_y) 
     else {
         set_win_tiles(to_x*2+1,to_y*2+5,1,1,tiles);
     }
-    waitpadup();
+    update_waitpadup(UI_BANK);
 }
 
 void update_text_entry_display (char *str, WORD max_len) {
@@ -222,7 +222,7 @@ void ui_show_text_entry (char *title, char *str, WORD max_len) {
         }
         set_win_tiles(1,5,18,9,tiles);
 
-        waitpadup();
+        update_waitpadup(UI_BANK);
         while (1) {
             k = joypad();
             if (k & J_UP && y > 0) {
@@ -254,15 +254,15 @@ void ui_show_text_entry (char *title, char *str, WORD max_len) {
                     str[l++] = str_buff[y*9+x];
                     set_win_tiles(10,3,max_len,1,str);
                     update_text_entry_display(str, max_len);
-                    waitpadup();
+                    update_waitpadup(UI_BANK);
                 }
             }
             else if (k & J_B && l > 0) {
                 str[--l] = '\0';
                 update_text_entry_display(str, max_len);
-                waitpadup();
+                update_waitpadup(UI_BANK);
             }
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
         }
     }
 }
@@ -311,23 +311,23 @@ UBYTE ui_show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *
         set_bkg_tiles(x+i,y,l,1,title);
     }
 
-    waitpadup();
+    update_waitpadup(UI_BANK);
     j = 0;
     while (1) {
         k = joypad();
         if (k & J_UP && j > 0) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             move_menu_arrow(--j);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
         else if (k & J_DOWN && j < c-1) {
-            wait_vbl_done(); 
+            update_vbl(UI_BANK); 
             move_menu_arrow(++j);
-            waitpadup();
+            update_waitpadup(UI_BANK);
         }
         if (k & (J_START | J_A)) return j+1;
         else if (k & J_B) return 0;
-        wait_vbl_done(); 
+        update_vbl(UI_BANK); 
     }
     return 0;
 }

@@ -131,7 +131,7 @@ void play_intro () {
     enable_interrupts();
     DISPLAY_ON;
     for (x = 160; x >= 0; x-=2) {
-        wait_vbl_done();
+        update_vbl(PLAY_BALL_BANK);
     }
     disable_interrupts();
     remove_LCD(slide_in_lcd_interrupt);
@@ -146,7 +146,7 @@ void play_intro () {
     enable_interrupts();
     set_interrupts(VBL_IFLAG | LCD_IFLAG);
     for (x = 0; x > -80; x-=2) {
-        wait_vbl_done();
+        update_vbl(PLAY_BALL_BANK);
     }
     disable_interrupts();
     remove_LCD(slide_out_lcd_interrupt);
@@ -154,7 +154,7 @@ void play_intro () {
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     HIDE_SPRITES();
-    wait_vbl_done();
+    update_vbl(PLAY_BALL_BANK);
     move_bkg(0,0);
 
     set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
@@ -331,14 +331,14 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     while (1) {
         k = joypad();
         if (k & J_UP && move_choice > 0) {
-            wait_vbl_done();
+            update_vbl(PLAY_BALL_BANK);
             --move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);
             waitpadup();
         }
         else if (k & J_DOWN && move_choice < c-1) {
-            wait_vbl_done();
+            update_vbl(PLAY_BALL_BANK);
             ++move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);
@@ -349,7 +349,7 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
             return move_choice+1;
         }
         else if (k & J_B) break;
-        wait_vbl_done(); 
+        update_vbl(PLAY_BALL_BANK); 
     }
     set_bkg_tiles(0,8,20,10,bkg_buff);
     return 0;
@@ -481,7 +481,7 @@ void bat (struct player *p, UBYTE move) {
         if (k & J_DOWN) ++b;
         else if (k & J_UP) --b;
         move_aim_circle(a>>1, b>>1);
-        wait_vbl_done();
+        update_vbl(PLAY_BALL_BANK);
     }
     sprintf(str_buff, "%s sets.", "LAGGARD");
     display_text(str_buff);
@@ -496,7 +496,7 @@ void bat (struct player *p, UBYTE move) {
         if (i == 30) {
             set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent1_map);
         }
-        wait_vbl_done();
+        update_vbl(PLAY_BALL_BANK);
     }
     set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent2_map);
     display_text("And the pitch.");
@@ -524,12 +524,12 @@ void bat (struct player *p, UBYTE move) {
             set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user2_map);
         }
         move_baseball(i);
-        wait_vbl_done();
+        update_vbl(PLAY_BALL_BANK);
     }
     hide_baseball();
     move_aim_circle(-8,-8);
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
-    delay(100);
+    update_delay(100, PLAY_BALL_BANK);
     waitpad(J_A);
 }
 

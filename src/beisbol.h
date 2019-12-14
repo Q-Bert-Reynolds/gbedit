@@ -137,6 +137,33 @@ struct player {
     set_win_tiles(x,y,w,h,tiles);\
 }
 
+#define fade_out_update(return_bank) {\
+    disable_interrupts();\
+    BGP_REG = 0x90;\
+    OBP0_REG = 0x90;\
+    update_delay(200, return_bank);\
+    BGP_REG = 0x40;\
+    OBP0_REG = 0x40;\
+    update_delay(200, return_bank);\
+    BGP_REG = 0x00;\
+    OBP0_REG = 0x00;\
+    update_delay(200, return_bank);\
+}
+
+#define fade_in_update(return_bank) {\
+    disable_interrupts();\
+    BGP_REG = 0x40;\
+    OBP0_REG = 0x40;\
+    update_delay(200, return_bank);\
+    BGP_REG = 0x90;\
+    OBP0_REG = 0x90;\
+    update_delay(200, return_bank);\
+    BGP_REG = BG_PALETTE;\
+    OBP0_REG = SPR_PALETTE_0;\
+    OBP1_REG = SPR_PALETTE_1;\
+    update_delay(200, return_bank);\
+}
+
 #define fade_out() {\
     disable_interrupts();\
     BGP_REG = 0x90;\
@@ -175,7 +202,9 @@ void display_text (UBYTE *text);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
 void show_options (WORD return_bank);
 
-void update(WORD return_bank);
+void update_vbl(WORD return_bank);
+void update_waitpadup(WORD return_bank);
+void update_delay(UBYTE time, WORD return_bank);
 
 // banked entry points
 void start();

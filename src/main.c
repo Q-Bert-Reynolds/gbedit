@@ -104,10 +104,28 @@ void show_options (WORD return_bank) {
     SWITCH_ROM_MBC5(return_bank);
 }
 
-void update(WORD return_bank) {
+void update_vbl(WORD return_bank) {
     wait_vbl_done();
     SWITCH_ROM_MBC5(AUDIO_BANK);
     update_audio();
+    SWITCH_ROM_MBC5(return_bank);
+}
+
+void update_waitpadup(WORD return_bank) {
+    SWITCH_ROM_MBC5(AUDIO_BANK);
+    while (joypad()) {
+        wait_vbl_done();
+        update_audio();
+    }
+    SWITCH_ROM_MBC5(return_bank);
+}
+
+void update_delay(UBYTE time, WORD return_bank) {
+    SWITCH_ROM_MBC5(AUDIO_BANK);
+    for (t = 0; t < time; t+=60) {
+        wait_vbl_done();
+        update_audio();
+    }
     SWITCH_ROM_MBC5(return_bank);
 }
 

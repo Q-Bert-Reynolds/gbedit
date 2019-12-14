@@ -5,17 +5,16 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
-// #include "gbt_player.h"
 #include "../data/roledex.h"
 #include "../img/ui_font.h"
 
-// banks
+// banks (PLAYER_IMG_BANK defined in data/roledex.h)
+#define AUDIO_BANK      1
 #define UI_BANK         2
 #define START_BANK      3
 #define TITLE_BANK      4
 #define NEW_GAME_BANK   5
 #define PLAY_BALL_BANK  6
-// #define PLAYER_IMG_BANK 10 // defined in data/roledex.c
 
 // GameBoy palettes
 #define BG_PALETTE    0xE4
@@ -114,7 +113,6 @@ struct player {
     UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
 };
 
-// drawing
 #define HIDE_SPRITES() {\
     for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);\
 }
@@ -139,19 +137,6 @@ struct player {
     set_win_tiles(x,y,w,h,tiles);\
 }
 
-void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
-
-// ui
-void load_font_tiles (WORD return_bank);
-void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h);
-void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank);
-void reveal_text (UBYTE *text, WORD return_bank);
-void display_text (UBYTE *text);
-UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
-void show_options (WORD return_bank);
-
-// fx
 #define fade_out() {\
     disable_interrupts();\
     BGP_REG = 0x90;\
@@ -179,14 +164,24 @@ void show_options (WORD return_bank);
     delay(200);\
 }
 
-// audio
-// void setup_audio();
-// void update_audio();
+void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
+void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset, unsigned char *in_tiles);
+
+void load_font_tiles (WORD return_bank);
+void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank);
+void reveal_text (UBYTE *text, WORD return_bank);
+void display_text (UBYTE *text);
+UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
+void show_options (WORD return_bank);
+
+void update(WORD return_bank);
 
 // banked entry points
 void start();
 UBYTE title();
 void new_game();
 void start_game();
+void update_audio();
 
 #endif

@@ -7,7 +7,7 @@ const UBYTE *types[15] = {
     "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON",
 };
 
-void ui_load_font_tiles ();
+extern void ui_load_font_tiles ();
 void load_font_tiles (WORD return_bank) {
     SWITCH_ROM_MBC5(UI_BANK);
     ui_load_font_tiles();
@@ -19,7 +19,15 @@ void set_bkg_tiles_with_offset (UBYTE x, UBYTE y, UBYTE w, UBYTE h, UBYTE offset
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
-void draw_ui_box (UBYTE w, UBYTE h) {
+extern void ui_reveal_text (unsigned char *text);
+void reveal_text (unsigned char *text, WORD return_bank) {
+    strcpy(str_buff, text);
+    SWITCH_ROM_MBC5(UI_BANK);
+    ui_reveal_text(str_buff);
+    SWITCH_ROM_MBC5(return_bank);
+}
+
+void draw_ui_box(UBYTE w, UBYTE h) {
     for (j = 0; j < h; ++j) {
         for (i = 0; i < w; ++i) {
             k = 0;
@@ -34,28 +42,19 @@ void draw_ui_box (UBYTE w, UBYTE h) {
                 else k = BOX_HORIZONTAL;
             }
             else if (i == 0 || i == w-1) k = BOX_VERTICAL;
-
             tiles[j*w+i] = k;
         }
     }
 }
 
-void draw_bkg_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     draw_ui_box(w,h);
     set_bkg_tiles(x,y,w,h,tiles);
 }
 
-void draw_win_ui_box (UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
+void draw_win_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h) {
     draw_ui_box(w,h);
     set_win_tiles(x,y,w,h,tiles);
-}
-
-void ui_reveal_text (unsigned char *text);
-void reveal_text (unsigned char *text, WORD return_bank) {
-    strcpy(str_buff, text);
-    SWITCH_ROM_MBC5(UI_BANK);
-    ui_reveal_text(str_buff);
-    SWITCH_ROM_MBC5(return_bank);
 }
 
 void display_text (unsigned char *text) {
@@ -77,7 +76,7 @@ void display_text (unsigned char *text) {
     SHOW_WIN;
 }
 
-UBYTE ui_show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
+extern UBYTE ui_show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank) {
     strcpy(str_buff, text);
     strcpy(name_buff, title);
@@ -87,7 +86,7 @@ UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *tex
     return a;
 }
 
-void ui_show_text_entry (char *title, char *str, WORD max_len);
+extern void ui_show_text_entry (char *title, char *str, WORD max_len);
 void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank) {
     strcpy(str_buff, title);
     strcpy(name_buff, str);
@@ -98,10 +97,17 @@ void show_text_entry (char *title, char *str, WORD max_len, WORD return_bank) {
     strcpy(str, name_buff);
 }
 
-void ui_show_options ();
+extern void ui_show_options ();
 void show_options (WORD return_bank) {
     SWITCH_ROM_MBC5(UI_BANK);
     ui_show_options();
+    SWITCH_ROM_MBC5(return_bank);
+}
+
+void update(WORD return_bank) {
+    wait_vbl_done();
+    SWITCH_ROM_MBC5(AUDIO_BANK);
+    update_audio();
     SWITCH_ROM_MBC5(return_bank);
 }
 
@@ -111,13 +117,19 @@ void main () {
     cgb_compatibility();
     cpu_fast();
     enable_interrupts();
-    // setup_audio();
+    
+    NR52_REG = 0xFFU;
+    NR51_REG = 0x00U;
+    NR50_REG = 0x77U;
+    
     SPRITES_8x8;
     BGP_REG = BG_PALETTE;
     OBP0_REG = SPR_PALETTE_0;
     OBP1_REG = SPR_PALETTE_1;
+    
     SHOW_SPRITES;
     SHOW_BKG;
+    
     SWITCH_RAM_MBC5(0);
     SWITCH_ROM_MBC5(START_BANK);
     start();    

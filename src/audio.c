@@ -259,12 +259,6 @@ void play_music() {
     NR51_REG |= 0x11U;
 }
 
-void setup_audio () {
-    NR52_REG = 0xFFU;
-    NR51_REG = 0x00U;
-    NR50_REG = 0x77U;
-}
-
 void update_audio () {
     if (music_timer == 0) {
         play_music();

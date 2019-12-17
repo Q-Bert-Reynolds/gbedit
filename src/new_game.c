@@ -18,10 +18,10 @@ void new_game() {
     set_bkg_tiles_with_offset(13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,_UI_FONT_TILE_COUNT,_doc_hickory_map);
     DISPLAY_ON;
 
-    fade_in_update(NEW_GAME_BANK);
+    FADE_IN(NEW_GAME_BANK);
     reveal_text("Hello there!\nWelcome to the\nworld of B\x7FiSBOL.", NEW_GAME_BANK);
     reveal_text("My name is DOC!\nPeople call me\nthe B\x7FiSBOL PROF!", NEW_GAME_BANK);
-    fade_out_update(NEW_GAME_BANK);
+    FADE_OUT(NEW_GAME_BANK);
 
     // set image to Muchacho
     DISPLAY_OFF;
@@ -30,12 +30,12 @@ void new_game() {
     set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
     DISPLAY_ON;
 
-    fade_in_update(NEW_GAME_BANK);
+    FADE_IN(NEW_GAME_BANK);
     reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!", NEW_GAME_BANK);
     reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams", NEW_GAME_BANK);
     reveal_text("Myself...", NEW_GAME_BANK);
     reveal_text("I study B\x7FiSBOL\nas a profession.", NEW_GAME_BANK);
-    fade_out_update(NEW_GAME_BANK);
+    FADE_OUT(NEW_GAME_BANK);
 
     // set image to Calvin
     DISPLAY_OFF;
@@ -44,7 +44,7 @@ void new_game() {
     set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
     move_bkg(-56,0);
     DISPLAY_ON;
-    fade_in_update(NEW_GAME_BANK);
+    FADE_IN(NEW_GAME_BANK);
 
     // slide in Calvin
     for (i = -56; i <= 48; i+=4) {
@@ -94,7 +94,7 @@ void new_game() {
     }
     sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
     reveal_text(str_buff, NEW_GAME_BANK);
-    fade_out_update(NEW_GAME_BANK);
+    FADE_OUT(NEW_GAME_BANK);
 
     // save user name
     disable_interrupts();
@@ -110,7 +110,7 @@ void new_game() {
     set_bkg_tiles_with_offset(13,4,_NOLAN0_COLUMNS,_NOLAN0_ROWS,_UI_FONT_TILE_COUNT,_nolan0_map);
     move_bkg(-56,0);
     DISPLAY_ON;
-    fade_in_update(NEW_GAME_BANK);
+    FADE_IN(NEW_GAME_BANK);
 
     // slide in Nolan
     for (i = -56; i <= 48; i+=4) {
@@ -162,7 +162,7 @@ void new_game() {
     
     sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
     reveal_text(str_buff, NEW_GAME_BANK);
-    fade_out_update(NEW_GAME_BANK);
+    FADE_OUT(NEW_GAME_BANK);
 
     // save rival name
     disable_interrupts();
@@ -177,7 +177,7 @@ void new_game() {
     set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
     set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
     DISPLAY_ON;
-    fade_in_update(NEW_GAME_BANK);
+    FADE_IN(NEW_GAME_BANK);
 
     // transition to game
     disable_interrupts();
@@ -190,5 +190,5 @@ void new_game() {
     reveal_text("Your very own\nB\x7FiSBOL legend is\nabout to unfold!", NEW_GAME_BANK);
     reveal_text("A world of dreams\nand adventures\nwith B\x7FiSBOL\nawaits! Let's go!", NEW_GAME_BANK); //don't wait for input at the end
     //TODO: shrink image
-    fade_out_update(NEW_GAME_BANK);
+    FADE_OUT(NEW_GAME_BANK);
 }

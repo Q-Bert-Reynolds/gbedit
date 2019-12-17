@@ -137,7 +137,7 @@ struct player {
     set_win_tiles(x,y,w,h,tiles);\
 }
 
-#define fade_out_update(return_bank) {\
+#define FADE_OUT(return_bank) {\
     disable_interrupts();\
     BGP_REG = 0x90;\
     OBP0_REG = 0x90;\
@@ -150,7 +150,7 @@ struct player {
     update_delay(200, return_bank);\
 }
 
-#define fade_in_update(return_bank) {\
+#define FADE_IN(return_bank) {\
     disable_interrupts();\
     BGP_REG = 0x40;\
     OBP0_REG = 0x40;\
@@ -162,33 +162,6 @@ struct player {
     OBP0_REG = SPR_PALETTE_0;\
     OBP1_REG = SPR_PALETTE_1;\
     update_delay(200, return_bank);\
-}
-
-#define fade_out() {\
-    disable_interrupts();\
-    BGP_REG = 0x90;\
-    OBP0_REG = 0x90;\
-    delay(200);\
-    BGP_REG = 0x40;\
-    OBP0_REG = 0x40;\
-    delay(200);\
-    BGP_REG = 0x00;\
-    OBP0_REG = 0x00;\
-    delay(200);\
-}
-
-#define fade_in() {\
-    disable_interrupts();\
-    BGP_REG = 0x40;\
-    OBP0_REG = 0x40;\
-    delay(200);\
-    BGP_REG = 0x90;\
-    OBP0_REG = 0x90;\
-    delay(200);\
-    BGP_REG = BG_PALETTE;\
-    OBP0_REG = SPR_PALETTE_0;\
-    OBP1_REG = SPR_PALETTE_1;\
-    delay(200);\
 }
 
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
@@ -202,9 +175,28 @@ void display_text (UBYTE *text);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
 void show_options (WORD return_bank);
 
+void update(WORD return_bank);
 void update_vbl(WORD return_bank);
 void update_waitpadup(WORD return_bank);
+void update_waitpad(UBYTE btn, WORD return_bank);
 void update_delay(UBYTE time, WORD return_bank);
+
+// interrupt
+UBYTE lcd_i;
+UBYTE lcd_count;
+UBYTE lcd_line[4];
+UBYTE lcd_x[4];
+UBYTE lcd_y[4];
+void (*lcd_callback[4])();
+void lcd_interrupt(void) {
+    if (LY_REG == lcd_line[lcd_i]) {
+        SCX_REG = lcd_x[lcd_i];
+        SCY_REG = lcd_y[lcd_i];
+        if (lcd_callback[lcd_i] != NULL) lcd_callback[lcd_i]();
+        if (++lcd_i == lcd_count) lcd_i = 0;
+        LYC_REG = lcd_line[lcd_i];
+    }
+}
 
 // banked entry points
 void start();

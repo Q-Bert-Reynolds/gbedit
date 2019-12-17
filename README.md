@@ -73,7 +73,7 @@ Rolédex
 
 Music:
 
-- implement gbt player
+- doesn't play during lcd interrupts because of bank switching
 - Charge (intro anim)
 - Take Me Out to the Ball Game (title screen)
 - Billet Town

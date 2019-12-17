@@ -16,9 +16,7 @@ UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
-void move_coach () {
-    LYC_REG = 0;
-    SCX_REG = 256-x;
+void move_coach() {
     for (j = 0; j < 3; ++j) {
         for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
             move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
@@ -26,20 +24,24 @@ void move_coach () {
     }
 }
 
-void slide_in_lcd_interrupt(void) {
-    if (LY_REG == 0){
-        LYC_REG = 56;
-        SCX_REG = x;
+void play_ball_lcd_interrupt(void) {
+    if (LY_REG == lcd_line[0]) {
+        LYC_REG = lcd_line[1];
+        SCX_REG = lcd_x[0];
     }
-    else if (LY_REG == 56) move_coach();
-}
-
-void slide_out_lcd_interrupt(void) {
-    if (LY_REG == 0){
-        LYC_REG = 56;
-        SCX_REG = 0;
+    else if (LY_REG == lcd_line[1]) {
+        LYC_REG = lcd_line[0];
+        SCX_REG = lcd_x[1];
+        if (lcd_callback[1]) lcd_callback[1]();
     }
-    else if (LY_REG == 56) move_coach();
+    // if (LY_REG == lcd_line[lcd_i]) {
+    //     SCX_REG = lcd_x[lcd_i];
+    //     SCY_REG = lcd_y[lcd_i];
+    //     if (lcd_callback[lcd_i]) lcd_callback[lcd_i]();
+    //     ++lcd_i;
+    //     if (lcd_i == lcd_count) lcd_i = 0;
+    //     LYC_REG = lcd_line[lcd_i];
+    // }
 }
 
 char *health_pct (struct player *p) {
@@ -125,34 +127,40 @@ void play_intro () {
     move_bkg(160,0);
     VBK_REG = 0;
     STAT_REG = 72;
-    set_interrupts(LCD_IFLAG|VBL_IFLAG);
     disable_interrupts();
-    add_LCD(slide_in_lcd_interrupt);
+    lcd_i = 0;
+    lcd_count = 2;
+    lcd_line[0] = 0;
+    lcd_line[1] = 56;
+    lcd_x[0] = 160;
+    lcd_x[1] = 96;
+    lcd_y[0] = 0;
+    lcd_y[1] = 0;
+    lcd_callback[1] = move_coach;
+    add_LCD(play_ball_lcd_interrupt);
     enable_interrupts();
     DISPLAY_ON;
+    set_interrupts(LCD_IFLAG|VBL_IFLAG);
     for (x = 160; x >= 0; x-=2) {
-        update_vbl(PLAY_BALL_BANK);
+        lcd_x[0] = x;
+        lcd_x[1] = 256-x;
+        // update(PLAY_BALL_BANK);
     }
-    disable_interrupts();
-    remove_LCD(slide_in_lcd_interrupt);
-    enable_interrupts();
     set_interrupts(VBL_IFLAG);
     
     sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
     reveal_text(str_buff, PLAY_BALL_BANK);
 
-    disable_interrupts();
-    add_LCD(slide_out_lcd_interrupt);
-    enable_interrupts();
     set_interrupts(VBL_IFLAG | LCD_IFLAG);
     for (x = 0; x > -80; x-=2) {
-        update_vbl(PLAY_BALL_BANK);
+        lcd_x[1] = 256-x;
+        // update(PLAY_BALL_BANK);
     }
     disable_interrupts();
-    remove_LCD(slide_out_lcd_interrupt);
-    CLEAR_BKG_AREA(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
+    remove_LCD(play_ball_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
+    CLEAR_BKG_AREA(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
     HIDE_SPRITES();
     update_vbl(PLAY_BALL_BANK);
     move_bkg(0,0);
@@ -284,15 +292,16 @@ void select_play_menu_item () {
     x = play_menu_selection % 2;
     y = (play_menu_selection & 2) >> 1;
     move_play_menu_arrow();
-    waitpadup();
+    update_waitpadup(PLAY_BALL_BANK);
     while (1) {
         k = joypad();
         if (k & J_UP && y == 1) { y = 0; move_play_menu_arrow(); }
         else if (k & J_DOWN && y == 0) { y = 1; move_play_menu_arrow(); }
         else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
         else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
-
         if (k & J_A) break;
+
+        update_vbl(PLAY_BALL_BANK);
     }
     play_menu_selection = x * 2 + y;
 }
@@ -327,22 +336,20 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     move_move_menu_arrow(move_choice);
     show_move_info();//p->moves[move_choice]);
 
-    waitpadup();
+    update_waitpadup(PLAY_BALL_BANK);
     while (1) {
         k = joypad();
         if (k & J_UP && move_choice > 0) {
-            update_vbl(PLAY_BALL_BANK);
             --move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);
-            waitpadup();
+            update_waitpadup(PLAY_BALL_BANK);
         }
         else if (k & J_DOWN && move_choice < c-1) {
-            update_vbl(PLAY_BALL_BANK);
             ++move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);
-            waitpadup();
+            update_waitpadup(PLAY_BALL_BANK);
         }
         if (k & (J_START | J_A)) {
             set_bkg_tiles(0,8,20,10,bkg_buff);
@@ -530,7 +537,7 @@ void bat (struct player *p, UBYTE move) {
     move_aim_circle(-8,-8);
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     update_delay(100, PLAY_BALL_BANK);
-    waitpad(J_A);
+    update_waitpad(J_A, PLAY_BALL_BANK);
 }
 
 void play_ball (struct player *p, UBYTE move) {

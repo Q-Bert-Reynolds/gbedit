@@ -12,43 +12,6 @@
 
 #define PLAYER_INDEX _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
-void show_title_lcd_interrupt(void) {
-    switch (LY_REG) {
-        case 0:
-        case 255:
-            LYC_REG = 63;
-            SCX_REG = 0;
-            SCY_REG = y;
-            break;
-        case 63:
-            LYC_REG = 71;
-            SCX_REG = x;
-            SCY_REG = 0;
-            break;
-        case 71:
-            LYC_REG = 135;
-            SCX_REG = 128;
-            SCY_REG = 0;
-            break;
-        case 135:
-            LYC_REG = 0;
-            SCX_REG = 0;
-            SCY_REG = 0;
-            break;
-    }
-}
-
-void cycle_players_lcd_interrupt(void) {
-    if (LY_REG == 72){
-        LYC_REG = 135;
-        SCX_REG = x;
-    }
-    else if (LY_REG == 135) {
-        LYC_REG = 72;
-        SCX_REG = 0;
-    }
-}
-
 void show_player (UBYTE p) {
     load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
     a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
@@ -80,43 +43,65 @@ void show_title () {
     set_sprite_prop(5, S_PALETTE);
 
     disable_interrupts();
-    add_LCD(show_title_lcd_interrupt);
+    lcd_i = 0;
+    lcd_count = 4;
+    lcd_line[0] = 0;
+    lcd_line[1] = 63;
+    lcd_line[2] = 71;
+    lcd_line[3] = 135;
+    lcd_x[0] = 0;
+    lcd_x[1] = 64;
+    lcd_x[2] = 128;
+    lcd_x[3] = 0;
+    lcd_y[0] = 64;
+    lcd_y[1] = 0; 
+    lcd_y[2] = 0;
+    lcd_y[3] = 0; 
+    add_LCD(lcd_interrupt);
     enable_interrupts();
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     show_player(0);
-    y = 64;
-    x = 64;
     DISPLAY_ON;
+    x = 64;
+    y = 64;
     for (i = 0; i <= 64; i+=2) {
+        lcd_y[0] = 64-i;
         y = 64-i;
-        wait_vbl_done();
+        update_vbl(TITLE_BANK);
     }
 
     set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
     for (i = 0; i <= 64; i+=2) {
+        lcd_x[1] = -64+i;
         x = -64+i;
-        wait_vbl_done();
+        update_vbl(TITLE_BANK);
     }
-    wait_vbl_done();
+    
     disable_interrupts();
-    remove_LCD(show_title_lcd_interrupt);
-    x = 128;
-    add_LCD(cycle_players_lcd_interrupt);
+    lcd_i = 0;
+    lcd_count = 2;
+    lcd_line[0] = 72;
+    lcd_line[1] = 135;
+    lcd_x[0] = 128;
+    lcd_x[1] = 0;
+    lcd_y[0] = 0;
+    lcd_y[1] = 0; 
     enable_interrupts();
+    
     z = 0;
     while (1) {
         for (i = 0; i < 60; i++) {
             if (joypad() & (J_START | J_A)) return;
-            wait_vbl_done();
+            update_vbl(TITLE_BANK);
         }
         for (j = 0; j <= 128; j+=6) {
-            x = j+128;
+            lcd_x[0] = j+128;
             if (joypad() & (J_START | J_A)) return;
             if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
-            wait_vbl_done();
+            update_vbl(TITLE_BANK);
         }
         z++;
         if (z == 16) z = 0;
@@ -124,9 +109,9 @@ void show_title () {
         show_player(z);
         enable_interrupts();
         for (j = 0; j <= 128; j+=6) {
-            x = j;
+            lcd_x[0] = j;
             if (joypad() & (J_START | J_A)) return;
-            wait_vbl_done();
+            update_vbl(TITLE_BANK);
         }
     }
 }
@@ -134,7 +119,7 @@ void show_title () {
 UBYTE show_start_menu () {
     DISPLAY_OFF;
     disable_interrupts();
-    remove_LCD(cycle_players_lcd_interrupt);
+    remove_LCD(lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     CLEAR_SCREEN(0);
@@ -171,7 +156,7 @@ UBYTE show_start_menu () {
                     CLEAR_BKG_AREA(4,7,16,10,0);
                     break;
                 }
-                wait_vbl_done();
+                update_vbl(TITLE_BANK);
             }
         }
         else return y;

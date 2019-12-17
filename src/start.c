@@ -27,13 +27,13 @@ const unsigned char lights_pal_seq[] = {
 void lights_sequence () {
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        wait_vbl_done();
+        update_vbl(START_BANK);
     }
     y = -8;
     for (x = 156; x > 94; x-=2) {
         move_sprite(0, x, y+=3);
         if (joypad() & (J_START | J_A)) return;
-        wait_vbl_done();
+        update_vbl(START_BANK);
     }
     set_bkg_tiles(10, 8, _INTRO_LIGHT_OUT_COLUMNS, _INTRO_LIGHT_OUT_ROWS, _intro_light_out_map);
     // start playing stars animation
@@ -41,36 +41,36 @@ void lights_sequence () {
         move_sprite(0, x+94, y+=4);
         BGP_REG = lights_pal_seq[x];
         if (joypad() & (J_START | J_A)) return;
-        wait_vbl_done();
+        update_vbl(START_BANK);
     }
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        wait_vbl_done();
+        update_vbl(START_BANK);
     }
 }
 
 void pitch_sequence () {
-    wait_vbl_done();
+    update_vbl(START_BANK);
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
     BGP_REG = BG_PALETTE;
     for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
         set_sprite_tile(i, _intro0_map[i]+_INTRO_SPRITES_TILE_COUNT);
         set_sprite_prop(i, S_PRIORITY);
     }
-    for (k = 0; k <= 128; k+=2) {
+    for (k = 0; k <= 128; ++k) {
+        if (joypad() & (J_START | J_A)) return;
         move_bkg(k+32, 0);
         a = 0;
         for (j = 0; j < _INTRO0_ROWS; j++) {
             for (i = 0; i < _INTRO0_COLUMNS; i++) {
                 move_sprite(a++, k+i*8-32, j*8+80);
-                if (joypad() & (J_START | J_A)) return;
             }
         }
-        wait_vbl_done();
+        update(START_BANK);
     }
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        wait_vbl_done();
+        update_vbl(START_BANK);
     }
 }
 
@@ -87,7 +87,7 @@ void show_intro_sequence () {
 
     lights_sequence();
     pitch_sequence();
-    fade_out();
+    FADE_OUT(START_BANK);
 }
 
 void start () {

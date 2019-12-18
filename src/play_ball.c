@@ -6,10 +6,10 @@
 #include "../img/play/righty_pitcher_opponent/righty_pitcher_opponent.c"
 #include "../img/coaches/calvin_back.c"
 
-struct player test_player;
-struct move move1;
-struct move move2;
-struct move *moves[4];
+Player test_player;
+Move move1;
+Move move2;
+Move *moves[4];
 
 
 UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
@@ -42,7 +42,7 @@ void slide_out_lcd_interrupt(void) {
     else if (LY_REG == 56) move_coach();
 }
 
-char *health_pct (struct player *p) {
+char *health_pct (Player *p) {
     a = p->hp; // * 100 / max_hp; 
     if (a >= 100) strcpy(str_buff, "100");
     if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
@@ -50,7 +50,7 @@ char *health_pct (struct player *p) {
     return str_buff;
 }
 
-char *batting_avg (struct player *p) {
+char *batting_avg (Player *p) {
     a = p->hits * 1000 / p->at_bats;
     if (a >= 1000) strcpy(str_buff, "1.000");
     else if (a < 10) sprintf(str_buff, ".00%d", a);
@@ -59,7 +59,7 @@ char *batting_avg (struct player *p) {
     return str_buff;
 }
 
-char *earned_run_avg (struct player *p) {
+char *earned_run_avg (Player *p) {
     a = p->runs_allowed * 2700 / p->outs_recorded;
     b = a/100;
     c = a%100;
@@ -161,7 +161,7 @@ void play_intro () {
     HIDE_WIN;
 }
 
-void draw_player_ui (UBYTE team, struct player *p) {
+void draw_player_ui (UBYTE team, Player *p) {
     if (team) x = 0, y = 2;
     else x = 8, y = 10;
 
@@ -303,7 +303,7 @@ void move_move_menu_arrow (UBYTE y) {
     set_bkg_tiles(6,13,1,4,tiles);
 }
 
-void show_move_info () {//struct move *m) {
+void show_move_info () {//Move *m) {
     draw_bkg_ui_box(0,8,11,5);
     set_bkg_tiles(1,9,5,1,"TYPE/");
     strcpy(name_buff, types[0]);//m->type]);
@@ -312,7 +312,7 @@ void show_move_info () {//struct move *m) {
 }
 
 UBYTE move_choice;
-UBYTE select_move_menu_item (struct player *p) { // input should be move struct
+UBYTE select_move_menu_item (Player *p) { // input should be move struct
     get_bkg_tiles(0,8,20,10,bkg_buff);
     draw_bkg_ui_box(5,12,15,6);
     c = 4;
@@ -423,7 +423,7 @@ void move_aim_circle (UBYTE x, UBYTE y) {
     move_sprite(6, x+8, y+8);
 }
 
-void pitch (struct player *p, UBYTE move) {
+void pitch (Player *p, UBYTE move) {
     sprintf(str_buff, "%s sets.", p->nickname);
     reveal_text(str_buff, PLAY_BALL_BANK);
     show_aim_circle(3);
@@ -460,7 +460,7 @@ void swing (WORD x, WORD y, WORD z) {
     }
 }
 
-void bat (struct player *p, UBYTE move) {
+void bat (Player *p, UBYTE move) {
     set_bkg_data(_UI_FONT_TILE_COUNT+64, _RIGHTY_PITCHER_OPPONENT_TILE_COUNT, _righty_pitcher_opponent_tiles);
     set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent0_map);
@@ -532,7 +532,7 @@ void bat (struct player *p, UBYTE move) {
     update_waitpad(J_A);
 }
 
-void play_ball (struct player *p, UBYTE move) {
+void play_ball (Player *p, UBYTE move) {
     if (home_team == (frame % 2)) bat(p, move);
     else pitch(p, move);
     HIDE_WIN;
@@ -565,12 +565,12 @@ void start_game () {
     test_player.hp = 97;
     test_player.at_bats = 100;
     test_player.hits = 32;
-    strcpy(test_player.nickname, "TEST");
+    test_player.nickname = "TEST";
 
     moves[0] = &move1;
     moves[1] = &move2;
-    strcpy(move1.name, "SWING");
-    strcpy(move2.name, "BUNT");
+    move1.name = "SWING";
+    move2.name = "BUNT";
 
     play_intro();
     draw_ui();

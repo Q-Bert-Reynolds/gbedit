@@ -5,6 +5,7 @@
 #include <gb/cgb.h>
 #include <stdio.h>
 #include <string.h>
+#include "types.h"
 #include "../data/roledex.h"
 #include "../img/ui_font.h"
 
@@ -92,27 +93,6 @@ UBYTE home_score;
 UBYTE away_score;
 
 extern const UBYTE *types[15];
-struct move {
-    char name[10];
-    UBYTE pp, type, effect, accuracy, power;
-};
-struct base_player {
-    char name[10];
-    char *description;
-    UBYTE num, type1, type2;
-    UBYTE evolves_to, evolve_type;
-    UBYTE hp, bat, field, speed, throw;
-    UBYTE lineup_body, lineup_head, lineup_hat;
-};
-struct player {
-    char nickname[10];
-    UBYTE num;
-    UBYTE move_ids[4];
-    UBYTE move_pp[4];
-    UBYTE level, hp, position, batting_order;
-    UWORD hits, at_bats;//, plate_appearances, walks;
-    UWORD outs_recorded, runs_allowed;//, walks_allowed, strikeouts;
-};
 
 #define HIDE_SPRITES() {\
     for (i = 0; i < 40; ++i) move_sprite(i, 0, 0);\

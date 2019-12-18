@@ -81,12 +81,12 @@ void show_title () {
 
     disable_interrupts();
     add_LCD(show_title_lcd_interrupt);
+    enable_interrupts();
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     show_player(0);
-    enable_interrupts();
     y = 64;
     x = 64;
     DISPLAY_ON;
@@ -94,7 +94,7 @@ void show_title () {
         y = 64-i;
         update_vbl();
     }
-    
+
     wait_vbl_done();
     set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
     for (i = 0; i <= 64; i+=2) {

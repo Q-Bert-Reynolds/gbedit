@@ -16,7 +16,9 @@ UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
 UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
 UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
 
-void move_coach() {
+void move_coach () {
+    LYC_REG = 0;
+    SCX_REG = 256-x;
     for (j = 0; j < 3; ++j) {
         for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
             move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
@@ -25,7 +27,7 @@ void move_coach() {
 }
 
 void slide_in_lcd_interrupt(void) {
-    if (LY_REG == 0) {
+    if (LY_REG == 0){
         LYC_REG = 56;
         SCX_REG = x;
     }
@@ -33,7 +35,7 @@ void slide_in_lcd_interrupt(void) {
 }
 
 void slide_out_lcd_interrupt(void) {
-    if (LY_REG == 0) {
+    if (LY_REG == 0){
         LYC_REG = 56;
         SCX_REG = 0;
     }
@@ -126,10 +128,10 @@ void play_intro () {
     disable_interrupts();
     add_LCD(slide_in_lcd_interrupt);
     enable_interrupts();
-    DISPLAY_ON;
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
+    DISPLAY_ON;
     for (x = 160; x >= 0; x-=2) {
-        update();
+        update_vbl();
     }
     set_interrupts(VBL_IFLAG);
     disable_interrupts();
@@ -142,19 +144,19 @@ void play_intro () {
 
     set_interrupts(VBL_IFLAG | LCD_IFLAG);
     for (x = 0; x > -80; x-=2) {
-        update();
+        update_vbl();
     }
     disable_interrupts();
     remove_LCD(slide_out_lcd_interrupt);
+    CLEAR_BKG_AREA(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
+    set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
+    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
-    CLEAR_BKG_AREA(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,' ');
     HIDE_SPRITES();
     update_vbl();
     move_bkg(0,0);
 
-    set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
-    set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
     reveal_text("Let's go!", PLAY_BALL_BANK);
     HIDE_WIN;
 }
@@ -287,8 +289,8 @@ void select_play_menu_item () {
         else if (k & J_DOWN && y == 0) { y = 1; move_play_menu_arrow(); }
         else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
         else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
-        if (k & J_A) break;
 
+        if (k & J_A) break;
         update_vbl();
     }
     play_menu_selection = x * 2 + y;
@@ -328,12 +330,14 @@ UBYTE select_move_menu_item (struct player *p) { // input should be move struct
     while (1) {
         k = joypad();
         if (k & J_UP && move_choice > 0) {
+            update_vbl();
             --move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);
             update_waitpadup();
         }
         else if (k & J_DOWN && move_choice < c-1) {
+            update_vbl();
             ++move_choice;
             move_move_menu_arrow(move_choice);
             show_move_info();//p->moves[move_choice]);

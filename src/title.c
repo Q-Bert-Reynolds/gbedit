@@ -12,7 +12,7 @@
 
 #define PLAYER_INDEX _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
-void drop_title_interrupt(void) {
+void show_title_lcd_interrupt(void) {
     switch (LY_REG) {
         case 0:
         case 255:
@@ -38,8 +38,8 @@ void drop_title_interrupt(void) {
     }
 }
 
-void slide_players_interrupt(void) {
-    if (LY_REG == 72) {
+void cycle_players_lcd_interrupt(void) {
+    if (LY_REG == 72){
         LYC_REG = 135;
         SCX_REG = x;
     }
@@ -80,16 +80,16 @@ void show_title () {
     set_sprite_prop(5, S_PALETTE);
 
     disable_interrupts();
-    add_LCD(drop_title_interrupt);
+    add_LCD(show_title_lcd_interrupt);
     enable_interrupts();
     set_interrupts(LCD_IFLAG|VBL_IFLAG);
     set_bkg_data(0, _TITLE_TILE_COUNT, _title_tiles);
     set_bkg_data(_TITLE_TILE_COUNT, _VERSION_TILE_COUNT, _version_tiles);
     set_bkg_tiles(0, 0, _BEISBOL_LOGO_COLUMNS, _BEISBOL_LOGO_ROWS, _beisbol_logo_map);
     show_player(0);
-    DISPLAY_ON;
-    x = 64;
     y = 64;
+    x = 64;
+    DISPLAY_ON;
     for (i = 0; i <= 64; i+=2) {
         y = 64-i;
         update_vbl();
@@ -98,16 +98,14 @@ void show_title () {
     set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
     for (i = 0; i <= 64; i+=2) {
         x = -64+i;
-        x = -64+i;
         update_vbl();
     }
-    
+    update_vbl();
     disable_interrupts();
+    remove_LCD(show_title_lcd_interrupt);
     x = 128;
-    remove_LCD(drop_title_interrupt);
-    add_LCD(slide_players_interrupt);
+    add_LCD(cycle_players_lcd_interrupt);
     enable_interrupts();
-    
     z = 0;
     while (1) {
         for (i = 0; i < 60; i++) {
@@ -136,7 +134,7 @@ void show_title () {
 UBYTE show_start_menu () {
     DISPLAY_OFF;
     disable_interrupts();
-    remove_LCD(slide_players_interrupt);
+    remove_LCD(cycle_players_lcd_interrupt);
     enable_interrupts();
     set_interrupts(VBL_IFLAG);
     CLEAR_SCREEN(0);
@@ -152,7 +150,7 @@ UBYTE show_start_menu () {
         c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
         y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
         if (y == 1) {
-            wait_vbl_done();
+            update_vbl();
             draw_bkg_ui_box(4,7,16,10);
             set_bkg_tiles(5,9,5,1,"COACH");
             set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
@@ -166,7 +164,7 @@ UBYTE show_start_menu () {
             sprintf(str_buff, "%d:%d", 999, 59);
             l = strlen(str_buff);
             set_bkg_tiles(19-l,15,l,1,str_buff);
-            waitpadup();
+            update_waitpadup();
             while (1) {
                 if (joypad() & J_A) return y;
                 else if (joypad() & J_B) {

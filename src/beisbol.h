@@ -9,7 +9,6 @@
 #include "../img/ui_font.h"
 
 // banks (PLAYER_IMG_BANK defined in data/roledex.h)
-#define AUDIO_BANK      1
 #define UI_BANK         2
 #define START_BANK      3
 #define TITLE_BANK      4
@@ -68,8 +67,10 @@ WORD a, b, c, d;
 WORD i, j, k, l;
 WORD s, t, u, v;
 WORD w, x, y, z;
-unsigned char tiles[512];
-unsigned char bkg_buff[512];
+
+#define BUFFER_SIZE 512
+unsigned char tiles[BUFFER_SIZE];
+unsigned char bkg_buff[BUFFER_SIZE];
 char str_buff[64];
 char name_buff[16];
 
@@ -118,7 +119,7 @@ struct player {
 }
 
 #define CLEAR_SCREEN(tile) {\
-    for (i = 0; i < 512; ++i) tiles[i] = tile;\
+    for (i = 0; i < BUFFER_SIZE; ++i) tiles[i] = tile;\
     set_bkg_tiles(0,0,32,32,tiles);\
     set_win_tiles(0,0,20,18,tiles);\
     move_win(167,144);\
@@ -141,27 +142,27 @@ struct player {
     disable_interrupts();\
     BGP_REG = 0x90;\
     OBP0_REG = 0x90;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
     BGP_REG = 0x40;\
     OBP0_REG = 0x40;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
     BGP_REG = 0x00;\
     OBP0_REG = 0x00;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
 }
 
 #define FADE_IN(return_bank) {\
     disable_interrupts();\
     BGP_REG = 0x40;\
     OBP0_REG = 0x40;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
     BGP_REG = 0x90;\
     OBP0_REG = 0x90;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
     BGP_REG = BG_PALETTE;\
     OBP0_REG = SPR_PALETTE_0;\
     OBP1_REG = SPR_PALETTE_1;\
-    update_delay(200, return_bank);\
+    update_delay(200);\
 }
 
 void draw_bkg_ui_box(UBYTE x, UBYTE y, UBYTE w, UBYTE h);
@@ -175,28 +176,11 @@ void display_text (UBYTE *text);
 UBYTE show_list_menu (UBYTE x, UBYTE y, UBYTE w, UBYTE h, char *title, char *text, WORD return_bank);
 void show_options (WORD return_bank);
 
-void update(WORD return_bank);
-void update_vbl(WORD return_bank);
-void update_waitpadup(WORD return_bank);
-void update_waitpad(UBYTE btn, WORD return_bank);
-void update_delay(UBYTE time, WORD return_bank);
-
-// interrupt
-UBYTE lcd_i;
-UBYTE lcd_count;
-UBYTE lcd_line[4];
-UBYTE lcd_x[4];
-UBYTE lcd_y[4];
-void (*lcd_callback[4])();
-void lcd_interrupt(void) {
-    if (LY_REG == lcd_line[lcd_i]) {
-        SCX_REG = lcd_x[lcd_i];
-        SCY_REG = lcd_y[lcd_i];
-        if (lcd_callback[lcd_i] != NULL) lcd_callback[lcd_i]();
-        if (++lcd_i == lcd_count) lcd_i = 0;
-        LYC_REG = lcd_line[lcd_i];
-    }
-}
+void update();
+void update_vbl();
+void update_waitpadup();
+void update_waitpad(UBYTE btn);
+void update_delay(UBYTE time);
 
 // banked entry points
 void start();

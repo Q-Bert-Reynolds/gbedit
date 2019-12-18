@@ -24,7 +24,6 @@ all:
 	
 	$(CC) -Wa-l -Wf-ba1 -c -o $(OBJ_DIR)/save0.o     $(SRC_DIR)/save0.c
 
-	$(CC) -Wa-l -Wf-bo1 -c -o $(OBJ_DIR)/audio.o     $(SRC_DIR)/audio.c	
 	$(CC) -Wa-l -Wf-bo2 -c -o $(OBJ_DIR)/ui.o        $(SRC_DIR)/ui.c	
 	$(CC) -Wa-l -Wf-bo3 -c -o $(OBJ_DIR)/start.o     $(SRC_DIR)/start.c
 	$(CC) -Wa-l -Wf-bo4 -c -o $(OBJ_DIR)/title.o     $(SRC_DIR)/title.c
@@ -35,6 +34,7 @@ all:
 		$(CC) -Wa-l -Wf-bo1$$i -c -o $(OBJ_DIR)/roledex$$i.o $(DATA_DIR)/roledex$$i.c;\
 	done
 
+	$(CC) -Wa-l -c -o $(OBJ_DIR)/audio.o     $(SRC_DIR)/audio.c	
 	$(CC) -Wa-l -c -o $(OBJ_DIR)/main.o 	  $(SRC_DIR)/main.c
 	
 	@mkdir -p $(DIST_DIR)

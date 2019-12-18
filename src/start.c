@@ -27,13 +27,13 @@ const unsigned char lights_pal_seq[] = {
 void lights_sequence () {
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        update_vbl(START_BANK);
+        update_vbl();
     }
     y = -8;
     for (x = 156; x > 94; x-=2) {
         move_sprite(0, x, y+=3);
         if (joypad() & (J_START | J_A)) return;
-        update_vbl(START_BANK);
+        update_vbl();
     }
     set_bkg_tiles(10, 8, _INTRO_LIGHT_OUT_COLUMNS, _INTRO_LIGHT_OUT_ROWS, _intro_light_out_map);
     // start playing stars animation
@@ -41,16 +41,16 @@ void lights_sequence () {
         move_sprite(0, x+94, y+=4);
         BGP_REG = lights_pal_seq[x];
         if (joypad() & (J_START | J_A)) return;
-        update_vbl(START_BANK);
+        update_vbl();
     }
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        update_vbl(START_BANK);
+        update_vbl();
     }
 }
 
 void pitch_sequence () {
-    update_vbl(START_BANK);
+    update_vbl();
     set_bkg_tiles(0, 0, _INTRO_PITCH_COLUMNS, _INTRO_PITCH_ROWS, _intro_pitch_map);
     BGP_REG = BG_PALETTE;
     for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
@@ -66,11 +66,11 @@ void pitch_sequence () {
                 move_sprite(a++, k+i*8-32, j*8+80);
             }
         }
-        update(START_BANK);
+        update();
     }
     for (i = 0; i < 60; i++) {
         if (joypad() & (J_START | J_A)) return;
-        update_vbl(START_BANK);
+        update_vbl();
     }
 }
 
@@ -87,7 +87,7 @@ void show_intro_sequence () {
 
     lights_sequence();
     pitch_sequence();
-    FADE_OUT(START_BANK);
+    FADE_OUT();
 }
 
 void start () {

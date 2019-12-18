@@ -49,12 +49,12 @@ void new_game() {
     // slide in Calvin
     for (i = -56; i <= 48; i+=4) {
         move_bkg(i,0);
-        update_vbl(NEW_GAME_BANK);
+        update_vbl();
     }
     reveal_text("First, what is\nyour name?", NEW_GAME_BANK);
     for (i = 48; i >= 0; i-=2) {
         move_bkg(i,0);
-        update_vbl(NEW_GAME_BANK);
+        update_vbl();
     }
 
     // ask for user's name
@@ -89,7 +89,7 @@ void new_game() {
         }
         for (i = 0; i <= 48; i+=2) {
             move_bkg(i,0);
-            update_vbl(NEW_GAME_BANK);
+            update_vbl();
         }
     }
     sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
@@ -115,13 +115,13 @@ void new_game() {
     // slide in Nolan
     for (i = -56; i <= 48; i+=4) {
         move_bkg(i,0);
-        update_vbl(NEW_GAME_BANK);
+        update_vbl();
     }
     reveal_text("This is my grand-\nson. He's been\nyour rival since\nyou were a rookie", NEW_GAME_BANK);
     reveal_text("...Erm, what is\nhis name again?", NEW_GAME_BANK);
     for (i = 48; i >= 0; i-=2) {
         move_bkg(i,0);
-        update_vbl(NEW_GAME_BANK);
+        update_vbl();
     }
     
     // ask for rival's name
@@ -156,7 +156,7 @@ void new_game() {
         }
         for (i = 0; i <= 48; i+=2) {
             move_bkg(i,0);
-            update_vbl(NEW_GAME_BANK);
+            update_vbl();
         }
     }
     

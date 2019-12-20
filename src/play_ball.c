@@ -565,12 +565,12 @@ void start_game () {
     test_player.hp = 97;
     test_player.at_bats = 100;
     test_player.hits = 32;
-    test_player.nickname = "TEST";
+    strcpy(test_player.nickname, "TEST");
 
     moves[0] = &move1;
     moves[1] = &move2;
-    move1.name = "SWING";
-    move2.name = "BUNT";
+    strcpy(move1.name, "SWING");
+    strcpy(move2.name, "BUNT");
 
     play_intro();
     draw_ui();

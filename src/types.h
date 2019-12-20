@@ -1,22 +1,20 @@
 #ifndef BEISBOL_TYPES
 #define BEISBOL_TYPES
 
-typedef struct {
-    char *name;
+typedef struct Move {
+    char name[12];
     unsigned char pp, type, effect, accuracy, power;
 } Move;
 
-typedef struct {
-    char *name;
-    char *description;
+typedef struct PlayerBase {
     unsigned char num, type1, type2;
-    unsigned char evolves_to, evolve_type;
+    unsigned char evolves_to, evolve_type, evolve_level;
     unsigned char hp, bat, field, speed, throw;
     unsigned char lineup_body, lineup_head, lineup_hat;
-} Roledex;
+} PlayerBase;
 
-typedef struct {
-    char *nickname;
+typedef struct Player {
+    char nickname[10];
     unsigned char num;
     unsigned char move_ids[4];
     unsigned char move_pp[4];

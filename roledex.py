@@ -26,7 +26,6 @@ def generate_header ():
     h_file.write("#define PLAYER_STRINGS 8\n")
     h_file.write("#define PLAYER_DATA 9\n")
     h_file.write("#define PLAYER_IMG_BANK 10\n\n")
-    h_file.write("extern PlayerBase player_base;\n")
     h_file.write("char* get_player_name (UBYTE number, WORD return_bank);\n")
     h_file.write("char* get_player_description (UBYTE number, WORD return_bank);\n")
     h_file.write("void load_player_base_data (UBYTE number, WORD return_bank);\n")
@@ -40,23 +39,34 @@ def generate_main ():
     c_file.write("#include \"roledex.h\"\n")
     c_file.write("#include \"../src/beisbol.h\"\n\n")
 
-    # c_file.write("extern char* banked_get_player_name (UBYTE number, WORD return_bank);\n")
-    # c_file.write("extern char* banked_get_player_description (UBYTE number, WORD return_bank);\n")
-    # c_file.write("extern void banked_load_player_base_data(unsigned char number);\n")
+    c_file.write("extern const char* player_strings[151];\n")
+    c_file.write("extern void load_base_data(unsigned char number);\n")
     for i in range(file_count):
       c_file.write("extern const char* player_tiles" + str(i) + "[];\n")
     for i in range(file_count):
-      c_file.write("extern const unsigned char player_tile_counts" + str(i) + "[];\n")
+      c_file.write("extern const UBYTE player_tile_counts" + str(i) + "[];\n")
     for i in range(file_count):
-      c_file.write("extern const unsigned char player_columns" + str(i) + "[];\n")
+      c_file.write("extern const UBYTE player_columns" + str(i) + "[];\n")
     for i in range(file_count):
       c_file.write("extern const char* player_maps" + str(i) + "[];\n")
 
-    # c_file.write("\nPlayerBase player_base;\n")
-    # c_file.write("void load_player_base_data (UBYTE number, WORD return_bank) {\n    ")
-    # c_file.write("    SWITCH_ROM_MBC5(PLAYER_DATA);\n")
-    # c_file.write("    banked_load_player_base_data(number);\n")
-    # c_file.write("    SWITCH_ROM_MBC5(return_bank);\n}\n")
+    c_file.write("\nchar* get_player_name (UBYTE number, WORD return_bank) {\n")
+    c_file.write("    SWITCH_ROM_MBC5(PLAYER_STRINGS);\n")
+    c_file.write("    strcpy(name_buff, player_strings[number]);\n")
+    c_file.write("    SWITCH_ROM_MBC5(return_bank);\n")
+    c_file.write("    return name_buff;\n}\n")
+
+    c_file.write("\nchar* get_player_description (UBYTE number, WORD return_bank) {\n")
+    c_file.write("    SWITCH_ROM_MBC5(PLAYER_STRINGS);\n")
+    c_file.write("    strcpy(str_buff, (player_strings[number]+11));\n")
+    c_file.write("    SWITCH_ROM_MBC5(return_bank);\n")
+    c_file.write("    return str_buff;\n}\n")
+
+    c_file.write("\nPlayerBase player_base;\n")
+    c_file.write("void load_player_base_data (UBYTE number, WORD return_bank) {\n")
+    c_file.write("    SWITCH_ROM_MBC5(PLAYER_DATA);\n")
+    c_file.write("    load_base_data(number);\n")
+    c_file.write("    SWITCH_ROM_MBC5(return_bank);\n}\n")
 
     c_file.write("\nvoid load_player_bkg_data (UBYTE number, UBYTE vram_offset, WORD return_bank) {\n    ")
     for i in range(file_count):
@@ -143,8 +153,9 @@ def generate_player_strings(roledex):
   with open("./data/player_strings.c", "w+") as c_file:
     c_file.write("\nconst char* player_strings[151] = {\n")
     for player in roledex:
-      c_file.write("    \"{}\\0{}\",\n".format(player["Nickname"], player["Description"]))
+      c_file.write("    \"{0: <10}\\0{1}\",\n".format(player["Nickname"], player["Description"]))
     c_file.write("};\n")
+
 
 type_names = [
   "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
@@ -226,23 +237,23 @@ def generate_player_data(roledex):
       c_file.write("};\n")
     c_file.write("\nconst PlayerBase* roledex[151] = {\n"+var_names+"};\n")
 
-    # c_file.write("\nvoid banked_load_player_base_data(unsigned char number) {\n")
-    # r = "player_roledex[number]"
-    # c_file.write("    player_base.num = "+r+"->num;\n")
-    # c_file.write("    player_base.type1 = "+r+"->type1;\n")
-    # c_file.write("    player_base.type2 = "+r+"->type2;\n")
-    # c_file.write("    player_base.evolves_to = "+r+"->evolves_to;\n")
-    # c_file.write("    player_base.evolve_type = "+r+"->evolve_type;\n")
-    # c_file.write("    player_base.evolve_level = "+r+"->evolve_level;\n")
-    # c_file.write("    player_base.hp = "+r+"->hp;\n")
-    # c_file.write("    player_base.bat = "+r+"->bat;\n")
-    # c_file.write("    player_base.field = "+r+"->field;\n")
-    # c_file.write("    player_base.speed = "+r+"->speed;\n")
-    # c_file.write("    player_base.throw = "+r+"->throw;\n")
-    # c_file.write("    player_base.lineup_body = "+r+"->lineup_body;\n")
-    # c_file.write("    player_base.lineup_head = "+r+"->lineup_head;\n")
-    # c_file.write("    player_base.lineup_hat = "+r+"->lineup_hat;\n")
-    # c_file.write("}\n")
+    c_file.write("\nvoid load_base_data(unsigned char number) {\n")
+    r = "roledex[number]"
+    c_file.write("    player_base.num = "+r+"->num;\n")
+    c_file.write("    player_base.type1 = "+r+"->type1;\n")
+    c_file.write("    player_base.type2 = "+r+"->type2;\n")
+    c_file.write("    player_base.evolves_to = "+r+"->evolves_to;\n")
+    c_file.write("    player_base.evolve_type = "+r+"->evolve_type;\n")
+    c_file.write("    player_base.evolve_level = "+r+"->evolve_level;\n")
+    c_file.write("    player_base.hp = "+r+"->hp;\n")
+    c_file.write("    player_base.bat = "+r+"->bat;\n")
+    c_file.write("    player_base.field = "+r+"->field;\n")
+    c_file.write("    player_base.speed = "+r+"->speed;\n")
+    c_file.write("    player_base.throw = "+r+"->throw;\n")
+    c_file.write("    player_base.lineup_body = "+r+"->lineup_body;\n")
+    c_file.write("    player_base.lineup_head = "+r+"->lineup_head;\n")
+    c_file.write("    player_base.lineup_hat = "+r+"->lineup_hat;\n")
+    c_file.write("}\n")
 
 
 if __name__ == "__main__":

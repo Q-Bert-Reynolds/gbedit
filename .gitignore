@@ -4,6 +4,9 @@ bin/*
 # C files created in /img and /data
 img/**/*.c
 img/**/*.h
+img/**/*.asm
+img/**/*.tilemap
+img/**/*.tiles
 data/*.c
 data/*.h
 
@@ -12,6 +15,9 @@ data/*.h
 *.gbc
 *.map
 *.lst
+*.sym
+*.1bpp
+*.2bpp
 *.sav
 
 # macOS Desktop Services file

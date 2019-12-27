@@ -1,56 +1,94 @@
-include "src/hardware.asm"
+INCLUDE "src/hardware.inc"
+INCLUDE "src/memory1.asm"
+INCLUDE "src/start.asm"
 
-section "Gloval Vars", wram0
-last_button_state: db
-button_state: db
-temp: db
+SECTION "Gloval Vars", WRAM0
+last_button_state: DB
+button_state: DB
+temp: DB
 
-section "Header", rom0[$100]
+SECTION "Header", ROM0[$100]
 Entry:
-    nop
-    jp Start
-    NINTENDO_LOGO
-if def(HOME)
-    db "BEISBOL HOME",0,0,0  ;Cart name - 15bytes
-else
-    db "BEISBOL AWAY",0,0,0  ;Cart name - 15bytes
-endc
-    db 0                     ;$143
-    db 0,0                   ;$144 - Licensee code (not important)
-    db 0                     ;$146 - SGB Support indicator
-    db CART_ROM_MBC5_RAM_BAT ;$147 - Cart type
-    db CART_ROM_2M           ;$148 - ROM Size
-    db CART_RAM_256K         ;$149 - RAM Size
-    db 1                     ;$14a - Destination code
-    db $33                   ;$14b - Old licensee code
-    db 0                     ;$14c - Mask ROM version
-    db 0                     ;$14d - Complement check (important)
-    dw 0                     ;$14e - Checksum (not important)
+  nop
+  jp Start
+  NINTENDO_LOGO
+IF DEF(_HOME)
+  DB "BEISBOL HOME",0,0,0  ;Cart name - 15bytes
+ELSE
+  DB "BEISBOL AWAY",0,0,0  ;Cart name - 15bytes
+ENDC
+  DB 0                     ;$143
+  DB 0,0                   ;$144 - Licensee code (not important)
+  DB 0                     ;$146 - SGB Support indicator
+  DB CART_ROM_MBC5_RAM_BAT ;$147 - Cart type
+  DB CART_ROM_2M           ;$148 - ROM Size
+  DB CART_RAM_256K         ;$149 - RAM Size
+  DB 1                     ;$14a - Destination code
+  DB $33                   ;$14b - Old licensee code
+  DB 0                     ;$14c - Mask ROM version
+  DB 0                     ;$14d - Complement check (important)
+  dw 0                     ;$14e - Checksum (not important)
 
-section "VBlank",rom0[$0040]
-    reti
-section "LCDC",rom0[$0048]
-    reti
-section "TimerOverflow",rom0[$0050]
-    reti
-section "Serial",rom0[$0058]
-    reti
-section "p1thru4",rom0[$0060]
-    reti
+SECTION "VBlank", ROM0[$0040]
+  reti
+SECTION "LCDC", ROM0[$0048]
+  reti
+SECTION "TimerOverflow", ROM0[$0050]
+  reti
+SECTION "Serial", ROM0[$0058]
+  reti
+SECTION "p1thru4", ROM0[$0060]
+  reti
 
-section "Game", rom0
-Start:
-ld sp, $ffff ;init stack ptr
-call WaitVBlank
+SECTION "Game", ROM0
+Game:
+  ld sp, $ffff
+  call Start
+.gameLoop
+  lcd_WaitVRAM
+  jr .gameLoop
 
-xor a ;"xor a" is equivlent to "ld a, 0", but it's twice as fast
-ld [rLCDC], a ;turn off the display
+TurnLCDOff:
+  ldh a, [rLCDC]
+  add a
+  ret nc
+.waitVBL:
+  ldh a, [rLY]
+  cp 145
+  jr c, .waitVBL
+  
+  ldh a, [rLCDC]
+  and %01111111
+  ldh [rLCDC],A
+  ret
 
-ld hl, _VRAM + $1000 ;location of bg tiles
 
+; mem_Copy - "Copy" a memory region
+;
+; input:
+;   hl - pSource
+;   de - pDest
+;   bc - bytecount
 
-WaitVBlank::
-    ldh a, [rLY] ;since the scanline address (rLY) is in $FFxx, use "ldh" instead of "ld"
-    cp 144 ;check to see if we're done drawing all 144 lines
-    jr c, WaitVBlank
-    ret
+; SetBKGTiles
+;   hl - firstTile
+;   d - x
+;   e - y
+;   b - width
+;   c - height
+SetBKGTiles::
+  ld	b,(hl)		; bc = widh
+  dec	hl
+  ld	c,(hl)
+  dec	hl
+  ld	d,(hl)		; de = dst
+  dec	hl
+  ld	e,(hl)
+  ld	d,(hl)		; d = x
+  inc	hl
+  ld	e,(hl)		; e = y
+  inc	hl
+  ld	a,(hl+)		; a = w
+  ld	l,(hl)		; l = h
+  ld	h,a		; h = w
+  ret

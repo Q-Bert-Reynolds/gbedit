@@ -59,11 +59,12 @@ def folder_to_asm (root, files):
         
   name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".asm"), "w+") as asm_file:
+    asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
     asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(len(tileset)) + "\n")
 
-    asm_file.write(PascalCase(name)+"Tiles:\n    INCBIN \"")
+    asm_file.write(PascalCase(name)+"Tiles: INCBIN \"")
     asm_file.write(os.path.join(root, name) + ".tiles\"\n")
-    asm_file.write(PascalCase(name)+"TilesEnd:\n")
+    
     with open(os.path.join(root, name) + ".tiles", "wb") as bin_file:
       hex_string = ""
       for tile in tileset:
@@ -74,14 +75,15 @@ def folder_to_asm (root, files):
       rows, cols = dimensions[img_name]
       asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
       asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
-      asm_file.write(PascalCase(img_name)+"TileMap:\n    INCBIN \"")
+      asm_file.write(PascalCase(img_name)+"TileMap: INCBIN \"")
       asm_file.write(os.path.join(root, img_name) + ".tilemap\"\n")
-      asm_file.write(PascalCase(img_name)+"TileMapEnd:\n")
+
       with open(os.path.join(root, img_name) + ".tilemap", "wb") as bin_file:
         hex_string = ""
         for i in range(0, len(tilemaps[img_name]), cols):
           hex_string += "".join(tilemaps[img_name][i:i+cols])
         bin_file.write(bytes.fromhex(hex_string))
+    asm_file.write("ENDC\n")
 
 def png_to_asm (path):
   base, ext = os.path.splitext(path)
@@ -99,16 +101,17 @@ def png_to_asm (path):
       tileset.append(tile)
 
     with open(base + ".asm", "w+") as asm_file:
+      asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
       asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
 
-      asm_file.write(PascalCase(name)+"Tiles:\n    INCBIN \"")
+      asm_file.write(PascalCase(name)+"Tiles: INCBIN \"")
       asm_file.write(base + ".tiles\"\n")
-      asm_file.write(PascalCase(name)+"TilesEnd:\n")
       with open(base + ".tiles", "wb") as bin_file:
         hex_string = ""
         for tile in tileset:
           hex_string += tile
         bin_file.write(bytes.fromhex(hex_string))
+      asm_file.write("ENDC\n")
 
   else:
     tileset = []
@@ -141,16 +144,16 @@ def png_to_asm (path):
       tile_count = len(tileset)
 
     with open(base + ".asm", "w+") as asm_file:
-      has_map = (name not in ["health_bar"]) and ("sprites" not in name)
+      asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
+      asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
 
+      has_map = (name not in ["health_bar"]) and ("sprites" not in name)
       if has_map:
         asm_file.write("_" + name.upper() + "_ROWS EQU " + str(rows) + "\n")
         asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
-      asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
-
-      asm_file.write(PascalCase(name)+"Tiles:\n    INCBIN \"")
+      
+      asm_file.write(PascalCase(name)+"Tiles: INCBIN \"")
       asm_file.write(base + ".tiles\"\n")
-      asm_file.write(PascalCase(name)+"TilesEnd:\n")
       with open(base + ".tiles", "wb") as bin_file:
         hex_string = ""
         for tile in tileset:
@@ -158,14 +161,14 @@ def png_to_asm (path):
         bin_file.write(bytes.fromhex(hex_string))
 
       if has_map:
-        asm_file.write(PascalCase(name)+"TileMap:\n    INCBIN \"")
+        asm_file.write(PascalCase(name)+"TileMap: INCBIN \"")
         asm_file.write(base + ".tilemap\"\n")
-        asm_file.write(PascalCase(name)+"TileMapEnd:\n")
         with open(base + ".tilemap", "wb") as bin_file:
           hex_string = ""
           for i in range(0, len(tilemap), cols):
             hex_string += "".join(tilemap[i:i+cols])
             bin_file.write(bytes.fromhex(hex_string))
+      asm_file.write("ENDC\n")
 
 def PascalCase(name):
   return "".join(x for x in name.title() if not x.isspace())

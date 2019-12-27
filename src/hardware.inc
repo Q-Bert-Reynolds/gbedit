@@ -24,17 +24,13 @@
 ;* Rev 2.7 - 19-Jan-19 : Added rPCMXX (ISSOtm)
 ;* Rev 2.8 - 03-Feb-19 : Added audio registers flags (Álvaro Cuesta)
 
-; If all of these are already defined, don't do it again.
-
-    IF !DEF(HARDWARE_INC)
+IF !DEF(HARDWARE_INC)
 HARDWARE_INC SET 1
 
 rev_Check_hardware_inc : MACRO
-;NOTE: REVISION NUMBER CHANGES MUST BE ADDED
-;TO SECOND PARAMETER IN FOLLOWING LINE.
-    IF  \1 > 2.8 ;PUT REVISION NUMBER HERE
-        WARN    "Version \1 or later of 'hardware.inc' is required."
-    ENDC
+  IF  \1 > 2.8
+    WARN "Version \1 or later of 'hardware.inc' is required."
+  ENDC
 ENDM
 
 _HW          EQU $FF00
@@ -49,17 +45,14 @@ _AUD3WAVERAM EQU $FF30 ; $FF30->$FF3F
 _HRAM        EQU $FF80 ; $FF80->$FFFE
 
 ; *** MBC5 Equates ***
-
 rRAMG        EQU $0000 ; $0000->$1fff
 rROMB0       EQU $2000 ; $2000->$2fff
 rROMB1       EQU $3000 ; $3000->$3fff - If more than 256 ROM banks are present.
 rRAMB        EQU $4000 ; $4000->$5fff - Bit 3 enables rumble (if present)
 
-
 ; --
 ; -- OAM flags
 ; --
-
 OAMF_PRI        EQU %10000000 ; Priority
 OAMF_YFLIP      EQU %01000000 ; Y flip
 OAMF_XFLIP      EQU %00100000 ; X flip
@@ -78,11 +71,10 @@ OAMB_BANK1      EQU 3 ; Bank number; 0,1 (GBC)
 
 
 ;***************************************************************************
-;*
-;* Custom registers
-;*
+;
+; Custom registers
+;
 ;***************************************************************************
-
 ; --
 ; -- P1 ($FF00)
 ; -- Register for reading joy pad info.    (R/W)
@@ -390,7 +382,6 @@ IEF_VBLANK EQU %00000001 ; V-Blank
 ;* Sound control registers
 ;*
 ;***************************************************************************
-
 ; --
 ; -- AUDVOL/NR50 ($FF24)
 ; -- Channel control / ON-OFF / Volume (R/W)
@@ -457,7 +448,6 @@ AUDENA_OFF   EQU %00000000  ; sets all audio regs to 0!
 ;* SoundChannel #1 registers
 ;*
 ;***************************************************************************
-
 ; --
 ; -- AUD1SWEEP/NR10 ($FF10)
 ; -- Sweep register (R/W)
@@ -526,7 +516,6 @@ rAUD1HIGH EQU rNR14
 ;* SoundChannel #2 registers
 ;*
 ;***************************************************************************
-
 ; --
 ; -- AUD2LEN/NR21 ($FF16)
 ; -- Sound Length; Wave Pattern Duty (R/W)
@@ -570,7 +559,6 @@ rAUD2HIGH EQU rNR24
 ;* SoundChannel #3 registers
 ;*
 ;***************************************************************************
-
 ; --
 ; -- AUD3ENA/NR30 ($FF1A)
 ; -- Sound on/off (R/W)
@@ -699,7 +687,6 @@ rPCM34 EQU $FF77
 ;* Flags common to multiple sound channels
 ;*
 ;***************************************************************************
-
 ; --
 ; -- Square wave duty cycle
 ; --
@@ -728,7 +715,6 @@ AUDENV_DOWN         EQU %00000000
 ; -- Can be used with AUD1HIGH, AUD2HIGH, AUD3HIGH
 ; -- See AUD1HIGH for more info
 ; --
-
 AUDHIGH_RESTART     EQU %10000000
 AUDHIGH_LENGTH_ON   EQU %01000000
 AUDHIGH_LENGTH_OFF  EQU %00000000
@@ -739,7 +725,6 @@ AUDHIGH_LENGTH_OFF  EQU %00000000
 ;* Cart related
 ;*
 ;***************************************************************************
-
 CART_COMPATIBLE_DMG     EQU $00
 CART_COMPATIBLE_DMG_GBC EQU $80
 CART_COMPATIBLE_GBC     EQU $C0
@@ -790,7 +775,6 @@ CART_RAM_DISABLE EQU $00
 ;* Keypad related
 ;*
 ;***************************************************************************
-
 PADF_DOWN   EQU $80
 PADF_UP     EQU $40
 PADF_LEFT   EQU $20
@@ -814,7 +798,6 @@ PADB_A      EQU $0
 ;* Screen related
 ;*
 ;***************************************************************************
-
 SCRN_X    EQU 160 ; Width of screen in pixels
 SCRN_Y    EQU 144 ; Height of screen in pixels
 SCRN_X_B  EQU 20  ; Width of screen in bytes
@@ -825,14 +808,15 @@ SCRN_VY   EQU 256 ; Virtual height of screen in pixels
 SCRN_VX_B EQU 32  ; Virtual width of screen in bytes
 SCRN_VY_B EQU 32  ; Virtual height of screen in bytes
 
-;*
-;* Nintendo scrolling logo
-;* (Code won't work on a real GameBoy)
-;* (if next lines are altered.)
+;***************************************************************************
+; Nintendo scrolling logo
+; (Code won't work on a real GameBoy)
+; (if next lines are altered.)
+;***************************************************************************
 NINTENDO_LOGO : MACRO
-    DB  $CE,$ED,$66,$66,$CC,$0D,$00,$0B,$03,$73,$00,$83,$00,$0C,$00,$0D
-    DB  $00,$08,$11,$1F,$88,$89,$00,$0E,$DC,$CC,$6E,$E6,$DD,$DD,$D9,$99
-    DB  $BB,$BB,$67,$63,$6E,$0E,$EC,$CC,$DD,$DC,$99,$9F,$BB,$B9,$33,$3E
+  DB $CE, $ED, $66, $66, $CC, $0D, $00, $0B, $03, $73, $00, $83, $00, $0C, $00, $0D
+  DB $00, $08, $11, $1F, $88, $89, $00, $0E, $DC, $CC, $6E, $E6, $DD, $DD, $D9, $99
+  DB $BB, $BB, $67, $63, $6E, $0E, $EC, $CC, $DD, $DC, $99, $9F, $BB, $B9, $33, $3E
 ENDM
 
-ENDC    ;HARDWARE_INC
+ENDC ;HARDWARE_INC

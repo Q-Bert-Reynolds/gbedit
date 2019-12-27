@@ -13,7 +13,7 @@ all:
 	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(DIST_DIR)
 	
-	rgbasm -D $(VERSION) -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.asm
+	rgbasm -D _$(VERSION) -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.asm
 	rgblink -o $(ROM_FILE) $(OBJ_DIR)/main.o
 	rgbfix -vcs -l 0x33 -p 0 -t $(GAME_NAME) $(ROM_FILE)
 
@@ -22,4 +22,3 @@ all:
 clean:
 	# @rm -rf $(DIST_DIR)
 	@rm -rf $(OBJ_DIR)
-	# find . \( -iname '*.1bpp' -o -iname '*.2bpp' -o -iname '*.pic' \) -exec rm {} +

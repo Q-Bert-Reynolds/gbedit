@@ -1,5 +1,4 @@
-INCLUDE "src/hardware.inc"
-INCLUDE "src/memory1.asm"
+INCLUDE "src/beisbol.asm"
 INCLUDE "src/start.asm"
 
 SECTION "Gloval Vars", WRAM0
@@ -48,47 +47,12 @@ Game:
   lcd_WaitVRAM
   jr .gameLoop
 
-TurnLCDOff:
+TurnLCDOff::
   ldh a, [rLCDC]
   add a
   ret nc
-.waitVBL:
-  ldh a, [rLY]
-  cp 145
-  jr c, .waitVBL
-  
+  lcd_WaitVRAM  
   ldh a, [rLCDC]
   and %01111111
   ldh [rLCDC],A
-  ret
-
-
-; mem_Copy - "Copy" a memory region
-;
-; input:
-;   hl - pSource
-;   de - pDest
-;   bc - bytecount
-
-; SetBKGTiles
-;   hl - firstTile
-;   d - x
-;   e - y
-;   b - width
-;   c - height
-SetBKGTiles::
-  ld	b,(hl)		; bc = widh
-  dec	hl
-  ld	c,(hl)
-  dec	hl
-  ld	d,(hl)		; de = dst
-  dec	hl
-  ld	e,(hl)
-  ld	d,(hl)		; d = x
-  inc	hl
-  ld	e,(hl)		; e = y
-  inc	hl
-  ld	a,(hl+)		; a = w
-  ld	l,(hl)		; l = h
-  ld	h,a		; h = w
   ret

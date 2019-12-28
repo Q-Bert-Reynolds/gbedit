@@ -171,7 +171,9 @@ def png_to_asm (path):
       asm_file.write("ENDC\n")
 
 def PascalCase(name):
-  return "".join(x for x in name.title() if not x.isspace())
+  s = "".join(x for x in name.title() if not x.isspace())
+  s = s.replace("_", "")
+  return s
 
 if __name__ == "__main__":
     main()

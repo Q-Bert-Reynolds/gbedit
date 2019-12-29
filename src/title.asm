@@ -90,8 +90,9 @@ ShowTitle:
 ;         }
 ;     }
 
-  ; ld hl, _OAMRAM+5*4+2 ;OAM+N*4
-  ; ld d, [hld]
+  ld hl, _OAMRAM+5*4+2 ;OAM+N*4
+  ld d, [hl]
+  dec hl
   dec hl ;_OAMRAM + 5 * 4
   ld b, 94 ;x
   ld c, 117 ;y
@@ -109,7 +110,7 @@ ShowTitle:
   call mem_CopyVRAM
 
   ld hl, VersionTiles
-  ld de, _VRAM+$1000+_TITLE_TILE_COUNT
+  ld de, _VRAM+$1000+_TITLE_TILE_COUNT*16
   ld bc, _VERSION_TILE_COUNT*16
   call mem_CopyVRAM
 
@@ -131,13 +132,13 @@ ShowTitle:
 ;     }
 
   call gbdk_WaitVBLDone
-;     set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
-  ; ld d, 7 ; x
-  ; ld e, 8 ; y
-  ; ld h, _VERSION_COLUMNS ; w
-  ; ld l, _VERSION_ROWS ; h
-  ; ld bc, VersionTileMap
-  ; call gbdk_SetBKGTiles
+  ld d, 7 ; x
+  ld e, 8 ; y
+  ld h, _VERSION_COLUMNS ; w
+  ld l, _VERSION_ROWS ; h
+  ld bc, VersionTileMap
+; set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
+  call gbdk_SetBKGTiles
 
 ;     for (i = 0; i <= 64; i+=2) {
 ;         x = -64+i;

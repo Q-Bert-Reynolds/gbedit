@@ -10,53 +10,182 @@ ENDM
 INCLUDE "src/memory1.asm"
   rev_Check_memory1_asm 1.1
 
+DISPLAY_ON: MACRO
+  ld a, [rLCDC]
+  or LCDCF_ON
+  ld [rLCDC], a
+ENDM
+
+DISPLAY_OFF: MACRO
+  call gbdk_DisplayOff
+ENDM
+
+SHOW_BKG: MACRO
+  ld a, [rLCDC]
+  or LCDCF_BGON
+  ld [rLCDC], a
+ENDM
+
+HIDE_BKG: MACRO
+  ld a, [rLCDC]
+  and ~LCDCF_BGON
+  ld [rLCDC], a
+ENDM
+
+SHOW_WIN: MACRO
+  ld a, [rLCDC]
+  or LCDCF_WINON
+  ld [rLCDC], a
+ENDM
+
+HIDE_WIN: MACRO
+  ld a, [rLCDC]
+  and ~LCDCF_WINON
+  ld [rLCDC], a
+ENDM
+
+SHOW_SPRITES: MACRO
+  ld a, [rLCDC]
+  or LCDCF_OBJON
+  ld [rLCDC], a
+ENDM
+
+HIDE_SPRITES: MACRO
+  ld a, [rLCDC]
+  and ~LCDCF_OBJON
+  ld [rLCDC], a
+ENDM
+
+SPRITES_8x16: MACRO
+  ld a, [rLCDC]
+  or LCDCF_OBJ16
+  ld [rLCDC], a
+ENDM
+
+SPRITES_8x8: MACRO
+  ld a, [rLCDC]
+  and ~LCDCF_OBJ16
+  ld [rLCDC], a
+ENDM
+
+; MBC5
+SWITCH_ROM_MBC5: MACRO ;word \1
+  ld hl, rROMB0
+  ld [hl], \1 & $FF
+  ld hl, rROMB1
+  ld [hl], \1 >> 8
+ENDM
+
+SWITCH_RAM_MBC5: MACRO ;byte \1
+  ld hl, rRAMB
+  ld [hl], \1
+ENDM
+
+ENABLE_RAM_MBC5: MACRO
+  ld hl, rRAMG
+  ld [hl], $0A
+ENDM
+
+DISABLE_RAM_MBC5: MACRO
+  xor a
+  ld [rRAMG], a
+ENDM
+
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
 ;
-; gbdk_SetXYWin - Sets window tile table from BC at XY = DE of size WH = HL
-; wh >= (1,1)
+; gbdk_SetOAM - sets X, Y, tile ID, and flags of Sprite N
+;   immediately ready to set bcde (x,y,tile,flags) on Sprite N+1
 ;
 ; input:
-;   hl - wh
-;   de - xy
+;   hl - _OAMRAM + N * 4
+;   bc - xy
+;   d - tile
+;   e - flags
+;
+;***************************************************************************
+gbdk_SetOAM
+  ld a, c ;y pos
+  ld [hli], a
+  ld a, b ;x pos
+  ld [hli], a
+  ld a, d ;tile
+  ld [hli], a
+  ld a, e ;flags
+  ld [hli], a
+  ret
+
+;***************************************************************************
+;
+; gbdk_DisplayOff - Waits for VBlank and turns off the LCD
+;
+;***************************************************************************
+gbdk_DisplayOff::
+  ldh a, [rLCDC]
+  add a
+  ret nc
+  lcd_WaitVRAM  
+  ldh a, [rLCDC]
+  and %01111111
+  ldh [rLCDC], A
+  ret
+
+;***************************************************************************
+;
+; gbdk_WaitVBLDone - Wait for VBL interrupt to be finished
+;
+;***************************************************************************
+gbdk_WaitVBLDone::
+  ld a, [rLY]
+  cp 144
+  jr nz, gbdk_WaitVBLDone
+  ret
+
+;***************************************************************************
+;
+; gbdk_SetWinTiles - Sets window tile table
+; width and height >= (1,1); 
+;
+; input:
+;   hl - width, height
+;   de - x pos, y pos
 ;   bc - firstTile
 ;
 ;***************************************************************************
-gbdk_SetXYWin::
+gbdk_SetWinTiles::
   push  hl    ; store wh
   ldh  a,[rLCDC]
-  bit  6,a
+  bit  6, a
   jr  nz,.innerLoop
   ld  hl,$9800  ; hl = origin
-  jr  gbdk_SetXYTT
+  jr  setTiles
 .innerLoop:
   ld  hl,$9c00  ; hl = origin
-  jr  gbdk_SetXYTT
+  jr  setTiles
 
 
 ;***************************************************************************
 ;
-; gbdk_SetXYBKG - Sets background tile table from (BC) at XY = DE of size WH = HL
-; wh >= (1,1); 
+; gbdk_SetBKGTiles - Sets background tile table
+; width and height >= (1,1); 
 ;
 ; input:
-;   hl - wh
-;   de - xy
+;   hl - width, height
+;   de - x pos, y pos
 ;   bc - firstTile
 ;
 ;***************************************************************************
-gbdk_SetXYBKG::
+gbdk_SetBKGTiles::
   push  hl    ; store wh
   ldh  a,[rLCDC]
-  bit  3,a
+  bit  3, a
   jr  nz,.loop
   ld  hl,$9800  ; hl = origin
-  jr  gbdk_SetXYTT
+  jr  setTiles
 .loop:
   ld  hl,$9c00  ; hl = origin
 
-
-gbdk_SetXYTT::
+setTiles:
   push  bc    ; store source
   xor  a
   or  e
@@ -72,36 +201,36 @@ gbdk_SetXYTT::
   ld  c,d
   add  hl,bc
 
-	pop	bc		; bc = source
-	pop	de		; de = wh
-	push	hl		; store origin
-	push	de		; store wh
+  pop	bc		; bc = source
+  pop	de		; de = wh
+  push	hl		; store origin
+  push	de		; store wh
 .loop3:
-	ldh	a,[rSTAT]
-	and	$02
-	jr	nz,.loop3
+  ldh	a,[rSTAT]
+  and	$02
+  jr	nz,.loop3
 
-	ld	a,[bc]		; copy w tiles
-	ld	[hl+],a
-	inc	bc
-	dec	d
-	jr	nz,.loop3
-	pop	hl		; hl = wh
-	ld	d,h		; restore d = w
-	pop	hl		; hl = origin
-	dec	e
-	jr	z,.loop4
+  ld	a,[bc]		; copy w tiles
+  ld	[hl+], a
+  inc	bc
+  dec	d
+  jr	nz,.loop3
+  pop	hl		; hl = wh
+  ld	d,h		; restore d = w
+  pop	hl		; hl = origin
+  dec	e
+  jr	z,.loop4
 
-	push	bc		; next line
-	ld	bc,$20	; one line is 20 tiles
-	add	hl,bc
-	pop	bc
+  push	bc		; next line
+  ld	bc,$20	; one line is 20 tiles
+  add	hl,bc
+  pop	bc
 
-	push	hl		; store current origin
-	push	de		; store wh
-	jr	.loop3
+  push	hl		; store current origin
+  push	de		; store wh
+  jr	.loop3
 .loop4:
-	ret
+  ret
 
 ;***************************************************************************
 ;
@@ -170,6 +299,95 @@ gbdk_Delay::
 ; =========
 ; 12 cycles
 ret
+
+;***************************************************************************
+;
+; gbdk_CPUSlow - Sets GameBoy Color to DMG speed
+;
+;***************************************************************************
+gbdk_CPUSlow::
+  ldh	a,[rKEY1]
+  and	$80		; is gbc in double speed mode?
+  ret	z		; no, already in single speed
+
+shift_speed:
+  ldh	a,[rIE]
+  push	af
+
+  xor	a		; a = 0
+  ldh	[rIE], a		; disable interrupts
+  ldh	[rIF], a
+
+  ld	a,$30
+  ldh	[rP1], a
+
+  ld	a,$01
+  ldh	[rKEY1], a
+
+  stop
+
+  pop	af
+  ldh	[rIE], a
+
+  ret
+
+;***************************************************************************
+;
+; gbdk_CPUFast - Sets GameBoy Color to double speed mode
+;
+;***************************************************************************
+gbdk_CPUFast::
+  ldh	a,[rKEY1]
+  and	$80		; is gbc in double speed mode?
+  ret	nz		; yes, exit
+  jr	shift_speed
+
+;***************************************************************************
+;
+; gbdk_CGBCompatibility - Sets default palette colors for GameBoy Color
+;
+;***************************************************************************
+gbdk_CGBCompatibility::
+
+  ld	a,$80
+  ldh	[rBCPS], a	; set default bkg palette
+  ld	a,$ff		; white
+  ldh	[rBCPD], a
+  ld	a,$7f
+  ldh	[rBCPD], a
+  ld	a,$b5		; light gray
+  ldh	[rBCPD], a
+  ld	a,$56
+  ldh	[rBCPD], a
+  ld	a,$4a		; dark gray
+  ldh	[rBCPD], a
+  ld	a,$29
+  ldh	[rBCPD], a
+  ld	a,$00		; black
+  ldh	[rBCPD], a
+  ld	a,$00
+  ldh	[rBCPD], a
+
+  ld	a,$80
+  ldh	[rOCPS], a	; set default sprite palette
+  ld	a,$ff		; white
+  ldh	[rOCPD], a
+  ld	a,$7f
+  ldh	[rOCPD], a
+  ld	a,$b5		; light gray
+  ldh	[rOCPD], a
+  ld	a,$56
+  ldh	[rOCPD], a
+  ld	a,$4a		; dark gray
+  ldh	[rOCPD], a
+  ld	a,$29
+  ldh	[rOCPD], a
+  ld	a,$00		; black
+  ldh	[rOCPD], a
+  ld	a,$00
+  ldh	[rOCPD], a
+
+  ret
 
 
 ENDC ;GBDK_ASM

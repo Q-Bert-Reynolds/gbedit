@@ -1,8 +1,6 @@
-INCLUDE "src/hardware.inc"
-INCLUDE "src/memory1.asm"
-INCLUDE "src/gbdk.asm"
+INCLUDE "src/beisbol.asm"
 
-SECTION "Start", ROMX;, BANK(1)
+SECTION "Start", ROMX, BANK[START_BANK]
 
 INCLUDE "img/title/copyrights/copyrights.asm"
 INCLUDE "img/title/intro/intro.asm"
@@ -15,17 +13,17 @@ ELSE
 ENDC
 
 LightsPalSeq:
-  db $E0, $E0, $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0
-  db $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0
-  db $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0, $E8, $E8
-  db $E8, $E8, $EC, $EC, $EC, $EC, $EC, $EC, $EC, $EC
+  DB $E0, $E0, $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0
+  DB $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0
+  DB $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0, $E8, $E8
+  DB $E8, $E8, $EC, $EC, $EC, $EC, $EC, $EC, $EC, $EC
 
 Start::
   xor a
   ld [rVBK], a
   ld [rSTAT], a
 .showCopyrights
-  call TurnLCDOff
+  DISPLAY_OFF
 
   ld hl, CopyrightsTiles
   ld de, _VRAM+$1000
@@ -38,15 +36,16 @@ Start::
   ld h, _COPYRIGHT_COLUMNS ; w
   ld l, _COPYRIGHT_ROWS ; h
   ld bc, CopyrightTileMap
-  call gbdk_SetXYBKG
+  call gbdk_SetBKGTiles
 
   ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
   ld de, 1000
   call gbdk_Delay
+
 .showIntroSequence
-  call TurnLCDOff
+  DISPLAY_OFF
   ld hl, rBGP
   ld [hl], $E0
 
@@ -61,15 +60,28 @@ Start::
   ld h, _INTRO_LIGHTS_COLUMNS ; w
   ld l, _INTRO_LIGHTS_ROWS ; h
   ld bc, IntroLightsTileMap
-  call gbdk_SetXYBKG
+  call gbdk_SetBKGTiles
 
   ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
-  ; set_sprite_data(0, _INTRO_SPRITES_TILE_COUNT, _intro_sprites_tiles);
-  ; set_sprite_data(_INTRO_SPRITES_TILE_COUNT, _VERSION_SPRITES_TILE_COUNT, _version_sprites_tiles);
-  ; set_sprite_tile(0, 0);
-  ; move_sprite(0, 152,0);
+  ld hl, IntroSpritesTiles
+  ld de, _VRAM
+  ld bc, _INTRO_SPRITES_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld hl, VersionSpritesTiles
+  ld de, _VRAM+_INTRO_SPRITES_TILE_COUNT*16
+  ld bc, _VERSION_SPRITES_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld hl, _OAMRAM; + N * 4
+  xor a
+  ld b, a ;x
+  ld c, 152 ;y
+  ld d, a ;tile
+  ld e, a ;flags
+  call gbdk_SetOAM
 
 .lightsSequence
   ld de, 1000
@@ -90,7 +102,7 @@ Start::
   ld h, _INTRO_LIGHT_OUT_COLUMNS ; w
   ld l, _INTRO_LIGHT_OUT_ROWS ; h
   ld bc, IntroLightOutTileMap
-  call gbdk_SetXYBKG
+  call gbdk_SetBKGTiles
   
   ; // start playing stars animation
   ; for (x = 0; x < 40; ++x) {
@@ -106,14 +118,14 @@ Start::
   ld de, 1000
   call gbdk_Delay
 .pitchSequence
-  lcd_WaitVRAM
+  call gbdk_WaitVBLDone
 
   ld d, 0 ; x
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w
   ld l, _INTRO_PITCH_ROWS ; h
   ld bc, IntroPitchTileMap
-  call gbdk_SetXYBKG
+  call gbdk_SetBKGTiles
 
   ld hl, rBGP
   ld [hl], BG_PALETTE

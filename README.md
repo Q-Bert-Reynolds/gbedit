@@ -18,19 +18,20 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 - [Old rom hack attempt](https://bitbucket.org/q_bert_reynolds/beisbolromhack/src/master/)
 
 # Compiling:
-    python3 png2gbdk.py
+    python3 png2rgbds.py
     python3 roledex.py
     make clean
     make
 
 # TODO:
+Rewrite in GBZ80
 
 Python scripts
 
 - add and parse moves csv
 - generate all player data
-- handle 1bpp and rle
-- only update .c file when png changes
+- handle 1bpp and rle images
+- only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
 
 Intro
@@ -98,15 +99,15 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
 ROM Banks:
 
-    main.c      ( bank0 ) - movement/collisions, bank switching
-    ui.c        ( bank2 ) - font, non-realtime UI functions, options
-    start.c     ( bank3 ) - copyrights & intro
-    title.c     ( bank4 ) - title, new game/continue menu
-    new_game.c  ( bank5 ) - prologue, name entry
-    play_ball.c ( bank6 ) - baseball
-    lineup.c    ( bank8 ) - change batting order & positions
-    roledexX.c  ( bank1X) - player images, descriptions, base stats
+    main.asm      ( bank0 ) - movement/collisions, bank switching
+    ui.asm        ( bank2 ) - font, non-realtime UI functions, options
+    start.asm     ( bank3 ) - copyrights & intro
+    title.asm     ( bank4 ) - title, new game/continue menu
+    new_game.asm  ( bank5 ) - prologue, name entry
+    play_ball.asm ( bank6 ) - baseball
+    lineup.asm    ( bank8 ) - change batting order & positions
+    roledexX.asm  ( bank1X) - player images, descriptions, base stats
 
 RAM Banks
 
-    save0.c (bank0) - main save file
+    save0.asm (bank0) - main save file

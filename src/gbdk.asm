@@ -1,3 +1,39 @@
+; GBDK like functions
+;  Started 30-Dec-19
+;
+; Initials: NB = Nolan Baker, GBDK = Pascal Felber & Michael Hope
+; V1.0 - 30-Dec-19 : Original Release - NB, based on GBDK 2.96
+;
+; Macros:
+;   DISPLAY_ON
+;   DISPLAY_OFF
+;   SHOW_BKG
+;   HIDE_BKG
+;   SHOW_WIN
+;   HIDE_WIN
+;   SHOW_SPRITES
+;   HIDE_SPRITES
+;   SPRITES_8x16
+;   SPRITES_8x8
+;   SWITCH_ROM_MBC5
+;   SWITCH_RAM_MBC5
+;   ENABLE_RAM_MBC5
+;   DISABLE_RAM_MBC5
+;   CGB_COMPATIBILITY
+;
+; Library Subroutines:
+;   gbdk_SetOAM
+;     sets X, Y, tile ID, and flags of Sprite N
+;     Entry: hl = _OAMRAM + N * 4, bc = xy, d = tile, e = flags
+;   gbdk_DisplayOff
+;   gbdk_WaitVBLDone
+;   gbdk_SetWinTiles
+;   gbdk_SetBKGTiles
+;   gbdk_Delay
+;   gbdk_CPUSlow
+;   gbdk_CPUFast
+;
+
 IF !DEF(GBDK_ASM)
 GBDK_ASM  SET  1
 

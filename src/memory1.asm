@@ -7,9 +7,11 @@
 ;                    Fixed bug in mem_SetVRAM. - JF
 ; V1.2 - 30-Dec-19 : Adds tile data copy that loops from 9800 to 8800 - NB
 ;
-; Library Subroutines:
+; Macros:
 ;   lcd_WaitVRAM
 ;     Macro that pauses until VRAM available.
+; 
+; Library Subroutines:
 ;   mem_Set
 ;     Set a memory region.
 ;     Entry: a = value, hl = src address, bc = length

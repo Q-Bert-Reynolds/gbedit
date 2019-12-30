@@ -26,7 +26,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # TODO:
 Rewrite in GBZ80
 
-- mem_CopyVRAM needs to wrap around when address larger than 9800
+- When this section of the TODO is gone, the RGBDS version will be on par with old GBDK version
 
 Python scripts
 

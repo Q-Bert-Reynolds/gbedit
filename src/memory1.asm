@@ -21,7 +21,7 @@
 ;     Entry: hl = src address, de = dst address, bc = src length
 ;   mem_SetVRAM
 ;     Set a memory region in VRAM.
-;     Entry: a = value, hl = src address, bc = length
+;     Entry: a = value, hl = dst address, bc = length
 ;   mem_CopyVRAM
 ;     Copy a memory region to or from VRAM.
 ;     Entry: hl = src address, de = dst address, bc = length

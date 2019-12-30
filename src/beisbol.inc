@@ -70,19 +70,20 @@ SET_LCD_INTERRUPT: MACRO ;interrupt
   ei
 ENDM
 
-
 HIDE_ALL_SPRITES: MACRO
   xor a
-  ld bc, a
-  ld de, a
+  ld [_i], a
+  ld b, a
+  ld c, a
+  ld d, a
+  ld e, a
   ld hl, _OAMRAM
-  ld a, 40
-  ld [_i], a
 .loop\@
+  call gbdk_SetOAM
   ld a, [_i]
-  dec a
+  inc a
   ld [_i], a
-  gbdk_SetOAM
+  sub 39
   jr nz, .loop\@
 ENDM
 
@@ -107,10 +108,34 @@ CLEAR_SCREEN: MACRO ;\1 = tile
   ld [rWX], a
   ld a, 144
   ld [rWY], a
-  ; HIDE_ALL_SPRITES
+  HIDE_ALL_SPRITES
+ENDM
+
+CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
+  ld a, \4 ;h
+  ld [_i], a
+.clearBkgLoop\@
+  ld hl, _SCRN0 + \1 + \2 * 32 ;start x, y
+  ld bc, 32 ;tiles to next row
+  ld a, [_i]
+  sub a
+  jr z, .skip\@
+.moveToRow\@
+  add hl, bc
+  dec a
+  jr nz, .moveToRow\@
+.skip\@
+  ld a, \5 ;tile
+  ld bc, \3 ;width
+  call mem_SetVRAM ; Entry: a = value, hl = dst address, bc = length
+  ld a, [_i]
+  dec a
+  ld [_i], a
+  jr nz, .clearBkgLoop\@
 ENDM
 
 SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
+  di
   ld hl, \6
   ld de, tile_buffer
   ld bc, \2 * \3
@@ -134,6 +159,7 @@ SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
   ld l, \4 ; h
   ld bc, tile_buffer
   call gbdk_SetBKGTiles
+  ei
 ENDM
 
 FADE_OUT: MACRO

@@ -65,21 +65,33 @@ ShowTitleLCDInterrupt::
   reti
 
 CyclePlayersLCDInterrupt::
-; if (LY_REG == 72){
-;     LYC_REG = 135;
-;     SCX_REG = x;
-; }
-; else if (LY_REG == 135) {
-;     LYC_REG = 72;
-;     SCX_REG = 0;
-; }
+  ld a, [rLY]
+  sub 134
+  jr nz, .scrollPlayers
+  ld a, 71
+  ld [rLYC], a
+  xor a
+  ld [rSCX], a
+  reti
+.scrollPlayers
+  ld a, [rLY]
+  sub 71
+  jr nz, .exitCyclePlayersInterrupt
+  ld a, 134
+  ld [rLYC], a
+  ld a, [_x]
+  ld [rSCX], a
+.exitCyclePlayersInterrupt
+  reti
 
-; void show_player (UBYTE p) {
-; load_player_bkg_data(IntroPlayerNums: DBLAYER_INDEX, TITLE_BAN
-; a = 7-get_player_img_columns (IntroPlayerNums: DBITLE_BAN
-; CLEAR_BKG_AREA(20,10,7,7,0);
-; set_player_bkg_tiles(20+a, 10+a, IntroPlayerNums: DBLAYER_INDEX, TITLE_BAN
-; }
+ShowPlayer: ; de = player number
+  ld hl, IntroPlayerNums
+  add hl, de
+; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
+  CLEAR_BKG_AREA 20,10,7,7,0
+; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+  ret
 
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
@@ -122,7 +134,6 @@ ShowTitle:
   call gbdk_SetOAM
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
-  
   ld hl, TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16
@@ -141,7 +152,10 @@ ShowTitle:
   ld bc, BeisbolLogoTileMap
   call gbdk_SetBKGTiles
 
-; show_player(0);
+  xor a
+  ld d, a
+  ld e, a
+  call ShowPlayer
 
   ld a, 64
   ld [_y], a
@@ -166,12 +180,13 @@ ShowTitle:
   ld [_x], a
   jr nz, .slideInVersionTextLoop
 
-  di 
-; remove_LCD(show_title_lcd_interrupt);
-; x = 128;
-; add_LCD(cycle_players_lcd_interrupt);
-  ei
-; z = 0;
+  SET_LCD_INTERRUPT NoInterrupt ;CyclePlayersLCDInterrupt
+
+  ld a, 128
+  ld [_x], a
+  xor a
+  ld [_z], a
+
 ; while (1) {
 ;     for (i = 0; i < 60; i++) {
 ;         if (joypad() & (J_START | J_A)) return;
@@ -198,9 +213,7 @@ ShowTitle:
 
 ShowStartMenu:
   DISPLAY_OFF
-  di
-; remove_LCD(cycle_players_lcd_interrupt);
-  ei
+  SET_LCD_INTERRUPT NoInterrupt
 
   xor a
   ld [rIE], a

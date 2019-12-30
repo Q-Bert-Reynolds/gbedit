@@ -59,4 +59,40 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
+FADE_OUT: MACRO
+  ld a, $90
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, $40
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  xor a
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+ENDM
+
+FADE_IN: MACRO
+  ld a, $40
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, $90
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, BG_PALETTE
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+ENDM
+
 ENDC

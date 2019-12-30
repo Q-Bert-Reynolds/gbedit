@@ -91,6 +91,45 @@ DISABLE_RAM_MBC5: MACRO
   ld [rRAMG], a
 ENDM
 
+CGB_COMPATIBILITY: MACRO
+  ld	a,$80
+  ldh	[rBCPS], a	; set default bkg palette
+  ld	a,$ff		; white
+  ldh	[rBCPD], a
+  ld	a,$7f
+  ldh	[rBCPD], a
+  ld	a,$b5		; light gray
+  ldh	[rBCPD], a
+  ld	a,$56
+  ldh	[rBCPD], a
+  ld	a,$4a		; dark gray
+  ldh	[rBCPD], a
+  ld	a,$29
+  ldh	[rBCPD], a
+  ld	a,$00		; black
+  ldh	[rBCPD], a
+  ld	a,$00
+  ldh	[rBCPD], a
+  ld	a,$80
+  ldh	[rOCPS], a	; set default sprite palette
+  ld	a,$ff		; white
+  ldh	[rOCPD], a
+  ld	a,$7f
+  ldh	[rOCPD], a
+  ld	a,$b5		; light gray
+  ldh	[rOCPD], a
+  ld	a,$56
+  ldh	[rOCPD], a
+  ld	a,$4a		; dark gray
+  ldh	[rOCPD], a
+  ld	a,$29
+  ldh	[rOCPD], a
+  ld	a,$00		; black
+  ldh	[rOCPD], a
+  ld	a,$00
+  ldh	[rOCPD], a
+ENDM
+
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
 ;
@@ -341,53 +380,6 @@ gbdk_CPUFast::
   and	$80		; is gbc in double speed mode?
   ret	nz		; yes, exit
   jr	shift_speed
-
-;***************************************************************************
-;
-; gbdk_CGBCompatibility - Sets default palette colors for GameBoy Color
-;
-;***************************************************************************
-gbdk_CGBCompatibility::
-
-  ld	a,$80
-  ldh	[rBCPS], a	; set default bkg palette
-  ld	a,$ff		; white
-  ldh	[rBCPD], a
-  ld	a,$7f
-  ldh	[rBCPD], a
-  ld	a,$b5		; light gray
-  ldh	[rBCPD], a
-  ld	a,$56
-  ldh	[rBCPD], a
-  ld	a,$4a		; dark gray
-  ldh	[rBCPD], a
-  ld	a,$29
-  ldh	[rBCPD], a
-  ld	a,$00		; black
-  ldh	[rBCPD], a
-  ld	a,$00
-  ldh	[rBCPD], a
-
-  ld	a,$80
-  ldh	[rOCPS], a	; set default sprite palette
-  ld	a,$ff		; white
-  ldh	[rOCPD], a
-  ld	a,$7f
-  ldh	[rOCPD], a
-  ld	a,$b5		; light gray
-  ldh	[rOCPD], a
-  ld	a,$56
-  ldh	[rOCPD], a
-  ld	a,$4a		; dark gray
-  ldh	[rOCPD], a
-  ld	a,$29
-  ldh	[rOCPD], a
-  ld	a,$00		; black
-  ldh	[rOCPD], a
-  ld	a,$00
-  ldh	[rOCPD], a
-
-  ret
 
 
 ENDC ;GBDK_ASM

@@ -3,9 +3,16 @@ INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 
 SECTION "Gloval Vars", WRAM0
+rLCDInterrupt: DW
 last_button_state: DB
 button_state: DB
-temp: DB
+_i: DB
+_j: DB
+_k: DB
+_x: DW
+_y: DW
+_z: DW
+tmp: DB
 
 SECTION "Header", ROM0[$100]
 Entry:
@@ -32,6 +39,7 @@ ENDC
 SECTION "VBlank", ROM0[$0040]
   reti
 SECTION "LCDC", ROM0[$0048]
+  call rLCDInterrupt ;TODO: pretty sure this is wrong
   reti
 SECTION "TimerOverflow", ROM0[$0050]
   reti
@@ -46,7 +54,7 @@ Main::
 
   DISPLAY_OFF
   di
-  call gbdk_CGBCompatibility
+  CGB_COMPATIBILITY
   call gbdk_CPUFast
   ei
   

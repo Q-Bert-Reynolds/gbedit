@@ -38,7 +38,7 @@ Start::
   ld bc, CopyrightTileMap
   call gbdk_SetBKGTiles
 
-  ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
+  ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
   ld de, 1000
@@ -62,7 +62,7 @@ Start::
   ld bc, IntroLightsTileMap
   call gbdk_SetBKGTiles
 
-  ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_WINON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
+  ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a
 
   ld hl, IntroSpritesTiles
@@ -86,17 +86,50 @@ Start::
 .lightsSequence
   ld de, 1000
   call gbdk_Delay
-  ; for (i = 0; i < 60; i++) {
-  ;  if (joypad() & (J_START | J_A)) return;
-  ;  update_vbl();
-  ; }
-  ; y = -8;
-  ; for (x = 156; x > 94; x-=2) {
-  ;  move_sprite(0, x, y+=3);
-  ;  if (joypad() & (J_START | J_A)) return;
-  ;  update_vbl();
-  ; }
   
+; for (i = 0; i < 60; i++)
+  ld a, 60
+  ld [_i], a
+.exitableOneSecPauseLoop1
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jp nz, .fadeOutAndExit
+  call gbdk_WaitVBLDone
+  ld a, [_i]
+  sub a
+  ld [_i], a
+  jr nz, .exitableOneSecPauseLoop1
+
+; for (x = 156; x > 94; x-=2)
+  ld a, -8
+  ld [_y], a
+  ld a, 156
+  ld [_x], a
+.ballFallingIntoLightsLoop 
+  ld hl, _OAMRAM ;OAM+N*4
+  ld a, [_x]
+  ld b, a ;x
+  ld a, [_y]
+  ld c, a ;y
+  xor a
+  ld d, a ;tile
+  ld e, a ;flags
+  call gbdk_SetOAM
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jp nz, .fadeOutAndExit
+  call gbdk_WaitVBLDone
+  ld a, [_y]
+  add a, 3
+  ld [_y], a
+  ld a, [_x]
+  sub a, 2
+  ld [_x], a
+  sub a, 94
+  jr nz, .ballFallingIntoLightsLoop
+
   ld d, 10 ; x
   ld e, 8  ; y
   ld h, _INTRO_LIGHT_OUT_COLUMNS ; w
@@ -104,19 +137,54 @@ Start::
   ld bc, IntroLightOutTileMap
   call gbdk_SetBKGTiles
   
-  ; // start playing stars animation
-  ; for (x = 0; x < 40; ++x) {
-  ;  move_sprite(0, x+94, y+=4);
-  ;  BGP_REG = lights_pal_seq[x];
-  ;  if (joypad() & (J_START | J_A)) return;
-  ;  update_vbl();
-  ; }
-  ; for (i = 0; i < 60; i++) {
-  ;  if (joypad() & (J_START | J_A)) return;
-  ;  update_vbl();
-  ; }
-  ld de, 1000
-  call gbdk_Delay
+; TODO: start playing stars animation
+; for (x = 0; x < 40; ++x)
+  xor a
+  ld [_x], a
+  ld hl, LightsPalSeq
+.ballBouncingOffLights
+  push hl
+  ld hl, _OAMRAM ;OAM+N*4
+  ld a, [_x]
+  add a, 94
+  ld b, a ;x
+  ld a, [_y]
+  ld c, a ;y
+  xor a
+  ld d, a ;tile
+  ld e, a ;flags
+  call gbdk_SetOAM
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jp nz, .fadeOutAndExit
+  call gbdk_WaitVBLDone
+  pop hl
+  ld a, [hli]
+  ld [rBGP], a
+  ld a, [_y]
+  add a, 4
+  ld [_y], a
+  ld a, [_x]
+  inc a
+  ld [_x], a
+  sub a, 40
+  jr nz, .ballBouncingOffLights
+
+; for (i = 0; i < 60; i++)
+  ld a, 60
+  ld [_i], a
+.exitableOneSecPauseLoop2
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jp nz, .fadeOutAndExit
+  call gbdk_WaitVBLDone
+  ld a, [_i]
+  sub a
+  ld [_i], a
+  jr nz, .exitableOneSecPauseLoop2
+
 .pitchSequence
   call gbdk_WaitVBLDone
 
@@ -125,7 +193,7 @@ Start::
   ld h, _INTRO_PITCH_COLUMNS ; w
   ld l, _INTRO_PITCH_ROWS ; h
   ld bc, IntroPitchTileMap
-  call gbdk_SetBKGTiles
+  call gbdk_SetBKGTiles 
 
   ld hl, rBGP
   ld [hl], BG_PALETTE
@@ -133,25 +201,66 @@ Start::
   ld de, 1000
   call gbdk_Delay
 
-  ;  for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
-  ;    set_sprite_tile(i, _intro0_map[i]+_INTRO_SPRITES_TILE_COUNT);
-  ;    set_sprite_prop(i, S_PRIORITY);
-  ;  }
-  ;  for (k = 0; k <= 128; ++k) {
-  ;    if (joypad() & (J_START | J_A)) return;
-  ;    move_bkg(k+32, 0);
-  ;    a = 0;
-  ;    for (j = 0; j < _INTRO0_ROWS; j++) {
-  ;     for (i = 0; i < _INTRO0_COLUMNS; i++) {
-  ;      move_sprite(a++, k+i*8-32, j*8+80);
-  ;     }
-  ;    }
-  ;    update();
-  ;  }
-  ;  for (i = 0; i < 60; i++) {
-  ;    if (joypad() & (J_START | J_A)) return;
-  ;    update_vbl();
-  ;  }
+; for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
+  xor a
+  ld [_i], a
+  ld hl, _OAMRAM
+  ld bc, Intro0TileMap + _INTRO_SPRITES_TILE_COUNT
+.setIntroSpriteTiles
+  push bc
+  xor a
+  ld b, a ;x
+  ld c, a ;y
+  xor a
+  ld d, a ;tile
+  ld e, OAMF_PRI ;flags
+  call gbdk_SetOAM
+  pop bc
+  inc bc
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub _INTRO0_COLUMNS * _INTRO0_ROWS
+  jr nz, .setIntroSpriteTiles
 
-  ;  FADE_OUT();
+;  for (k = 0; k <= 128; ++k) {
+  xor a
+  ld [_k], a
+.slidePlayersLoop
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jr nz, .fadeOutAndExit
+  ld a, [_k]
+  add a, 32
+  ld [rSCX], a
+; a = 0;
+; for (j = 0; j < _INTRO0_ROWS; j++) {
+;  for (i = 0; i < _INTRO0_COLUMNS; i++) {
+;   move_sprite(a++, k+i*8-32, j*8+80);
+;  }
+; }
+  call gbdk_WaitVBLDone
+  ld a, [_k] 
+  inc a
+  ld [_k], a
+  sub 128
+  jr nz, .slidePlayersLoop
+
+; for (i = 0; i < 60; i++)
+  ld a, 60
+  ld [_i], a
+.exitableOneSecPauseLoop3
+  call UpdateInput
+  ld a, [button_state]
+  and PADF_START | PADF_A
+  jr nz, .fadeOutAndExit
+  call gbdk_WaitVBLDone
+  ld a, [_i]
+  sub a
+  ld [_i], a
+  jr nz, .exitableOneSecPauseLoop3
+
+.fadeOutAndExit
+  FADE_OUT
   ret

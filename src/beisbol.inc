@@ -61,12 +61,8 @@ HOME_MASK        EQU $F000
 
 SET_LCD_INTERRUPT: MACRO ;interrupt
   di
-  ld hl, \1
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld c, a
   ld hl, rLCDInterrupt
+  ld bc, \1
   ld a, b
   ld [hli], a
   ld a, c

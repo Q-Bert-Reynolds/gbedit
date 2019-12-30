@@ -62,7 +62,7 @@ Main::
   call gbdk_CPUFast
   ei
 
-  ; SET_LCD_INTERRUPT NoInterrupt
+  SET_LCD_INTERRUPT NoInterrupt
 
   ; audio  
   ld hl, rAUDENA
@@ -131,10 +131,13 @@ UpdateInput::
   ld [hl], a
   ret
 
-LCDInterrupt:: ;FIXME
-  ld hl, ShowTitleLCDInterrupt
-  ; ld [rLCDInterrupt], hl
-  
+LCDInterrupt::
+  ld hl, rLCDInterrupt
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, b
+  ld l, a
   jp hl
 NoInterrupt::
   reti

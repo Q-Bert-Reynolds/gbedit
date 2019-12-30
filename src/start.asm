@@ -1,4 +1,4 @@
-INCLUDE "src/beisbol.asm"
+INCLUDE "src/beisbol.inc"
 
 SECTION "Start", ROMX, BANK[START_BANK]
 
@@ -52,7 +52,7 @@ Start::
   ld hl, IntroTiles
   ld de, _VRAM+$1000
   ld bc, _INTRO_TILE_COUNT*16
-  call mem_CopyVRAM
+  call mem_CopyToTileData
 
   xor a
   ld d, a ; x
@@ -87,7 +87,6 @@ Start::
   ld de, 1000
   call gbdk_Delay
   
-; for (i = 0; i < 60; i++)
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop1
@@ -101,7 +100,6 @@ Start::
   ld [_i], a
   jr nz, .exitableOneSecPauseLoop1
 
-; for (x = 156; x > 94; x-=2)
   ld a, -8
   ld [_y], a
   ld a, 156
@@ -138,7 +136,6 @@ Start::
   call gbdk_SetBKGTiles
   
 ; TODO: start playing stars animation
-; for (x = 0; x < 40; ++x)
   xor a
   ld [_x], a
   ld hl, LightsPalSeq
@@ -171,7 +168,6 @@ Start::
   sub a, 40
   jr nz, .ballBouncingOffLights
 
-; for (i = 0; i < 60; i++)
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop2
@@ -186,8 +182,6 @@ Start::
   jr nz, .exitableOneSecPauseLoop2
 
 .pitchSequence
-  call gbdk_WaitVBLDone
-
   ld d, 0 ; x
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w
@@ -201,7 +195,6 @@ Start::
   ld de, 1000
   call gbdk_Delay
 
-; for (i = 0; i < _INTRO0_COLUMNS*_INTRO0_ROWS; i++) {
   xor a
   ld [_i], a
   ld hl, _OAMRAM
@@ -223,7 +216,6 @@ Start::
   sub _INTRO0_COLUMNS * _INTRO0_ROWS
   jr nz, .setIntroSpriteTiles
 
-;  for (k = 0; k <= 128; ++k) {
   xor a
   ld [_k], a
 .slidePlayersLoop
@@ -247,7 +239,6 @@ Start::
   sub 128
   jr nz, .slidePlayersLoop
 
-; for (i = 0; i < 60; i++)
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop3

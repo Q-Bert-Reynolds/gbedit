@@ -244,21 +244,21 @@ setTiles:
   pop	de		; de = wh
   push	hl		; store origin
   push	de		; store wh
-.loop3:
+.waitVRAM:
   ldh	a,[rSTAT]
-  and	$02
-  jr	nz,.loop3
+  and	STATF_BUSY
+  jr	nz,.waitVRAM
 
   ld	a,[bc]		; copy w tiles
   ld	[hl+], a
   inc	bc
   dec	d
-  jr	nz,.loop3
+  jr	nz,.waitVRAM
   pop	hl		; hl = wh
   ld	d,h		; restore d = w
   pop	hl		; hl = origin
   dec	e
-  jr	z,.loop4
+  jr	z,.exit
 
   push	bc		; next line
   ld	bc,$20	; one line is 20 tiles
@@ -267,8 +267,8 @@ setTiles:
 
   push	hl		; store current origin
   push	de		; store wh
-  jr	.loop3
-.loop4:
+  jr	.waitVRAM
+.exit:
   ret
 
 ;***************************************************************************
@@ -380,6 +380,5 @@ gbdk_CPUFast::
   and	$80		; is gbc in double speed mode?
   ret	nz		; yes, exit
   jr	shift_speed
-
 
 ENDC ;GBDK_ASM

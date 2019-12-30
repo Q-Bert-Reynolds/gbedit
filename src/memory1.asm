@@ -174,5 +174,39 @@ mem_CopyVRAM::
   jr  nz,.loop
   ret
 
+;***************************************************************************
+;
+; mem_CopyToTileData - "Copy" a memory region to Tile Data
+;   loops from 9800 to 8800
+;
+; input:
+;   hl - pSource
+;   de - tile data dest
+;   bc - bytecount
+;
+;***************************************************************************
+mem_CopyToTileData::
+  inc b
+  inc c
+  jr  .skip
+.loop
+  di
+  lcd_WaitVRAM
+  ld  a,[hl+]
+  ld  [de],a
+  ei
+  inc de
+  ld a, $98
+  cp a, d
+  jr nz, .skip
+  sub $10
+  ld d, a
+.skip
+  dec c
+  jr  nz,.loop
+  dec b
+  jr  nz,.loop
+  ret
+
 ENDC ;MEMORY1_ASM
 

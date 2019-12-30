@@ -1,4 +1,4 @@
-INCLUDE "src/beisbol.asm"
+INCLUDE "src/beisbol.inc"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 
@@ -6,6 +6,10 @@ SECTION "Gloval Vars", WRAM0
 rLCDInterrupt: DW
 last_button_state: DB
 button_state: DB
+_a: DB
+_b: DB
+_c: DB
+_d: DB
 _i: DB
 _j: DB
 _k: DB
@@ -39,8 +43,7 @@ ENDC
 SECTION "VBlank", ROM0[$0040]
   reti
 SECTION "LCDC", ROM0[$0048]
-  call rLCDInterrupt ;TODO: pretty sure this is wrong
-  reti
+  call ShowTitleLCDInterrupt;LCDInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
   reti
 SECTION "Serial", ROM0[$0058]
@@ -122,3 +125,11 @@ UpdateInput::
   ld hl, button_state
   ld [hl], a
   ret
+
+LCDInterrupt:: ;FIXME
+  ld a, [rLCDInterrupt]
+  ld h, a
+  ld a, [rLCDInterrupt+1]
+  ld l, a
+  jp hl
+  reti

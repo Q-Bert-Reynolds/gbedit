@@ -1,4 +1,4 @@
-INCLUDE "src/beisbol.asm"
+INCLUDE "src/beisbol.inc"
 
 SECTION "Title", ROMX, BANK[TITLE_BANK]
 
@@ -18,29 +18,51 @@ ENDC
 PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
 ShowTitleLCDInterrupt::
-; switch (LY_REG) {
-;     case 0:
-;     case 255:
-;         LYC_REG = 63;
-;         SCX_REG = 0;
-;         SCY_REG = y;
-;         break;
-;     case 63:
-;         LYC_REG = 71;
-;         SCX_REG = x;
-;         SCY_REG = 0;
-;         break;
-;     case 71:
-;         LYC_REG = 135;
-;         SCX_REG = 128;
-;         SCY_REG = 0;
-;         break;
-;     case 135:
-;         LYC_REG = 0;
-;         SCX_REG = 0;
-;         SCY_REG = 0;
-;         break;
-; }
+  ld a, [rLY]
+  and a
+  jr z, .dropInTitle
+  sub 255
+  jr nz, .slideVersion
+.dropInTitle
+  ld a, 63
+  ld [rLYC], a
+  xor a
+  ld [rSCX], a
+  ld a, [_y]
+  ld [rSCY], a
+  reti
+.slideVersion
+  ld a, [rLY]
+  sub 63
+  jr nz, .scrollPlayers
+  ld a, 71
+  ld [rLYC], a
+  ld a, [_x]
+  ld [rSCX], a
+  xor a
+  ld [rSCY], a
+  reti
+.scrollPlayers
+  ld a, [rLY]
+  sub 71
+  jr nz, .screenBottom
+  ld a, 135
+  ld [rLYC], a
+  ld a, 128
+  ld [rSCX], a
+  xor a
+  ld [rSCY], a
+  reti
+.screenBottom
+  ld a, [rLY]
+  sub 135
+  jr nz, .exitShowTitleInterrupt
+  xor a
+  ld [rLYC], a
+  ld [rSCX], a
+  ld [rSCY], a
+.exitShowTitleInterrupt
+  reti
 
 CyclePlayersLCDInterrupt::
 ; if (LY_REG == 72){
@@ -63,8 +85,9 @@ BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
 
 ShowTitle:
+  di
   DISPLAY_OFF
-  ;CLEAR_SCREEN(0);
+  CLEAR_SCREEN 0
   ld hl, rBGP
   ld [hl], BG_PALETTE
   ld hl, rOBP0
@@ -76,6 +99,7 @@ ShowTitle:
   ld de, _VRAM
   ld bc, _TITLE_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
+
 ; a = 0;
 ; for (j = 0; j < _CALVIN_TITLE_ROWS; ++j) {
 ;     for (i = 0; i < _CALVIN_TITLE_COLUMNS; ++i) {
@@ -98,9 +122,17 @@ ShowTitle:
   call gbdk_SetOAM
 
   di
-; add_LCD(show_title_lcd_interrupt);
-  ei 
-; set_interrupts(LCD_IFLAG|VBL_IFLAG);
+  ld hl, ShowTitleLCDInterrupt
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld c, a
+  ld hl, rLCDInterrupt
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hl], a
+  ei
 
   ld hl, TitleTiles
   ld de, _VRAM+$1000
@@ -121,16 +153,20 @@ ShowTitle:
   call gbdk_SetBKGTiles
 
 ; show_player(0);
-; y = 64;
-; x = 64;
+
+  ld a, 64
+  ld [_y], a
+  ld [_x], a
   DISPLAY_ON
-; for (i = 0; i <= 64; i+=2) {
-;     y = 64-i;
-;     update_vbl();
-; }
+  call gbdk_WaitVBLDone
+.dropInTitleLoop
+  call gbdk_WaitVBLDone
+  ld a, [_y]
+  dec a
+  ld [_y], a
+  jr nz, .dropInTitleLoop
 
 ; TODO: set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
-  call gbdk_WaitVBLDone
   ld d, 7 ; x
   ld e, 8 ; y
   ld h, _VERSION_COLUMNS ; w
@@ -138,11 +174,15 @@ ShowTitle:
   ld bc, VersionTileMap
   call gbdk_SetBKGTiles
 
-; for (i = 0; i <= 64; i+=2) {
-;     x = -64+i;
-;     update_vbl();
-; }
+  ld a, 192
+  ld [_x], a
+.slideInVersionTextLoop
   call gbdk_WaitVBLDone
+  ld a, [_x]
+  inc a
+  ld [_x], a
+  jr nz, .slideInVersionTextLoop
+
   di 
 ; remove_LCD(show_title_lcd_interrupt);
 ; x = 128;
@@ -178,8 +218,11 @@ ShowStartMenu:
   di
 ; remove_LCD(cycle_players_lcd_interrupt);
   ei
-; set_interrupts(VBL_IFLAG);
-; CLEAR_SCREEN(0);
+
+  xor a
+  ld [rIE], a
+
+  CLEAR_SCREEN 0
 ; load_font_tiles(TITLE_BANK);
   DISPLAY_ON
 
@@ -230,18 +273,50 @@ Title::
   ld [rVBK], a
   ld a, 72
   ld [rSTAT], a
-; set_interrupts(LCD_IFLAG|VBL_IFLAG);
-; d = 0;
-; while (d == 0 || d == c) {
-;     if (d == 0) {
+
+  ld a, IEF_LCDC
+  ld [rIE], a
+
+  xor a
+  ld [_d], a
+.showTitleAndNewGameMenuLoop ; while (d == 0 || d == c)
+  ld a, [_d]
+  and a
+  jr nz, .checkOptions
   call ShowTitle
-;     }
-;     else if (d == c) {
-;         show_options(TITLE_BANK);
-;         d = 0;
-;     }
-;     d = show_start_menu();
-; }
-; return (UBYTE)(c-d-1);
-; }
+
+; HACK - early return here
+  xor a
+  ld [rIE], a
+  ret
+; END HACK
+
+  jr .showStartMenu
+.checkOptions
+  ld a, [_d]
+  ld d, a
+  ld a, [_c]
+  and a, d
+  jp z, .showStartMenu
+  ; call ShowOptions
+  xor a
+  ld d, a
+.showStartMenu
+  call ShowStartMenu
+  ld a, [_d]
+  and a
+  jr z, .showTitleAndNewGameMenuLoop
+  ld a, [_c]
+  and a
+  jr z, .showTitleAndNewGameMenuLoop
+
+  xor a
+  ld [rIE], a
+
+; return c-d-1
+  ld a, [_d]
+  ld d, a
+  ld a, [_c]
+  sub a, d
+  dec a
   ret

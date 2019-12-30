@@ -1,5 +1,5 @@
-IF !DEF(BEISBOL_ASM)
-BEISBOL_ASM SET 1
+IF !DEF(BEISBOL_INC)
+BEISBOL_INC SET 1
 
 INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
@@ -59,6 +59,45 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
+HIDE_ALL_SPRITES: MACRO
+  xor a
+  ld bc, a
+  ld de, a
+  ld hl, _OAMRAM
+  ld a, 40
+  ld [_i], a
+.loop\@
+  ld a, [_i]
+  dec a
+  ld [_i], a
+  gbdk_SetOAM
+  jr nz, .loop\@
+ENDM
+
+CLEAR_SCREEN: MACRO ;\1 = tile
+  ld a, \1
+  ld d, a
+  ld bc, 1384
+  ld hl, _SCRN0
+
+.loop\@
+  ld a, d
+  ld [hli], a
+  dec bc
+  ld a, b
+  and a
+  jr nz, .loop\@
+  ld a, c
+  and a
+  jr nz, .loop\@
+
+  ld a, 167
+  ld [rWX], a
+  ld a, 144
+  ld [rWY], a
+  ; HIDE_ALL_SPRITES
+ENDM
+
 FADE_OUT: MACRO
   ld a, $90
   ld [rBGP], a
@@ -95,4 +134,4 @@ FADE_IN: MACRO
   call gbdk_Delay
 ENDM
 
-ENDC
+ENDC ; BEISBOL_INC

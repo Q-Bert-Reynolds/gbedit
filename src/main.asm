@@ -17,6 +17,7 @@ _x: DW
 _y: DW
 _z: DW
 tmp: DB
+tile_buffer: DS 512
 
 SECTION "Header", ROM0[$100]
 Entry:

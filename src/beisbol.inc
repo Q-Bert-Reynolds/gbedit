@@ -98,6 +98,32 @@ CLEAR_SCREEN: MACRO ;\1 = tile
   ; HIDE_ALL_SPRITES
 ENDM
 
+SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
+  ld hl, \6
+  ld de, tile_buffer
+  ld bc, \2 * \3
+  inc  b
+  inc  c
+  jr   .skip\@
+.loop\@
+  ld   a,[hl+]
+  add \5
+  ld   [de],a
+  inc  de
+.skip\@
+  dec  c
+  jr   nz, .loop\@
+  dec  b
+  jr   nz, .loop\@
+
+  ld d, \1 ; x
+  ld e, \2 ; y
+  ld h, \3 ; w
+  ld l, \4 ; h
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles
+ENDM
+
 FADE_OUT: MACRO
   ld a, $90
   ld [rBGP], a

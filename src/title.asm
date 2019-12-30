@@ -166,13 +166,7 @@ ShowTitle:
   ld [_y], a
   jr nz, .dropInTitleLoop
 
-; TODO: set_bkg_tiles_with_offset(7,8,_VERSION_COLUMNS,_VERSION_ROWS,_TITLE_TILE_COUNT,_version_map);
-  ld d, 7 ; x
-  ld e, 8 ; y
-  ld h, _VERSION_COLUMNS ; w
-  ld l, _VERSION_ROWS ; h
-  ld bc, VersionTileMap
-  call gbdk_SetBKGTiles
+  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, VersionTileMap
 
   ld a, 192
   ld [_x], a

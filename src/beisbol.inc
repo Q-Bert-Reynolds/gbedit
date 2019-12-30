@@ -59,6 +59,22 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
+SET_LCD_INTERRUPT: MACRO ;interrupt
+  di
+  ld hl, \1
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld c, a
+  ld hl, rLCDInterrupt
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hl], a
+  ei
+ENDM
+
+
 HIDE_ALL_SPRITES: MACRO
   xor a
   ld bc, a

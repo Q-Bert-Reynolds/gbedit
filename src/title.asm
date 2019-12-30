@@ -121,19 +121,8 @@ ShowTitle:
   ld e, OAMF_PAL1 ;flags
   call gbdk_SetOAM
 
-  di
-  ld hl, ShowTitleLCDInterrupt
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld c, a
-  ld hl, rLCDInterrupt
-  ld a, b
-  ld [hli], a
-  ld a, c
-  ld [hl], a
-  ei
-
+  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
+  
   ld hl, TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16

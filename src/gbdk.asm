@@ -8,7 +8,7 @@ rev_Check_GBDK_ASM: MACRO
 ENDM
 
 INCLUDE "src/memory1.asm"
-  rev_Check_memory1_asm 1.1
+  rev_Check_memory1_asm 1.2
 
 DISPLAY_ON: MACRO
   ld a, [rLCDC]

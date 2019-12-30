@@ -44,7 +44,7 @@ ENDC
 SECTION "VBlank", ROM0[$0040]
   reti
 SECTION "LCDC", ROM0[$0048]
-  call ShowTitleLCDInterrupt;LCDInterrupt
+  call LCDInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
   reti
 SECTION "Serial", ROM0[$0058]
@@ -55,13 +55,16 @@ SECTION "p1thru4", ROM0[$0060]
 SECTION "Main", ROM0
 Main::
   ld sp, $ffff
-
   DISPLAY_OFF
+
   di
   CGB_COMPATIBILITY
   call gbdk_CPUFast
   ei
-  
+
+  ; SET_LCD_INTERRUPT NoInterrupt
+
+  ; audio  
   ld hl, rAUDENA
   ld [hl], AUDENA_ON
   xor a
@@ -69,6 +72,7 @@ Main::
   ld hl, rAUDVOL
   ld [hl], $FF
   
+  ; drawing
   SPRITES_8x8
   ld hl, rBGP
   ld [hl], BG_PALETTE
@@ -128,9 +132,9 @@ UpdateInput::
   ret
 
 LCDInterrupt:: ;FIXME
-  ld a, [rLCDInterrupt]
-  ld h, a
-  ld a, [rLCDInterrupt+1]
-  ld l, a
+  ld hl, ShowTitleLCDInterrupt
+  ; ld [rLCDInterrupt], hl
+  
   jp hl
+NoInterrupt::
   reti

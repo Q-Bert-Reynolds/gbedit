@@ -1,32 +1,40 @@
 ; Memory Manipulation Code
 ;  Started 16-Aug-97
 ;
-; Initials: JF = Jeff Frohwein, CS = Carsten Sorensen
+; Initials: JF = Jeff Frohwein, CS = Carsten Sorensen, NB = Nolan Baker
 ; V1.0 - 16-Aug-97 : Original Release - JF, most code from CS
 ; V1.1 - 29-Nov-97 : Added monochrome font copy. - JF
 ;                    Fixed bug in mem_SetVRAM. - JF
+; V1.2 - 30-Dec-19 : Adds tile data copy that loops from 9800 to 8800 - NB
 ;
 ; Library Subroutines:
 ;   lcd_WaitVRAM
 ;     Macro that pauses until VRAM available.
 ;   mem_Set
 ;     Set a memory region.
-;     Entry: a = value, hl = start address, bc = length
+;     Entry: a = value, hl = src address, bc = length
 ;   mem_Copy
 ;     Copy a memory region.
-;     Entry: hl = start address, de = end address, bc = length
+;     Entry: hl = src address, de = dst address, bc = length
+;   mem_CopyMono
+;     Copy a monochrome font from ROM to RAM
+;     Entry: hl = src address, de = dst address, bc = src length
 ;   mem_SetVRAM
 ;     Set a memory region in VRAM.
-;     Entry: a = value, hl = start address, bc = length
+;     Entry: a = value, hl = src address, bc = length
 ;   mem_CopyVRAM
 ;     Copy a memory region to or from VRAM.
-;     Entry: hl = start address, de = end address, bc = length
+;     Entry: hl = src address, de = dst address, bc = length
+;   mem_CopyToTileData
+;     Copy a memory region to Tile Data (loops from 9800 to 8800)
+;     Entry: hl = src address, de = dst tiledata, bc = length
+;
 
 IF !DEF(MEMORY1_ASM)
 MEMORY1_ASM  SET  1
 
 rev_Check_memory1_asm: MACRO
-  IF \1 > 1.1
+  IF \1 > 1.2
     WARN "Version \1 or later of 'memory1.asm' is required."
   ENDC
 ENDM
@@ -177,7 +185,7 @@ mem_CopyVRAM::
 ;***************************************************************************
 ;
 ; mem_CopyToTileData - "Copy" a memory region to Tile Data
-;   loops from 9800 to 8800
+;   loops the tilemap data from $9800 to $8800
 ;
 ; input:
 ;   hl - pSource

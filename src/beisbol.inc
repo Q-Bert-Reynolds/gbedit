@@ -59,6 +59,26 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
+PUSH_BANK: MACRO
+  ld hl, rROMB0
+  ld a, [hl]
+  ld b, a
+  ld hl, rROMB1
+  ld a, [hl]
+  ld c, a
+  push bc
+ENDM
+
+POP_BANK: MACRO
+  pop bc
+  ld hl, rROMB0
+  ld a, b
+  ld [hl], a
+  ld hl, rROMB1
+  ld a, c
+  ld [hl], a
+ENDM
+
 SET_LCD_INTERRUPT: MACRO ;interrupt
   di
   ld hl, rLCDInterrupt
@@ -68,6 +88,20 @@ SET_LCD_INTERRUPT: MACRO ;interrupt
   ld a, c
   ld [hl], a
   ei
+  ld a, IEF_LCDC
+  ld [rIE], a
+ENDM
+
+DISABLE_LCD_INTERRUPT: macro
+  di
+  ld hl, rLCDInterrupt
+  ld bc, NoInterrupt
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hl], a
+  xor a
+  ld [rIE], a
 ENDM
 
 HIDE_ALL_SPRITES: MACRO
@@ -217,60 +251,6 @@ SET_SPRITE_TILES: MACRO ;count, map, flags, offset
   ld [_i], a
   sub a, \1
   jr nz, .setSprite\@
-ENDM
-
-MOVE_SPRITES: MACRO  ;x, y, w, h, offset
-  ld a, \5 ;offset
-  ld [_a], a
-  ld [_j], a
-.loopRows\@ ;for (j = 0; j < h; j++)
-  xor a
-  ld [_i], a
-.loopColumns\@ ;for (i = 0; i < w; i++)
-  ld a, [_i]
-  ld d, a
-  add a, d
-  add a, d
-  add a, d
-  add a, d
-  add a, d
-  add a, d
-  add a, d ; i*8
-  sub a, \1 ; i*8-x
-  ld d, a
-  ld a, [_k]
-  add a, d
-  ld d, a ; k+i*8-x
-
-  ld a, [_j]
-  ld e, a
-  add a, e
-  add a, e
-  add a, e
-  add a, e
-  add a, e
-  add a, e
-  add a, e ; j*8
-  add \2
-  ld e, a ; j*8+y
-  
-  ld a, [_a]
-  ld c, a
-  inc a
-  ld [_a], a
-  call gbdk_MoveSprite;move_sprite(a++, k+i*8-x, j*8+y);
-
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub \3
-  jr nz, .loopColumns\@
-
-  ld a, [_j]
-  inc a
-  ld [_j], a
-  sub \4
-  jr nz, .loopRows\@
 ENDM
 
 JUMP_TO_IF_BUTTONS: MACRO ; address, buttons

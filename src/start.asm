@@ -20,7 +20,6 @@ LightsPalSeq:
 
 Start::
   xor a
-  ld [rVBK], a
   ld [rSTAT], a
 .showCopyrights
   DISPLAY_OFF
@@ -192,7 +191,16 @@ Start::
   add a, 32
   ld [rSCX], a
 
-  MOVE_SPRITES 32, 80, _INTRO0_COLUMNS, _INTRO0_ROWS, 0
+  sub a, 64
+  ld b, a
+  ld a, 80
+  ld c, a
+  ld a, _INTRO0_COLUMNS
+  ld h, a
+  ld a, _INTRO0_ROWS
+  ld l, a
+  xor a
+  call MoveSprites ;bc = xy, hl = wh, a = offset
 
   call gbdk_WaitVBLDone
   ld a, [_k] 

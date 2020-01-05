@@ -352,58 +352,6 @@ setTiles:
 
 ;***************************************************************************
 ;
-; gbdk_SetSpriteData - Sets sprite tile data
-;
-; input:
-;   l - first tile
-;   e - num tiles
-;   bc - data
-;
-;***************************************************************************
-gbdk_SetSpriteData::
-  push bc
-  ld b, [hl]  ; bc = data
-  dec hl
-  ld c, [hl]
-  dec hl
-  ld e, [hl]  ; e = nb_tiles
-  dec hl
-  ld l,[hl]  ; l = first_tile
-  push hl
- 
-  xor a
-  or e  ; is nb_tiles == 0?
-  jr nz,.loop1
-  ld de,$1000 ; de = nb_tiles = 256
-  jr .loop2
-.loop1:
-  ld h,0  ; hl = nb_tiles
-  ld l,e
-  add hl,hl  ; hl *= 16
-  add hl,hl
-  add hl,hl
-  add hl,hl
-  ld d,h  ; de = nb_tiles
-  ld e,l
-.loop2:
-  pop hl  ; hl = first_tile
-  ld h,0
-  add hl,hl  ; hl *= 16
-  add hl,hl
-  add hl,hl
-  add hl,hl
- 
-  push bc
-  ld bc,$8000
-  add hl,bc
-  pop bc
-  call mem_CopyVRAM
- 
-  pop bc
-  ret
-
-;***************************************************************************
-;
 ; gbdk_Delay - delay de milliseconds
 ; 
 ; input:

@@ -112,19 +112,22 @@ ShowTitle:
   ld hl, rOBP1
   ld [hl], $E0
 
-  ; ld hl, _TitleSpritesTiles
-  ; ld de, _VRAM
-  ; ld bc, _TITLE_SPRITES_TILE_COUNT*16
-  ; call mem_CopySpriteData
-  xor a
-  ld l, a
-  ld a, _TITLE_SPRITES_TILE_COUNT
-  ld e, a
-  ld bc, _TitleSpritesTiles
-  call gbdk_SetSpriteData
+  ld hl, _TitleSpritesTiles
+  ld de, _VRAM
+  ld bc, _TITLE_SPRITES_TILE_COUNT*16
+  call mem_CopyVRAM
 
   SET_SPRITE_TILES (_CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS), _CalvinTitleTileMap, 0, 0
-  MOVE_SPRITES 96, 96, _CALVIN_TITLE_COLUMNS, _CALVIN_TITLE_ROWS, 0
+
+  ld a, 96
+  ld b, a
+  ld c, a
+  ld a, _CALVIN_TITLE_COLUMNS
+  ld h, a
+  ld a, _CALVIN_TITLE_ROWS
+  ld l, a
+  xor a
+  call MoveSprites ;bc = xy, hl = wh, a = offset
 
   ld c, 5
   ld d, OAMF_PAL1
@@ -135,6 +138,9 @@ ShowTitle:
   call gbdk_MoveSprite
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
+  ld a, IEF_LCDC
+  ld [rIE], a
+
   ld hl, _TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16
@@ -264,13 +270,9 @@ ShowTitle:
 
 ShowStartMenu:
   DISPLAY_OFF
-  SET_LCD_INTERRUPT NoInterrupt
-
-  xor a
-  ld [rIE], a
-
+  DISABLE_LCD_INTERRUPT
   CLEAR_SCREEN 0
-; load_font_tiles(TITLE_BANK);
+  call LoadFontTiles
   DISPLAY_ON
 
   di
@@ -317,14 +319,11 @@ ShowStartMenu:
 Title::
   xor a
   ld [rSCX], a
-  ld [rVBK], a
   ld a, 72
   ld [rSTAT], a
 
-  ld a, IEF_LCDC
-  ld [rIE], a
-
   xor a
+  ld [rIE], a
   ld [_d], a
 .showTitleAndNewGameMenuLoop ; while (d == 0 || d == c)
   ld a, [_d]

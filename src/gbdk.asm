@@ -22,9 +22,9 @@
 ;   CGB_COMPATIBILITY
 ;
 ; Library Subroutines:
-;   gbdk_SetOAM
-;     sets X, Y, tile ID, and flags of Sprite N
-;     Entry: hl = _OAMRAM + N * 4, bc = xy, d = tile, e = flags
+;   gbdk_MoveSprite - Move sprite number C at XY = DE
+;   gbdk_SetSpriteTile - Set sprite number C to tile D
+;   gbdk_SetSpriteProp - Set properties of sprite number C to D
 ;   gbdk_DisplayOff
 ;   gbdk_WaitVBLDone
 ;   gbdk_SetWinTiles
@@ -128,66 +128,109 @@ DISABLE_RAM_MBC5: MACRO
 ENDM
 
 CGB_COMPATIBILITY: MACRO
-  ld	a,$80
-  ldh	[rBCPS], a	; set default bkg palette
-  ld	a,$ff		; white
-  ldh	[rBCPD], a
-  ld	a,$7f
-  ldh	[rBCPD], a
-  ld	a,$b5		; light gray
-  ldh	[rBCPD], a
-  ld	a,$56
-  ldh	[rBCPD], a
-  ld	a,$4a		; dark gray
-  ldh	[rBCPD], a
-  ld	a,$29
-  ldh	[rBCPD], a
-  ld	a,$00		; black
-  ldh	[rBCPD], a
-  ld	a,$00
-  ldh	[rBCPD], a
-  ld	a,$80
-  ldh	[rOCPS], a	; set default sprite palette
-  ld	a,$ff		; white
-  ldh	[rOCPD], a
-  ld	a,$7f
-  ldh	[rOCPD], a
-  ld	a,$b5		; light gray
-  ldh	[rOCPD], a
-  ld	a,$56
-  ldh	[rOCPD], a
-  ld	a,$4a		; dark gray
-  ldh	[rOCPD], a
-  ld	a,$29
-  ldh	[rOCPD], a
-  ld	a,$00		; black
-  ldh	[rOCPD], a
-  ld	a,$00
-  ldh	[rOCPD], a
+  ld a,$80
+  ldh [rBCPS], a ; set default bkg palette
+  ld a,$ff  ; white
+  ldh [rBCPD], a
+  ld a,$7f
+  ldh [rBCPD], a
+  ld a,$b5  ; light gray
+  ldh [rBCPD], a
+  ld a,$56
+  ldh [rBCPD], a
+  ld a,$4a  ; dark gray
+  ldh [rBCPD], a
+  ld a,$29
+  ldh [rBCPD], a
+  ld a,$00  ; black
+  ldh [rBCPD], a
+  ld a,$00
+  ldh [rBCPD], a
+  ld a,$80
+  ldh [rOCPS], a ; set default sprite palette
+  ld a,$ff  ; white
+  ldh [rOCPD], a
+  ld a,$7f
+  ldh [rOCPD], a
+  ld a,$b5  ; light gray
+  ldh [rOCPD], a
+  ld a,$56
+  ldh [rOCPD], a
+  ld a,$4a  ; dark gray
+  ldh [rOCPD], a
+  ld a,$29
+  ldh [rOCPD], a
+  ld a,$00  ; black
+  ldh [rOCPD], a
+  ld a,$00
+  ldh [rOCPD], a
 ENDM
 
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
 ;
-; gbdk_SetOAM - sets X, Y, tile ID, and flags of Sprite N
-;   immediately ready to set bcde (x,y,tile,flags) on Sprite N+1
+; gbdk_MoveSprite - Move sprite number C at XY = DE
 ;
 ; input:
-;   hl - _OAMRAM + N * 4
-;   bc - xy
-;   d - tile
-;   e - flags
+;   c - sprite number
+;   de - xy
 ;
 ;***************************************************************************
-gbdk_SetOAM
-  ld a, c ;y pos
-  ld [hli], a
-  ld a, b ;x pos
-  ld [hli], a
-  ld a, d ;tile
-  ld [hli], a
-  ld a, e ;flags
-  ld [hli], a
+gbdk_MoveSprite::
+  ld hl, _OAMRAM ;calculate origin of sprite info
+  sla c ;multiply c by 4
+  sla c
+  ld b, 0
+  add hl, bc
+  LCD_WAIT_VRAM
+  ld a,e  ;set y
+  ld [hl], a
+  inc l
+  LCD_WAIT_VRAM
+  ld a,d  ;set x
+  ld [hl], a
+  ret
+
+;***************************************************************************
+;
+; gbdk_SetSpriteTile - Set sprite number C to tile D
+;
+; input:
+;   c - sprite number
+;   d - tile
+;
+;***************************************************************************
+gbdk_SetSpriteTile::
+  ld hl, _OAMRAM+2 ;calculate origin of sprite info
+  sla c ;multiply c by 4
+  sla c
+  ld b, 0
+  add hl, bc
+  di
+  LCD_WAIT_VRAM
+  ld a, d ;set sprite number
+  ld [hl], a
+  ei
+  ret
+
+;***************************************************************************
+;
+; gbdk_SetSpriteProp - Set properties of sprite number C to D
+;
+; input:
+;   c - sprite number
+;   d - properties
+;
+;***************************************************************************
+gbdk_SetSpriteProp::
+  ld hl, _OAMRAM+3 ; calculate origin of sprite info
+  sla c ;multiply c by 4
+  sla c
+  ld b, 0
+  add hl, bc
+  LCD_WAIT_VRAM
+  ld a, d ;set sprite properties
+  ld [hl], a
   ret
 
 ;***************************************************************************
@@ -199,7 +242,7 @@ gbdk_DisplayOff::
   ldh a, [rLCDC]
   add a
   ret nc
-  lcd_WaitVRAM  
+  LCD_WAIT_VRAM  
   ldh a, [rLCDC]
   and %01111111
   ldh [rLCDC], A
@@ -276,34 +319,34 @@ setTiles:
   ld  c,d
   add  hl,bc
 
-  pop	bc		; bc = source
-  pop	de		; de = wh
-  push	hl		; store origin
-  push	de		; store wh
+  pop bc  ; bc = source
+  pop de  ; de = wh
+  push hl  ; store origin
+  push de  ; store wh
 .waitVRAM:
-  ldh	a,[rSTAT]
-  and	STATF_BUSY
-  jr	nz,.waitVRAM
+  ldh a,[rSTAT]
+  and STATF_BUSY
+  jr nz,.waitVRAM
 
-  ld	a,[bc]		; copy w tiles
-  ld	[hl+], a
-  inc	bc
-  dec	d
-  jr	nz,.waitVRAM
-  pop	hl		; hl = wh
-  ld	d,h		; restore d = w
-  pop	hl		; hl = origin
-  dec	e
-  jr	z,.exit
+  ld a,[bc]  ; copy w tiles
+  ld [hl+], a
+  inc bc
+  dec d
+  jr nz,.waitVRAM
+  pop hl  ; hl = wh
+  ld d,h  ; restore d = w
+  pop hl  ; hl = origin
+  dec e
+  jr z,.exit
 
-  push	bc		; next line
-  ld	bc,$20	; one line is 20 tiles
-  add	hl,bc
-  pop	bc
+  push bc  ; next line
+  ld bc,$20 ; one line is 20 tiles
+  add hl,bc
+  pop bc
 
-  push	hl		; store current origin
-  push	de		; store wh
-  jr	.waitVRAM
+  push hl  ; store current origin
+  push de  ; store wh
+  jr .waitVRAM
 .exit:
   ret
 
@@ -381,28 +424,28 @@ ret
 ;
 ;***************************************************************************
 gbdk_CPUSlow::
-  ldh	a,[rKEY1]
-  and	$80		; is gbc in double speed mode?
-  ret	z		; no, already in single speed
+  ldh a,[rKEY1]
+  and $80  ; is gbc in double speed mode?
+  ret z  ; no, already in single speed
 
 shift_speed:
-  ldh	a,[rIE]
-  push	af
+  ldh a,[rIE]
+  push af
 
-  xor	a		; a = 0
-  ldh	[rIE], a		; disable interrupts
-  ldh	[rIF], a
+  xor a  ; a = 0
+  ldh [rIE], a  ; disable interrupts
+  ldh [rIF], a
 
-  ld	a,$30
-  ldh	[rP1], a
+  ld a,$30
+  ldh [rP1], a
 
-  ld	a,$01
-  ldh	[rKEY1], a
+  ld a,$01
+  ldh [rKEY1], a
 
   stop
 
-  pop	af
-  ldh	[rIE], a
+  pop af
+  ldh [rIE], a
 
   ret
 
@@ -412,9 +455,9 @@ shift_speed:
 ;
 ;***************************************************************************
 gbdk_CPUFast::
-  ldh	a,[rKEY1]
-  and	$80		; is gbc in double speed mode?
-  ret	nz		; yes, exit
-  jr	shift_speed
+  ldh a,[rKEY1]
+  and $80  ; is gbc in double speed mode?
+  ret nz  ; yes, exit
+  jr shift_speed
 
 ENDC ;GBDK_ASM

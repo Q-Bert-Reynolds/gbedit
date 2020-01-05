@@ -72,18 +72,16 @@ ENDM
 
 HIDE_ALL_SPRITES: MACRO
   xor a
-  ld [_i], a
-  ld b, a
-  ld c, a
-  ld d, a
-  ld e, a
+  ld b, 40
   ld hl, _OAMRAM
 .loop\@
-  call gbdk_SetOAM
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub 39
+  ld [hl], a
+  inc l
+  ld [hl], a
+  inc l
+  inc l
+  inc l
+  dec b
   jr nz, .loop\@
 ENDM
 
@@ -135,7 +133,6 @@ CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
 ENDM
 
 SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
-  di
   ld hl, \6
   ld de, tile_buffer
   ld bc, \2 * \3
@@ -159,7 +156,6 @@ SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
   ld l, \4 ; h
   ld bc, tile_buffer
   call gbdk_SetBKGTiles
-  ei
 ENDM
 
 FADE_OUT: MACRO
@@ -196,6 +192,92 @@ FADE_IN: MACRO
   ld [rOBP0], a
   ld de, 200
   call gbdk_Delay
+ENDM
+
+SET_SPRITE_TILES: MACRO ;count, map, flags, offset
+  xor a
+  ld [_i], a
+  ld hl, \2
+  ld e, \3 ;flags
+.setSprite\@
+  ld a, [_i]
+  ld c, a
+  ld a, [hli]
+  push hl
+  add a, \4
+  ld d, a ;tile
+  call gbdk_SetSpriteTile
+  ld a, [_i]
+  ld c, a
+  ld d, e
+  call gbdk_SetSpriteProp
+  pop hl
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub a, \1
+  jr nz, .setSprite\@
+ENDM
+
+MOVE_SPRITES: MACRO  ;x, y, w, h, offset
+  ld a, \5 ;offset
+  ld [_a], a
+  ld [_j], a
+.loopRows\@ ;for (j = 0; j < h; j++)
+  xor a
+  ld [_i], a
+.loopColumns\@ ;for (i = 0; i < w; i++)
+  ld a, [_i]
+  ld d, a
+  add a, d
+  add a, d
+  add a, d
+  add a, d
+  add a, d
+  add a, d
+  add a, d ; i*8
+  sub a, \1 ; i*8-x
+  ld d, a
+  ld a, [_k]
+  add a, d
+  ld d, a ; k+i*8-x
+
+  ld a, [_j]
+  ld e, a
+  add a, e
+  add a, e
+  add a, e
+  add a, e
+  add a, e
+  add a, e
+  add a, e ; j*8
+  add \2
+  ld e, a ; j*8+y
+  
+  ld a, [_a]
+  ld c, a
+  inc a
+  ld [_a], a
+  call gbdk_MoveSprite;move_sprite(a++, k+i*8-x, j*8+y);
+
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub \3
+  jr nz, .loopColumns\@
+
+  ld a, [_j]
+  inc a
+  ld [_j], a
+  sub \4
+  jr nz, .loopRows\@
+ENDM
+
+JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
+  call UpdateInput
+  ld a, [button_state]
+  and \2
+  jp nz, \1
 ENDM
 
 ENDC ; BEISBOL_INC

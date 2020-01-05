@@ -8,7 +8,7 @@
 ; V1.2 - 30-Dec-19 : Adds tile data copy that loops from 9800 to 8800 - NB
 ;
 ; Macros:
-;   lcd_WaitVRAM
+;   LCD_WAIT_VRAM
 ;     Macro that pauses until VRAM available.
 ; 
 ; Library Subroutines:
@@ -45,7 +45,7 @@ INCLUDE "src/hardware.inc"
   rev_Check_hardware_inc   1.5
 
 ; Macro that pauses until VRAM available.
-lcd_WaitVRAM: MACRO
+LCD_WAIT_VRAM: MACRO
   ldh  a,[rSTAT]  ; <---+
   and  STATF_BUSY ;     |
   jr   nz,@-4     ; ----+
@@ -145,7 +145,7 @@ mem_SetVRAM::
 .loop
   push af
   di
-  lcd_WaitVRAM
+  LCD_WAIT_VRAM
   pop  af
   ld   [hl+],a
   ei
@@ -172,7 +172,7 @@ mem_CopyVRAM::
   jr  .skip
 .loop
   di
-  lcd_WaitVRAM
+  LCD_WAIT_VRAM
   ld  a,[hl+]
   ld  [de],a
   ei
@@ -201,7 +201,7 @@ mem_CopyToTileData::
   jr  .skip
 .loop
   di
-  lcd_WaitVRAM
+  LCD_WAIT_VRAM
   ld  a,[hl+]
   ld  [de],a
   ei

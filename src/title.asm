@@ -4,6 +4,7 @@ SECTION "Title", ROMX, BANK[TITLE_BANK]
 
 INCLUDE "img/title/title/title.asm"
 INCLUDE "img/title/title/title_sprites/title_sprites.asm"
+INCLUDE "img/players/001Bubbi.asm"
 
 IF DEF(_HOME)
 INCLUDE "img/home_version/version.asm"
@@ -85,13 +86,17 @@ CyclePlayersLCDInterrupt::
   reti
 
 ShowPlayer: ; de = player number
-  ld hl, IntroPlayerNums
-  add hl, de
+  di
 ; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
-; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
+  ld hl, _001BubbiTiles
+  ld de, _VRAM+$1000+PLAYER_INDEX*16
+  ld bc, _001BUBBI_TILE_COUNT*16
+  call mem_CopyToTileData
   CLEAR_BKG_AREA 20,10,7,7,0
+; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
 ; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
-  ret
+  SET_BKG_TILES_WITH_OFFSET (27-_001BUBBI_COLUMNS), (17-_001BUBBI_ROWS), _001BUBBI_COLUMNS, _001BUBBI_ROWS, PLAYER_INDEX, _001BubbiTileMap
+  reti
 
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
@@ -107,39 +112,29 @@ ShowTitle:
   ld hl, rOBP1
   ld [hl], $E0
 
-  ld hl, TitleSpritesTiles
+  ld hl, _TitleSpritesTiles
   ld de, _VRAM
   ld bc, _TITLE_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
 
-; a = 0;
-; for (j = 0; j < _CALVIN_TITLE_ROWS; ++j) {
-;     for (i = 0; i < _CALVIN_TITLE_COLUMNS; ++i) {
-;         b = _calvin_title_map[j*_CALVIN_TITLE_COLUMNS+i];
-;         if (b == 0) continue;
-;         set_sprite_tile(a, b);
-;         set_sprite_prop(a, 0);
-;         move_sprite(a, i*8+96, j*8+96);
-;         a++;
-;     }
-; }
+  SET_SPRITE_TILES (_CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS), _CalvinTitleTileMap, 0, 0
+  MOVE_SPRITES 96, 96, _CALVIN_TITLE_COLUMNS, _CALVIN_TITLE_ROWS, 0
 
-  ld hl, _OAMRAM+5*4+2 ;OAM+N*4
-  ld d, [hl]
-  dec hl
-  dec hl ;_OAMRAM + 5 * 4
-  ld b, 94 ;x
-  ld c, 117 ;y
-  ld e, OAMF_PAL1 ;flags
-  call gbdk_SetOAM
+  ld c, 5
+  ld d, OAMF_PAL1
+  call gbdk_SetSpriteProp
+  ld c, 5
+  ld d, 94
+  ld e, 117
+  call gbdk_MoveSprite
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
-  ld hl, TitleTiles
+  ld hl, _TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16
   call mem_CopyVRAM
 
-  ld hl, VersionTiles
+  ld hl, _VersionTiles
   ld de, _VRAM+$1000+_TITLE_TILE_COUNT*16
   ld bc, _VERSION_TILE_COUNT*16
   call mem_CopyVRAM
@@ -149,7 +144,7 @@ ShowTitle:
   ld e, a ; y
   ld h, _BEISBOL_LOGO_COLUMNS ; w
   ld l, _BEISBOL_LOGO_ROWS ; h
-  ld bc, BeisbolLogoTileMap
+  ld bc, _BeisbolLogoTileMap
   call gbdk_SetBKGTiles
 
   xor a
@@ -169,8 +164,10 @@ ShowTitle:
   ld [_y], a
   jr nz, .dropInTitleLoop
 
-  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, VersionTileMap
-
+  di
+  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
+  ei
+  
   ld a, 192
   ld [_x], a
 .slideInVersionTextLoop
@@ -180,24 +177,50 @@ ShowTitle:
   ld [_x], a
   jr nz, .slideInVersionTextLoop
 
-  SET_LCD_INTERRUPT NoInterrupt ;CyclePlayersLCDInterrupt
+  SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
 
   ld a, 128
   ld [_x], a
   xor a
   ld [_z], a
+.cyclePlayersLoop
+  ld a, 60
+  ld [_i], a
+.exitableOneSecPauseLoop1
+  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  call gbdk_WaitVBLDone
+  ld a, [_i]
+  sub a
+  ld [_i], a
+  jr nz, .exitableOneSecPauseLoop1
 
-; while (1) {
-;     for (i = 0; i < 60; i++) {
-;         if (joypad() & (J_START | J_A)) return;
-;         update_vbl();
-;     }
-;     for (j = 0; j <= 128; j+=6) {
-;         x = j+128;
-;         if (joypad() & (J_START | J_A)) return;
-;         if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
-;         update_vbl();
-;     }
+  xor a
+  ld [_j], a
+.movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=6) {
+  ld a, [_j]
+  add a, 128
+  ld [_x], a
+  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  ld a, [_z]
+  and a
+  jr nz, .skipBallToss
+  ld hl, BallToss
+  ld a, [_j]
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hl]
+  add a, 101
+  ld e, a
+  ld a, 94
+  ld d, a
+  ld a, 5
+  ld c, a
+  call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
+.skipBallToss
+  call gbdk_WaitVBLDone
+  jr nz, .movePlayerOnScreenLoop
+
 ;     z++;
 ;     if (z == 16) z = 0;
 ;     disable_interrupts();
@@ -209,6 +232,8 @@ ShowTitle:
 ;         update_vbl();
 ;     }
 ; }
+  jr .cyclePlayersLoop
+.exitTitleScreen
   ret
 
 ShowStartMenu:

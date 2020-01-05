@@ -25,7 +25,7 @@ Start::
 .showCopyrights
   DISPLAY_OFF
 
-  ld hl, CopyrightsTiles
+  ld hl, _CopyrightsTiles
   ld de, _VRAM+$1000
   ld bc, _COPYRIGHTS_TILE_COUNT*16
   call mem_CopyVRAM
@@ -35,7 +35,7 @@ Start::
   ld e, a ; y
   ld h, _COPYRIGHT_COLUMNS ; w
   ld l, _COPYRIGHT_ROWS ; h
-  ld bc, CopyrightTileMap
+  ld bc, _CopyrightTileMap
   call gbdk_SetBKGTiles
 
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
@@ -49,7 +49,7 @@ Start::
   ld hl, rBGP
   ld [hl], $E0
 
-  ld hl, IntroTiles
+  ld hl, _IntroTiles
   ld de, _VRAM+$1000
   ld bc, _INTRO_TILE_COUNT*16
   call mem_CopyToTileData
@@ -59,29 +59,35 @@ Start::
   ld e, a ; y
   ld h, _INTRO_LIGHTS_COLUMNS ; w
   ld l, _INTRO_LIGHTS_ROWS ; h
-  ld bc, IntroLightsTileMap
+  ld bc, _IntroLightsTileMap
   call gbdk_SetBKGTiles
 
-  ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
-  ld [rLCDC], a
-
-  ld hl, IntroSpritesTiles
+  ld hl, _IntroSpritesTiles
   ld de, _VRAM
   ld bc, _INTRO_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
 
-  ld hl, VersionSpritesTiles
+  ld hl, _VersionSpritesTiles
   ld de, _VRAM+_INTRO_SPRITES_TILE_COUNT*16
   ld bc, _VERSION_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
 
-  ld hl, _OAMRAM; + N * 4
+  ld a, LCDCF_ON | LCDCF_WIN9800 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
+  ld [rLCDC], a
+
   xor a
-  ld b, a ;x
-  ld c, 152 ;y
+  ld c, a
+  ld d, a ;x
+  ld e, 152 ;y
+  call gbdk_MoveSprite
+  xor a
+  ld c, a
   ld d, a ;tile
-  ld e, a ;flags
-  call gbdk_SetOAM
+  call gbdk_SetSpriteTile
+  xor a
+  ld c, a
+  ld d, a ;flags
+  call gbdk_SetSpriteProp
 
 .lightsSequence
   ld de, 1000
@@ -90,10 +96,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop1
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jp nz, .fadeOutAndExit
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   ld a, [_i]
   sub a
@@ -105,19 +108,14 @@ Start::
   ld a, 156
   ld [_x], a
 .ballFallingIntoLightsLoop 
-  ld hl, _OAMRAM ;OAM+N*4
-  ld a, [_x]
-  ld b, a ;x
-  ld a, [_y]
-  ld c, a ;y
   xor a
-  ld d, a ;tile
-  ld e, a ;flags
-  call gbdk_SetOAM
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jp nz, .fadeOutAndExit
+  ld c, a
+  ld a, [_x]
+  ld d, a ;x
+  ld a, [_y]
+  ld e, a ;y
+  call gbdk_MoveSprite
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   ld a, [_y]
   add a, 3
@@ -132,7 +130,7 @@ Start::
   ld e, 8  ; y
   ld h, _INTRO_LIGHT_OUT_COLUMNS ; w
   ld l, _INTRO_LIGHT_OUT_ROWS ; h
-  ld bc, IntroLightOutTileMap
+  ld bc, _IntroLightOutTileMap
   call gbdk_SetBKGTiles
   
 ; TODO: start playing stars animation
@@ -141,20 +139,15 @@ Start::
   ld hl, LightsPalSeq
 .ballBouncingOffLights
   push hl
-  ld hl, _OAMRAM ;OAM+N*4
+  xor a
+  ld c, a
   ld a, [_x]
   add a, 94
-  ld b, a ;x
+  ld d, a ;x
   ld a, [_y]
-  ld c, a ;y
-  xor a
-  ld d, a ;tile
-  ld e, a ;flags
-  call gbdk_SetOAM
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jp nz, .fadeOutAndExit
+  ld e, a ;y
+  call gbdk_MoveSprite
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   pop hl
   ld a, [hli]
@@ -171,10 +164,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop2
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jp nz, .fadeOutAndExit
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   ld a, [_i]
   sub a
@@ -186,52 +176,24 @@ Start::
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w
   ld l, _INTRO_PITCH_ROWS ; h
-  ld bc, IntroPitchTileMap
+  ld bc, _IntroPitchTileMap
   call gbdk_SetBKGTiles 
 
   ld hl, rBGP
   ld [hl], BG_PALETTE
 
-  ld de, 1000
-  call gbdk_Delay
-
-  xor a
-  ld [_i], a
-  ld hl, _OAMRAM
-  ld bc, Intro0TileMap + _INTRO_SPRITES_TILE_COUNT
-.setIntroSpriteTiles
-  push bc
-  xor a
-  ld b, a ;x
-  ld c, a ;y
-  xor a
-  ld d, a ;tile
-  ld e, OAMF_PRI ;flags
-  call gbdk_SetOAM
-  pop bc
-  inc bc
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub _INTRO0_COLUMNS * _INTRO0_ROWS
-  jr nz, .setIntroSpriteTiles
+  SET_SPRITE_TILES (_INTRO0_COLUMNS*_INTRO0_ROWS), _Intro0TileMap, OAMF_PRI, _INTRO_SPRITES_TILE_COUNT
 
   xor a
   ld [_k], a
 .slidePlayersLoop
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jr nz, .fadeOutAndExit
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   ld a, [_k]
   add a, 32
   ld [rSCX], a
-; a = 0;
-; for (j = 0; j < _INTRO0_ROWS; j++) {
-;  for (i = 0; i < _INTRO0_COLUMNS; i++) {
-;   move_sprite(a++, k+i*8-32, j*8+80);
-;  }
-; }
+
+  MOVE_SPRITES 32, 80, _INTRO0_COLUMNS, _INTRO0_ROWS, 0
+
   call gbdk_WaitVBLDone
   ld a, [_k] 
   inc a
@@ -242,10 +204,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop3
-  call UpdateInput
-  ld a, [button_state]
-  and PADF_START | PADF_A
-  jr nz, .fadeOutAndExit
+  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   ld a, [_i]
   sub a

@@ -112,10 +112,16 @@ ShowTitle:
   ld hl, rOBP1
   ld [hl], $E0
 
-  ld hl, _TitleSpritesTiles
-  ld de, _VRAM
-  ld bc, _TITLE_SPRITES_TILE_COUNT*16
-  call mem_CopyVRAM
+  ; ld hl, _TitleSpritesTiles
+  ; ld de, _VRAM
+  ; ld bc, _TITLE_SPRITES_TILE_COUNT*16
+  ; call mem_CopySpriteData
+  xor a
+  ld l, a
+  ld a, _TITLE_SPRITES_TILE_COUNT
+  ld e, a
+  ld bc, _TitleSpritesTiles
+  call gbdk_SetSpriteData
 
   SET_SPRITE_TILES (_CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS), _CalvinTitleTileMap, 0, 0
   MOVE_SPRITES 96, 96, _CALVIN_TITLE_COLUMNS, _CALVIN_TITLE_ROWS, 0
@@ -167,7 +173,7 @@ ShowTitle:
   di
   SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
   ei
-  
+
   ld a, 192
   ld [_x], a
 .slideInVersionTextLoop
@@ -196,7 +202,7 @@ ShowTitle:
 
   xor a
   ld [_j], a
-.movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=6) {
+.movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=4) {
   ld a, [_j]
   add a, 128
   ld [_x], a
@@ -219,20 +225,40 @@ ShowTitle:
   call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
 .skipBallToss
   call gbdk_WaitVBLDone
+  ld a, [_j]
+  add a, 4
+  ld [_j], a
+  sub 128
   jr nz, .movePlayerOnScreenLoop
 
-;     z++;
-;     if (z == 16) z = 0;
-;     disable_interrupts();
-;     show_player(z);
-;     enable_interrupts();
-;     for (j = 0; j <= 128; j+=6) {
-;         x = j;
-;         if (joypad() & (J_START | J_A)) return;
-;         update_vbl();
-;     }
-; }
-  jr .cyclePlayersLoop
+  ld a, [_z]
+  inc a
+  ld [_z], a
+  sub 16
+  jr nz, .skipZMod
+  xor a
+  ld [_z], a
+.skipZMod
+  di
+  xor a
+  ld d, a
+  ld a, [_z]
+  ld e, a
+  call ShowPlayer
+  ei
+
+  xor a
+  ld [_x], a
+.movePlayerOffScreenLoop ;for (x = 0; x <= 128; x+=4) {
+  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  call gbdk_WaitVBLDone
+  ld a, [_x]
+  add a, 4
+  ld [_x], a
+  sub 128
+  jr nz, .movePlayerOffScreenLoop
+
+  jp .cyclePlayersLoop
 .exitTitleScreen
   ret
 

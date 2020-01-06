@@ -6,7 +6,6 @@
 ; V1.1 - 29-Nov-97 : Added monochrome font copy. - JF
 ;                    Fixed bug in mem_SetVRAM. - JF
 ; V1.2 - 30-Dec-19 : Adds tile data copy that loops from 9800 to 8800 - NB
-;         5-Jan-20 : Adds string copy - NB
 ;
 ; Macros:
 ;   LCD_WAIT_VRAM
@@ -217,22 +216,6 @@ mem_CopyToTileData::
   jr  nz,.loop
   dec b
   jr  nz,.loop
-  ret
-
-;***************************************************************************
-;
-; mem_CopyString - "Copy" a string
-;
-; input:
-;   hl - pSource
-;   de - pDest
-;
-;***************************************************************************
-mem_CopyString::
-  ld   a, [hli]
-  ld   [de], a
-  inc  de
-  jr   nz, mem_CopyString
   ret
 
 ENDC ;MEMORY1_ASM

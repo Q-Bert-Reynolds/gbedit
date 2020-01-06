@@ -9,7 +9,7 @@ INCLUDE "img/players/001Bubbi.asm"
 IF DEF(_HOME)
 INCLUDE "img/home_version/version.asm"
 IntroPlayerNums: 
-  DB 4, 7, 1, 13, 32, 123, 25, 35, 112, 63, 092, 132, 17, 095, 77, 129
+  DB 4, 7, 1, 13, 32, 123, 25, 35, 112, 63, 92, 132, 17, 95, 77, 129
 ELSE
 INCLUDE "img/away_version/version.asm"
 IntroPlayerNums: 
@@ -67,7 +67,7 @@ ShowTitleLCDInterrupt::
 
 CyclePlayersLCDInterrupt::
   ld a, [rLY]
-  sub 134
+  sub 135
   jr nz, .scrollPlayers
   ld a, 71
   ld [rLYC], a
@@ -78,7 +78,7 @@ CyclePlayersLCDInterrupt::
   ld a, [rLY]
   sub 71
   jr nz, .exitCyclePlayersInterrupt
-  ld a, 134
+  ld a, 135
   ld [rLYC], a
   ld a, [_x]
   ld [rSCX], a

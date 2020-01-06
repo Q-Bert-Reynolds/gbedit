@@ -177,7 +177,6 @@ Start::
   ld l, _INTRO_PITCH_ROWS ; h
   ld bc, _IntroPitchTileMap
   call gbdk_SetBKGTiles 
-
   ld hl, rBGP
   ld [hl], BG_PALETTE
 

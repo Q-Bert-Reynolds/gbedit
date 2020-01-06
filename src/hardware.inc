@@ -210,7 +210,7 @@ rLY EQU $FF44
 ; -- LYC ($FF45)
 ; -- LY Compare (R/W)
 ; --
-; -- When LYEQUEQULYC, STATF_LYCF will be set in STAT
+; -- When LY == LYC, STATF_LYCF will be set in STAT
 ; --
 rLYC EQU $FF45
 

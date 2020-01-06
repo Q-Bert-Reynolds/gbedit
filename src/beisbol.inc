@@ -3,6 +3,7 @@ BEISBOL_INC SET 1
 
 INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
+INCLUDE "src/strings.asm"
 INCLUDE "src/gbdk.asm"
 
 ; banks

@@ -182,6 +182,7 @@ gbdk_MoveSprite::
   sla c
   ld b, 0
   add hl, bc
+  di
   LCD_WAIT_VRAM
   ld a,e  ;set y
   ld [hl], a
@@ -189,7 +190,7 @@ gbdk_MoveSprite::
   LCD_WAIT_VRAM
   ld a,d  ;set x
   ld [hl], a
-  ret
+  reti
 
 ;***************************************************************************
 ;
@@ -210,8 +211,7 @@ gbdk_SetSpriteTile::
   LCD_WAIT_VRAM
   ld a, d ;set sprite number
   ld [hl], a
-  ei
-  ret
+  reti
 
 ;***************************************************************************
 ;
@@ -228,10 +228,11 @@ gbdk_SetSpriteProp::
   sla c
   ld b, 0
   add hl, bc
+  di
   LCD_WAIT_VRAM
   ld a, d ;set sprite properties
   ld [hl], a
-  ret
+  reti
 
 ;***************************************************************************
 ;

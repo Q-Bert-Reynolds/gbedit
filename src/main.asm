@@ -14,6 +14,8 @@ _d: DB
 _i: DB
 _j: DB
 _k: DB
+_l: DB
+_w: DW
 _x: DW
 _y: DW
 _z: DW
@@ -57,6 +59,7 @@ SECTION "p1thru4", ROM0[$0060]
 
 SECTION "Main", ROM0
 Main::
+.setup
   di
   ld sp, $ffff
   DISPLAY_OFF
@@ -64,7 +67,7 @@ Main::
   call gbdk_CPUFast
   DISABLE_LCD_INTERRUPT
 
-  ; audio  
+.setupAudio
   ld hl, rAUDENA
   ld [hl], AUDENA_ON
   xor a
@@ -72,7 +75,7 @@ Main::
   ld hl, rAUDVOL
   ld [hl], $FF
   
-  ; drawing
+.setupDrawing
   SPRITES_8x8
   ld hl, rBGP
   ld [hl], BG_PALETTE
@@ -80,27 +83,37 @@ Main::
   ld [hl], SPR_PALETTE_0
   ld hl, rOBP1
   ld [hl], SPR_PALETTE_1
-  
   SHOW_SPRITES
   SHOW_BKG
   
+.start ;show intro credits, batting animation
   SWITCH_RAM_MBC5 0
   SWITCH_ROM_MBC5 START_BANK
   call Start
-
+.title ;show title drop, version slide, cycle of players, new game/continue screen
   SWITCH_ROM_MBC5 TITLE_BANK
-  call Title
-  ; if (!title()) {
-  ;     SWITCH_ROM_MBC5 NEW_GAME_BANK
-  ;     new_game();
-  ; }
-
-  ; SWITCH_ROM_MBC5 PLAY_BALL_BANK
-  ; start_game();
-
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .startGame
+.newGame
+  SWITCH_ROM_MBC5 NEW_GAME_BANK
+  ; call NewGame
+.startGame
+  SWITCH_ROM_MBC5 PLAY_BALL_BANK
+  ; call StartGame
   SWITCH_ROM_MBC5 0
-  jp Main
+  jp Main ;restart the game
 
+LCDInterrupt::
+  ld hl, rLCDInterrupt
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, b
+  ld l, a
+  jp hl
+NoInterrupt::
+  reti
+  
 UpdateInput::
   ;copy button_state to last_button_state
   ld hl, button_state
@@ -129,17 +142,6 @@ UpdateInput::
   ld [hl], a
   ret
 
-LCDInterrupt::
-  ld hl, rLCDInterrupt
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld h, b
-  ld l, a
-  jp hl
-NoInterrupt::
-  reti
-
 LoadFontTiles::
   PUSH_BANK
   SWITCH_ROM_MBC5 UI_BANK
@@ -149,7 +151,7 @@ LoadFontTiles::
 
 RevealText:: ;hl = text
   ld de, str_buff
-  call mem_CopyString
+  call str_Copy
   PUSH_BANK
   SWITCH_ROM_MBC5 UI_BANK
   ld hl, str_buff
@@ -157,20 +159,78 @@ RevealText:: ;hl = text
   POP_BANK
   ret
 
-DrawUIBox: ;de = wh
-; for (j = 0; j < h; ++j) {
-;   for (i = 0; i < w; ++i) {
-;     k = 0;
-;     if (j == 0) {
-;       if (i == 0) k = BOX_UPPER_LEFT;
-;       else if (i == w-1) k = BOX_UPPER_RIGHT;
-;       else k = BOX_HORIZONTAL;
-;     else if (j == h-1) {
-;       if (i == 0) k = BOX_LOWER_LEFT;
-;       else if (i == w-1) k = BOX_LOWER_RIGHT;
-;       else k = BOX_HORIZONTAL;
-;     else if (i == 0 || i == w-1) k = BOX_VERTICAL;
-;     tiles[j*w+i] = k;
+DrawUIBox: ;Entry: de = wh, Affects: hl
+  ld hl, tile_buffer
+  xor a
+  ld [_j], a
+.rowLoop ;for (j = 0; j < h; ++j) {
+  xor a
+  ld [_i], a
+.columnLoop ;for (i = 0; i < w; ++i) {
+.testTop ;if (j == 0) {
+  ld a, [_j] 
+  and a
+  jr nz, .testBottom
+.testUpperLeft ;if (i == 0) k = BOX_UPPER_LEFT;
+  ld a, [_i]
+  and a
+  jr nz, .testUpperRight
+  ld a, BOX_UPPER_LEFT
+  jp .setTile
+.testUpperRight ;else if (i == w-1) k = BOX_UPPER_RIGHT;
+  ld a, [_i]
+  sub a, d
+  inc a
+  jr nz, .setHorizontal
+  ld a, BOX_UPPER_RIGHT
+  jp .setTile
+.testBottom ;else if (j == h-1) {
+  ld a, [_j] 
+  sub e
+  inc a
+  jr nz, .testSides
+.testLowerLeft ;if (i == 0) k = BOX_LOWER_LEFT;
+  ld a, [_i]
+  and a
+  jr nz, .testLowerRight
+  ld a, BOX_LOWER_LEFT
+  jp .setTile
+.testLowerRight ;else if (i == w-1) k = BOX_LOWER_RIGHT;
+  ld a, [_i]
+  sub a, d
+  inc a
+  jr nz, .setHorizontal
+  ld a, BOX_LOWER_RIGHT
+  jp .setTile
+.testSides ;else if (i == 0 || i == w-1) k = BOX_VERTICAL;
+  ld a, [_i]
+  and a
+  jr z, .setVertical
+  sub d
+  inc a
+  jr z, .setVertical
+.setNone
+  xor a
+  jr .setTile
+.setVertical
+  ld a, BOX_VERTICAL
+  jr .setTile
+.setHorizontal
+  ld a, BOX_HORIZONTAL
+.setTile
+  ld [hli], a ;tiles[j*w+i] = k;
+
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub a, h
+  jr nz, .columnLoop
+
+  ld a, [_j]
+  inc a
+  ld [_j], a
+  sub a, l
+  jr nz, .rowLoop
   ret
 
 DrawBKGUIBox:: ; bc = xy, de = wh
@@ -194,20 +254,100 @@ DrawWinUIBox:: ; bc = xy, de = wh
   ret
 
 DisplayText:: ;hl = text
-; draw_win_ui_box(0,0,20,6);
-; l = strlen(text);
-; w = 0;
-; y = 0;
-; for (i = 0; i < l; ++i) {
-;   if (text[i] == '\n') {
-;     memcpy(str_buff,text+w,i-w);
-;     set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
-;     ++y;
-;     w = i+1;
-; memcpy(str_buff,text+w,i-w);
-; set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
-; move_win(7,96);
-; SHOW_WIN;
+  push hl
+  xor a ; draw_win_ui_box(0,0,20,6);
+  ld b, a
+  ld c, a
+  ld a, 20
+  ld d, a
+  ld a, 6
+  ld e, a
+  call DrawWinUIBox
+  pop hl
+  push hl
+  call str_Length
+  ld a, e ; assumes that de is less than a byte
+  ld [_l], a ; l = strlen(text);
+  pop hl
+  xor a
+  ld [_w], a
+  ld [_y], a
+  ld [_i], a
+.loopString; for (i = 0; i < l; ++i) {
+  push hl
+  xor a
+  ld b, a
+  ld a, [_i]
+  ld c, a
+  add hl, bc
+  ld a, [hl]
+  sub a, "\n"
+  jr nz, .skip ;if (text[i] == '\n') {
+  pop hl
+  push hl
+  xor a
+  ld b, a
+  ld a, [_w]
+  ld c, a
+  add hl, bc ;text+w
+  ld de, str_buff
+  ld a, [_i]
+  sub a, c
+  ld c, a ;i-w
+  call mem_Copy ;memcpy(str_buff,text+w,i-w);
+  ld a, 1
+  ld d, a ;x
+  ld l, a ;height
+  ld a, [_y]
+  add a ;*2
+  add a, 2 ;2+y*2
+  ld e, a ;y
+  ld h, c ;i-w still in c
+  ld bc, str_buff
+  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+  ld a, [_y]
+  inc a
+  ld [_y], a ;++y
+  ld a, [_i]
+  inc a
+  ld [_w], a ;w = i+1;
+.skip
+  pop hl
+  push hl
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  ld b, a
+  ld a, [_l]
+  sub a, b
+  jr nz, .loopString
+  pop hl
+  xor a
+  ld b, a
+  ld a, [_w]
+  ld c, a
+  add hl, bc ;text+w
+  ld de, str_buff
+  ld a, [_i]
+  sub a, c
+  ld c, a ;i-w
+  call mem_Copy ; memcpy(str_buff,text+w,i-w);
+  ld a, 1
+  ld d, a ;x
+  ld l, a ;height
+  ld a, [_y]
+  add a ;*2
+  add a, 2 ;2+y*2
+  ld e, a ;y
+  ld h, c ;i-w still in c
+  ld bc, str_buff
+  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+  ld a, 96
+  ld hl, rWY
+  ld [hli], a
+  ld a, 7
+  ld [hl], a ; move_win(7,96);
+  SHOW_WIN
   ret
 
 ShowListMenu:: ; bc = xy, de = wh, hl = text, title = sp
@@ -238,14 +378,15 @@ ShowOptions::
   POP_BANK
   ret
 
-MoveSprites:: ;bc = xy, hl = wh, a = offset
+;; moves a grid of sprite tiles
+MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld [_a], a
   xor a
   ld [_j], a
-.loopRows\@ ;for (j = 0; j < h; j++)
+.rowLoop ;for (j = 0; j < h; j++)
   xor a
   ld [_i], a
-.loopColumns\@ ;for (i = 0; i < w; i++)
+.columnLoop ;for (i = 0; i < w; i++)
   ld a, [_i]
   add a ;i*2
   add a ;i*4
@@ -275,12 +416,12 @@ MoveSprites:: ;bc = xy, hl = wh, a = offset
   inc a
   ld [_i], a
   sub a, h
-  jr nz, .loopColumns\@
+  jr nz, .columnLoop
 
   ld a, [_j]
   inc a
   ld [_j], a
   sub a, l
-  jr nz, .loopRows\@
+  jr nz, .rowLoop
 
   ret

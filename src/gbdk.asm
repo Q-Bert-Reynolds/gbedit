@@ -1,4 +1,4 @@
-; GBDK like functions
+; GBDK-like functions
 ;  Started 30-Dec-19
 ;
 ; Initials: NB = Nolan Baker, GBDK = Pascal Felber & Michael Hope
@@ -208,6 +208,7 @@ gbdk_SetSpriteTile::
   ld b, 0
   add hl, bc
   di
+  LCD_WAIT_VRAM ; WTF!? why twice?
   LCD_WAIT_VRAM
   ld a, d ;set sprite number
   ld [hl], a

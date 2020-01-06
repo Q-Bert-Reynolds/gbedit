@@ -66,7 +66,7 @@ Main::
   CGB_COMPATIBILITY
   call gbdk_CPUFast
   DISABLE_LCD_INTERRUPT
-
+  
 .setupAudio
   ld hl, rAUDENA
   ld [hl], AUDENA_ON
@@ -113,7 +113,7 @@ LCDInterrupt::
   jp hl
 NoInterrupt::
   reti
-  
+
 UpdateInput::
   ;copy button_state to last_button_state
   ld hl, button_state

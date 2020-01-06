@@ -89,7 +89,8 @@ SET_LCD_INTERRUPT: MACRO ;interrupt
   ld a, c
   ld [hl], a
   ei
-  ld a, IEF_LCDC
+  ld a, [rIE]
+  or IEF_LCDC
   ld [rIE], a
 ENDM
 
@@ -101,20 +102,17 @@ DISABLE_LCD_INTERRUPT: macro
   ld [hli], a
   ld a, c
   ld [hl], a
-  xor a
+  ld a, [rIE]
+  and !IEF_LCDC
   ld [rIE], a
 ENDM
 
 HIDE_ALL_SPRITES: MACRO
   xor a
-  ld b, 40
+  ld b, 160
   ld hl, _OAMRAM
 .loop\@
   ld [hl], a
-  inc l
-  ld [hl], a
-  inc l
-  inc l
   inc l
   dec b
   jr nz, .loop\@

@@ -64,8 +64,12 @@ Main::
   ld sp, $ffff
   DISPLAY_OFF
   CGB_COMPATIBILITY
-  call gbdk_CPUFast
   DISABLE_LCD_INTERRUPT
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
+  ld [rWX], a
+  ld [rWY], a
   
 .setupAudio
   ld hl, rAUDENA
@@ -76,6 +80,7 @@ Main::
   ld [hl], $FF
   
 .setupDrawing
+  CLEAR_SCREEN 0
   SPRITES_8x8
   ld hl, rBGP
   ld [hl], BG_PALETTE

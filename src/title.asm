@@ -19,6 +19,7 @@ ENDC
 PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
 ShowTitleLCDInterrupt::
+  push af
   ld a, [rLY]
   and a
   jr z, .dropInTitle
@@ -31,7 +32,7 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   ld a, [_y]
   ld [rSCY], a
-  reti
+  jr .exitShowTitleInterrupt
 .slideVersion
   ld a, [rLY]
   sub 63
@@ -42,7 +43,7 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  reti
+  jr .exitShowTitleInterrupt
 .scrollPlayers
   ld a, [rLY]
   sub 71
@@ -53,7 +54,7 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  reti
+  jr .exitShowTitleInterrupt
 .screenBottom
   ld a, [rLY]
   sub 135
@@ -63,40 +64,42 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   ld [rSCY], a
 .exitShowTitleInterrupt
+  pop af
   reti
 
 CyclePlayersLCDInterrupt::
+  push af
   ld a, [rLY]
-  sub 135
-  jr nz, .scrollPlayers
-  ld a, 71
-  ld [rLYC], a
-  xor a
-  ld [rSCX], a
-  reti
-.scrollPlayers
-  ld a, [rLY]
-  sub 71
-  jr nz, .exitCyclePlayersInterrupt
-  ld a, 135
+  sub 72
+  jr nz, .noScroll
+  ld a,  135
   ld [rLYC], a
   ld a, [_x]
   ld [rSCX], a
+  jr .exitCyclePlayersInterrupt
+.noScroll
+  ld a, [rLY]
+  sub 135
+  jr nz, .exitCyclePlayersInterrupt
+  ld a, 72
+  ld [rLYC], a
+  xor a
+  ld [rSCX], a
 .exitCyclePlayersInterrupt
+  pop af
   reti
 
 ShowPlayer: ; de = player number
-  di
-; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+  ; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
   ld hl, _001BubbiTiles
   ld de, _VRAM+$1000+PLAYER_INDEX*16
   ld bc, _001BUBBI_TILE_COUNT*16
   call mem_CopyToTileData
   CLEAR_BKG_AREA 20,10,7,7,0
-; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
-; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+  ; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
+  ; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
   SET_BKG_TILES_WITH_OFFSET (27-_001BUBBI_COLUMNS), (17-_001BUBBI_ROWS), _001BUBBI_COLUMNS, _001BUBBI_ROWS, PLAYER_INDEX, _001BubbiTileMap
-  reti
+  ret
 
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
@@ -137,10 +140,6 @@ ShowTitle:
   ld e, 117
   call gbdk_MoveSprite
 
-  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
-  ld a, IEF_LCDC
-  ld [rIE], a
-
   ld hl, _TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16
@@ -163,44 +162,55 @@ ShowTitle:
   ld d, a
   ld e, a
   call ShowPlayer
+  nop
+
+  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
 
   ld a, 64
   ld [_y], a
   ld [_x], a
   DISPLAY_ON
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
 .dropInTitleLoop
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_y]
   dec a
   ld [_y], a
   jr nz, .dropInTitleLoop
 
   di
-  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
+  SET_BKG_TILES_WITH_OFFSET 20, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
   ei
 
-  ld a, 192
+  xor a
   ld [_x], a
 .slideInVersionTextLoop
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_x]
   inc a
   ld [_x], a
+  sub 104
   jr nz, .slideInVersionTextLoop
+
+  di
+  DISABLE_LCD_INTERRUPT
+  CLEAR_BKG_AREA 20, 8, _VERSION_COLUMNS, _VERSION_ROWS, 0
+  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
+  ei
 
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
 
   ld a, 128
   ld [_x], a
+CyclePlayersLoop:
   xor a
-  ld [_z], a
-.cyclePlayersLoop
+  ld [_z], a ;current player index
+
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop1
-  ; JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a
   ld [_i], a
@@ -212,7 +222,7 @@ ShowTitle:
   ld a, [_j]
   add a, 128
   ld [_x], a
-  ; JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   ld a, [_z]
   and a
   jr nz, .skipBallToss
@@ -226,11 +236,11 @@ ShowTitle:
   ld e, a
   ld a, 94 ;x
   ld d, a
-  ld a, 10 ;sprite id
+  ld a, 10 ;sprite id (would be 5 if blanks were removed)
   ld c, a
   call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
 .skipBallToss
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_j]
   add a, 4
   ld [_j], a
@@ -252,17 +262,18 @@ ShowTitle:
   ; call ShowPlayer
 
   xor a
-  ld [_x], a
-.movePlayerOffScreenLoop ;for (x = 0; x <= 128; x+=4) {
+  ld [_j], a
+.movePlayerOffScreenLoop ;for (j = 0; j <= 128; j+=6) {
   JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
-  ld a, [_x]
-  add a, 4
+  call gbdk_WaitVBL
+  ld a, [_j]
+  add a, 6
+  ld [_j], a
   ld [_x], a
   sub 128
   jr nz, .movePlayerOffScreenLoop
 
-  jp .cyclePlayersLoop
+  jp CyclePlayersLoop
 .exitTitleScreen
   ret
 
@@ -275,50 +286,48 @@ ShowStartMenu:
 
   di
   ENABLE_RAM_MBC5
-; memcpy(name_buff, user_name, 7);
+  ; memcpy(name_buff, user_name, 7);
   DISABLE_RAM_MBC5
   ei 
 
-; while (name_buff[0] > 0) {
-;     c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
-;     y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
-;     if (y == 1) {
-;         update_vbl();
-;         draw_bkg_ui_box(4,7,16,10);
-;         set_bkg_tiles(5,9,5,1,"COACH");
-;         set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
-;         set_bkg_tiles(5,11,8,1,"PENNANTS");
-;         set_bkg_tiles(18,11,1,1,"0");//+penant_count);
-;         set_bkg_tiles(5,13,7,1, "ROLeDEX"); // "ROL\x7FDEX" draws trash here for some reason
-;         set_bkg_tiles(8,13,1,1,"\x7F"); // HACK: wouldn't be necessary if "ROL\x7FDEX" worked above
-;         sprintf(str_buff, "%d", 151);
-;         set_bkg_tiles(16,13,3,1,str_buff);
-;         set_bkg_tiles(5,15,4,1,"TIME");
-;         sprintf(str_buff, "%d:%d", 999, 59);
-;         l = strlen(str_buff);
-;         set_bkg_tiles(19-l,15,l,1,str_buff);
-;         update_waitpadup();
-;         while (1) {
-;             if (joypad() & J_A) return y;
-;             else if (joypad() & J_B) {
-;                 CLEAR_BKG_AREA(4,7,16,10,0);
-;                 break;
-;             }
-;             update_vbl();
-;         }
-;     }
-;     else return y;
-; }
-; c = 2;
-; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
-; }
+  ; while (name_buff[0] > 0) {
+  ;     c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
+  ;     y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
+  ;     if (y == 1) {
+  ;         update_vbl();
+  ;         draw_bkg_ui_box(4,7,16,10);
+  ;         set_bkg_tiles(5,9,5,1,"COACH");
+  ;         set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
+  ;         set_bkg_tiles(5,11,8,1,"PENNANTS");
+  ;         set_bkg_tiles(18,11,1,1,"0");//+penant_count);
+  ;         set_bkg_tiles(5,13,7,1, "ROLeDEX"); // "ROL\x7FDEX" draws trash here for some reason
+  ;         set_bkg_tiles(8,13,1,1,"\x7F"); // HACK: wouldn't be necessary if "ROL\x7FDEX" worked above
+  ;         sprintf(str_buff, "%d", 151);
+  ;         set_bkg_tiles(16,13,3,1,str_buff);
+  ;         set_bkg_tiles(5,15,4,1,"TIME");
+  ;         sprintf(str_buff, "%d:%d", 999, 59);
+  ;         l = strlen(str_buff);
+  ;         set_bkg_tiles(19-l,15,l,1,str_buff);
+  ;         update_waitpadup();
+  ;         while (1) {
+  ;             if (joypad() & J_A) return y;
+  ;             else if (joypad() & J_B) {
+  ;                 CLEAR_BKG_AREA(4,7,16,10,0);
+  ;                 break;
+  ;             }
+  ;             update_vbl();
+  ;         }
+  ;     }
+  ;     else return y;
+  ; }
+  ; c = 2;
+  ; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
+  ; }
   ret
 
 Title::
   xor a
   ld [rSCX], a
-  ld a, 72
-  ld [rSTAT], a
 
   xor a
   ld [rIE], a

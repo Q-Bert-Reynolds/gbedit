@@ -26,7 +26,7 @@
 ;   gbdk_SetSpriteTile - Set sprite number C to tile D
 ;   gbdk_SetSpriteProp - Set properties of sprite number C to D
 ;   gbdk_DisplayOff
-;   gbdk_WaitVBLDone
+;   gbdk_WaitVBL
 ;   gbdk_SetWinTiles
 ;   gbdk_SetBKGTiles
 ;   gbdk_Delay
@@ -184,9 +184,11 @@ gbdk_MoveSprite::
   add hl, bc
   di
   LCD_WAIT_VRAM
+  LCD_WAIT_VRAM
   ld a,e  ;set y
   ld [hl], a
   inc l
+  LCD_WAIT_VRAM
   LCD_WAIT_VRAM
   ld a,d  ;set x
   ld [hl], a
@@ -252,13 +254,15 @@ gbdk_DisplayOff::
 
 ;***************************************************************************
 ;
-; gbdk_WaitVBLDone - Wait for VBL interrupt to be finished
+; gbdk_WaitVBL - Wait for VBL interrupt to start
 ;
 ;***************************************************************************
-gbdk_WaitVBLDone::
+gbdk_WaitVBL::
   ld a, [rLY]
   cp 144
-  jr nz, gbdk_WaitVBLDone
+  jr c, gbdk_WaitVBL
+  cp 145
+  jr nc, gbdk_WaitVBL
   ret
 
 ;***************************************************************************
@@ -444,7 +448,7 @@ shift_speed:
   ld a,$01
   ldh [rKEY1], a
 
-  stop
+  nop
 
   pop af
   ldh [rIE], a

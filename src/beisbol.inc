@@ -81,6 +81,8 @@ POP_BANK: MACRO
 ENDM
 
 SET_LCD_INTERRUPT: MACRO ;interrupt
+  ld a, STATF_LYC | STATF_LYCF
+  ld [rSTAT], a
   di
   ld hl, rLCDInterrupt
   ld bc, \1
@@ -105,6 +107,8 @@ DISABLE_LCD_INTERRUPT: macro
   ld a, [rIE]
   and !IEF_LCDC
   ld [rIE], a
+  xor a
+  ld [rSTAT], a
 ENDM
 
 HIDE_ALL_SPRITES: MACRO
@@ -144,6 +148,7 @@ ENDM
 
 CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
   ld a, \4 ;h
+  inc a
   ld [_i], a
 .clearBkgLoop\@
   ld hl, _SCRN0 + \1 + \2 * 32 ;start x, y
@@ -173,7 +178,7 @@ SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
   inc  c
   jr   .skip\@
 .loop\@
-  ld   a,[hl+]
+  ld   a,[hli]
   add \5
   ld   [de],a
   inc  de

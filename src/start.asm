@@ -19,8 +19,6 @@ LightsPalSeq:
   DB $E8, $E8, $EC, $EC, $EC, $EC, $EC, $EC, $EC, $EC
 
 Start::
-  xor a
-  ld [rSTAT], a
 .showCopyrights
   DISPLAY_OFF
 
@@ -96,7 +94,7 @@ Start::
   ld [_i], a
 .exitableOneSecPauseLoop1
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a
   ld [_i], a
@@ -115,7 +113,7 @@ Start::
   ld e, a ;y
   call gbdk_MoveSprite
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_y]
   add a, 3
   ld [_y], a
@@ -148,7 +146,7 @@ Start::
   call gbdk_MoveSprite
   pop hl ;pop has to happen before jump or return address will be incorrect
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [hli]
   ld [rBGP], a
   ld a, [_y]
@@ -164,7 +162,7 @@ Start::
   ld [_i], a
 .exitableOneSecPauseLoop2
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a
   ld [_i], a
@@ -201,7 +199,7 @@ Start::
   xor a
   call MoveSprites ;bc = xy, hl = wh, a = offset
 
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_k] 
   inc a
   ld [_k], a
@@ -212,14 +210,14 @@ Start::
   ld [_i], a
 .exitableOneSecPauseLoop3
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a
   ld [_i], a
   jr nz, .exitableOneSecPauseLoop3
 
 .fadeOutAndExit
-  call gbdk_WaitVBLDone
+  call gbdk_WaitVBL
   FADE_OUT
   nop
   ret

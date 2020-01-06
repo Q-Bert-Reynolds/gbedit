@@ -146,9 +146,9 @@ Start::
   ld a, [_y]
   ld e, a ;y
   call gbdk_MoveSprite
+  pop hl ;pop has to happen before jump or return address will be incorrect
   JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
-  pop hl
   ld a, [hli]
   ld [rBGP], a
   ld a, [_y]
@@ -219,5 +219,7 @@ Start::
   jr nz, .exitableOneSecPauseLoop3
 
 .fadeOutAndExit
+  call gbdk_WaitVBLDone
   FADE_OUT
+  nop
   ret

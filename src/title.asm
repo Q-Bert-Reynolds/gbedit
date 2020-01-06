@@ -132,7 +132,7 @@ ShowTitle:
   ld c, 5
   ld d, OAMF_PAL1
   call gbdk_SetSpriteProp
-  ld c, 5
+  ld c, 10 ;would be 5 if blank sprites were skipped
   ld d, 94
   ld e, 117
   call gbdk_MoveSprite
@@ -199,7 +199,7 @@ ShowTitle:
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop1
-  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  ; JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   call gbdk_WaitVBLDone
   ld a, [_i]
   sub a
@@ -212,7 +212,7 @@ ShowTitle:
   ld a, [_j]
   add a, 128
   ld [_x], a
-  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  ; JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   ld a, [_z]
   and a
   jr nz, .skipBallToss
@@ -222,11 +222,11 @@ ShowTitle:
   ld c, a
   add hl, bc
   ld a, [hl]
-  add a, 101
+  add a, 101 ;y = 101+BallToss+_j
   ld e, a
-  ld a, 94
+  ld a, 94 ;x
   ld d, a
-  ld a, 5
+  ld a, 10 ;sprite id
   ld c, a
   call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
 .skipBallToss
@@ -245,13 +245,11 @@ ShowTitle:
   xor a
   ld [_z], a
 .skipZMod
-  di
   xor a
   ld d, a
   ld a, [_z]
   ld e, a
-  call ShowPlayer
-  ei
+  ; call ShowPlayer
 
   xor a
   ld [_x], a

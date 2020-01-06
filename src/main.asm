@@ -115,6 +115,8 @@ NoInterrupt::
   reti
 
 UpdateInput::
+  push hl
+
   ;copy button_state to last_button_state
   ld hl, button_state
   ld a, [hl]
@@ -140,6 +142,8 @@ UpdateInput::
   cpl ;flip bits so 1 means pressed
   ld hl, button_state
   ld [hl], a
+
+  pop hl
   ret
 
 LoadFontTiles::

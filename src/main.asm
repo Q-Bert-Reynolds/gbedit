@@ -4,6 +4,7 @@ INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 
 SECTION "Gloval Vars", WRAM0
+_bank: DB
 rLCDInterrupt: DW
 last_button_state: DB
 button_state: DB
@@ -93,20 +94,23 @@ Main::
   
 .start ;show intro credits, batting animation
   SWITCH_RAM_MBC5 0
-  SWITCH_ROM_MBC5 START_BANK
+  SET_BANK START_BANK
   call Start
 .title ;show title drop, version slide, cycle of players, new game/continue screen
-  SWITCH_ROM_MBC5 TITLE_BANK
+  SET_BANK TITLE_BANK
   call Title ;should set a to 0 if new game pressed
   jr nz, .startGame
 .newGame
-  SWITCH_ROM_MBC5 NEW_GAME_BANK
+  SET_BANK NEW_GAME_BANK
   ; call NewGame
 .startGame
-  SWITCH_ROM_MBC5 PLAY_BALL_BANK
+  SET_BANK PLAY_BALL_BANK
   ; call StartGame
-  SWITCH_ROM_MBC5 0
+  SET_BANK 0
   jp Main ;restart the game
+
+EmptyString::
+  db ""
 
 LCDInterrupt::
   push af
@@ -160,20 +164,20 @@ UpdateInput::
   ret
 
 LoadFontTiles::
-  PUSH_BANK
+
   SWITCH_ROM_MBC5 UI_BANK
   call UILoadFontTiles
-  POP_BANK
+  RETURN_BANK
   ret
 
 RevealText:: ;hl = text
   ld de, str_buff
   call str_Copy
-  PUSH_BANK
+
   SWITCH_ROM_MBC5 UI_BANK
   ld hl, str_buff
   call UIRevealText
-  POP_BANK
+  RETURN_BANK
   ret
 
 DrawUIBox: ;Entry: de = wh, Affects: hl
@@ -203,7 +207,7 @@ DrawUIBox: ;Entry: de = wh, Affects: hl
   jp .setTile
 .testBottom ;else if (j == h-1) {
   ld a, [_j] 
-  sub e
+  sub a, e
   inc a
   jr nz, .testSides
 .testLowerLeft ;if (i == 0) k = BOX_LOWER_LEFT;
@@ -240,13 +244,13 @@ DrawUIBox: ;Entry: de = wh, Affects: hl
   ld a, [_i]
   inc a
   ld [_i], a
-  sub a, h
+  sub a, d
   jr nz, .columnLoop
 
   ld a, [_j]
   inc a
   ld [_j], a
-  sub a, l
+  sub a, e
   jr nz, .rowLoop
   ret
 
@@ -368,31 +372,41 @@ DisplayText:: ;hl = text
   ret
 
 ShowListMenu:: ; bc = xy, de = wh, hl = text, title = sp
-; strcpy(str_buff, text);
-; strcpy(name_buff, title);
-  PUSH_BANK
+  push de
+  ld de, str_buff
+  call str_Copy; strcpy(str_buff, text);
+  pop de
+
+  pop hl ;title
+  push de
+  ld de, name_buff
+  call str_Copy; strcpy(name_buff, title);
+  pop de
+
+  ld hl, name_buff
+  push hl ;title = sp
+  ld hl, str_buff
   SWITCH_ROM_MBC5 UI_BANK
   call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buff,str_buff);
-  POP_BANK
-; return a;
-  ret
+  RETURN_BANK
+  ret; return a;
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len
 ; strcpy(str_buff, title);
 ; strcpy(name_buff, str);
-  PUSH_BANK
+
   SWITCH_ROM_MBC5 UI_BANK
   call UIShowTextEntry ;ui_show_text_entry(str_buff, name_buff, max_len);
-  POP_BANK
+  RETURN_BANK
 ; strcpy(title, str_buff);
 ; strcpy(str, name_buff);
   ret
 
 ShowOptions::
-  PUSH_BANK
+
   SWITCH_ROM_MBC5 UI_BANK
   call UIShowOptions
-  POP_BANK
+  RETURN_BANK
   ret
 
 ;; moves a grid of sprite tiles

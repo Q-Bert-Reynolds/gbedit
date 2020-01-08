@@ -60,24 +60,20 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
-PUSH_BANK: MACRO
-  ld hl, rROMB0
-  ld a, [hl]
-  ld b, a
-  ld hl, rROMB1
-  ld a, [hl]
-  ld c, a
-  push bc
+SET_BANK: MACRO ;\1 = BANK
+  ld a, \1
+  ld [_bank], a
+  SWITCH_ROM_MBC5 \1
 ENDM
 
-POP_BANK: MACRO
-  pop bc
+RETURN_BANK: MACRO
+  push af
+  push hl
+  ld a, [_bank]
   ld hl, rROMB0
-  ld a, b
   ld [hl], a
-  ld hl, rROMB1
-  ld a, c
-  ld [hl], a
+  pop hl
+  pop af
 ENDM
 
 SET_LCD_INTERRUPT: MACRO ;interrupt

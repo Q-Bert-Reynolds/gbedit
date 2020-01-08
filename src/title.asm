@@ -202,7 +202,7 @@ CyclePlayersLoop:
   xor a
   ld [_z], a ;current player index
 
-  ld a, 60
+  ld a, 255
   ld [_i], a
 .exitableOneSecPauseLoop1
   JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
@@ -246,7 +246,7 @@ CyclePlayersLoop:
   ld a, [_z]
   inc a
   ld [_z], a
-  sub 16
+  sub a, 16
   jr nz, .skipMod
   xor a
   ld [_z], a
@@ -256,7 +256,6 @@ CyclePlayersLoop:
   ld a, [_z]
   ld e, a
   call ShowPlayer
-
 
   xor a
   ld [_x], a
@@ -273,18 +272,22 @@ CyclePlayersLoop:
 .exitTitleScreen
   ret
 
+NewGameOptionMenuText:
+  db "NEW GAME\nOPTION"
+NewGameContinueOptionMenuText:
+  db "CONTINUE\nNEW GAME\nOPTION"
 ShowStartMenu:
-  DISPLAY_OFF
   DISABLE_LCD_INTERRUPT
+  DISPLAY_OFF
   CLEAR_SCREEN 0
   call LoadFontTiles
   DISPLAY_ON
 
-  di
-  ENABLE_RAM_MBC5
-  ; memcpy(name_buff, user_name, 7);
-  DISABLE_RAM_MBC5
-  ei 
+  ; di
+  ; ENABLE_RAM_MBC5
+  ; ; memcpy(name_buff, user_name, 7);
+  ; DISABLE_RAM_MBC5
+  ; ei 
 
   ; while (name_buff[0] > 0) {
   ;     c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
@@ -310,15 +313,27 @@ ShowStartMenu:
   ;             else if (joypad() & J_B) {
   ;                 CLEAR_BKG_AREA(4,7,16,10,0);
   ;                 break;
-  ;             }
   ;             update_vbl();
-  ;         }
-  ;     }
   ;     else return y;
-  ; }
   ; c = 2;
-  ; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
-  ; }
+
+  xor a
+  ld b, a
+  ld c, a ;bc=xy
+  ld a, 15
+  ld d, a ;width
+  ld a, 6
+  ld e, a ;height
+  ld hl, EmptyString ;title
+  push hl
+  ld hl, NewGameOptionMenuText ;text
+  call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
+
+;TODO: Delete me.
+.LOOPFOREVER
+  call gbdk_WaitVBL
+  jr .LOOPFOREVER
+
   ret
 
 Title::
@@ -333,12 +348,6 @@ Title::
   and a
   jr nz, .checkOptions
   call ShowTitle
-
-; HACK - early return here
-  xor a
-  ld [rIE], a
-  ret
-; END HACK
 
   jr .showStartMenu
 .checkOptions

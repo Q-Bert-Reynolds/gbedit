@@ -78,17 +78,17 @@ UIShowOptions::
 ; if (a > 2) a = 0;
 ; if (b > 1) b = 0;
 ; if (c > 1) c = 0;
-; draw_bkg_ui_box(0,0,20,5);
+  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,0,20,5);
 ; set_bkg_tiles(1,1,18,3,
 ;   "TEXT SPEED        "
 ;   "                  "
 ;   " FAST  MEDIUM SLOW"
-; draw_bkg_ui_box(0,5,20,5);
+  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,5,20,5);
 ; set_bkg_tiles(1,6,18,3,
 ;   "AT-BAT ANIMATIONS "
 ;   "                  "
 ;   " ON       OFF     "
-; draw_bkg_ui_box(0,10,20,5);
+  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,10,20,5);
 ; set_bkg_tiles(1,11,18,3,
 ;   "COACHING STYLE    "
 ;   "                  "
@@ -234,25 +234,102 @@ MoveMenuArrow: ; e = y
   ret
 
 UIShowListMenu::  ; bc = xy, de = wh, hl = text, title = sp
-; draw_bkg_ui_box(x,y,w,h);
-; l = 0;
-; j = y+2;
-; c = 0;
-; k = 0;
-; while (1) {
-;   if (text[k] == '\n') {
-;     set_bkg_tiles(x+2,j,l,1,tiles);
-;     l = 0;
-;     j += 2;
-;     ++c;
-;   else if (text[k] == '\0') {
-;     set_bkg_tiles(x+2,j,l,1,tiles);
-;     ++c;
-;     break;
-;   else {
-;     tiles[l] = text[k];
-;     ++l;
-;   ++k;
+  push bc
+  push de
+  call DrawBKGUIBox; draw_bkg_ui_box(x,y,w,h);
+  pop de
+  pop bc
+
+  xor a
+  ld [_l], a
+  ld [_c], a
+  ld a, c
+  add a, 2
+  ld [_j], a ;j = y+2;
+.placeCharactersLoop ;while (1) {
+  ld a, "\n"
+  cp a, [hl] ;if (text[k] == '\n') {
+  jr nz, .testEndOfString
+
+  push bc
+  push de
+  push hl
+  ld a, b
+  add a, 2
+  ld d, a ; x
+  ld a, [_j]
+  ld e, a ; y
+  ld a, [_l]
+  ld h, a ; w
+  ld a, 1
+  ld l, a ; h
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x+2,j,l,1,tiles);
+  pop hl
+  pop de
+  pop bc
+
+  xor a
+  ld [_l], a
+  ld a, [_j]
+  add a, 2
+  ld [_j], a
+  ld a, [_c]
+  inc a
+  ld [_c], a
+  jr .nextChar
+.testEndOfString
+  xor a
+  cp a, [hl] ;else if (text[k] == '\0') {
+  jr nz, .setChar
+
+  push bc
+  push de
+  push hl
+  ld a, b
+  add a, 2
+  ld d, a ; x
+  ld a, [_j]
+  ld e, a ; y
+  ld a, [_l]
+  ld h, a ; w
+  ld a, 1
+  ld l, a ; h
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x+2,j,l,1,tiles);
+  pop hl
+  pop de
+  pop bc
+
+  ld a, [_c]
+  inc a
+  ld [_c], a ;++c;
+  jr .exitLoop ;break;
+.setChar;   else {
+  push bc
+  push de
+  push hl
+  ld a, [hl];text[k]
+  ld d, a
+  ld hl, tile_buffer
+  xor a
+  ld b, a
+  ld a, [_l]
+  ld c, a
+  add hl, bc ;tiles[l]
+  ld [hl], d ;tiles[l] = text[k];
+  inc c
+  ld a, c
+  ld [_l], a;++l;
+  pop hl
+  pop de
+  pop bc
+.nextChar
+  inc hl
+  jr .placeCharactersLoop
+.exitLoop
+
+  pop hl ;title
 ; tiles[0] = ARROW_RIGHT;
 ; set_bkg_tiles(x+1,y+2,1,1,tiles);
   ; l = strlen(title);

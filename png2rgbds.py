@@ -167,7 +167,7 @@ def png_to_asm (path):
           hex_string = ""
           for i in range(0, len(tilemap), cols):
             hex_string += "".join(tilemap[i:i+cols])
-            bin_file.write(bytes.fromhex(hex_string))
+          bin_file.write(bytes.fromhex(hex_string))
       asm_file.write("ENDC\n")
 
 def PascalCase(name):

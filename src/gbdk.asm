@@ -184,11 +184,9 @@ gbdk_MoveSprite::
   add hl, bc
   di
   LCD_WAIT_VRAM
-  LCD_WAIT_VRAM
   ld a,e  ;set y
   ld [hl], a
   inc l
-  LCD_WAIT_VRAM
   LCD_WAIT_VRAM
   ld a,d  ;set x
   ld [hl], a

@@ -81,34 +81,37 @@ POP_BANK: MACRO
 ENDM
 
 SET_LCD_INTERRUPT: MACRO ;interrupt
-  ld a, STATF_LYC | STATF_LYCF
-  ld [rSTAT], a
   di
+  xor a
+  ld [rIE], a
+  ld [rSTAT], a
+
   ld hl, rLCDInterrupt
   ld bc, \1
   ld a, b
   ld [hli], a
   ld a, c
   ld [hl], a
-  ei
-  ld a, [rIE]
-  or IEF_LCDC
+
+  ld a, IEF_LCDC
   ld [rIE], a
+  ld a, STATF_LYC | STATF_MODE00
+  ld [rSTAT], a
+  ei
 ENDM
 
 DISABLE_LCD_INTERRUPT: macro
   di
+  xor a
+  ld [rIE], a
+  ld [rSTAT], a
+
   ld hl, rLCDInterrupt
-  ld bc, NoInterrupt
+  ld bc, EndLCDInterrupt
   ld a, b
   ld [hli], a
   ld a, c
   ld [hl], a
-  ld a, [rIE]
-  and !IEF_LCDC
-  ld [rIE], a
-  xor a
-  ld [rSTAT], a
 ENDM
 
 HIDE_ALL_SPRITES: MACRO

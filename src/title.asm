@@ -19,7 +19,6 @@ ENDC
 PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
 ShowTitleLCDInterrupt::
-  push af
   ld a, [rLY]
   and a
   jr z, .dropInTitle
@@ -32,21 +31,21 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   ld a, [_y]
   ld [rSCY], a
-  jr .exitShowTitleInterrupt
+  jp EndLCDInterrupt
 .slideVersion
   ld a, [rLY]
   sub 63
   jr nz, .scrollPlayers
-  ld a, 71
+  ld a, 72
   ld [rLYC], a
   ld a, [_x]
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  jr .exitShowTitleInterrupt
+  jp EndLCDInterrupt
 .scrollPlayers
   ld a, [rLY]
-  sub 71
+  sub 72
   jr nz, .screenBottom
   ld a, 135
   ld [rLYC], a
@@ -54,42 +53,40 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  jr .exitShowTitleInterrupt
+  jp EndLCDInterrupt
 .screenBottom
   ld a, [rLY]
   sub 135
-  jr nz, .exitShowTitleInterrupt
+  jp nz, EndLCDInterrupt
   xor a
   ld [rLYC], a
   ld [rSCX], a
   ld [rSCY], a
-.exitShowTitleInterrupt
-  pop af
-  reti
+  jp EndLCDInterrupt
 
 CyclePlayersLCDInterrupt::
-  push af
   ld a, [rLY]
+  and a
+  jr z, .noScroll
   sub 72
   jr nz, .noScroll
   ld a,  135
   ld [rLYC], a
   ld a, [_x]
   ld [rSCX], a
-  jr .exitCyclePlayersInterrupt
+  jp EndLCDInterrupt
 .noScroll
   ld a, [rLY]
   sub 135
-  jr nz, .exitCyclePlayersInterrupt
+  jp nz, EndLCDInterrupt
   ld a, 72
   ld [rLYC], a
   xor a
   ld [rSCX], a
-.exitCyclePlayersInterrupt
-  pop af
-  reti
+  jp EndLCDInterrupt
 
 ShowPlayer: ; de = player number
+  DISABLE_LCD_INTERRUPT
   ; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
   ld hl, _001BubbiTiles
   ld de, _VRAM+$1000+PLAYER_INDEX*16
@@ -99,6 +96,7 @@ ShowPlayer: ; de = player number
   ; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
   ; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
   SET_BKG_TILES_WITH_OFFSET (27-_001BUBBI_COLUMNS), (17-_001BUBBI_ROWS), _001BUBBI_COLUMNS, _001BUBBI_ROWS, PLAYER_INDEX, _001BubbiTileMap
+  SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
   ret
 
 BallToss:
@@ -192,12 +190,10 @@ ShowTitle:
   sub 104
   jr nz, .slideInVersionTextLoop
 
-  di
   DISABLE_LCD_INTERRUPT
   CLEAR_BKG_AREA 20, 8, _VERSION_COLUMNS, _VERSION_ROWS, 0
   SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
-  ei
-
+  
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
 
   ld a, 128
@@ -212,13 +208,13 @@ CyclePlayersLoop:
   JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_i]
-  sub a
+  dec a
   ld [_i], a
   jr nz, .exitableOneSecPauseLoop1
 
   xor a
   ld [_j], a
-.movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=4) {
+.movePlayerOffScreenLoop ;for (j = 0; j <= 128; j+=4) {
   ld a, [_j]
   add a, 128
   ld [_x], a
@@ -245,33 +241,33 @@ CyclePlayersLoop:
   add a, 4
   ld [_j], a
   sub 128
-  jr nz, .movePlayerOnScreenLoop
+  jr nz, .movePlayerOffScreenLoop
 
   ld a, [_z]
   inc a
   ld [_z], a
   sub 16
-  jr nz, .skipZMod
+  jr nz, .skipMod
   xor a
   ld [_z], a
-.skipZMod
+.skipMod
   xor a
   ld d, a
   ld a, [_z]
   ld e, a
-  ; call ShowPlayer
+  call ShowPlayer
+
 
   xor a
-  ld [_j], a
-.movePlayerOffScreenLoop ;for (j = 0; j <= 128; j+=6) {
+  ld [_x], a
+.movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=4) {
   JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   call gbdk_WaitVBL
-  ld a, [_j]
-  add a, 6
-  ld [_j], a
+  ld a, [_x]
+  add a, 4
   ld [_x], a
   sub 128
-  jr nz, .movePlayerOffScreenLoop
+  jr nz, .movePlayerOnScreenLoop
 
   jp CyclePlayersLoop
 .exitTitleScreen

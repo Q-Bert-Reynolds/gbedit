@@ -49,7 +49,7 @@ ENDC
 SECTION "VBlank", ROM0[$0040]
   reti
 SECTION "LCDC", ROM0[$0048]
-  call LCDInterrupt
+  jp LCDInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
   reti
 SECTION "Serial", ROM0[$0058]
@@ -109,6 +109,10 @@ Main::
   jp Main ;restart the game
 
 LCDInterrupt::
+  push af
+  push bc
+  push de
+  push hl
   ld hl, rLCDInterrupt
   ld a, [hli]
   ld b, a
@@ -116,7 +120,11 @@ LCDInterrupt::
   ld h, b
   ld l, a
   jp hl
-NoInterrupt::
+EndLCDInterrupt::; all interrupts should jump here 
+  pop hl 
+  pop de
+  pop bc
+  pop af
   reti
 
 UpdateInput::

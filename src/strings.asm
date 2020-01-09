@@ -40,6 +40,7 @@ str_Copy::
   ld   a, [hli]
   ld   [de], a
   inc  de
+  and  a
   jr   nz, str_Copy
   ret
 

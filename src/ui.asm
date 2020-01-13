@@ -225,14 +225,50 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
 ;     update_vbl(); 
   ret
 
-MoveMenuArrow:
-  pop bc ;xy
-; for (i = 0; i < c; ++i) {
-;   tiles[i*2] = 0;
-;   if (i == y) tiles[i*2+1] = ARROW_RIGHT;
-;   else tiles[i*2+1] = 0;
-; set_bkg_tiles(1,1,1,c*2,tiles); // this is incorrect, should be x+1, y+2, not 1,1
-  push bc ;xy
+MoveMenuArrow: ;xy on stack, must stay there
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.tilesLoop; for (i = 0; i < c; ++i) {
+  xor a
+  ld [hli], a;   tiles[i*2] = 0;
+  ld a, [_j]
+  ld c, a
+  ld a, [_i]
+  sub a, c ;_i - _j
+  jp nz, .setZero ;if (i == _j)
+  ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
+  jr .skip
+.setZero
+  xor a ;else tiles[i*2+1] = 0;
+.skip
+  ld [hli], a ;tiles[i*2+1]
+
+  ld a, [_i]
+  inc a
+  ld [_i], a;++_i
+  ld b, a
+  ld a, [_c]
+  sub a, b ;_c-_i
+  jp nz, .tilesLoop
+
+  ; pop de ;xy
+  ; push de ;xy must stay on stack
+  ld a, 1
+  ; add a, d
+  ld d, a ;x=x+1
+  ld a, 1
+  ; add a, e
+  ld e, a ;y=y+1
+
+  ld a, 1
+  ld h, a ;w=1
+  ld a, [_c]
+  add a, a
+  ld l, a ;h=_c*2
+  
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(x+1,y+1,1,c*2,tiles);
   ret
 
 DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
@@ -335,23 +371,12 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   push bc ;xy
   push de ;wh
 
-  inc b
-  inc c
-  inc c
-  ld a, 1
-  ld d, a
-  ld e, a
-  ld hl, tile_buffer
-  ld a, ARROW_RIGHT
-  ld [hl], a;tiles[0] = ARROW_RIGHT;
-  ;rearrange data to use with gbdk_SetBKGTiles
-  push bc ;xy
-  push de ;wh
-  push hl ;tiles
-  pop bc ;tiles
-  pop hl ;wh
-  pop de ;xy
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x+1,y+2,1,1,tiles);
+  push bc
+  xor a
+  ld [_j], a
+  call MoveMenuArrow
+  pop bc
+
   pop de ;wh
   pop bc ;xy
   
@@ -391,13 +416,13 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
   call UpdateInput
-.moveArrowUp ;if (k & J_UP && j > 0) {
+.checkMoveArrowUp ;if (k & J_UP && j > 0) {
   ld a, [button_state];k = joypad();
   and a, PADF_UP
-  jp z, .moveArrowDown
+  jp z, .checkMoveArrowDown
   ld a, [_j]
-  and a
-  jp z, .moveArrowDown
+  or a
+  jp z, .checkMoveArrowDown
   call gbdk_WaitVBL ;update_vbl(); 
   ld a, [_j]
   dec a
@@ -405,10 +430,10 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   call MoveMenuArrow;move_menu_arrow(--j);
   WAITPAD_UP ;update_waitpadup();
   jr .waitVBLThenLoop
-.moveArrowDown ;else if (k & J_DOWN && j < c-1) {
+.checkMoveArrowDown ;else if (k & J_DOWN && j < c-1) {
   ld a, [button_state];k = joypad();
   and a, PADF_DOWN
-  jp z, .moveArrowDown
+  jp z, .selectMenuItem
   ld a, [_c]
   dec a
   ld b, a

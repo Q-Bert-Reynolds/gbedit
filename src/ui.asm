@@ -225,50 +225,72 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
 ;     update_vbl(); 
   ret
 
-MoveMenuArrow: ; e = y
+MoveMenuArrow:
+  pop bc ;xy
 ; for (i = 0; i < c; ++i) {
 ;   tiles[i*2] = 0;
 ;   if (i == y) tiles[i*2+1] = ARROW_RIGHT;
 ;   else tiles[i*2+1] = 0;
-; set_bkg_tiles(1,1,1,c*2,tiles);
+; set_bkg_tiles(1,1,1,c*2,tiles); // this is incorrect, should be x+1, y+2, not 1,1
+  push bc ;xy
   ret
 
-UIShowListMenu::  ; bc = xy, de = wh, hl = text, title = sp
-  push bc
-  push de
+DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
+;store register state
+  push bc ;xy
+  push de ;wh
+  push hl ;text
+
+;reorganize registers to use with gbdk_SetBKGTiles
+  pop bc ;text
+  pop hl ;wh
+  pop de ;xy
+  push de ;xy
+  push hl ;wh
+  push bc ;text
+
+  ld a, d
+  add a, 2
+  ld d, a;x = x+2
+  ld a, [_j]
+  ld e, a;y = _j
+  ld a, a
+  ld a, [_l]
+  ld h, a;w = _l
+  ld a, 1
+  ld l, a;h = 1
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles
+
+;restore initial register state
+  pop hl ;text
+  pop de ;wh
+  pop bc ;xy
+  ret 
+
+UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+  push bc ;xy
+  push de ;wh
   call DrawBKGUIBox; draw_bkg_ui_box(x,y,w,h);
-  pop de
-  pop bc
+  pop de ;wh
+  pop bc ;xy
 
   xor a
-  ld [_l], a
-  ld [_c], a
+  ld [_l], a ; length of current entry
+  ld [_c], a ; number of rows (used later)
   ld a, c
   add a, 2
-  ld [_j], a ;j = y+2;
-.placeCharactersLoop ;while (1) {
-  ld a, "\n"
-  cp a, [hl] ;if (text[k] == '\n') {
-  jr nz, .testEndOfString
-
-  push bc
-  push de
-  push hl
-  ld a, b
-  add a, 2
-  ld d, a ; x
-  ld a, [_j]
-  ld e, a ; y
-  ld a, [_l]
-  ld h, a ; w
-  ld a, 1
-  ld l, a ; h
-  ld bc, tile_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x+2,j,l,1,tiles);
-  pop hl
-  pop de
-  pop bc
-
+  ld [_j], a ;y position to draw entry
+  ld hl, str_buffer ; first letter of current entry (from text)
+.drawListEntriesLoop
+  push bc ;xy
+  push de ;wh
+  push hl ;text
+.testNewLine; if (text[k] == '\n') {
+  ld a, [hl] ;text
+  cp "\n"
+  jr nz, .testStringEnd
+  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tiles);
   xor a
   ld [_l], a
   ld a, [_j]
@@ -277,79 +299,145 @@ UIShowListMenu::  ; bc = xy, de = wh, hl = text, title = sp
   ld a, [_c]
   inc a
   ld [_c], a
-  jr .nextChar
-.testEndOfString
-  xor a
-  cp a, [hl] ;else if (text[k] == '\0') {
-  jr nz, .setChar
-
-  push bc
-  push de
-  push hl
-  ld a, b
-  add a, 2
-  ld d, a ; x
-  ld a, [_j]
-  ld e, a ; y
-  ld a, [_l]
-  ld h, a ; w
-  ld a, 1
-  ld l, a ; h
-  ld bc, tile_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x+2,j,l,1,tiles);
-  pop hl
-  pop de
-  pop bc
-
+  jr .nextCharacter
+.testStringEnd; else if (text[k] == '\0') {
+  and a
+  jr nz, .copyCharacterToTiles
+  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tiles);
   ld a, [_c]
   inc a
-  ld [_c], a ;++c;
-  jr .exitLoop ;break;
-.setChar;   else {
-  push bc
-  push de
-  push hl
-  ld a, [hl];text[k]
-  ld d, a
+  ld [_c], a
+  pop hl ;text
+  pop de ;wh
+  pop bc ;xy
+  jr .exitDrawListEntriesLoop ;break;
+.copyCharacterToTiles; else tiles[++l] = text[k];
   ld hl, tile_buffer
   xor a
   ld b, a
   ld a, [_l]
   ld c, a
-  add hl, bc ;tiles[l]
-  ld [hl], d ;tiles[l] = text[k];
-  inc c
-  ld a, c
-  ld [_l], a;++l;
-  pop hl
-  pop de
-  pop bc
-.nextChar
+  inc a
+  ld [_l], a
+  add hl, bc
+  pop bc ;text
+  ld a, [bc]
+  ld [hl], a
+  push bc ;text
+.nextCharacter
+  pop hl ;text
   inc hl
-  jr .placeCharactersLoop
-.exitLoop
+  pop de ;wh
+  pop bc ;xy
+  jp .drawListEntriesLoop
+.exitDrawListEntriesLoop
 
-  pop hl ;title
-; tiles[0] = ARROW_RIGHT;
-; set_bkg_tiles(x+1,y+2,1,1,tiles);
-  ; l = strlen(title);
-; if (l > 0) {
-;   i = (w-l)/2;
-;   set_bkg_tiles(x+i,y,l,1,title);
-; update_waitpadup();
-; j = 0;
-; while (1) {
-;   k = joypad();
-;   if (k & J_UP && j > 0) {
-;     update_vbl(); 
-;     move_menu_arrow(--j);
-;     update_waitpadup();
-;   else if (k & J_DOWN && j < c-1) {
-;     update_vbl(); 
-;     move_menu_arrow(++j);
-;     update_waitpadup();
-;   if (k & (J_START | J_A)) return j+1;
-;   else if (k & J_B) return 0;
-;   update_vbl(); 
-; return 0;
-  ret
+  push bc ;xy
+  push de ;wh
+
+  inc b
+  inc c
+  inc c
+  ld a, 1
+  ld d, a
+  ld e, a
+  ld hl, tile_buffer
+  ld a, ARROW_RIGHT
+  ld [hl], a;tiles[0] = ARROW_RIGHT;
+  ;rearrange data to use with gbdk_SetBKGTiles
+  push bc ;xy
+  push de ;wh
+  push hl ;tiles
+  pop bc ;tiles
+  pop hl ;wh
+  pop de ;xy
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x+1,y+2,1,1,tiles);
+  pop de ;wh
+  pop bc ;xy
+  
+  push bc ;xy
+  push de ;wh
+.drawTitle
+  push de ;wh
+  ld hl, name_buffer
+  call str_Length; puts length in de
+  ld a, e ;assumes length is less than 256
+  pop de ;wh
+  ld e, a ;l = strlen(title); 
+  jr z, .skipTitle;if (l > 0) {
+  ld a, d ;w
+  sub a, e ;w-l
+  srl a;i = (w-l)/2;
+  add a, b;x+i
+  ld b, a
+  ld d, e ;w = l
+  ld a, 1
+  ld e, a ;h = 1
+  ;surely there's a better way to do this than rearrange registers
+  push bc ;xy
+  push de ;wh
+  push hl ;title
+  pop bc ;title
+  pop hl ;wh
+  pop de ;xy
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x+i,y,l,1,title);
+.skipTitle
+  pop de ;wh
+  pop bc ;xy
+
+  push bc ;xy
+  WAITPAD_UP;update_waitpadup();
+  xor a
+  ld [_j], a ;j = 0;
+.moveMenuArrowLoop ;while (1) {
+  call UpdateInput
+.moveArrowUp ;if (k & J_UP && j > 0) {
+  ld a, [button_state];k = joypad();
+  and a, PADF_UP
+  jp z, .moveArrowDown
+  ld a, [_j]
+  and a
+  jp z, .moveArrowDown
+  call gbdk_WaitVBL ;update_vbl(); 
+  ld a, [_j]
+  dec a
+  ld [_j], a ;--j
+  call MoveMenuArrow;move_menu_arrow(--j);
+  WAITPAD_UP ;update_waitpadup();
+  jr .waitVBLThenLoop
+.moveArrowDown ;else if (k & J_DOWN && j < c-1) {
+  ld a, [button_state];k = joypad();
+  and a, PADF_DOWN
+  jp z, .moveArrowDown
+  ld a, [_c]
+  dec a
+  ld b, a
+  ld a, [_j]
+  cp b
+  jp nc, .selectMenuItem
+  call gbdk_WaitVBL ;update_vbl(); 
+  ld a, [_j]
+  inc a
+  ld [_j], a ;++j
+  call MoveMenuArrow;move_menu_arrow(++j);
+  WAITPAD_UP ;update_waitpadup();
+  jr .waitVBLThenLoop
+.selectMenuItem ;if (k & (J_START | J_A)) 
+  ld a, [button_state];k = joypad();
+  and a, PADF_START | PADF_A
+  jr z, .back
+  ld a, [_j]
+  inc a ;return j+1;
+  jr .exitMenu
+.back ;else if (k & J_B) 
+  ld a, [button_state];k = joypad();
+  and a, PADF_B
+  jr z, .waitVBLThenLoop
+  xor a ;return 0;
+  jr .exitMenu
+.waitVBLThenLoop
+  call gbdk_WaitVBL ;update_vbl();
+  jp .moveMenuArrowLoop
+.exitMenu
+  pop bc ;xy
+  ret ;return 0;

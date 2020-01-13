@@ -273,9 +273,9 @@ CyclePlayersLoop:
   ret
 
 NewGameOptionMenuText:
-  db "NEW GAME\nOPTION"
+  db "NEW GAME\nOPTION", 0
 NewGameContinueOptionMenuText:
-  db "CONTINUE\nNEW GAME\nOPTION"
+  db "CONTINUE\nNEW GAME\nOPTION", 0
 ShowStartMenu:
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF

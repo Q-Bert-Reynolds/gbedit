@@ -22,8 +22,8 @@ _y: DW
 _z: DW
 tmp: DB
 tile_buffer: DS 512
-str_buff: DS 64
-name_buff: DS 16
+str_buffer: DS 64
+name_buffer: DS 16
 
 SECTION "Header", ROM0[$100]
 Entry:
@@ -110,7 +110,7 @@ Main::
   jp Main ;restart the game
 
 EmptyString::
-  db ""
+  db "", 0
 
 LCDInterrupt::
   push af
@@ -164,18 +164,17 @@ UpdateInput::
   ret
 
 LoadFontTiles::
-
   SWITCH_ROM_MBC5 UI_BANK
   call UILoadFontTiles
   RETURN_BANK
   ret
 
 RevealText:: ;hl = text
-  ld de, str_buff
+  ld de, str_buffer
   call str_Copy
 
   SWITCH_ROM_MBC5 UI_BANK
-  ld hl, str_buff
+  ld hl, str_buffer
   call UIRevealText
   RETURN_BANK
   ret
@@ -311,11 +310,11 @@ DisplayText:: ;hl = text
   ld a, [_w]
   ld c, a
   add hl, bc ;text+w
-  ld de, str_buff
+  ld de, str_buffer
   ld a, [_i]
   sub a, c
   ld c, a ;i-w
-  call mem_Copy ;memcpy(str_buff,text+w,i-w);
+  call mem_Copy ;memcpy(str_buffer,text+w,i-w);
   ld a, 1
   ld d, a ;x
   ld l, a ;height
@@ -324,8 +323,8 @@ DisplayText:: ;hl = text
   add a, 2 ;2+y*2
   ld e, a ;y
   ld h, c ;i-w still in c
-  ld bc, str_buff
-  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+  ld bc, str_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buffer);
   ld a, [_y]
   inc a
   ld [_y], a ;++y
@@ -348,11 +347,11 @@ DisplayText:: ;hl = text
   ld a, [_w]
   ld c, a
   add hl, bc ;text+w
-  ld de, str_buff
+  ld de, str_buffer
   ld a, [_i]
   sub a, c
   ld c, a ;i-w
-  call mem_Copy ; memcpy(str_buff,text+w,i-w);
+  call mem_Copy ; memcpy(str_buffer,text+w,i-w);
   ld a, 1
   ld d, a ;x
   ld l, a ;height
@@ -361,8 +360,8 @@ DisplayText:: ;hl = text
   add a, 2 ;2+y*2
   ld e, a ;y
   ld h, c ;i-w still in c
-  ld bc, str_buff
-  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buff);
+  ld bc, str_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buffer);
   ld a, 96
   ld hl, rWY
   ld [hli], a
@@ -371,35 +370,32 @@ DisplayText:: ;hl = text
   SHOW_WIN
   ret
 
-ShowListMenu:: ; bc = xy, de = wh, hl = text, title = sp
-  push de
-  ld de, str_buff
-  call str_Copy; strcpy(str_buff, text);
-  pop de
+ShowListMenu:: ; bc = xy, de = wh, hl = text, sp = title
+  push de ;wh
+  ld de, str_buffer
+  call str_Copy; strcpy(str_buffer, text);
+  pop de ;wh
 
   pop hl ;title
-  push de
-  ld de, name_buff
-  call str_Copy; strcpy(name_buff, title);
-  pop de
+  push de ;wh
+  ld de, name_buffer
+  call str_Copy; strcpy(name_buffer, title);
+  pop de ;wh
 
-  ld hl, name_buff
-  push hl ;title = sp
-  ld hl, str_buff
   SWITCH_ROM_MBC5 UI_BANK
-  call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buff,str_buff);
+  call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
   RETURN_BANK
   ret; return a;
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len
-; strcpy(str_buff, title);
-; strcpy(name_buff, str);
+; strcpy(str_buffer, title);
+; strcpy(name_buffer, str);
 
   SWITCH_ROM_MBC5 UI_BANK
-  call UIShowTextEntry ;ui_show_text_entry(str_buff, name_buff, max_len);
+  call UIShowTextEntry ;ui_show_text_entry(str_buffer, name_buffer, max_len);
   RETURN_BANK
-; strcpy(title, str_buff);
-; strcpy(str, name_buff);
+; strcpy(title, str_buffer);
+; strcpy(str, name_buffer);
   ret
 
 ShowOptions::

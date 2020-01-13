@@ -5,6 +5,7 @@ INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
 INCLUDE "src/strings.asm"
 INCLUDE "src/gbdk.asm"
+INCLUDE "src/charmap.asm"
 
 ; banks
 UI_BANK         EQU 2
@@ -261,6 +262,15 @@ JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
   ld a, [button_state]
   and \2
   jp nz, \1
+ENDM
+
+WAITPAD_UP: MACRO
+.loop\@
+  call gbdk_WaitVBL
+  call UpdateInput
+  ld a, [button_state]
+  and a
+  jr nz, .loop\@
 ENDM
 
 ENDC ; BEISBOL_INC

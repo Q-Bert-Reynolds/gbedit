@@ -2,28 +2,10 @@ INCLUDE "src/beisbol.inc"
 INCLUDE "src/ui.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
+INCLUDE "src/new_game.asm"
 
-SECTION "Gloval Vars", WRAM0
-_bank: DB
-rLCDInterrupt: DW
-last_button_state: DB
-button_state: DB
-_a: DB
-_b: DB
-_c: DB
-_d: DB
-_i: DB
-_j: DB
-_k: DB
-_l: DB
-_w: DW
-_x: DW
-_y: DW
-_z: DW
-tmp: DB
-tile_buffer: DS 512
-str_buffer: DS 64
-name_buffer: DS 16
+INCLUDE "src/wram.asm"
+INCLUDE "src/sram.asm"
 
 SECTION "Header", ROM0[$100]
 Entry:
@@ -102,7 +84,7 @@ Main::
   jr nz, .startGame
 .newGame
   SET_BANK NEW_GAME_BANK
-  ; call NewGame
+  call NewGame
 .startGame
   SET_BANK PLAY_BALL_BANK
   ; call StartGame
@@ -370,7 +352,7 @@ DisplayText:: ;hl = text
   SHOW_WIN
   ret
 
-ShowListMenu:: ; bc = xy, de = wh, hl = text, sp = title
+ShowListMenu:: ; bc = xy, de = wh, hl = text, sp = title, returns a
   push de ;wh
   ld de, str_buffer
   call str_Copy; strcpy(str_buffer, text);

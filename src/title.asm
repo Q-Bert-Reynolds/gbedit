@@ -276,7 +276,7 @@ NewGameOptionMenuText:
   db "NEW GAME\nOPTION", 0
 NewGameContinueOptionMenuText:
   db "CONTINUE\nNEW GAME\nOPTION", 0
-ShowStartMenu:
+ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
   CLEAR_SCREEN 0
@@ -328,15 +328,9 @@ ShowStartMenu:
   push hl
   ld hl, NewGameOptionMenuText ;text
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
-
-;TODO: Delete me.
-.LOOPFOREVER
-  call gbdk_WaitVBL
-  jr .LOOPFOREVER
-
   ret
 
-Title::
+Title:: ; puts (c-d-1) in a
   xor a
   ld [rSCX], a
 
@@ -356,16 +350,19 @@ Title::
   ld a, [_c]
   and a, d
   jp z, .showStartMenu
-  ; call ShowOptions
+  call ShowOptions
   xor a
-  ld d, a
+  ld [_d], a
 .showStartMenu
-  call ShowStartMenu
+  call ShowStartMenu ;puts choice in a
+  ld [_d], a;d = show_start_menu();
+
   ld a, [_d]
-  and a
+  and a ;d==0
   jr z, .showTitleAndNewGameMenuLoop
+  ld b, a
   ld a, [_c]
-  and a
+  sub a, b ;d==c
   jr z, .showTitleAndNewGameMenuLoop
 
   xor a
@@ -377,4 +374,5 @@ Title::
   ld a, [_c]
   sub a, d
   dec a
+
   ret

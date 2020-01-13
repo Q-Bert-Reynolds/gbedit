@@ -3,6 +3,12 @@ INCLUDE "src/beisbol.inc"
 SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
 
+;UILoadFontTiles
+;UIRevealText - hl = text
+;UIShowOptions
+;UIShowTextEntry - de = title, hl = str, c = max_len
+;UIShowListMenu - returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+
 UILoadFontTiles::
   ld hl, _UiFontTiles
   ld de, _VRAM+$1000
@@ -16,12 +22,12 @@ FlashNextArrow: ;de = xy
 ;         set_win_tiles(x, y, 1, 1, tiles);
 ;         update_waitpadup();
 ;         for (a = 0; a < 20; ++a) {
-;             if (joypad() & J_A) return;
+;             if (joypad() & PADF_A) return;
 ;             update_delay(10);
 ;         tiles[0] = 0;
 ;         set_win_tiles(x, y, 1, 1, tiles);
 ;         for (a = 0; a < 20; ++a) {
-;             if (joypad() & J_A) return;
+;             if (joypad() & PADF_A) return;
 ;             update_delay(10);
   ret
 
@@ -67,72 +73,146 @@ MoveOptionsArrow: ; e = y
   ret
 
 UIShowOptions::
-; DISPLAY_OFF;
-; disable_interrupts();
-; ENABLE_RAM_MBC5;
-; a = text_speed;
-; b = animation_style;
-; c = coaching_style;
-; DISABLE_RAM_MBC5;
-; enable_interrupts();
+  DISPLAY_OFF
+  di
+  ENABLE_RAM_MBC5
+  ld a, [text_speed]
+  ld [_a], a
+  ld a, [animation_style]
+  ld [_b], a
+  ld a, [coaching_style]
+  ld [_c], a
+  DISABLE_RAM_MBC5
+  ei
+
 ; if (a > 2) a = 0;
 ; if (b > 1) b = 0;
 ; if (c > 1) c = 0;
+
+  xor a
+  ld b, a
+  ld c, a
+  ld a, 20
+  ld d, a
+  ld a, 5
+  ld e, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,0,20,5);
 ; set_bkg_tiles(1,1,18,3,
 ;   "TEXT SPEED        "
 ;   "                  "
 ;   " FAST  MEDIUM SLOW"
+
+  xor a
+  ld b, a
+  ld a, 5
+  ld c, a
+  ld e, a
+  ld a, 20
+  ld d, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,5,20,5);
 ; set_bkg_tiles(1,6,18,3,
 ;   "AT-BAT ANIMATIONS "
 ;   "                  "
 ;   " ON       OFF     "
+
+  xor a
+  ld b, a
+  ld a, 10
+  ld c, a
+  ld a, 20
+  ld d, a
+  ld a, 5
+  ld e, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,10,20,5);
 ; set_bkg_tiles(1,11,18,3,
 ;   "COACHING STYLE    "
 ;   "                  "
 ;   " SHIFT    SET     "
+
+
 ; set_bkg_tiles(2,16,6,1,
 ;   "CANCEL"
-; DISPLAY_ON;
-; update_waitpadup();
-; y = 0;
-; move_options_arrow(y);
-; while (1) {
-;   k = joypad();
-;   if (k & J_UP && y > 0) {
-;     update_vbl(); 
-;     move_options_arrow(--y);
-;     update_waitpadup();
-;   else if (k & J_DOWN && y < 3) {
-;     update_vbl(); 
-;     move_options_arrow(++y);
-;     update_waitpadup();
-;   else if (k & J_LEFT && y < 3) {
-;     update_vbl(); 
+
+  DISPLAY_ON
+  WAITPAD_UP
+
+  xor a
+  ld [_y], a; y = 0;
+  call MoveOptionsArrow; move_options_arrow(y);
+
+.moveOptionsArrowLoop; while (1) {
+  call UpdateInput;   k = joypad();
+.checkUpPressed;   if (button_state & PADF_UP && y > 0) {
+  ld a, [button_state]
+  and a, PADF_UP
+  jr z, .checkDownPressed
+  ld a, [_y]
+  and a
+  jp z, .checkDownPressed
+  call gbdk_WaitVBL
+  ld a, [_y]
+  dec a
+  ld [_y], a
+  call MoveOptionsArrow;     move_options_arrow(--y);
+  WAITPAD_UP
+  jr .waitVBLAndLoop
+.checkDownPressed;   else if (button_state & PADF_DOWN && y < 3) {
+  ld a, [button_state]
+  and a, PADF_DOWN
+  jr z, .checkLeftPressed
+  ld a, 3
+  ld b, a
+  ld a, [_y]
+  cp b
+  jr nc, .checkLeftPressed
+  call gbdk_WaitVBL
+  ld a, [_y]
+  inc a
+  ld [_y], a
+  call MoveOptionsArrow;     move_options_arrow(++y);
+  WAITPAD_UP
+  jr .waitVBLAndLoop
+.checkLeftPressed;   else if (button_state & PADF_LEFT && y < 3) {
+  call gbdk_WaitVBL
 ;     if (y == 0 && a > 0) --a;
 ;     else if (y == 1 && b > 0) --b;
 ;     else if (y == 2 && c > 0) --c;
-;     move_options_arrow(y);
-;     update_waitpadup();
-;   else if (k & J_RIGHT && y < 3) {
-;     update_vbl(); 
+  call MoveOptionsArrow;     move_options_arrow(y);
+  WAITPAD_UP
+  jr .waitVBLAndLoop
+.checkRightPressed;   else if (button_state & PADF_RIGHT && y < 3) {
+  call gbdk_WaitVBL
 ;     if (y == 0 && a < 2) ++a;
 ;     else if (y == 1 && b < 1) ++b;
 ;     else if (y == 2 && c < 1) ++c;
-;     move_options_arrow(y);
-;     update_waitpadup();
-;   if (k & (J_START | J_A) && y == 3) break;
-;   else if (k & J_B) break;
-;   update_vbl(); 
-; disable_interrupts();
-; ENABLE_RAM_MBC5;
-; text_speed = a;
-; animation_style = b;
-; coaching_style = c;
-; DISABLE_RAM_MBC5;
-; enable_interrupts();
+  call MoveOptionsArrow;     move_options_arrow(y);
+  WAITPAD_UP
+  jr .waitVBLAndLoop
+.checkStartAPressed;   if (button_state & (PADF_START | PADF_A) && y == 3) break;
+  ld a, [button_state]
+  and a, PADF_START | PADF_A
+  jr z, .exitMoveOptionsArrowLoop
+  jr .waitVBLAndLoop
+.checkBPressed;   else if (button_state & PADF_B) break;
+  ld a, [button_state]
+  and a, PADF_B
+  jr z, .exitMoveOptionsArrowLoop
+.waitVBLAndLoop
+  call gbdk_WaitVBL
+  jp .moveOptionsArrowLoop
+.exitMoveOptionsArrowLoop
+
+  di
+  ENABLE_RAM_MBC5;
+  ld a, [_a]
+  ld [text_speed], a
+  ld a, [_b]
+  ld [animation_style], a
+  ld a, [_c]
+  ld [coaching_style], a
+  DISABLE_RAM_MBC5
+  ei
+  ret
 
 MoveTextEntryArrow: ; bc = from xy, de = to xy
 ; update_vbl();
@@ -194,20 +274,20 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
 ;   update_waitpadup();
 ;   while (1) {
 ;     k = joypad();
-;     if (k & J_UP && y > 0) {
+;     if (button_state & PADF_UP && y > 0) {
 ;       move_text_entry_arrow(x,y,x,y-1);
 ;       --y;
-;     else if (k & J_DOWN && y < 5) {
+;     else if (button_state & PADF_DOWN && y < 5) {
 ;       move_text_entry_arrow(x,y,x,y+1);
 ;       ++y;
-;     else if (k & J_LEFT && x > 0 && y < 5) {
+;     else if (button_state & PADF_LEFT && x > 0 && y < 5) {
 ;       move_text_entry_arrow(x,y,x-1,y);
 ;       --x;
-;     else if (k & J_RIGHT && x < 8 && y < 5) {
+;     else if (button_state & PADF_RIGHT && x < 8 && y < 5) {
 ;       move_text_entry_arrow(x,y,x+1,y);
 ;       ++x;
 
-;     if (k & (J_START | J_A)) {
+;     if (button_state & (PADF_START | PADF_A)) {
 ;       if (y == 5) {
 ;         c = 1-c;
 ;         break;
@@ -218,7 +298,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
 ;         set_win_tiles(10,3,max_len,1,str);
 ;         update_text_entry_display(str, max_len);
 ;         update_waitpadup();
-;     else if (k & J_B && l > 0) {
+;     else if (button_state & PADF_B && l > 0) {
 ;       str[--l] = '\0';
 ;       update_text_entry_display(str, max_len);
 ;       update_waitpadup();
@@ -416,8 +496,8 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
   call UpdateInput
-.checkMoveArrowUp ;if (k & J_UP && j > 0) {
-  ld a, [button_state];k = joypad();
+.checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
+  ld a, [button_state]
   and a, PADF_UP
   jp z, .checkMoveArrowDown
   ld a, [_j]
@@ -430,8 +510,8 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   call MoveMenuArrow;move_menu_arrow(--j);
   WAITPAD_UP ;update_waitpadup();
   jr .waitVBLThenLoop
-.checkMoveArrowDown ;else if (k & J_DOWN && j < c-1) {
-  ld a, [button_state];k = joypad();
+.checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
+  ld a, [button_state]
   and a, PADF_DOWN
   jp z, .selectMenuItem
   ld a, [_c]
@@ -447,15 +527,15 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   call MoveMenuArrow;move_menu_arrow(++j);
   WAITPAD_UP ;update_waitpadup();
   jr .waitVBLThenLoop
-.selectMenuItem ;if (k & (J_START | J_A)) 
-  ld a, [button_state];k = joypad();
+.selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
+  ld a, [button_state]
   and a, PADF_START | PADF_A
   jr z, .back
   ld a, [_j]
   inc a ;return j+1;
   jr .exitMenu
-.back ;else if (k & J_B) 
-  ld a, [button_state];k = joypad();
+.back ;else if (button_state & PADF_B) 
+  ld a, [button_state]
   and a, PADF_B
   jr z, .waitVBLThenLoop
   xor a ;return 0;
@@ -465,4 +545,4 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   jp .moveMenuArrowLoop
 .exitMenu
   pop bc ;xy
-  ret ;return 0;
+  ret ;return a

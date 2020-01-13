@@ -1,1 +1,2 @@
+CHARMAP "é",  127
 CHARMAP "\n", 128

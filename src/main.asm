@@ -151,6 +151,43 @@ LoadFontTiles::
   RETURN_BANK
   ret
 
+SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
+  push de ;xy
+  push hl ;wh
+  push af ;offset
+  push bc ;in_tiles
+
+  xor a
+  ld d, a
+  ld a, h 
+  ld e, a ;de = w
+  ld a, l ;a = h
+  call Multiply
+  ld a, l ;assumes result is less than 256
+  ld [_i], a ;i = w*h
+  ld hl, tile_buffer
+  pop bc ;in_tiles
+.loop ;for (i = w*h; i > 0; --i)
+
+  ld a, [bc]
+  inc bc
+  ld d, a
+  pop af ;offset
+  push af ;store off
+  add a, d
+  ld [hli], a; tiles[i] = in_tiles[i]+offset;
+  
+  ld a, [_i]
+  dec a
+  ld [_i], a
+  jr nz, .loop
+
+  pop af ;offset
+  pop hl ;xy
+  pop de ;wh
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x,y,w,h,tiles);
+
 RevealText:: ;hl = text
   ld de, str_buffer
   call str_Copy

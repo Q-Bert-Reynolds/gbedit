@@ -5,6 +5,7 @@ INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
 INCLUDE "src/strings.asm"
 INCLUDE "src/gbdk.asm"
+INCLUDE "src/math.asm"
 INCLUDE "src/charmap.asm"
 
 ; banks
@@ -168,32 +169,6 @@ CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
   dec a
   ld [_i], a
   jr nz, .clearBkgLoop\@
-ENDM
-
-SET_BKG_TILES_WITH_OFFSET: MACRO ;x, y, w, h, offset, tile_map
-  ld hl, \6
-  ld de, tile_buffer
-  ld bc, \2 * \3
-  inc  b
-  inc  c
-  jr   .skip\@
-.loop\@
-  ld   a,[hli]
-  add \5
-  ld   [de],a
-  inc  de
-.skip\@
-  dec  c
-  jr   nz, .loop\@
-  dec  b
-  jr   nz, .loop\@
-
-  ld d, \1 ; x
-  ld e, \2 ; y
-  ld h, \3 ; w
-  ld l, \4 ; h
-  ld bc, tile_buffer
-  call gbdk_SetBKGTiles
 ENDM
 
 FADE_OUT: MACRO

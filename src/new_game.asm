@@ -12,7 +12,7 @@ AwayNames:
   DB "NEW NAME\nBLUE\nNOLAN\nCASEY", 0
 
 NewGame::
-  DISABLE_LCD_INTERRUPT; set_interrupts(VBL_IFLAG);
+  ; DISABLE_LCD_INTERRUPT
 
 ; // set image to Doc
   DISPLAY_OFF
@@ -21,18 +21,32 @@ NewGame::
   ld a, 48
   ld [rSCX], a ; move_bkg(48,0);
 
-  ; call LoadFontTiles
+  call LoadFontTiles
 
   ld hl, _DocHickoryTiles
-  ld de, _VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _DOC_HICKORY_TILE_COUNT*16
-  call mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
+  call mem_CopyVRAM;mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
   CLEAR_SCREEN " "
 
-  SET_BKG_TILES_WITH_OFFSET 13,4,_DOC_HICKORY_COLUMNS,_DOC_HICKORY_ROWS,_UI_FONT_TILE_COUNT,_DocHickoryTileMap
+  ld a, 13
+  ld d, a
+  ld a, 4
+  ld e, a
+  ld a, _DOC_HICKORY_COLUMNS
+  ld h, a
+  ld a, _DOC_HICKORY_ROWS
+  ld l, a
+  ld bc, _DocHickoryTileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+
   DISPLAY_ON
 
   FADE_IN
+
+  halt
+  stop
 
   ld de, 5000
   call gbdk_Delay

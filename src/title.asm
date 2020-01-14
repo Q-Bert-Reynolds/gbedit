@@ -95,7 +95,14 @@ ShowPlayer: ; de = player number
   CLEAR_BKG_AREA 20,10,7,7,0
   ; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
   ; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
-  SET_BKG_TILES_WITH_OFFSET (27-_001BUBBI_COLUMNS), (17-_001BUBBI_ROWS), _001BUBBI_COLUMNS, _001BUBBI_ROWS, PLAYER_INDEX, _001BubbiTileMap
+
+  ld d, 27-_001BUBBI_COLUMNS
+  ld e, 17-_001BUBBI_ROWS
+  ld h, _001BUBBI_COLUMNS
+  ld l, _001BUBBI_ROWS
+  ld a, PLAYER_INDEX
+  ld bc, _001BubbiTileMap
+  call SetBKGTilesWithOffset
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
   ret
 
@@ -177,7 +184,13 @@ ShowTitle:
   jr nz, .dropInTitleLoop
 
   di
-  SET_BKG_TILES_WITH_OFFSET 20, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
+  ld d, 20
+  ld e, 8
+  ld h, _VERSION_COLUMNS
+  ld l, _VERSION_ROWS
+  ld a, _TITLE_TILE_COUNT
+  ld bc, _VersionTileMap
+  call SetBKGTilesWithOffset
   ei
 
   xor a
@@ -192,8 +205,13 @@ ShowTitle:
 
   DISABLE_LCD_INTERRUPT
   CLEAR_BKG_AREA 20, 8, _VERSION_COLUMNS, _VERSION_ROWS, 0
-  SET_BKG_TILES_WITH_OFFSET 7, 8, _VERSION_COLUMNS, _VERSION_ROWS, _TITLE_TILE_COUNT, _VersionTileMap
-  
+  ld d, 7
+  ld e, 8
+  ld h, _VERSION_COLUMNS
+  ld l, _VERSION_ROWS
+  ld a, _TITLE_TILE_COUNT
+  ld bc, _VersionTileMap
+  call SetBKGTilesWithOffset  
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
 
   ld a, 128

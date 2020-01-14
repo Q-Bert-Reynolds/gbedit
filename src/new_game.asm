@@ -23,6 +23,7 @@ NewGame::
 
   call LoadFontTiles
 
+  ; since font takes up $9000 to $9800, no need to wrap around with mem_CopyToTileData
   ld hl, _DocHickoryTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _DOC_HICKORY_TILE_COUNT*16

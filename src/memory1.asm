@@ -200,17 +200,18 @@ mem_CopyToTileData::
   inc c
   jr  .skip
 .loop
+  ld a, $98
+  cp a, d
+  jr nz, .noWrap
+  sub $10
+  ld d, a
+.noWrap
   di
   LCD_WAIT_VRAM
   ld  a,[hl+]
   ld  [de],a
   ei
   inc de
-  ld a, $98
-  cp a, d
-  jr nz, .skip
-  sub $10
-  ld d, a
 .skip
   dec c
   jr  nz,.loop

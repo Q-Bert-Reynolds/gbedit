@@ -64,15 +64,15 @@ Main::
   
 .setupDrawing
   CLEAR_SCREEN 0
-  SPRITES_8x8
   ld hl, rBGP
   ld [hl], BG_PALETTE
   ld hl, rOBP0
   ld [hl], SPR_PALETTE_0
   ld hl, rOBP1
   ld [hl], SPR_PALETTE_1
-  SHOW_SPRITES
-  SHOW_BKG
+
+  ld a, LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
+  ld [rLCDC], a
   
 .start ;show intro credits, batting animation
   SWITCH_RAM_MBC5 0
@@ -187,6 +187,7 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   pop de ;wh
   ld bc, tile_buffer
   call gbdk_SetBKGTiles ;set_bkg_tiles(x,y,w,h,tiles);
+  ret
 
 RevealText:: ;hl = text
   ld de, str_buffer

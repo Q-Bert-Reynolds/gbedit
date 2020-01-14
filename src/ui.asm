@@ -17,45 +17,134 @@ UILoadFontTiles::
   ret
 
 FlashNextArrow: ;de = xy
-;     while (1) {
-;         tiles[0] = ARROW_DOWN;
-;         set_win_tiles(x, y, 1, 1, tiles);
-;         update_waitpadup();
-;         for (a = 0; a < 20; ++a) {
-;             if (joypad() & PADF_A) return;
-;             update_delay(10);
-;         tiles[0] = 0;
-;         set_win_tiles(x, y, 1, 1, tiles);
-;         for (a = 0; a < 20; ++a) {
-;             if (joypad() & PADF_A) return;
-;             update_delay(10);
+  push de;xy
+  ld hl, tile_buffer
+  ld a, ARROW_DOWN
+  ld [hl], a ;tile_buffer[0] = ARROW_DOWN;
+  ld b, h
+  ld c, l
+  ld a, 1
+  ld h, a ;w=1
+  ld l, a ;h=1
+  call gbdk_SetWinTiles ;set_win_tiles(x, y, 1, 1, tile_buffer);
+  WAITPAD_UP
+  ld a, 20
+  pop de;xy
+.loop1 ;for (a = 20; a > 0; --a) {
+  ld [_a], a
+  JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
+  push de;xy
+  ld de, 10
+  call gbdk_Delay
+  pop de ;restore xy
+  ld a, [_a]
+  dec a
+  jp nz, .loop1
+  ld hl, tile_buffer
+  xor a
+  ld [hl], a ;tile_buffer[0] = 0;
+  ld b, h
+  ld c, l
+  ld a, 1
+  ld h, a ;w=1
+  ld l, a ;h=1
+  push de ;xy
+  call gbdk_SetWinTiles ;set_win_tiles(x, y, 1, 1, tile_buffer);
+  pop de ;restore xy
+  ld a, 20
+.loop2 ;for (a = 20; a > 0; --a) {
+  ld [_a], a
+  JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
+  push de;xy
+  ld de, 10
+  call gbdk_Delay
+  pop de ;restore de
+  ld a, [_a]
+  dec a
+  jp nz, .loop2
+  jp FlashNextArrow
+.exitFlashNextArrow
   ret
 
-UIRevealText:: ; hl = text
-; draw_win_ui_box(0,0,20,6);
-; move_win(7,96);
-; SHOW_WIN;
-; x = 0;
-; y = 0;
-; l = strlen(text);
-; w = 0;
-; for (i = 0; i < l; ++i) {
-;   if (text[i] == '\n') {
-;     ++y;
+UIRevealText::
+  push hl;text
+
+  xor a
+  ld b, a
+  ld c, a
+  ld a, 20
+  ld d, a
+  ld a, 6
+  ld e, a
+  call DrawWinUIBox; bc = xy, de = wh; draw_win_ui_box(0,0,20,6);
+
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a; move_win(7,96);
+  SHOW_WIN
+  
+  xor a
+  ld [_i], a
+  ld [_x], a
+  ld [_y], a
+  ld [_w], a
+  pop hl ;text
+  push hl
+  call str_Length ;de = length
+  ld a, e ;assumes length < 256
+  ld [_l], a; l = strlen(text);
+.revealTextLoop; for (i = 0; i < l; ++i) {
+  pop hl;text
+  push hl
+.testNewLine;   if (text[i] == '\n') {
+  ld a, [_i]
+  add a, l
+  ld l, a
+  ld a, [hl]
+  cp "\n"
+  jr nz, .drawCharacter
+
 ;     memcpy(str_buff,"                 ",17);
 ;     memcpy(str_buff,text+w,i-w);
-;     if (y == 2) {
-;       y = 1;
+  ld a, [_y]
+  inc a
+  ld [_y], a
+  cp 2
+  jr z, .skipFlash;     if (y == 2) {
+  ld a, 1
+  ld [_y], a
 ;       flash_next_arrow(18,4);
 ;       set_win_tiles(1, 2, 17, 1, str_buff);
 ;       set_win_tiles(1, 4, 17, 1, "                 ");
-;     x = 0;
-;     w = i+1;
-;   else {
+.skipFlash
+  xor a
+  ld [_x], a
+  ld a, [_i]
+  inc a
+  ld [_w], a
+  jr .delay
+.drawCharacter;   else {
 ;     set_win_tiles(x+1,y*2+2,1,1,text+i);
-;     x++;
-;   update_delay(10);
-; flash_next_arrow(18,4);
+  ld a, [_x]
+  inc a
+  ld [_x], a
+.delay
+  ld de, 10;TODO: should use text speed
+  call gbdk_Delay
+
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  ld b, a
+  ld a, [_l]
+  sub b
+  jp nz, .revealTextLoop
+
+  ld d, 18
+  ld e, 4
+  call FlashNextArrow ;flash_next_arrow(18,4);
+  pop hl ;text
   ret
 
 MoveOptionsArrow: ; e = y

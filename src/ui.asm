@@ -41,6 +41,7 @@ FlashNextArrow: ;de = xy
   dec a
   jp nz, .loop1
   ld hl, tile_buffer
+
   xor a
   ld [hl], a ;tile_buffer[0] = 0;
   ld b, h
@@ -50,6 +51,7 @@ FlashNextArrow: ;de = xy
   ld l, a ;h=1
   push de ;xy
   call gbdk_SetWinTiles ;set_win_tiles(x, y, 1, 1, tile_buffer);
+
   pop de ;restore xy
   ld a, 20
 .loop2 ;for (a = 20; a > 0; --a) {
@@ -105,18 +107,54 @@ UIRevealText::
   cp "\n"
   jr nz, .drawCharacter
 
-;     memcpy(str_buff,"                 ",17);
-;     memcpy(str_buff,text+w,i-w);
+  ld bc, 17
+  ld hl, str_buffer
+  ld a, " "
+  call mem_Set ;memcpy(str_buff,"                 ",17);
+
+  pop hl;text
+  push hl
+  xor a
+  ld b, a
+  ld a, [_w]
+  ld c, a
+  add hl, bc;text+w
+  ld de, str_buffer
+  ld a, [_i]
+  sub a, c
+  ld c, a;i-w
+  call mem_Copy ;memcpy(str_buff,text+w,i-w);
+
   ld a, [_y]
   inc a
   ld [_y], a
   cp 2
-  jr z, .skipFlash;     if (y == 2) {
+  jr z, .skipFlash ;if (y == 2) {
   ld a, 1
   ld [_y], a
-;       flash_next_arrow(18,4);
-;       set_win_tiles(1, 2, 17, 1, str_buff);
-;       set_win_tiles(1, 4, 17, 1, "                 ");
+
+  ld d, 18
+  ld e, 4
+  call FlashNextArrow ;flash_next_arrow(18,4);
+
+  ld d, 1 ;x
+  ld e, 2 ;y
+  ld h, 17 ;w
+  ld l, 1 ;h
+  ld bc, str_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1, 2, 17, 1, str_buff);
+
+  ld bc, 17
+  ld hl, str_buffer
+  ld a, " "
+  call mem_Set
+  ld d, 1 ;x
+  ld e, 4 ;y
+  ld h, 17 ;w
+  ld l, 1 ;h
+  ld bc, str_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1, 4, 17, 1, "                 ");
+
 .skipFlash
   xor a
   ld [_x], a
@@ -124,11 +162,27 @@ UIRevealText::
   inc a
   ld [_w], a
   jr .delay
-.drawCharacter;   else {
-;     set_win_tiles(x+1,y*2+2,1,1,text+i);
+.drawCharacter ;else {
+  pop hl; text
+  push hl
+  xor a
+  ld b, a
+  ld a, [_i]
+  ld c, a
+  add hl, bc
+  ld b, h
+  ld c, l;bc = text+i
   ld a, [_x]
   inc a
   ld [_x], a
+  ld d, a ;x
+  ld a, [_y]
+  add a, 2
+  ld e, a ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  call gbdk_SetWinTiles;set_win_tiles(x+1,y*2+2,1,1,text+i);
+
 .delay
   ld de, 10;TODO: should use text speed
   call gbdk_Delay

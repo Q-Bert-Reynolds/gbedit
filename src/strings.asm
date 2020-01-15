@@ -58,10 +58,9 @@ str_Length::
   ld   de, 0
 .loop
   ld   a, [hli]
-  jr   z, .done
+  and  a
+  ret z
   inc  de
   jr   .loop
-.done
-  ret
 
 ENDC ;STRINGS_ASM

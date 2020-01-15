@@ -3,10 +3,10 @@ BEISBOL_INC SET 1
 
 INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
+INCLUDE "src/charmap.asm"
 INCLUDE "src/strings.asm"
 INCLUDE "src/gbdk.asm"
 INCLUDE "src/math.asm"
-INCLUDE "src/charmap.asm"
 
 ; banks
 UI_BANK         EQU 2

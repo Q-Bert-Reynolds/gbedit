@@ -97,103 +97,106 @@ UIRevealText::
   ld a, e ;assumes length < 256
   ld [_l], a; l = strlen(text);
 .revealTextLoop; for (i = 0; i < l; ++i) {
-  pop hl;text
-  push hl
+    pop hl;text
+    push hl
 .testNewLine;   if (text[i] == '\n') {
-  ld a, [_i]
-  add a, l
-  ld l, a
-  ld a, [hl]
-  cp "\n"
-  jr nz, .drawCharacter
+    xor a
+    ld b, a
+    ld a, [_i]
+    ld c, a
+    add hl, bc;text[i]
+    ld a, [hl]
+    cp "\n"
+    jr nz, .drawCharacter
 
-  ld bc, 17
-  ld hl, str_buffer
-  ld a, " "
-  call mem_Set ;memcpy(str_buff,"                 ",17);
+      ld a, [_y]
+      inc a
+      ld [_y], a
+      sub a, 2
+      jr nz, .skipFlash ;if (y == 2) {
+        ld d, 18
+        ld e, 4
+        call FlashNextArrow ;flash_next_arrow(18,4);
 
-  pop hl;text
-  push hl
-  xor a
-  ld b, a
-  ld a, [_w]
-  ld c, a
-  add hl, bc;text+w
-  ld de, str_buffer
-  ld a, [_i]
-  sub a, c
-  ld c, a;i-w
-  call mem_Copy ;memcpy(str_buff,text+w,i-w);
+        ld a, 1
+        ld [_y], a
 
-  ld a, [_y]
-  inc a
-  ld [_y], a
-  cp 2
-  jr z, .skipFlash ;if (y == 2) {
-  ld a, 1
-  ld [_y], a
+        ld bc, 17
+        ld hl, str_buffer
+        ld a, " "
+        call mem_Set ;memcpy(str_buff,"                 ",17);
 
-  ld d, 18
-  ld e, 4
-  call FlashNextArrow ;flash_next_arrow(18,4);
+        pop hl;text
+        push hl
+        xor a
+        ld b, a
+        ld a, [_w]
+        ld c, a
+        add hl, bc;text+w
+        ld de, str_buffer
+        ld a, [_i]
+        sub a, c
+        ld c, a;i-w
+        call mem_Copy ;memcpy(str_buff,text+w,i-w);
 
-  ld d, 1 ;x
-  ld e, 2 ;y
-  ld h, 17 ;w
-  ld l, 1 ;h
-  ld bc, str_buffer
-  call gbdk_SetWinTiles ;set_win_tiles(1, 2, 17, 1, str_buff);
+        ld d, 1 ;x
+        ld e, 2 ;y
+        ld h, 17 ;w
+        ld l, 1 ;h
+        ld bc, str_buffer
+        call gbdk_SetWinTiles ;set_win_tiles(1, 2, 17, 1, str_buff);
 
-  ld bc, 17
-  ld hl, str_buffer
-  ld a, " "
-  call mem_Set
-  ld d, 1 ;x
-  ld e, 4 ;y
-  ld h, 17 ;w
-  ld l, 1 ;h
-  ld bc, str_buffer
-  call gbdk_SetWinTiles ;set_win_tiles(1, 4, 17, 1, "                 ");
+        ld bc, 17
+        ld hl, str_buffer
+        ld a, " "
+        call mem_Set
+        ld d, 1 ;x
+        ld e, 4 ;y
+        ld h, 17 ;w
+        ld l, 1 ;h
+        ld bc, str_buffer
+        call gbdk_SetWinTiles ;set_win_tiles(1, 4, 17, 1, "                 ");
 
 .skipFlash
-  xor a
-  ld [_x], a
-  ld a, [_i]
-  inc a
-  ld [_w], a
-  jr .delay
+      xor a
+      ld [_x], a
+      ld a, [_i]
+      inc a
+      ld [_w], a
+      jr .delay
 .drawCharacter ;else {
-  pop hl; text
-  push hl
-  xor a
-  ld b, a
-  ld a, [_i]
-  ld c, a
-  add hl, bc
-  ld b, h
-  ld c, l;bc = text+i
-  ld a, [_x]
-  inc a
-  ld [_x], a
-  ld d, a ;x
-  ld a, [_y]
-  add a, 2
-  ld e, a ;y
-  ld h, 1 ;w
-  ld l, 1 ;h
-  call gbdk_SetWinTiles;set_win_tiles(x+1,y*2+2,1,1,text+i);
+    pop hl; text
+    push hl
+    xor a
+    ld b, a
+    ld a, [_i]
+    ld c, a
+    add hl, bc
+    ld b, h
+    ld c, l;bc = text+i
+    ld a, [_x]
+    inc a
+    ld [_x], a
+    ld d, a ;_x+1
+    ld a, [_y]
+    add a, a;_y*2
+    add a, 2;_y*2+2
+    ld e, a ;y=_y*2+2
+    ld h, 1 ;w
+    ld l, 1 ;h
+    call gbdk_SetWinTiles;set_win_tiles(x+1,y*2+2,1,1,text+i);
 
 .delay
-  ld de, 10;TODO: should use text speed
-  call gbdk_Delay
+    ld de, 10;TODO: should use text speed
+    call gbdk_Delay
 
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  ld b, a
-  ld a, [_l]
-  sub b
-  jp nz, .revealTextLoop
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    ld b, a
+    ld a, [_l]
+    sub b
+    jp nz, .revealTextLoop
 
   ld d, 18
   ld e, 4

@@ -121,11 +121,6 @@ UIRevealText::
         ld a, 1
         ld [_y], a
 
-        ld bc, 17
-        ld hl, str_buffer
-        ld a, " "
-        call mem_Set ;memcpy(str_buff,"                 ",17);
-
         pop hl;text
         push hl
         xor a
@@ -138,6 +133,20 @@ UIRevealText::
         sub a, c
         ld c, a;i-w
         call mem_Copy ;memcpy(str_buff,text+w,i-w);
+
+        ld a, [_x]
+        and a
+        jr z, .skipWhiteSpace
+        ld bc, 17
+        ld hl, str_buffer
+.whiteSpaceLoop
+          dec bc
+          inc hl
+          dec a
+          jr nz, .whiteSpaceLoop
+        ld a, " "
+        call mem_Set
+.skipWhiteSpace
 
         ld d, 1 ;x
         ld e, 2 ;y

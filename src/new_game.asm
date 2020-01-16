@@ -10,6 +10,12 @@ HomeNames:
   DB "NEW NAME\nRED\nCALVIN\nHOMER", 0
 AwayNames:
   DB "NEW NAME\nBLUE\nNOLAN\nCASEY", 0
+UserNameTitle:
+  DB "NAME", 0
+RivalNameTitle:
+  DB "RIVAL", 0
+UserNameTextEntryTitle:
+  DB "YOUR NAME?", 0
 
 HelloThereString:
   DB "Hello there!\nWelcome to the\nworld of BéiSBOL.", 0
@@ -113,60 +119,146 @@ NewGame::
 ;set image to Calvin
   DISPLAY_OFF
   CLEAR_SCREEN 0
-; set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
-; set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
-; move_bkg(-56,0);
+
+  ld hl, _CalvinTiles
+  ld de, $8800
+  ld bc, _CALVIN_TILE_COUNT*16
+  call mem_CopyVRAM; set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
+  CLEAR_SCREEN " "
+
+  ld a, 13
+  ld d, a
+  ld a, 4
+  ld e, a
+  ld a, _CALVIN_COLUMNS
+  ld h, a
+  ld a, _CALVIN_ROWS
+  ld l, a
+  ld bc, _CalvinTileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset; set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
+
+  ld a, -56
+  ld [rSCX], a
+  xor a
+  ld [rSCY], a; move_bkg(-56,0);
+
   DISPLAY_ON
   FADE_IN
 
-;slide in Calvin
-; for (i = -56; i <= 48; i+=4) {
-;     move_bkg(i,0);
-;     update_vbl();
-; }
+  ld a, -56
+  ld [_i], a
+.slideInCalvinLoop; for (i = -56; i <= 48; i+=4) {
+  call gbdk_WaitVBL
+  ld a, [_i]
+  ld [rSCX], a
+  add a, 4
+  ld [_i], a
+  sub a, 48
+  jp nz, .slideInCalvinLoop
+
 ; reveal_text("First, what is\nyour name?", NEW_GAME_BANK);
   ld hl, WhatIsYourNameString
   call RevealText
-; for (i = 48; i >= 0; i-=2) {
-;     move_bkg(i,0);
-;     update_vbl();
-; }
+
+  ld a, 48
+  ld [_i], a
+.slideOverCalvinLoop; for (i = 48; i >= 0; i-=2) {
+  call gbdk_WaitVBL
+  ld a, [_i]
+  sub a, 2
+  ld [rSCX], a
+  ld [_i], a
+  jp nz, .slideOverCalvinLoop
 
 ;ask for user's name
-; #ifdef HOME
-; strcpy(str_buff, home_names);
-; #else
-; strcpy(str_buff, away_names);
-; #endif
-; d = 0;
-; while (d == 0) {
-;     d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
-; }
-    
+IF DEF(_HOME)
+  ld hl, HomeNames; strcpy(str_buff, home_names);
+ELSE
+  ld hl, AwayNames; strcpy(str_buff, away_names);
+ENDC
+  ld de, str_buffer
+  call str_Copy
+
+  xor a
+  ld [_d], a
+.ShowUserNameListLoop; while (d == 0) {
+  xor a
+  ld b, a
+  ld c, a
+  ld a, 12
+  ld d, a
+  ld e, a
+  ld hl, UserNameTitle
+  push hl ;title on stack
+  ld hl, str_buffer ;list items
+  call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
+  ld [_d], a
+  and a
+  jp z, .ShowUserNameListLoop
+  
 ;show text entry
   CLEAR_BKG_AREA 0,0,12,12," "
-; if (d == 1) {
-;     move_bkg(48,0);
-;     show_text_entry("YOUR NAME?", name_buff, 7, NEW_GAME_BANK);
-; }
-; else {
-;     d -= 1;
-;     j = 0;
-;     l = strlen(str_buff);
-;     for (i = 0; i < l; i++) {
-;         if (str_buff[i] == '\0' || str_buff[i] == '\n') {
-;             --d;
-;         }
-;         else if (d == 0) {
-;             name_buff[j] = str_buff[i];
-;             ++j;
-;         }
-;     }
-;     for (i = 0; i <= 48; i+=2) {
-;         move_bkg(i,0);
-;         update_vbl();
-;     }
-; }
+  ld a, [_d]
+  dec a
+  jp nz, .nameSelected; if (d == 1) {
+  ld a, 48
+  ld [rSCX], a
+  ld bc, UserNameTextEntryTitle
+  ld de, name_buffer
+  ld a, 7
+  ld l, a
+  call ShowTextEntry;     show_text_entry("YOUR NAME?", name_buff, 7, NEW_GAME_BANK);
+  jp .moveCalvinBack
+.nameSelected ; else {
+  ld [_d], a;d -= 1;
+  xor a
+  ld [_i], a
+  ld hl, str_buffer
+  call str_Length ;de = length
+  ld a, e ;assumes length < 256
+  ld [_l], a;l = strlen(str_buff);
+  ld hl, str_buffer
+  ld de, name_buffer
+.copyNameFromListLoop ;for (i = 0; i < l; i++) {
+    ld a, [hl]
+    and a
+    jr nz, .checkNameFound
+    ld a, [hl]
+    sub "\n"
+    jr nz, .checkNameFound
+    ld a, [_d]
+    dec a
+    ld [_d], a
+    jr .skipNameCopy
+.checkNameFound; else if (d == 0) {
+    ld a, [hl]
+    ld [de], a ;name_buff[j] = str_buff[i];
+    inc de ;++j;
+.skipNameCopy
+    inc hl
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    ld b, a
+    ld a, [_l]
+    sub b
+    jp nz, .copyNameFromListLoop
+
+.moveCalvinBack
+  xor a
+  ld [_i], a
+.moveCalvinBackLoop;for (i = 0; i <= 48; i+=2) {
+    call gbdk_WaitVBL
+    ld a, [_i]
+    add a, 2
+    ld [rSCX], a
+    ld [_i], a
+    sub a, 48
+    jp nz, .moveCalvinBackLoop
+
+  stop
+
 ; sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
 ; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, RightSoYourNameString

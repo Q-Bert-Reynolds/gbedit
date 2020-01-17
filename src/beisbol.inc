@@ -140,46 +140,52 @@ CLEAR_SCREEN: MACRO ;\1 = tile
   and a
   jr nz, .loop\@
 
-  ld a, 167
+  ld a, 166
   ld [rWX], a
-  ld a, 144
+  ld a, 143
   ld [rWY], a
   HIDE_ALL_SPRITES
 ENDM
 
 CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
-  CLEAR_SCREEN_AREA \1,\2,\3,\4,\5,_SCRN0
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.tilesLoop\@
+  ld a, \5
+  ld [hli], a
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub a, \3 * \4
+  jr nz, .tilesLoop\@
+  ld d, \1
+  ld e, \2
+  ld h, \3
+  ld l, \4
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles
 ENDM
 
 CLEAR_WIN_AREA: MACRO ;x, y, w, h, tile
-  CLEAR_SCREEN_AREA \1,\2,\3,\4,\5,_SCRN1
-ENDM
-
-CLEAR_SCREEN_AREA: MACRO ;x, y, w, h, tile, screen
-  ld a, \4 ;h
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.tilesLoop\@
+  ld a, \5
+  ld [hli], a
+  ld a, [_i]
   inc a
   ld [_i], a
-.clearBkgLoop\@
-  ld hl, \6 + \1 + \2 * 32 ;start x, y
-  ld bc, 32 ;tiles to next row
-  ld a, [_i]
-  sub a
-  jr z, .skip\@
-.moveToRow\@
-  add hl, bc
-  dec a
-  jr nz, .moveToRow\@
-.skip\@
-  ld a, \5 ;tile
-  ld bc, \3 ;width
-  call mem_SetVRAM ; Entry: a = value, hl = dst address, bc = length
-  ld a, [_i]
-  dec a
-  ld [_i], a
-  jr nz, .clearBkgLoop\@
+  sub a, \3 * \4
+  jr nz, .tilesLoop\@
+  ld d, \1
+  ld e, \2
+  ld h, \3
+  ld l, \4
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles
 ENDM
-
-
 
 FADE_OUT: MACRO
   ld a, $90

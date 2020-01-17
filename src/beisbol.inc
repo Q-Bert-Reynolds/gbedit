@@ -148,11 +148,19 @@ CLEAR_SCREEN: MACRO ;\1 = tile
 ENDM
 
 CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
+  CLEAR_SCREEN_AREA \1,\2,\3,\4,\5,_SCRN0
+ENDM
+
+CLEAR_WIN_AREA: MACRO ;x, y, w, h, tile
+  CLEAR_SCREEN_AREA \1,\2,\3,\4,\5,_SCRN1
+ENDM
+
+CLEAR_SCREEN_AREA: MACRO ;x, y, w, h, tile, screen
   ld a, \4 ;h
   inc a
   ld [_i], a
 .clearBkgLoop\@
-  ld hl, _SCRN0 + \1 + \2 * 32 ;start x, y
+  ld hl, \6 + \1 + \2 * 32 ;start x, y
   ld bc, 32 ;tiles to next row
   ld a, [_i]
   sub a
@@ -170,6 +178,8 @@ CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
   ld [_i], a
   jr nz, .clearBkgLoop\@
 ENDM
+
+
 
 FADE_OUT: MACRO
   ld a, $90

@@ -370,94 +370,494 @@ UIShowOptions::
   ret
 
 MoveTextEntryArrow: ; bc = from xy, de = to xy
-; update_vbl();
-; tiles[0] = 0;
-; if (from_y == 5) {
-;   set_win_tiles(1,15,1,1,tiles);
-; else {
-;   set_win_tiles(from_x*2+1,from_y*2+5,1,1,tiles);
-; tiles[0] = ARROW_RIGHT;
-; if (to_y == 5) {
-;   set_win_tiles(1,15,1,1,tiles);
-; else {
-;   set_win_tiles(to_x*2+1,to_y*2+5,1,1,tiles);
-; update_waitpadup();
+  push bc ;from xy
+  push de ;to xy
+  call gbdk_WaitVBL
+  ld hl, tile_buffer
+  xor a
+  ld [hl], a; tiles[0] = 0;
+  ld a, c
+  cp 5; if (from_y == 5) {
+  jr nz, .notFromLineFive
+  ld e, 15
+  ld a, 1
+  ld d, a
+  ld h, a
+  ld l, a
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1,15,1,1,tile_buffer);
+  jr .setArrow
+.notFromLineFive; else {
+  ld a, b ;from_x
+  add a, a ;from_x*2
+  inc a ;from_x*2+1
+  ld d, a
+  ld a, c ;from_y
+  add a, a ;from_y*2
+  add a, 5 ;from_y*2+5
+  ld e, c
+  ld a, 1
+  ld h, a
+  ld l, a
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(from_x*2+1,from_y*2+5,1,1,tile_buffer);
+.setArrow
+  pop de ;to xy
+  pop bc ;from xy  ld hl, tile_buffer
+  ld a, ARROW_RIGHT
+  ld [hl], a; tiles[0] = ARROW_RIGHT;
+  ld a, e
+  cp 5; if (to_y == 5) {
+  jr nz, .notToLineFive
+  push bc ;from xy
+  push de ;to xy
+  ld e, 15
+  ld a, 1
+  ld d, a
+  ld h, a
+  ld l, a
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(1,15,1,1,tile_buffer);
+  pop de ;to xy
+  pop bc ;from xy
+  jr .waitPadUp
+.notToLineFive; else {
+  ld a, d ;to_x
+  add a, a ;to_x*2
+  inc a ;to_x*2+1
+  ld d, a
+  ld a, e ;to_y
+  add a, a ;to_y*2
+  add a, 5 ;to_y*2+5
+  ld e, c
+  ld a, 1
+  ld h, a
+  ld l, a
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles ;set_win_tiles(to_x*2+1,to_y*2+5,1,1,tile_buffer);
+.waitPadUp
+  WAITPAD_UP; update_waitpadup();
+  ret
 
 UpdateTextEntryDisplay: ; hl = str, d = max_len
-; w = strlen(str);
-; for (i = 0; i < max_len; ++i) {
-;   tiles[i] = ' ';
-;   if (i != w) tiles[i+max_len] = '-';
-;   else tiles[i+max_len] = '^';
-; set_win_tiles(10,2,max_len,2,tiles);
-; if (w > 0) set_win_tiles(10,2,w,1,str);
+  push de ;d = max_len
+  push hl ;str
+  call str_Length; w = strlen(str);
+  ld e, a ;assumes len < 256
+  ld [_w], a
+.updateEntryLoop; for (i = 0; i < max_len; ++i) {
+    ld hl, tile_buffer
+    xor a
+    ld b, a
+    ld a, [_i]
+    ld c, a
+    add hl, bc
+    ld a, " "
+    ld [hl], a; tiles[i] = ' ';
+.testLastChar
+
+    xor a
+    ld b, a
+    ld a, [_i]
+    pop hl; str
+    pop de; d = max_len
+    push de
+    push hl
+    add a, d
+    ld c, a
+    ld hl, tile_buffer
+    add hl, bc ;tile_buffer+_i+max_len
+    ld a, [_w]
+    ld b, a
+    ld a, [_i]
+    cp a, b
+    jr z, .lastChar; if (i != w) tiles[i+max_len] = '-';
+    ld a, "-"
+    jr .setChar
+.lastChar; else tiles[i+max_len] = '^';
+    ld a, "^"
+.setChar
+    ld [hl], a
+
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    ld b, a
+    ld a, [_w]
+    sub b
+    jr nz, .updateEntryLoop
+
+  ld d, 10
+  ld e, 2
+  pop bc; str
+  pop hl; h = max_len
+  ld l, 2
+  push bc ;str
+  ld bc, tile_buffer
+  call gbdk_SetWinTiles; set_win_tiles(10,2,max_len,2,tile_buffer);
+
+  ld a, [_w]
+  and a
+  jp z, .skipStr; if (w > 0)
+  ld h, a
+  ld l, 1
+  pop bc ;str
+  push bc
+  call gbdk_SetWinTiles; set_win_tiles(10,2,w,1,str);
+.skipStr
+  pop bc
+  ret
 
 LowerCase:
-  db "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,é"
+  db "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,é", 0
+LowerCaseTitle:
+  db "lower case", 0
 UpperCase:
-  db "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,é"
+  db "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,é", 0
+UpperCaseTitle:
+  db "UPPER CASE", 0
+
 UIShowTextEntry:: ; de = title, hl = str, c = max_len
-; DISPLAY_OFF;
-; for (i = 0; i != max_len; ++i) str[i] = 0;
-; CLEAR_WIN_AREA(0,0,20,4,' ');
-; move_win(7,0);
-; l = strlen(title);
-; if (l > 0) set_win_tiles(0,1,l,1,title);
-; update_text_entry_display(str, max_len);
-; draw_win_ui_box(0,4,20,11);
-; DISPLAY_ON;
-; x = 0;
-; y = 0;
-; c = 0;
-; l = 0;
-; while (1) {
-;   if (c == 0) {
-;     memcpy(str_buff, upper_case, 46);
-;     set_win_tiles(2,15,10,1,"lower case");
-;   else {
-;     memcpy(str_buff, lower_case, 46);
-;     set_win_tiles(2,15,10,1,"UPPER CASE");
+  push bc;c = max_len
+  push hl;str
+  push de;title
+  DISPLAY_OFF
 
-;   for (j = 0; j < 5; ++j) {
-;     for (i = 0; i < 9; ++i) {
-;       tiles[j*2*18+i*2]   = (x==i && y==j) ? ARROW_RIGHT : 0;
-;       tiles[j*2*18+i*2+1] = str_buff[j*9+i];
-;     for (i = 0; i < 9; ++i) {
-;       tiles[(j*2+1)*18+i*2]   = 0;
-;       tiles[(j*2+1)*18+i*2+1] = 0;
-;   set_win_tiles(1,5,18,9,tiles);
-;   update_waitpadup();
-;   while (1) {
-;     k = joypad();
-;     if (button_state & PADF_UP && y > 0) {
-;       move_text_entry_arrow(x,y,x,y-1);
-;       --y;
-;     else if (button_state & PADF_DOWN && y < 5) {
-;       move_text_entry_arrow(x,y,x,y+1);
-;       ++y;
-;     else if (button_state & PADF_LEFT && x > 0 && y < 5) {
-;       move_text_entry_arrow(x,y,x-1,y);
-;       --x;
-;     else if (button_state & PADF_RIGHT && x < 8 && y < 5) {
-;       move_text_entry_arrow(x,y,x+1,y);
-;       ++x;
+  xor a
+  ld b, a;bc = max_len
+  call mem_Set; for (i = 0; i != max_len; ++i) str[i] = 0;
+  CLEAR_WIN_AREA 0,0,20,4," "
 
-;     if (button_state & (PADF_START | PADF_A)) {
-;       if (y == 5) {
-;         c = 1-c;
-;         break;
-;       else if (str_buff[y*9+x] == '\x1E') {
-;         if (l > 0) return;
-;       else if (l < max_len) {
-;         str[l++] = str_buff[y*9+x];
-;         set_win_tiles(10,3,max_len,1,str);
-;         update_text_entry_display(str, max_len);
-;         update_waitpadup();
-;     else if (button_state & PADF_B && l > 0) {
-;       str[--l] = '\0';
-;       update_text_entry_display(str, max_len);
-;       update_waitpadup();
-;     update_vbl(); 
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a; move_win(7,0);
+
+  
+  pop hl;title
+  push hl
+  call str_Length; l = strlen(title);
+  ld a, e ;assumes len < 256
+  ld [_l], a
+  and a
+  jp z, .skipTiles; if (l > 0) 
+  pop bc;title
+  push bc
+  xor a
+  ld d, a
+  ld a, 1
+  ld e, a
+  ld l, a
+  ld a, [_l]
+  ld h, a
+  call gbdk_SetWinTiles;set_win_tiles(0,1,l,1,title);
+.skipTiles
+
+  pop bc; title
+  pop hl; str
+  pop de; max_len
+  push de
+  push hl ;str
+  ld d, e
+  call UpdateTextEntryDisplay; update_text_entry_display(str, max_len);
+  xor a
+  ld b, a
+  ld a, 4
+  ld c, a
+  ld a, 20
+  ld d, a
+  ld a, 11
+  ld e, a
+  call DrawWinUIBox; draw_win_ui_box(0,4,20,11);
+  DISPLAY_ON
+  pop hl ;str
+  pop de; max_len
+  push hl ;str
+  push de ;max_len
+
+  xor a
+  ld [_x], a
+  ld [_y], a
+  ld [_c], a
+  ld [_l], a
+.drawTextBoxLoop; while (1) {
+    ld de, str_buffer
+    ld bc, 46
+    ld a, [_c]
+    and a
+    jp nz, .shouldUseUpper
+.shouldUseLower;   if (c == 0) {
+    ld hl, UpperCase
+    call mem_Copy;     memcpy(str_buff, upper_case, 46);
+    ld bc, LowerCaseTitle;set_win_tiles(2,15,10,1,"lower case");
+    jr .setCaseTiles
+.shouldUseUpper;   else {
+    ld hl, LowerCase
+    call mem_Copy;     memcpy(str_buff, lower_case, 46);
+    ld bc, UpperCaseTitle;set_win_tiles(2,15,10,1,"UPPER CASE");
+.setCaseTiles
+    ld d, 2
+    ld e, 15
+    ld h, 10
+    ld l, 1
+    call gbdk_SetWinTiles
+    xor a
+    ld [_j], a
+.rowLoop;   for (j = 0; j < 5; ++j) {
+      xor a
+      ld [_i], a
+      ld a, [_j]
+      add a, a; j*2
+      ld de, 18
+      call Multiply; hl = 18 * j*2
+      ld b, h
+      ld c, l ;bc = j*2*18
+      ld hl, tile_buffer
+      add hl, bc ;tiles[j*2*18]
+      push hl
+      ld hl, str_buffer
+      ld a, [_j]
+      add a, a ;_j*2
+      add a, a ;_j*4
+      add a, a ;_j*8
+      ld c, a
+      ld a, [_j]
+      add a, c ;_j*9
+      add hl, bc ;str_buff[j*9]
+      ld d, h
+      ld e, l
+      pop hl ;tiles[j*2*18]
+.collumnLoop1;     for (i = 0; i < 9; ++i) {
+        ld a, [_x]
+        ld b, a
+        ld a, [_i]
+        sub a, b
+        jr nz, .notArrowTile
+        ld a, [_y]
+        ld b, a
+        ld a, [_j]
+        sub a, b
+        jr nz, .notArrowTile;(x==i && y==j) ?
+        ld a, ARROW_RIGHT
+        ld [hli], a;tiles[j*2*18+i*2] = ARROW_RIGHT
+        jr .setCharTile
+.notArrowTile
+        xor a
+        ld [hli], a;tiles[j*2*18+i*2] = 0
+.setCharTile
+        ld a, [de]
+        ld [hli], a ;tiles[j*2*18+i*2+1] = str_buff[j*9+i];
+        inc de
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      sub 9
+      jr nz, .collumnLoop1
+
+      xor a
+      ld [_i], a
+      ld a, [_j]
+      add a, a; j*2
+      inc a ;j*2+1
+      ld de, 18
+      call Multiply; hl = 18 * (j*2+1)
+      ld b, h
+      ld c, l ;bc = (j*2+1)*18
+      ld hl, tile_buffer
+      add hl, bc ;tiles[(j*2+1)*18]
+.collumnLoop2 ;for (i = 0; i < 9; ++i) {
+        xor a
+        ld [hli], a ;tiles[(j*2+1)*18+i*2]   = 0;
+        ld [hli], a ;tiles[(j*2+1)*18+i*2+1] = 0;
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      sub 9
+      jr nz, .collumnLoop2
+
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    sub a, 5
+    jr nz, .rowLoop
+
+    ld d, 1
+    ld e, 5
+    ld h, 18
+    ld l, 9
+    ld bc, tile_buffer
+    call gbdk_SetWinTiles;set_win_tiles(1,5,18,9,tile_buffer);
+
+    WAITPAD_UP
+.moveArrowLoop;   while (1) {
+      call UpdateInput;k = joypad();
+      ld a, [_x]
+      ld b, a
+      ld d, a
+      ld a, [_y]
+      ld c, a
+      ld e, a
+.moveUp;if (button_state & PADF_UP && y > 0) {
+      ld a, [button_state]
+      and PADF_UP
+      jr z, .moveDown
+      ld a, [_y]
+      and a
+      jr z, .moveDown
+      dec e
+      ld a, e
+      ld [_y], a;--y;
+      call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x,y-1);
+      jp .startOrAPressed
+.moveDown;else if (button_state & PADF_DOWN && y < 5) {
+      ld a, [button_state]
+      and PADF_DOWN
+      jr z, .moveLeft
+      ld a, [_y]
+      sub a, 5
+      jr z, .moveLeft
+      inc e
+      ld a, e
+      ld [_y], a;++y;
+      call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x,y+1);
+      jp .startOrAPressed
+.moveLeft;else if (button_state & PADF_LEFT && x > 0 && y < 5) {
+      ld a, [button_state]
+      and PADF_LEFT
+      jr z, .moveRight
+      ld a, [_y]
+      sub a, 5
+      jr z, .moveRight
+      ld a, [_x]
+      and a
+      jr z, .moveRight
+      dec d
+      ld a, d
+      ld [_x], a;  --x;
+      call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x-1,y);
+      jp .startOrAPressed
+.moveRight;else if (button_state & PADF_RIGHT && x < 8 && y < 5) {
+      ld a, [button_state]
+      and PADF_RIGHT
+      jr z, .startOrAPressed
+      ld a, [_y]
+      sub a, 5
+      jr z, .startOrAPressed
+      ld a, [_x]
+      sub a, 8
+      jr z, .startOrAPressed
+      inc d
+      ld a, d
+      ld [_x], a;  ++x;
+      call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x+1,y);
+.startOrAPressed ;if (button_state & (PADF_START | PADF_A)) {
+      ld a, [button_state]
+      and PADF_START | PADF_A
+      jp z, .bPressed
+      ld a, [_y]
+      sub a, 5
+      jr nz, .testEnd;       if (y == 5) {
+      ld a, [_c]
+      ld b, a
+      ld a, 1
+      sub a, b
+      ld [_c], a ;c = 1-c;
+      jp .exitMoveArrowLoop ;break;
+.testEnd ; else if (str_buff[y*9+x] == '\x1E') {
+      ld hl, str_buffer
+      xor a
+      ld b, a
+      ld a, [_y]
+      add a, a;y*2
+      add a, a;y*4
+      add a, a;y*8
+      ld c, a
+      ld a, [_y]
+      add a, c;y*9
+      ld c, a
+      ld a, [_x]
+      add a, c;y*9+x
+      ld c, a
+      add hl, bc ;str_buff[y*9+x]
+      ld a, [hl]
+      cp "↵" ;0x1E
+      jp nz, .testLength
+      ld a, [_l]
+      jp nz, .exitMoveArrowLoop ; if (l > 0) return;
+      jr .waitVBL
+.testLength;else if (l < max_len) {
+      ld a, [_l]
+      pop de ;e = max_len
+      cp e
+      jr nc, .waitVBL
+      pop hl ;str
+      push hl
+      push de ;e = max_len
+      ld c, a; _l
+      inc a
+      ld [_l], a;_l++
+      xor a
+      ld b, a
+      add hl, bc;hl = str[_l]
+      push hl
+      ld hl, str_buffer
+      ld a, [_y]
+      add a, a;y*2
+      add a, a;y*4
+      add a, a;y*8
+      ld c, a
+      ld a, [_y]
+      add a, c;y*9
+      ld c, a
+      ld a, [_x]
+      add a, c;y*9+x
+      ld c, a
+      add hl, bc ;str_buff[y*9+x]
+      pop bc;str[_l]
+      ld a, [hl]
+      ld [bc], a ;str[l++] = str_buff[y*9+x];
+      ld d, 10
+      ld e, 3
+      pop hl; l = max_len
+      ld h, l;h = max_len
+      push hl
+      ld l, 1
+      push bc ;str
+      call gbdk_SetWinTiles;set_win_tiles(10,3,max_len,1,str);
+      pop hl ;str
+      pop de ;d = max_len
+      call UpdateTextEntryDisplay;update_text_entry_display(str, max_len);
+      WAITPAD_UP
+      jr .waitVBL
+.bPressed;     else if (button_state & PADF_B && l > 0) {
+      ld a, [button_state]
+      and PADF_B
+      jr z, .waitVBL
+      ld a, [_l]
+      jr z, .waitVBL
+      ld a, [_l]
+      dec a
+      ld [_l], a;--l
+      pop de;d = max_len
+      pop hl;str
+      push hl
+      push de
+      ld c, a
+      xor a
+      ld b, a
+      add hl, bc
+      ld [hl], a;str[--l] = '\0';
+      call UpdateTextEntryDisplay ;update_text_entry_display(str, max_len);
+      WAITPAD_UP
+      jp .moveArrowLoop
+.waitVBL
+    pop hl ;max_len
+    pop hl ;str
+    call gbdk_WaitVBL
+    jp .drawTextBoxLoop
+.exitMoveArrowLoop
+  pop hl;str
+  pop hl;len
   ret
 
 MoveMenuArrow: ;xy on stack, must stay there
@@ -503,7 +903,7 @@ MoveMenuArrow: ;xy on stack, must stay there
   ld l, a ;h=_c*2
   
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(x+1,y+1,1,c*2,tiles);
+  call gbdk_SetBKGTiles;set_bkg_tiles(x+1,y+1,1,c*2,tile_buffer);
   ret
 
 DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
@@ -561,7 +961,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld a, [hl] ;text
   cp "\n"
   jr nz, .testStringEnd
-  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tiles);
+  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tile_buffer);
   xor a
   ld [_l], a
   ld a, [_j]
@@ -574,7 +974,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
 .testStringEnd; else if (text[k] == '\0') {
   and a
   jr nz, .copyCharacterToTiles
-  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tiles);
+  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tile_buffer);
   ld a, [_c]
   inc a
   ld [_c], a

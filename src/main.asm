@@ -394,6 +394,7 @@ ShowListMenu:: ; bc = xy, de = wh, hl = text, sp = title, returns a
   push de ;wh
   ld de, str_buffer
   call str_Copy; strcpy(str_buffer, text);
+.skipStrCopy
   pop de ;wh
 
   pop hl ;title
@@ -405,17 +406,27 @@ ShowListMenu:: ; bc = xy, de = wh, hl = text, sp = title, returns a
   SWITCH_ROM_MBC5 UI_BANK
   call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
   RETURN_BANK
+
   ret; return a;
 
-ShowTextEntry:: ;bc = title, de = str, l = max_len
-; strcpy(str_buffer, title);
-; strcpy(name_buffer, str);
+ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
+  push hl ;max_len
+  push de ;str
+  ld h, b
+  ld l, c
+  ld de, str_buffer
+  call str_Copy; strcpy(str_buffer, title);
+
+  pop hl ;str
+  ld de, name_buffer
+  call str_Copy; strcpy(name_buffer, str);
 
   SWITCH_ROM_MBC5 UI_BANK
+  ld de, str_buffer
+  ld hl, name_buffer
+  pop bc ;max_len
   call UIShowTextEntry ;ui_show_text_entry(str_buffer, name_buffer, max_len);
   RETURN_BANK
-; strcpy(title, str_buffer);
-; strcpy(str, name_buffer);
   ret
 
 ShowOptions::

@@ -756,6 +756,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       cp "↵" ;0x1E
       jp nz, .testLength
       ld a, [_l]
+      and a
       jp nz, .exitTextEntryLoop ; if (l > 0) return;
       jr .waitVBL
 .testLength;else if (l < max_len) {
@@ -808,6 +809,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       and PADF_B
       jr z, .waitVBL
       ld a, [_l]
+      and a
       jr z, .waitVBL
       dec a
       ld [_l], a;--l

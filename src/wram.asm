@@ -1,5 +1,4 @@
 SECTION "Gloval Vars", WRAM0
-_TEMP: DW
 _bank: DB
 rLCDInterrupt: DW
 last_button_state: DB

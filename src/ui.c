@@ -252,7 +252,7 @@ void ui_show_text_entry (char *title, char *str, WORD max_len) {
                 }
                 else if (l < max_len) {
                     str[l++] = str_buff[y*9+x];
-                    set_win_tiles(10,3,max_len,1,str);
+                    // set_win_tiles(10,3,max_len,1,str);
                     update_text_entry_display(str, max_len);
                     update_waitpadup();
                 }

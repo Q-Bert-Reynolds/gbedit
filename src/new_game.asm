@@ -177,7 +177,6 @@ NewGame::
 ;set image to Calvin
 ;   DISPLAY_OFF
   CLEAR_SCREEN 0
-
   ld hl, _CalvinTiles
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16

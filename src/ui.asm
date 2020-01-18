@@ -395,7 +395,7 @@ MoveTextEntryArrow: ; bc = from xy, de = to xy
   ld a, c ;from_y
   add a, a ;from_y*2
   add a, 5 ;from_y*2+5
-  ld e, c
+  ld e, a
   ld a, 1
   ld h, a
   ld l, a
@@ -403,7 +403,8 @@ MoveTextEntryArrow: ; bc = from xy, de = to xy
   call gbdk_SetWinTiles ;set_win_tiles(from_x*2+1,from_y*2+5,1,1,tile_buffer);
 .setArrow
   pop de ;to xy
-  pop bc ;from xy  ld hl, tile_buffer
+  pop bc ;from xy  
+  ld hl, tile_buffer
   ld a, ARROW_RIGHT
   ld [hl], a; tiles[0] = ARROW_RIGHT;
   ld a, e
@@ -429,7 +430,7 @@ MoveTextEntryArrow: ; bc = from xy, de = to xy
   ld a, e ;to_y
   add a, a ;to_y*2
   add a, 5 ;to_y*2+5
-  ld e, c
+  ld e, a
   ld a, 1
   ld h, a
   ld l, a
@@ -440,80 +441,53 @@ MoveTextEntryArrow: ; bc = from xy, de = to xy
   ret
 
 UpdateTextEntryDisplay: ; hl = str, d = max_len
-  push de ;d = max_len
-  push hl ;str
-  call str_Length; w = strlen(str);
-  ld e, a ;assumes len < 256
-  ld [_w], a
-.updateEntryLoop; for (i = 0; i < max_len; ++i) {
-    ld hl, tile_buffer
-    xor a
-    ld b, a
-    ld a, [_i]
-    ld c, a
-    add hl, bc
-    ld a, " "
-    ld [hl], a; tiles[i] = ' ';
-.testLastChar
+  push de; d = max_len
+  push hl; str
 
-    xor a
-    ld b, a
-    ld a, [_i]
-    pop hl; str
-    pop de; d = max_len
-    push de
-    push hl
-    add a, d
-    ld c, a
-    ld hl, tile_buffer
-    add hl, bc ;tile_buffer+_i+max_len
-    ld a, [_w]
-    ld b, a
-    ld a, [_i]
-    cp a, b
-    jr z, .lastChar; if (i != w) tiles[i+max_len] = '-';
-    ld a, "-"
-    jr .setChar
-.lastChar; else tiles[i+max_len] = '^';
-    ld a, "^"
-.setChar
-    ld [hl], a
-
-    ld a, [_i]
-    inc a
-    ld [_i], a
-    ld b, a
-    ld a, [_w]
-    sub b
-    jr nz, .updateEntryLoop
-
-  ld d, 10
-  ld e, 2
-  pop bc; str
-  pop hl; h = max_len
-  ld l, 2
-  push bc ;str
-  ld bc, tile_buffer
-  call gbdk_SetWinTiles; set_win_tiles(10,2,max_len,2,tile_buffer);
-
-  ld a, [_w]
-  and a
-  jp z, .skipStr; if (w > 0)
-  ld h, a
-  ld l, 1
+  ld d, 10;x
+  ld e, 2;y
   pop bc ;str
-  push bc
-  call gbdk_SetWinTiles; set_win_tiles(10,2,w,1,str);
-.skipStr
-  pop bc
+  pop hl; h = max_len = width
+  push hl
+  push bc ;str
+  ld l, 1; l = height
+  call gbdk_SetWinTiles; set_win_tiles(10,2,max_len,1,str);
+
+  pop bc ;str
+  pop de ;d =max_len
+  push de
+  push bc ;str
+  ld c, d ;c = max_len
+  xor a
+  ld b, a
+  ld a, "-"
+  ld hl, tile_buffer
+  call mem_Set
+
+  pop hl ;str
+  push hl
+  call str_Length; w = strlen(str);
+  ld hl, tile_buffer
+  add hl, de
+  ld a, "^"
+  ld [hl], a
+
+  ld d, 10;x
+  ld e, 3;y
+  pop bc ;str
+  pop hl; h = max_len = width
+  ld bc, tile_buffer
+  ld l, 1; l = height
+  call gbdk_SetWinTiles; set_win_tiles(10,2,max_len,1,str);
+
   ret
 
 LowerCase:
-  db "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,é", 0
+  db "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,↵", 0
 LowerCaseTitle:
   db "lower case", 0
 UpperCase:
-  db "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,é", 0
+  db "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,↵", 0
 UpperCaseTitle:
   db "UPPER CASE", 0
 
@@ -524,10 +498,9 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   DISPLAY_OFF
 
   xor a
-  ld b, a;bc = max_len
+  ld b, a;b = 0, c = max_len
   call mem_Set; for (i = 0; i != max_len; ++i) str[i] = 0;
   CLEAR_WIN_AREA 0,0,20,4," "
-
   ld a, 7
   ld [rWX], a
   xor a
@@ -552,13 +525,12 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   ld h, a
   call gbdk_SetWinTiles;set_win_tiles(0,1,l,1,title);
 .skipTiles
-
   pop bc; title
   pop hl; str
-  pop de; max_len
+  pop de; e = max_len
   push de
   push hl ;str
-  ld d, e
+  ld d, e; d = max_len
   call UpdateTextEntryDisplay; update_text_entry_display(str, max_len);
   xor a
   ld b, a
@@ -571,9 +543,9 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   call DrawWinUIBox; draw_win_ui_box(0,4,20,11);
   DISPLAY_ON
   pop hl ;str
-  pop de; max_len
-  push hl ;str
-  push de ;max_len
+  pop de; e = max_len
+  push de; e = max_len
+  push hl; str
 
   xor a
   ld [_x], a
@@ -623,6 +595,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld c, a
       ld a, [_j]
       add a, c ;_j*9
+      ld c, a
       add hl, bc ;str_buff[j*9]
       ld d, h
       ld e, l
@@ -783,23 +756,25 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       cp "↵" ;0x1E
       jp nz, .testLength
       ld a, [_l]
-      jp nz, .exitMoveArrowLoop ; if (l > 0) return;
+      jp nz, .exitTextEntryLoop ; if (l > 0) return;
       jr .waitVBL
 .testLength;else if (l < max_len) {
       ld a, [_l]
+      pop hl ;str
       pop de ;e = max_len
+      push de
+      push hl
       cp e
       jr nc, .waitVBL
       pop hl ;str
       push hl
-      push de ;e = max_len
       ld c, a; _l
       inc a
       ld [_l], a;_l++
       xor a
       ld b, a
       add hl, bc;hl = str[_l]
-      push hl
+      push hl ;str[_l]
       ld hl, str_buffer
       ld a, [_y]
       add a, a;y*2
@@ -816,17 +791,16 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       pop bc;str[_l]
       ld a, [hl]
       ld [bc], a ;str[l++] = str_buff[y*9+x];
-      ld d, 10
-      ld e, 3
-      pop hl; l = max_len
-      ld h, l;h = max_len
-      push hl
-      ld l, 1
-      push bc ;str
-      call gbdk_SetWinTiles;set_win_tiles(10,3,max_len,1,str);
+
       pop hl ;str
-      pop de ;d = max_len
+      pop de ;e = max_len
+      push de
+      ld d, e ;d = max_len
+      xor a
+      ld e, a
+      push hl ;str
       call UpdateTextEntryDisplay;update_text_entry_display(str, max_len);
+
       WAITPAD_UP
       jr .waitVBL
 .bPressed;     else if (button_state & PADF_B && l > 0) {
@@ -835,29 +809,32 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       jr z, .waitVBL
       ld a, [_l]
       jr z, .waitVBL
-      ld a, [_l]
       dec a
       ld [_l], a;--l
-      pop de;d = max_len
-      pop hl;str
-      push hl
-      push de
       ld c, a
       xor a
       ld b, a
-      add hl, bc
-      ld [hl], a;str[--l] = '\0';
+      pop hl;str
+      push hl
+      add hl, bc;str[l]
+      ld [hl], a;str[l] = 0;
+      pop hl;str
+      pop de ;e = max_len
+      push de
+      ld d, e ;d = max_len
+      xor a
+      ld e, a
+      push hl;str
       call UpdateTextEntryDisplay ;update_text_entry_display(str, max_len);
       WAITPAD_UP
-      jp .moveArrowLoop
 .waitVBL
-    pop hl ;max_len
-    pop hl ;str
     call gbdk_WaitVBL
-    jp .drawTextBoxLoop
+    jp .moveArrowLoop
 .exitMoveArrowLoop
-  pop hl;str
-  pop hl;len
+    jp .drawTextBoxLoop
+.exitTextEntryLoop
+  pop af;str
+  pop af;a = max_len
   ret
 
 MoveMenuArrow: ;xy on stack, must stay there
@@ -907,12 +884,12 @@ MoveMenuArrow: ;xy on stack, must stay there
   ret
 
 DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
-;store register state
+  ;store register state
   push bc ;xy
   push de ;wh
   push hl ;text
 
-;reorganize registers to use with gbdk_SetBKGTiles
+  ;reorganize registers to use with gbdk_SetBKGTiles
   pop bc ;text
   pop hl ;wh
   pop de ;xy
@@ -933,7 +910,7 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   ld bc, tile_buffer
   call gbdk_SetBKGTiles
 
-;restore initial register state
+  ;restore initial register state
   pop hl ;text
   pop de ;wh
   pop bc ;xy

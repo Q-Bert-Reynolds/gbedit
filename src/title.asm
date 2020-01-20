@@ -335,6 +335,14 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ;     else return y;
   ; c = 2;
 
+  xor a;title = EmptyString
+  ld hl, name_buffer
+  ld [hl], a
+
+  ld hl, NewGameOptionMenuText ;text
+  ld de, str_buffer
+  call str_Copy
+
   xor a
   ld b, a
   ld c, a ;bc=xy
@@ -342,9 +350,6 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld d, a ;width
   ld a, 6
   ld e, a ;height
-  ld hl, EmptyString ;title
-  push hl
-  ld hl, NewGameOptionMenuText ;text
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret
 

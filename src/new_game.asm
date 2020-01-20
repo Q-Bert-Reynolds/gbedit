@@ -237,22 +237,23 @@ ENDC
   ld de, str_buffer
   call str_Copy
 
-;   xor a
-;   ld [_d], a
-; .ShowUserNameListLoop; while (d == 0) {
-;   xor a
-;   ld b, a
-;   ld c, a
-;   ld a, 12
-;   ld d, a
-;   ld e, a
-;   ld hl, UserNameTitle
-;   push hl ;title on stack
-;   ld hl, str_buffer ;list items
-;   call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
-;   ld [_d], a
-;   and a
-;   jp z, .ShowUserNameListLoop
+  xor a
+  ld [_d], a
+.ShowUserNameListLoop; while (d == 0) {
+  ld hl, UserNameTitle
+  ld de, name_buffer
+  call str_Copy
+  
+  xor a
+  ld b, a
+  ld c, a
+  ld a, 12
+  ld d, a
+  ld e, a
+  call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
+  ld [_d], a
+  and a
+  jp z, .ShowUserNameListLoop
 
 ;show text entry
   CLEAR_BKG_AREA 0,0,12,12," "
@@ -336,22 +337,23 @@ ENDC
   ld de, str_buffer
   call str_Copy
 
-;   xor a
-;   ld [_d], a
-; .ShowRivalNameListLoop; while (d == 0) {
-;   xor a
-;   ld b, a
-;   ld c, a
-;   ld a, 12
-;   ld d, a
-;   ld e, a
-;   ld hl, UserNameTitle
-;   push hl ;title on stack
-;   ld hl, str_buffer ;list items
-;   call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
-;   ld [_d], a
-;   and a
-;   jp z, .ShowRivalNameListLoop
+  xor a
+  ld [_d], a
+.ShowRivalNameListLoop; while (d == 0) {
+  ld hl, UserNameTitle
+  ld de, name_buffer
+  call str_Copy
+  
+  xor a
+  ld b, a
+  ld c, a
+  ld a, 12
+  ld d, a
+  ld e, a
+  call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
+  ld [_d], a
+  and a
+  jp z, .ShowRivalNameListLoop
 
   CLEAR_BKG_AREA 0,0,12,12," "
   ld bc, RivalNameTextEntryTitle;"RIVAL's NAME?"

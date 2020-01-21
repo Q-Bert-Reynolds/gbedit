@@ -76,13 +76,13 @@ Main::
   
 .start ;show intro credits, batting animation
   SWITCH_RAM_MBC5 0
-  SET_BANK START_BANK
-  call Start
-.title ;show title drop, version slide, cycle of players, new game/continue screen
-  SET_BANK TITLE_BANK
-  call Title ;should set a to 0 if new game pressed
-  jr nz, .startGame
-.newGame
+;   SET_BANK START_BANK
+;   call Start
+; .title ;show title drop, version slide, cycle of players, new game/continue screen
+;   SET_BANK TITLE_BANK
+;   call Title ;should set a to 0 if new game pressed
+;   jr nz, .startGame
+; .newGame
   SET_BANK NEW_GAME_BANK
   call NewGame
 .startGame
@@ -394,7 +394,6 @@ ShowListMenu:: ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, r
   SWITCH_ROM_MBC5 UI_BANK
   call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
   RETURN_BANK
-
   ret; return a;
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer

@@ -6,6 +6,8 @@ INCLUDE "img/coaches/doc_hickory.asm"
 INCLUDE "img/coaches/calvin.asm"
 INCLUDE "img/coaches/nolan0.asm"
 
+ReplaceString:
+  DB "%s", 0
 HomeNames:
   DB "NEW NAME\nRED\nCALVIN\nHOMER", 0
 AwayNames:
@@ -49,7 +51,7 @@ AWorldOfDreamsString:
 SelectNameOrTextEntry: ;bc = title
   ld a, [_d]
   dec a
-  ; jp nz, .nameSelected; if (d == 1) {
+  jp nz, .nameSelected; if (d == 1) {
   ld a, 48
   ld [rSCX], a
   ld de, name_buffer
@@ -174,9 +176,8 @@ NewGame::
 ;   call RevealText
 ;   FADE_OUT
 
-;set image to Calvin
+; ; set image to Calvin
 ;   DISPLAY_OFF
-  CLEAR_SCREEN 0
   ld hl, _CalvinTiles
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16
@@ -261,9 +262,15 @@ ENDC
   call SelectNameOrTextEntry
 
 ; sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
-; reveal_text(str_buff, NEW_GAME_BANK);
+  ld bc, ReplaceString
   ld hl, RightSoYourNameString
+  ld de, str_buffer
+  call str_Replace
+
+; reveal_text(str_buff, NEW_GAME_BANK);
+  ld hl, str_buffer
   call RevealText
+
   FADE_OUT
 
 ;save user name

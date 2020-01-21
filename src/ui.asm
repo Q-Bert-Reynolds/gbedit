@@ -793,6 +793,11 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, [hl]
       ld [bc], a ;str[l++] = str_buff[y*9+x];
 
+      inc bc ;make sure there is a 0 at the end of the string
+      xor a
+      ld [bc], a
+      dec bc
+
       pop hl ;str
       pop de ;e = max_len
       push de
@@ -1002,7 +1007,8 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   call str_Length; puts length in de
   ld a, e ;assumes length is less than 256
   pop de ;wh
-  ld e, a ;l = strlen(title); 
+  ld e, a ;l = strlen(title);
+  and a
   jr z, .skipTitle;if (l > 0) {
   ld a, d ;w
   sub a, e ;w-l
@@ -1015,8 +1021,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ;surely there's a better way to do this than rearrange registers
   push bc ;xy
   push de ;wh
-  push hl ;title
-  pop bc ;title
+  ld bc, name_buffer
   pop hl ;wh
   pop de ;xy
   call gbdk_SetBKGTiles ;set_bkg_tiles(x+i,y,l,1,title);

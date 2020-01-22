@@ -48,7 +48,7 @@ YourBeisbolLegendString:
 AWorldOfDreamsString:
   DB "A world of dreams\nand adventures\nwith BéiSBOL\nawaits! Let's go!", 0
 
-SelectNameOrTextEntry: ;bc = title
+SelectNameOrTextEntry: ;assumes d > 0, bc = title
   ld a, [_d]
   dec a
   jp nz, .nameSelected; if (d == 1) {
@@ -59,6 +59,7 @@ SelectNameOrTextEntry: ;bc = title
   ld l, a
   call ShowTextEntry ;show_text_entry("YOUR NAME?", name_buff, 7, NEW_GAME_BANK);
   jp .moveImageBack
+
 .nameSelected ; else {
   ld [_d], a;d -= 1;
   xor a
@@ -72,27 +73,33 @@ SelectNameOrTextEntry: ;bc = title
 .copyNameFromListLoop ;for (i = 0; i < l; i++) {
     ld a, [hl]
     and a
-    jr nz, .checkNameFound
-    ld a, [hl]
-    sub "\n"
-    jr nz, .checkNameFound
+    jr z, .nextName
+    cp "\n"
+    jr z, .nextName
+    ld a, [_d]
+    and a
+    jr z, .checkNameFound
+    jr .checkLoopEnd
+.nextName
     ld a, [_d]
     dec a
     ld [_d], a
-    jr .skipNameCopy
+    jr .checkLoopEnd
 .checkNameFound; else if (d == 0) {
     ld a, [hl]
     ld [de], a ;name_buff[j] = str_buff[i];
     inc de ;++j;
-.skipNameCopy
+.checkLoopEnd
     inc hl
     ld a, [_i]
     inc a
     ld [_i], a
     ld b, a
     ld a, [_l]
-    sub b
+    cp b
     jp nz, .copyNameFromListLoop
+  xor a
+  ld [de], a ;make sure the last character is 0
 
 .moveImageBack
   xor a
@@ -119,65 +126,65 @@ NewGame::
 
   call LoadFontTiles
 
-;   ; since font takes up $9000 to $9800, no need to wrap around with mem_CopyToTileData
-;   ld hl, _DocHickoryTiles
-;   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-;   ld bc, _DOC_HICKORY_TILE_COUNT*16
-;   call mem_CopyVRAM;mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
-;   CLEAR_SCREEN " "
+  ; since font takes up $9000 to $9800, no need to wrap around with mem_CopyToTileData
+  ld hl, _DocHickoryTiles
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld bc, _DOC_HICKORY_TILE_COUNT*16
+  call mem_CopyVRAM;mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
+  CLEAR_SCREEN " "
 
-;   ld a, 13
-;   ld d, a
-;   ld a, 4
-;   ld e, a
-;   ld a, _DOC_HICKORY_COLUMNS
-;   ld h, a
-;   ld a, _DOC_HICKORY_ROWS
-;   ld l, a
-;   ld bc, _DocHickoryTileMap
-;   ld a, _UI_FONT_TILE_COUNT
-;   call SetBKGTilesWithOffset
+  ld a, 13
+  ld d, a
+  ld a, 4
+  ld e, a
+  ld a, _DOC_HICKORY_COLUMNS
+  ld h, a
+  ld a, _DOC_HICKORY_ROWS
+  ld l, a
+  ld bc, _DocHickoryTileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
 
-;   DISPLAY_ON
-;   FADE_IN
+  DISPLAY_ON
+  FADE_IN
   
-; ; reveal_text("Hello there!\nWelcome to the\nworld of BéiSBOL.", NEW_GAME_BANK);
-;   ld hl, HelloThereString
-;   call RevealText
+; reveal_text("Hello there!\nWelcome to the\nworld of BéiSBOL.", NEW_GAME_BANK);
+  ld hl, HelloThereString
+  call RevealText
 
-; ; reveal_text("My name is DOC!\nPeople call me\nthe BéiSBOL PROF!", NEW_GAME_BANK);
-;   ld hl, MyNameIsDocString
-;   call RevealText
-;   FADE_OUT
+; reveal_text("My name is DOC!\nPeople call me\nthe BéiSBOL PROF!", NEW_GAME_BANK);
+  ld hl, MyNameIsDocString
+  call RevealText
+  FADE_OUT
 
-; ;set image to Muchacho
-;   DISPLAY_OFF
-;   CLEAR_SCREEN 0
+;set image to Muchacho
+  DISPLAY_OFF
+  CLEAR_SCREEN 0
     
-; ; load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
-; ; set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
-;   DISPLAY_ON
+; load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+; set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+  DISPLAY_ON
 
-;   FADE_IN
-; ; reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!", NEW_GAME_BANK);
-;   ld hl, ThisWorldIsString
-;   call RevealText
+  FADE_IN
+; reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!", NEW_GAME_BANK);
+  ld hl, ThisWorldIsString
+  call RevealText
 
-; ; reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams", NEW_GAME_BANK);
-;   ld hl, ForSomeString
-;   call RevealText
+; reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams", NEW_GAME_BANK);
+  ld hl, ForSomeString
+  call RevealText
 
-; ; reveal_text("Myself...", NEW_GAME_BANK);
-;   ld hl, MyselfString
-;   call RevealText
+; reveal_text("Myself...", NEW_GAME_BANK);
+  ld hl, MyselfString
+  call RevealText
 
-; ; reveal_text("I study BéiSBOL\nas a profession.", NEW_GAME_BANK);
-;   ld hl, IStudyBeisbolString
-;   call RevealText
-;   FADE_OUT
+; reveal_text("I study BéiSBOL\nas a profession.", NEW_GAME_BANK);
+  ld hl, IStudyBeisbolString
+  call RevealText
+  FADE_OUT
 
-; ; set image to Calvin
-;   DISPLAY_OFF
+; set image to Calvin
+  DISPLAY_OFF
   ld hl, _CalvinTiles
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16
@@ -240,7 +247,7 @@ ENDC
 
   xor a
   ld [_d], a
-.ShowUserNameListLoop; while (d == 0) {
+.showUserNameListLoop; while (d == 0) {
   ld hl, UserNameTitle
   ld de, name_buffer
   call str_Copy
@@ -254,7 +261,7 @@ ENDC
   call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
   ld [_d], a
   and a
-  jp z, .ShowUserNameListLoop
+  jp z, .showUserNameListLoop
 
 ;show text entry
   CLEAR_BKG_AREA 0,0,12,12," "
@@ -346,7 +353,7 @@ ENDC
 
   xor a
   ld [_d], a
-.ShowRivalNameListLoop; while (d == 0) {
+.showRivalNameListLoop; while (d == 0) {
   ld hl, UserNameTitle
   ld de, name_buffer
   call str_Copy
@@ -360,15 +367,19 @@ ENDC
   call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
   ld [_d], a
   and a
-  jp z, .ShowRivalNameListLoop
+  jp z, .showRivalNameListLoop
 
   CLEAR_BKG_AREA 0,0,12,12," "
   ld bc, RivalNameTextEntryTitle;"RIVAL's NAME?"
   call SelectNameOrTextEntry
   
 ; sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
-; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, IRememberNowString
+  ld de, str_buffer
+  ld bc, ReplaceString
+  call str_Replace
+; reveal_text(str_buff, NEW_GAME_BANK);
+  ld hl, str_buffer
   call RevealText
   FADE_OUT
 
@@ -410,12 +421,21 @@ ENDC
 ;transition to game
   di
   ENABLE_RAM_MBC5
-; sprintf(str_buff, "%s!", user_name);
+  ld hl, user_name
+  ld de, name_buffer
+  ld bc, 8
+  call mem_Copy; memcpy(user_name, name_buff, 8);
   DISABLE_RAM_MBC5
   ei
 
-; reveal_text(str_buff, NEW_GAME_BANK);
+; sprintf(str_buff, "%s!", user_name);
   ld hl, ExclaimNameString
+  ld de, str_buffer
+  ld bc, ReplaceString
+  call str_Replace
+
+; reveal_text(str_buff, NEW_GAME_BANK);
+  ld hl, str_buffer
   call RevealText
 
 ; reveal_text("Your very own\nBéiSBOL legend is\nabout to unfold!", NEW_GAME_BANK);

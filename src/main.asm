@@ -76,13 +76,13 @@ Main::
   
 .start ;show intro credits, batting animation
   SWITCH_RAM_MBC5 0
-;   SET_BANK START_BANK
-;   call Start
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   SET_BANK TITLE_BANK
-;   call Title ;should set a to 0 if new game pressed
-;   jr nz, .startGame
-; .newGame
+  SET_BANK START_BANK
+  call Start
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  SET_BANK TITLE_BANK
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .startGame
+.newGame
   SET_BANK NEW_GAME_BANK
   call NewGame
 .startGame

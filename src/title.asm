@@ -295,6 +295,14 @@ NewGameOptionMenuText:
   db "NEW GAME\nOPTION", 0
 NewGameContinueOptionMenuText:
   db "CONTINUE\nNEW GAME\nOPTION", 0
+CoachStatText:
+  db "COACH"
+PennantsStatText:
+  db "PENNANTS"
+RoledexStatText:
+  db "ROLéDEX"
+TimeStatText:
+  db "TIME"
 ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
@@ -312,35 +320,129 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_RAM_MBC5
   ei 
 
-  ; while (name_buff[0] > 0) {
-  ;     c = 3; // even though c is set in show_list_menu, it gets reset to original value when it returns
-  ;     y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
-  ;     if (y == 1) {
-  ;         update_vbl();
-  ;         draw_bkg_ui_box(4,7,16,10);
-  ;         set_bkg_tiles(5,9,5,1,"COACH");
-  ;         set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
-  ;         set_bkg_tiles(5,11,8,1,"PENNANTS");
-  ;         set_bkg_tiles(18,11,1,1,"0");//+penant_count);
-  ;         set_bkg_tiles(5,13,7,1, "ROLeDEX"); // "ROL\x7FDEX" draws trash here for some reason
-  ;         set_bkg_tiles(8,13,1,1,"\x7F"); // HACK: wouldn't be necessary if "ROL\x7FDEX" worked above
-  ;         sprintf(str_buff, "%d", 151);
-  ;         set_bkg_tiles(16,13,3,1,str_buff);
-  ;         set_bkg_tiles(5,15,4,1,"TIME");
-  ;         sprintf(str_buff, "%d:%d", 999, 59);
-  ;         l = strlen(str_buff);
-  ;         set_bkg_tiles(19-l,15,l,1,str_buff);
-  ;         update_waitpadup();
-  ;         while (1) {
-  ;             if (joypad() & J_A) return y;
-  ;             else if (joypad() & J_B) {
-  ;                 CLEAR_BKG_AREA(4,7,16,10,0);
-  ;                 break;
-  ;             update_vbl();
-  ;     else return y;
-  ; c = 2;
+  ld hl, name_buffer
+  call str_Length
+  ld a, d
+  and a
+  jp nz, .noSaveFile
+  ld a, e
+  and a
+  jp z, .noSaveFile
+  cp 8
+  jp nc, .noSaveFile
 
-  xor a;title = EmptyString
+.newGameContinueLoop; while (name_buff[0] > 0) {
+  xor a
+  ld hl, name_buffer
+  ld [hl], a
+  ld hl, NewGameContinueOptionMenuText
+  ld de, str_buffer
+  call str_Copy
+  ld bc, 0
+  ld d, 15
+  ld e, 8
+  call ShowListMenu ;y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
+  cp 1 ;if (y == 1) {
+  ret nz ;else return y;
+  ld [_y], a
+  call gbdk_WaitVBL
+
+  ld b, 4
+  ld c, 7
+  ld d, 16
+  ld e, 10
+  call DrawBKGUIBox ;draw_bkg_ui_box(4,7,16,10);
+
+  ld d, 5
+  ld e, 9
+  ld h, 5
+  ld l, 1
+  ld bc, CoachStatText
+  call gbdk_SetBKGTiles ;set_bkg_tiles(5,9,5,1,"COACH");
+
+  di
+  SWITCH_RAM_MBC5 0
+  ENABLE_RAM_MBC5
+  ld hl, user_name
+  ld de, name_buffer
+  ld bc, 8
+  call mem_Copy
+  DISABLE_RAM_MBC5
+  ei
+  ld hl, name_buffer
+  call str_Length
+  ld h, e
+  ld d, 11
+  ld e, 9
+  ld l, 1
+  ld bc, name_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
+
+  ld d, 5
+  ld e, 11
+  ld h, 8
+  ld l, 1
+  ld bc, PennantsStatText
+  call gbdk_SetBKGTiles ;set_bkg_tiles(5,11,8,1,"PENNANTS");
+
+  ld d, 18
+  ld e, 11
+  ld h, 1
+  ld l, 1
+  ld bc, str_buffer
+  ld a, "0"
+  ld [bc], a
+  call gbdk_SetBKGTiles ;set_bkg_tiles(18,11,1,1,"0");//+penant_count);
+  
+  ld d, 5
+  ld e, 13
+  ld h, 7
+  ld l, 1
+  ld bc, RoledexStatText
+  call gbdk_SetBKGTiles ;set_bkg_tiles(5,13,7,1, "ROLéDEX");
+
+  ;sprintf(str_buff, "%d", 151);
+  ld d, 16
+  ld e, 13
+  ld h, 3
+  ld l, 1
+  ld bc, str_buffer
+  ld a, "1"
+  ld [bc], a
+  inc bc
+  inc bc
+  ld [bc], a
+  dec bc
+  ld a, "5"
+  ld [bc], a
+  dec bc
+  call gbdk_SetBKGTiles ;set_bkg_tiles(16,13,3,1,str_buff);
+
+  ld d, 5
+  ld e, 15
+  ld h, 4
+  ld l, 1
+  ld bc, TimeStatText
+  call gbdk_SetBKGTiles ;set_bkg_tiles(5,15,4,1,"TIME");
+
+  ; sprintf(str_buff, "%d:%d", 999, 59);
+  ; l = strlen(str_buff);
+  ; call gbdk_SetBKGTiles ;set_bkg_tiles(19-l,15,l,1,str_buff);
+  WAITPAD_UP
+.showGameStatsLoop ;while (1) {
+    JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;
+    JUMP_TO_IF_BUTTONS .backPressed, PADF_B; else if (joypad() & J_B) {
+    call gbdk_WaitVBL
+    jr .showGameStatsLoop
+.backPressed
+  CLEAR_BKG_AREA 4,7,16,10,0
+  jp .newGameContinueLoop
+.returnY
+  ld a, [_y]
+  ret
+
+.noSaveFile
+  xor a;title
   ld hl, name_buffer
   ld [hl], a
 

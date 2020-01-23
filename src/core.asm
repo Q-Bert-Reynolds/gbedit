@@ -1,7 +1,4 @@
 SECTION "Core", ROM0
-EmptyString::
-  db "", 0
-
 LCDInterrupt::
   push af
   push bc

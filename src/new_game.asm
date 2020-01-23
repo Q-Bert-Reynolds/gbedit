@@ -116,6 +116,7 @@ SelectNameOrTextEntry: ;assumes d > 0, bc = title
 
 NewGame::
   DISABLE_LCD_INTERRUPT
+  SWITCH_RAM_MBC5 0
 
 ;set image to Doc
   DISPLAY_OFF

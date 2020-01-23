@@ -15,7 +15,7 @@ all:
 	
 	rgbasm -D _$(VERSION) -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.asm
 	rgblink -o $(ROM_FILE) $(OBJ_DIR)/main.o
-	rgbfix -vcs -l 0x33 -p 0 -t $(GAME_NAME) $(ROM_FILE)
+	rgbfix -jvcs -k 01 -l 0x33 -m 0x1B -p 0 -r 03 -t $(GAME_NAME) $(ROM_FILE)
 
 	open $(ROM_FILE)
 

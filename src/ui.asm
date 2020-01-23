@@ -213,23 +213,118 @@ UIRevealText::
   pop hl ;text
   ret
 
-MoveOptionsArrow: ; e = y
-; tiles[0] = 0;
-; tiles[1] = ARROW_RIGHT;
-; tiles[2] = ARROW_RIGHT_BLANK;
-; set_bkg_tiles(1,3,1,1,tiles + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
-; set_bkg_tiles(7,3,1,1,tiles + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
-; set_bkg_tiles(14,3,1,1,tiles + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
-; set_bkg_tiles(1,8,1,1,tiles + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
-; set_bkg_tiles(10,8,1,1,tiles + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
-; set_bkg_tiles(1,13,1,1,tiles + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
-; set_bkg_tiles(10,13,1,1,tiles + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
-; set_bkg_tiles(1,16,1,1,tiles + (y==3 ? 1 : 2));
+SET_MOVE_OPTIONS_ARROW_TILE: MACRO ;var, row, column
+  xor a
+  ld bc, tile_buffer
+  ld [bc], a
+  ld a, [\1]
+  cp \3
+  jr nz, .setTile\@
+  ld a, ARROW_RIGHT_BLANK
+  ld bc, tile_buffer
+  ld [bc], a
+.subY\@
+  ld a, [_y]
+  cp \2
+  jr nz, .setTile\@
+  ld a, ARROW_RIGHT
+  ld bc, tile_buffer
+  ld [bc], a
+.setTile\@
+ENDM
+
+MoveOptionsArrow:
+; set_bkg_tiles(1,3,1,1,tile_buffer + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
+  ld d, 1 ;x
+  ld e, 3 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 0
+  call gbdk_SetBKGTiles
+; set_bkg_tiles(7,3,1,1,tile_buffer + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
+  ld d, 7 ;x
+  ld e, 3 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 1
+  call gbdk_SetBKGTiles
+; set_bkg_tiles(14,3,1,1,tile_buffer + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
+  ld d, 14 ;x
+  ld e, 3 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 2
+  call gbdk_SetBKGTiles
+
+; set_bkg_tiles(1,8,1,1,tile_buffer + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
+  ld d, 1 ;x
+  ld e, 8 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 0
+  call gbdk_SetBKGTiles
+; set_bkg_tiles(10,8,1,1,tile_buffer + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
+  ld d, 10 ;x
+  ld e, 8 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 1
+  call gbdk_SetBKGTiles
+
+; set_bkg_tiles(1,13,1,1,tile_buffer + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
+  ld d, 1 ;x
+  ld e, 13 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 0
+  call gbdk_SetBKGTiles
+; set_bkg_tiles(10,13,1,1,tile_buffer + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
+  ld d, 10 ;x
+  ld e, 13 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 1
+  call gbdk_SetBKGTiles
+
+; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
+  ld a, ARROW_RIGHT
+  ld bc, tile_buffer
+  ld [bc], a
+  ld d, 1 ;x
+  ld e, 16 ;y
+  ld h, 1 ;w
+  ld l, 1 ;h
+  ld a, [_y]
+  cp 3
+  jr z, .setCancelTile
+  ld a, ARROW_RIGHT_BLANK
+  ld [bc], a
+.setCancelTile
+  call gbdk_SetBKGTiles
   ret
+
+TextSpeedOptionString:
+db "TEXT SPEED        "
+db "                  "
+db " FAST  MEDIUM SLOW"
+
+AnimationOptionString:
+db "AT-BAT ANIMATIONS "
+db "                  "
+db " ON       OFF     "
+
+CoachingOptionString:
+db "COACHING STYLE    "
+db "                  "
+db " SHIFT    SET     "
+
+CancelOptionString:
+db "CANCEL"
 
 UIShowOptions::
   DISPLAY_OFF
   di
+  SWITCH_RAM_MBC5 0
   ENABLE_RAM_MBC5
   ld a, [text_speed]
   ld [_a], a
@@ -240,9 +335,25 @@ UIShowOptions::
   DISABLE_RAM_MBC5
   ei
 
-; if (a > 2) a = 0;
-; if (b > 1) b = 0;
-; if (c > 1) c = 0;
+.testA; if (a > 2) a = 0;
+  ld a, [_a]
+  cp 3
+  jr c, .testB 
+  xor a
+  ld [_a], a
+.testB; if (b > 1) b = 0;
+  ld a, [_b]
+  cp 2
+  jr c, .testC
+  xor a
+  ld [_b], a
+.testC; if (c > 1) c = 0;
+  ld a, [_c]
+  cp 2
+  jr c, .doneTestingStoreOptions
+  xor a
+  ld [_c], a
+.doneTestingStoreOptions
 
   xor a
   ld b, a
@@ -256,6 +367,12 @@ UIShowOptions::
 ;   "TEXT SPEED        "
 ;   "                  "
 ;   " FAST  MEDIUM SLOW"
+  ld d, 1
+  ld e, 1
+  ld h, 18
+  ld l, 3
+  ld bc, TextSpeedOptionString
+  call gbdk_SetBKGTiles
 
   xor a
   ld b, a
@@ -269,6 +386,12 @@ UIShowOptions::
 ;   "AT-BAT ANIMATIONS "
 ;   "                  "
 ;   " ON       OFF     "
+  ld d, 1
+  ld e, 6
+  ld h, 18
+  ld l, 3
+  ld bc, AnimationOptionString
+  call gbdk_SetBKGTiles
 
   xor a
   ld b, a
@@ -283,17 +406,29 @@ UIShowOptions::
 ;   "COACHING STYLE    "
 ;   "                  "
 ;   " SHIFT    SET     "
-
+  ld d, 1
+  ld e, 11
+  ld h, 18
+  ld l, 3
+  ld bc, CoachingOptionString
+  call gbdk_SetBKGTiles
 
 ; set_bkg_tiles(2,16,6,1,
 ;   "CANCEL"
+  ld d, 2
+  ld e, 16
+  ld h, 6
+  ld l, 1
+  ld bc, CancelOptionString
+  call gbdk_SetBKGTiles
 
   DISPLAY_ON
-  WAITPAD_UP
 
   xor a
   ld [_y], a; y = 0;
+
   call MoveOptionsArrow; move_options_arrow(y);
+  WAITPAD_UP
 
 .moveOptionsArrowLoop; while (1) {
   call UpdateInput;   k = joypad();
@@ -310,7 +445,7 @@ UIShowOptions::
   ld [_y], a
   call MoveOptionsArrow;     move_options_arrow(--y);
   WAITPAD_UP
-  jr .waitVBLAndLoop
+  jp .waitVBLAndLoop
 .checkDownPressed;   else if (button_state & PADF_DOWN && y < 3) {
   ld a, [button_state]
   and a, PADF_DOWN
@@ -326,39 +461,107 @@ UIShowOptions::
   ld [_y], a
   call MoveOptionsArrow;     move_options_arrow(++y);
   WAITPAD_UP
-  jr .waitVBLAndLoop
+  jp .waitVBLAndLoop
 .checkLeftPressed;   else if (button_state & PADF_LEFT && y < 3) {
+  ld a, [button_state]
+  and a, PADF_LEFT
+  jr z, .checkRightPressed
+  ld a, [_y]
+  cp 3
+  jr nc, .checkRightPressed
   call gbdk_WaitVBL
-;     if (y == 0 && a > 0) --a;
-;     else if (y == 1 && b > 0) --b;
-;     else if (y == 2 && c > 0) --c;
+.moveALeft;     if (y == 0 && a > 0) --a;
+  ld a, [_y]
+  and a
+  jr nz, .moveBLeft
+  ld a, [_a]
+  and a
+  jr z, .moveBLeft
+  dec a
+  ld [_a], a
+  jr .moveArrowLeft
+.moveBLeft;     else if (y == 1 && b > 0) --b;
+  ld a, [_y]
+  cp 1
+  jr nz, .moveCLeft
+  ld a, [_b]
+  and a
+  jr z, .moveCLeft
+  dec a
+  ld [_b], a
+  jr .moveArrowLeft
+.moveCLeft;     else if (y == 2 && c > 0) --c;
+  ld a, [_y]
+  cp 2
+  jr nz, .moveArrowLeft
+  ld a, [_c]
+  and a
+  jr z, .moveArrowLeft
+  dec a
+  ld [_c], a
+.moveArrowLeft
   call MoveOptionsArrow;     move_options_arrow(y);
   WAITPAD_UP
   jr .waitVBLAndLoop
 .checkRightPressed;   else if (button_state & PADF_RIGHT && y < 3) {
+  ld a, [button_state]
+  and a, PADF_RIGHT
+  jr z, .checkStartAPressed
+  ld a, [_y]
+  cp 3
+  jr nc, .checkStartAPressed
   call gbdk_WaitVBL
-;     if (y == 0 && a < 2) ++a;
-;     else if (y == 1 && b < 1) ++b;
-;     else if (y == 2 && c < 1) ++c;
+.moveARight;     if (y == 0 && a < 2) ++a;
+  ld a, [_y]
+  and a
+  jr nz, .moveBRight
+  ld a, [_a]
+  cp 2
+  jr nc, .moveBRight
+  inc a
+  ld [_a], a
+  jr .moveArrowRight
+.moveBRight;     else if (y == 1 && b < 1) ++b;
+  ld a, [_y]
+  cp 1
+  jr nz, .moveCRight
+  ld a, [_b]
+  cp 1
+  jr nc, .moveCRight
+  inc a
+  ld [_b], a
+  jr .moveArrowRight
+.moveCRight;     else if (y == 2 && c < 1) ++c;
+  ld a, [_y]
+  cp 2
+  jr nz, .moveArrowRight
+  ld a, [_c]
+  cp 1
+  jr nc, .moveArrowRight
+  inc a
+  ld [_c], a
+.moveArrowRight
   call MoveOptionsArrow;     move_options_arrow(y);
   WAITPAD_UP
   jr .waitVBLAndLoop
 .checkStartAPressed;   if (button_state & (PADF_START | PADF_A) && y == 3) break;
+  ld a, [_y]
+  cp 3
+  jr nz, .checkBPressed
   ld a, [button_state]
   and a, PADF_START | PADF_A
-  jr z, .exitMoveOptionsArrowLoop
-  jr .waitVBLAndLoop
+  jr nz, .exitMoveOptionsArrowLoop
 .checkBPressed;   else if (button_state & PADF_B) break;
   ld a, [button_state]
   and a, PADF_B
-  jr z, .exitMoveOptionsArrowLoop
+  jr nz, .exitMoveOptionsArrowLoop
 .waitVBLAndLoop
   call gbdk_WaitVBL
   jp .moveOptionsArrowLoop
 .exitMoveOptionsArrowLoop
 
   di
-  ENABLE_RAM_MBC5;
+  ENABLE_RAM_MBC5
   ld a, [_a]
   ld [text_speed], a
   ld a, [_b]
@@ -367,6 +570,7 @@ UIShowOptions::
   ld [coaching_style], a
   DISABLE_RAM_MBC5
   ei
+
   ret
 
 MoveTextEntryArrow: ; bc = from xy, de = to xy

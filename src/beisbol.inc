@@ -250,9 +250,13 @@ ENDM
 
 JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
   call UpdateInput
+  ld a, [last_button_state]
+  and a
+  jr nz, .skip\@
   ld a, [button_state]
   and \2
   jp nz, \1
+.skip\@
 ENDM
 
 WAITPAD_UP: MACRO

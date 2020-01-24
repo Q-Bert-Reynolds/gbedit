@@ -19,3 +19,4 @@ tmp: DB
 tile_buffer: DS 512
 str_buffer: DS 64
 name_buffer: DS 16
+player_base: DS 14

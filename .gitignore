@@ -9,6 +9,8 @@ img/**/*.tilemap
 img/**/*.tiles
 data/*.c
 data/*.h
+data/*.asm
+data/*.inc
 
 # generated GameBoy files
 *.gb

@@ -234,59 +234,55 @@ SET_MOVE_OPTIONS_ARROW_TILE: MACRO ;var, row, column
 ENDM
 
 MoveOptionsArrow:
-; set_bkg_tiles(1,3,1,1,tile_buffer + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
   ld d, 1 ;x
   ld e, 3 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 0
-  call gbdk_SetBKGTiles
-; set_bkg_tiles(7,3,1,1,tile_buffer + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
+  call gbdk_SetBKGTiles; set_bkg_tiles(1,3,1,1,tile_buffer + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
+  
   ld d, 7 ;x
   ld e, 3 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 1
-  call gbdk_SetBKGTiles
-; set_bkg_tiles(14,3,1,1,tile_buffer + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
+  call gbdk_SetBKGTiles; set_bkg_tiles(7,3,1,1,tile_buffer + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
+  
   ld d, 14 ;x
   ld e, 3 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 2
-  call gbdk_SetBKGTiles
-
-; set_bkg_tiles(1,8,1,1,tile_buffer + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
+  call gbdk_SetBKGTiles; set_bkg_tiles(14,3,1,1,tile_buffer + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
+  
   ld d, 1 ;x
   ld e, 8 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 0
-  call gbdk_SetBKGTiles
-; set_bkg_tiles(10,8,1,1,tile_buffer + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
+  call gbdk_SetBKGTiles; set_bkg_tiles(1,8,1,1,tile_buffer + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
+  
   ld d, 10 ;x
   ld e, 8 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 1
-  call gbdk_SetBKGTiles
+  call gbdk_SetBKGTiles; set_bkg_tiles(10,8,1,1,tile_buffer + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
 
-; set_bkg_tiles(1,13,1,1,tile_buffer + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
   ld d, 1 ;x
   ld e, 13 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 0
-  call gbdk_SetBKGTiles
-; set_bkg_tiles(10,13,1,1,tile_buffer + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
+  call gbdk_SetBKGTiles; set_bkg_tiles(1,13,1,1,tile_buffer + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
+  
   ld d, 10 ;x
   ld e, 13 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 1
-  call gbdk_SetBKGTiles
+  call gbdk_SetBKGTiles; set_bkg_tiles(10,13,1,1,tile_buffer + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
 
-; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
   ld a, ARROW_RIGHT
   ld bc, tile_buffer
   ld [bc], a
@@ -300,26 +296,26 @@ MoveOptionsArrow:
   ld a, ARROW_RIGHT_BLANK
   ld [bc], a
 .setCancelTile
-  call gbdk_SetBKGTiles
+  call gbdk_SetBKGTiles; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
   ret
 
 TextSpeedOptionString:
-db "TEXT SPEED        "
-db "                  "
-db " FAST  MEDIUM SLOW"
+  DB "TEXT SPEED        "
+  DB "                  "
+  DB " FAST  MEDIUM SLOW"
 
 AnimationOptionString:
-db "AT-BAT ANIMATIONS "
-db "                  "
-db " ON       OFF     "
+  DB "AT-BAT ANIMATIONS "
+  DB "                  "
+  DB " ON       OFF     "
 
 CoachingOptionString:
-db "COACHING STYLE    "
-db "                  "
-db " SHIFT    SET     "
+  DB "COACHING STYLE    "
+  DB "                  "
+  DB " SHIFT    SET     "
 
 CancelOptionString:
-db "CANCEL"
+  DB "CANCEL"
 
 UIShowOptions::
   DISPLAY_OFF
@@ -363,10 +359,10 @@ UIShowOptions::
   ld a, 5
   ld e, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,0,20,5);
-; set_bkg_tiles(1,1,18,3,
-;   "TEXT SPEED        "
-;   "                  "
-;   " FAST  MEDIUM SLOW"
+  ; set_bkg_tiles(1,1,18,3,
+  ;   "TEXT SPEED        "
+  ;   "                  "
+  ;   " FAST  MEDIUM SLOW"
   ld d, 1
   ld e, 1
   ld h, 18
@@ -382,10 +378,10 @@ UIShowOptions::
   ld a, 20
   ld d, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,5,20,5);
-; set_bkg_tiles(1,6,18,3,
-;   "AT-BAT ANIMATIONS "
-;   "                  "
-;   " ON       OFF     "
+  ; set_bkg_tiles(1,6,18,3,
+  ;   "AT-BAT ANIMATIONS "
+  ;   "                  "
+  ;   " ON       OFF     "
   ld d, 1
   ld e, 6
   ld h, 18
@@ -402,10 +398,10 @@ UIShowOptions::
   ld a, 5
   ld e, a
   call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,10,20,5);
-; set_bkg_tiles(1,11,18,3,
-;   "COACHING STYLE    "
-;   "                  "
-;   " SHIFT    SET     "
+  ; set_bkg_tiles(1,11,18,3,
+  ;   "COACHING STYLE    "
+  ;   "                  "
+  ;   " SHIFT    SET     "
   ld d, 1
   ld e, 11
   ld h, 18
@@ -413,8 +409,8 @@ UIShowOptions::
   ld bc, CoachingOptionString
   call gbdk_SetBKGTiles
 
-; set_bkg_tiles(2,16,6,1,
-;   "CANCEL"
+  ; set_bkg_tiles(2,16,6,1,
+  ;   "CANCEL"
   ld d, 2
   ld e, 16
   ld h, 6

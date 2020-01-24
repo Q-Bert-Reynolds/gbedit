@@ -162,8 +162,15 @@ NewGame::
   DISPLAY_OFF
   CLEAR_SCREEN 0
     
-; load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
-; set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+  ld a, 33
+  ld de, _UI_FONT_TILE_COUNT
+  call LoadPlayerBkgData ; load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+
+  ld a, 33
+  ld b, 13
+  ld c, 4
+  ld de, _UI_FONT_TILE_COUNT
+  call SetPlayerBkgTiles; set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
   DISPLAY_ON
 
   FADE_IN

@@ -1,4 +1,5 @@
 INCLUDE "src/beisbol.inc"
+INCLUDE "src/roledex.asm"
 INCLUDE "src/core.asm"
 INCLUDE "src/ui.asm"
 INCLUDE "src/start.asm"
@@ -90,3 +91,5 @@ Main::
   ; call StartGame
   SET_BANK 0
   jp Main ;restart the game
+  nop
+  ret

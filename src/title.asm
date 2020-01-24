@@ -4,7 +4,7 @@ SECTION "Title", ROMX, BANK[TITLE_BANK]
 
 INCLUDE "img/title/title/title.asm"
 INCLUDE "img/title/title/title_sprites/title_sprites.asm"
-INCLUDE "img/players/001Bubbi.asm"
+; INCLUDE "img/players/001Bubbi.asm"
 
 IF DEF(_HOME)
 INCLUDE "img/home_version/version.asm"
@@ -85,24 +85,31 @@ CyclePlayersLCDInterrupt::
   ld [rSCX], a
   jp EndLCDInterrupt
 
-ShowPlayer: ; de = player number
+ShowPlayer: ;de = player number
   DISABLE_LCD_INTERRUPT
-  ; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
-  ld hl, _001BubbiTiles
-  ld de, _VRAM+$1000+PLAYER_INDEX*16
-  ld bc, _001BUBBI_TILE_COUNT*16
-  call mem_CopyToTileData
+  ld hl, IntroPlayerNums
+  add hl, de
+  ld a, [hl]
+  push af ;player num
+  ld de, PLAYER_INDEX
+  call LoadPlayerBkgData; load_player_bkg_data(intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
   CLEAR_BKG_AREA 20,10,7,7,0
-  ; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
-  ; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
 
-  ld d, 27-_001BUBBI_COLUMNS
-  ld e, 17-_001BUBBI_ROWS
-  ld h, _001BUBBI_COLUMNS
-  ld l, _001BUBBI_ROWS
-  ld a, PLAYER_INDEX
-  ld bc, _001BubbiTileMap
-  call SetBKGTilesWithOffset
+  pop af
+  push af
+  call GetPlayerImgColumns; a = 7-get_player_img_columns (intro_player_nums[p], TITLE_BANK);
+
+  ld d, a
+  ld a, 27
+  sub a, d
+  ld b, a;x
+  ld a, 17
+  sub a, d
+  ld c, a;y
+  pop af ;player num
+  ld de, PLAYER_INDEX
+  call SetPlayerBkgTiles; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
   ret
 

@@ -224,7 +224,7 @@ CyclePlayersLoop:
   ld a, 255
   ld [_i], a
 .exitableOneSecPauseLoop1
-  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_i]
   dec a
@@ -237,7 +237,7 @@ CyclePlayersLoop:
   ld a, [_j]
   add a, 128
   ld [_x], a
-  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   ld a, [_z]
   and a
   jr nz, .skipBallToss
@@ -279,7 +279,7 @@ CyclePlayersLoop:
   xor a
   ld [_x], a
 .movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=4) {
-  JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_x]
   add a, 4
@@ -430,7 +430,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ; call gbdk_SetBKGTiles ;set_bkg_tiles(19-l,15,l,1,str_buff);
   WAITPAD_UP
 .showGameStatsLoop ;while (1) {
-    JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;
     JUMP_TO_IF_BUTTONS .backPressed, PADF_B; else if (joypad() & J_B) {
     call gbdk_WaitVBL
     jr .showGameStatsLoop

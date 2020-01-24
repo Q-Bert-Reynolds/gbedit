@@ -9,12 +9,14 @@ INCLUDE "src/gbdk.asm"
 INCLUDE "src/math.asm"
 
 ; banks
-UI_BANK         EQU 2
-START_BANK      EQU 3
-TITLE_BANK      EQU 4
-NEW_GAME_BANK   EQU 5
-PLAY_BALL_BANK  EQU 6
-PLAYER_IMG_BANK EQU 10
+UI_BANK             EQU 2
+START_BANK          EQU 3
+TITLE_BANK          EQU 4
+NEW_GAME_BANK       EQU 5
+PLAY_BALL_BANK      EQU 6
+PLAYER_STRINGS_BANK EQU 8
+PLAYER_DATA_BANK    EQU 9
+PLAYER_IMG_BANK     EQU 10
 
 ; GameBoy palettes
 BG_PALETTE    EQU $E4
@@ -248,8 +250,12 @@ SET_SPRITE_TILES: MACRO ;count, map, flags, offset
   jr nz, .setSprite\@
 ENDM
 
-JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
+UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS: MACRO ;address, buttons
   call UpdateInput
+  JUMP_TO_IF_BUTTONS \1, \2
+ENDM
+
+JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
   ld a, [last_button_state]
   and a
   jr nz, .skip\@

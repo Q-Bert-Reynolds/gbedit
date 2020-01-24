@@ -93,7 +93,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop1
-  JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_i]
   sub a
@@ -112,7 +112,7 @@ Start::
   ld a, [_y]
   ld e, a ;y
   call gbdk_MoveSprite
-  JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_y]
   add a, 3
@@ -145,7 +145,7 @@ Start::
   ld e, a ;y
   call gbdk_MoveSprite
   pop hl ;pop has to happen before jump or return address will be incorrect
-  JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [hli]
   ld [rBGP], a
@@ -161,7 +161,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop2
-  JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_i]
   sub a
@@ -183,7 +183,7 @@ Start::
   xor a
   ld [_k], a
 .slidePlayersLoop
-  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   ld a, [_k]
   add a, 32
   ld [rSCX], a
@@ -209,7 +209,7 @@ Start::
   ld a, 60
   ld [_i], a
 .exitableOneSecPauseLoop3
-  JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
   call gbdk_WaitVBL
   ld a, [_i]
   sub a

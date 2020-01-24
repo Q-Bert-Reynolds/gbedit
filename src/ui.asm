@@ -32,7 +32,7 @@ FlashNextArrow: ;de = xy
   pop de;xy
 .loop1 ;for (a = 20; a > 0; --a) {
   ld [_a], a
-  JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
   push de;xy
   ld de, 10
   call gbdk_Delay
@@ -56,7 +56,7 @@ FlashNextArrow: ;de = xy
   ld a, 20
 .loop2 ;for (a = 20; a > 0; --a) {
   ld [_a], a
-  JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
   push de;xy
   ld de, 10
   call gbdk_Delay

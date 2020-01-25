@@ -1,7 +1,7 @@
 IF !DEF(ROLEDEX)
 ROLEDEX SET 1
 
-IMG_BANK_COUNT      EQU 9
+IMG_BANK_COUNT EQU 6
 PLAYERS_PER_BANK = 151 / IMG_BANK_COUNT
 
 INCLUDE "data/player_img.asm"
@@ -32,6 +32,58 @@ LoadPlayerBaseData:: ; a = number
   SWITCH_ROM_MBC5 PLAYER_DATA_BANK
   ; load_base_data(number);
   RETURN_BANK
+  ret
+
+PutPlayerTilesInHL: ;A000
+  push af
+  push bc
+  ld hl, $4000
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
+  pop af
+  ret
+
+PutPlayerTileCountsInHL: ;A002
+  push af
+  push bc
+  ld hl, $4002
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
+  pop af
+  ret
+
+PutPlayerColumnsInHL: ;A004
+  push af
+  push bc
+  ld hl, $4004
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
+  pop af
+  ret
+
+PutPlayerTileMapsInHL: ;A006
+  push af
+  push bc
+  ld hl, $4006
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
+  pop af
   ret
 
 SwitchPlayerImageBank: ; a = number, return adjusted number in a
@@ -83,7 +135,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   pop af ;num
   ld c, a
   push bc ;num
-  ld hl, PlayerTileCounts0
+  call PutPlayerTileCountsInHL
   add hl, bc
   ld a, [hl]
   ld de, 16
@@ -93,7 +145,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
 
   pop de ;num
   push bc ;tile count
-  ld hl, PlayerTiles0
+  call PutPlayerTilesInHL
   add hl, de
   add hl, de ;address offset is 2 bytes
   ld a, [hli]
@@ -116,7 +168,7 @@ GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   ld b, a
   pop af ;num
   ld c, a
-  ld hl, PlayerColumns0
+  call PutPlayerColumnsInHL
   add hl, bc
   ld a, [hl]
   push af ;columns
@@ -135,7 +187,7 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   pop af ;num
   push af
   ld c, a
-  ld hl, PlayerTileMaps0
+  call PutPlayerTileMapsInHL
   add hl, bc
   add hl, bc ;address offset is 2 bytes
   ld a, [hli]
@@ -149,7 +201,7 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   pop af ;num
   push hl ;tile map
   ld c, a
-  ld hl, PlayerColumns0
+  call PutPlayerColumnsInHL
   add hl, bc
   pop bc ;tile map
   ld a, [hl]

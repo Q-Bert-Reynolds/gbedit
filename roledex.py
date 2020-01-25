@@ -23,7 +23,12 @@ def generate_img_bank(roledex):
         remainder = 151 - players_per_file * file_count
         player_count += remainder
 
-      c_file.write("SECTION \"Player Images "+str(bank)+"\", ROMX, BANK[PLAYER_IMG_BANK+"+str(bank)+"]\n\n")
+      c_file.write("SECTION \"Player Images "+str(bank)+"\", ROMX, BANK[PLAYER_IMG_BANK+"+str(bank)+"]\n")
+      c_file.write("DW PlayerTiles"+str(bank)+"\n")
+      c_file.write("DW PlayerTileCounts"+str(bank)+"\n")
+      c_file.write("DW PlayerColumns"+str(bank)+"\n")
+      c_file.write("DW PlayerTileMaps"+str(bank)+"\n\n")
+
       for n in range(player_count):
         player = roledex[bank*players_per_file+n]
         name = player["#"] + player["Nickname"].replace(" ","").replace("-","")

@@ -4,7 +4,6 @@ SECTION "Title", ROMX, BANK[TITLE_BANK]
 
 INCLUDE "img/title/title/title.asm"
 INCLUDE "img/title/title/title_sprites/title_sprites.asm"
-; INCLUDE "img/players/001Bubbi.asm"
 
 IF DEF(_HOME)
 INCLUDE "img/home_version/version.asm"

@@ -35,6 +35,7 @@ LoadPlayerBaseData:: ; a = number
   ret
 
 LoadPlayerBkgData:: ; a = number, de = vram_offset
+  dec a ;roledex entry 1 = index 0
   push af ;a = num
 
   ld a, 16
@@ -43,20 +44,52 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   add hl, de ;_VRAM+$1000+vram_offset*16
   ld d, h
   ld e, l
+  pop af
+  push de ;vram dest
+  push af ;num
 
   SWITCH_ROM_MBC5 PLAYER_IMG_BANK
-  pop af ;a = num
-  ld hl, _001BubbiTiles
-  ld bc, _001BUBBI_TILE_COUNT*16
+  xor a
+  ld b, a
+  pop af ;num
+  ld c, a
+  push bc ;num
+  ld hl, PlayerTileCounts0
+  add hl, bc
+  ld a, [hl]
+  ld de, 16
+  call Multiply
+  ld b, h
+  ld c, l
+
+  pop de ;num
+  push bc ;tile count
+  ld hl, PlayerTiles0
+  add hl, de
+  add hl, de ;address offset is 2 bytes
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b ;tiles
+
+  pop bc ;tile count
+  pop de ;vram dest
   call mem_CopyToTileData
   RETURN_BANK
   ret 
   
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
+  dec a ;roledex entry 1 = index 0
   push af ;num
   SWITCH_ROM_MBC5 PLAYER_IMG_BANK
+  xor a
+  ld b, a
   pop af ;num
-  ld a, 5
+  ld c, a
+  ld hl, PlayerColumns0
+  add hl, bc
+  ld a, [hl]
   push af ;columns
   RETURN_BANK
   pop af ;columns
@@ -68,21 +101,21 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   push de ;vram off
   push af ;num
   SWITCH_ROM_MBC5 PLAYER_IMG_BANK
-  ; xor a
-  ; ld b, a
-  ; pop af ;num
-  ; push af
-  ; ld c, a
-  ; ld hl, PlayerTileMaps0
-  ; add hl, bc
-  ; add hl, bc ;address offset is 2 bytes
-  ; ld a, [hli]
-  ; ld b, a
-  ; ld a, [hl]
-  ; ld l, a
-  ; ld h, b ;tile map
-  ld hl, _001BubbiTileMap
 
+  xor a
+  ld b, a
+  pop af ;num
+  push af
+  ld c, a
+  ld hl, PlayerTileMaps0
+  add hl, bc
+  add hl, bc ;address offset is 2 bytes
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b ;tile map
+  
   xor a
   ld b, a
   pop af ;num

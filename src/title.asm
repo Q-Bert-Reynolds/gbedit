@@ -224,10 +224,9 @@ ShowTitle:
 
   ld a, 128
   ld [_x], a
-CyclePlayersLoop:
   xor a
   ld [_z], a ;current player index
-
+CyclePlayersLoop:
   ld a, 255
   ld [_i], a
 .exitableOneSecPauseLoop1
@@ -272,7 +271,7 @@ CyclePlayersLoop:
   ld a, [_z]
   inc a
   ld [_z], a
-  sub a, 16
+  cp 16
   jr nz, .skipMod
   xor a
   ld [_z], a

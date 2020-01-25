@@ -34,6 +34,32 @@ LoadPlayerBaseData:: ; a = number
   RETURN_BANK
   ret
 
+SwitchPlayerImageBank: ; a = number
+  ld b, a ;num
+  ld c, 0 ;bank
+  ld a, PLAYERS_PER_BANK
+.findBankLoop
+  push af
+  cp b
+  jr nc, .setBank ;if num <= PLAYERS_PER_BANK * (c+1)
+  ld a, c
+  cp IMG_BANK_COUNT-1
+  jr z, .setBank ;if bank == bank_count-1
+  inc c
+  pop af
+  add a, PLAYERS_PER_BANK
+  jr .findBankLoop
+.setBank
+  pop af
+  ld hl, rROMB0
+  ld a, c
+  add a, PLAYER_IMG_BANK
+  ld [hl], a
+  xor a
+  ld hl, rROMB1
+  ld [hl], a
+  ret
+
 LoadPlayerBkgData:: ; a = number, de = vram_offset
   dec a ;roledex entry 1 = index 0
   push af ;a = num
@@ -48,7 +74,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   push de ;vram dest
   push af ;num
 
-  SWITCH_ROM_MBC5 PLAYER_IMG_BANK
+  call SwitchPlayerImageBank
   xor a
   ld b, a
   pop af ;num
@@ -82,7 +108,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   dec a ;roledex entry 1 = index 0
   push af ;num
-  SWITCH_ROM_MBC5 PLAYER_IMG_BANK
+  call SwitchPlayerImageBank
   xor a
   ld b, a
   pop af ;num
@@ -100,8 +126,7 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   push bc ;xy
   push de ;vram off
   push af ;num
-  SWITCH_ROM_MBC5 PLAYER_IMG_BANK
-
+  call SwitchPlayerImageBank
   xor a
   ld b, a
   pop af ;num

@@ -34,7 +34,7 @@ LoadPlayerBaseData:: ; a = number
   RETURN_BANK
   ret
 
-SwitchPlayerImageBank: ; a = number
+SwitchPlayerImageBank: ; a = number, return adjusted number in a
   ld b, a ;num
   ld c, 0 ;bank
   ld a, PLAYERS_PER_BANK
@@ -50,7 +50,6 @@ SwitchPlayerImageBank: ; a = number
   add a, PLAYERS_PER_BANK
   jr .findBankLoop
 .setBank
-  pop af
   ld hl, rROMB0
   ld a, c
   add a, PLAYER_IMG_BANK
@@ -58,6 +57,11 @@ SwitchPlayerImageBank: ; a = number
   xor a
   ld hl, rROMB1
   ld [hl], a
+  pop af 
+  ld c, a ;PLAYERS_PER_BANK * (bank+1)
+  ld a, b ;num
+  sub a, c
+  add a, PLAYERS_PER_BANK
   ret
 
 LoadPlayerBkgData:: ; a = number, de = vram_offset
@@ -72,9 +76,8 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   ld e, l
   pop af
   push de ;vram dest
-  push af ;num
-
   call SwitchPlayerImageBank
+  push af ;num
   xor a
   ld b, a
   pop af ;num
@@ -107,8 +110,8 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   dec a ;roledex entry 1 = index 0
-  push af ;num
   call SwitchPlayerImageBank
+  push af ;num
   xor a
   ld b, a
   pop af ;num
@@ -125,8 +128,8 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   dec a ;roledex entry 1 = index 0
   push bc ;xy
   push de ;vram off
-  push af ;num
   call SwitchPlayerImageBank
+  push af ;num
   xor a
   ld b, a
   pop af ;num

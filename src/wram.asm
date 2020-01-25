@@ -15,8 +15,16 @@ _w: DW
 _x: DW
 _y: DW
 _z: DW
-tmp: DB
 tile_buffer: DS 512
 str_buffer: DS 64
 name_buffer: DS 16
 player_base: DS 14
+balls_strikes_outs: DB; //0bxBBBSSOO
+runners_on_base: DW; //0bHHHHTTTTSSSSFFFF
+frame: DB
+home_team: DB
+away_team: DB
+home_score: DB
+away_score: DB
+move_choice: DB
+play_menu_selection: DB

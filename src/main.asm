@@ -5,6 +5,7 @@ INCLUDE "src/ui.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"
+INCLUDE "src/play_ball.asm"
 
 INCLUDE "src/wram.asm"
 INCLUDE "src/sram.asm"
@@ -88,7 +89,7 @@ Main::
   call NewGame
 .startGame
   SET_BANK PLAY_BALL_BANK
-  ; call StartGame
+  call StartGame
   SET_BANK 0
   jp Main ;restart the game
   nop

@@ -166,10 +166,14 @@ str_Number::
   and a
   jr nz, .divLoop
 
-  srl c;num digits / 2
   pop hl ;dest string
   xor a
   ld [de], a;terminate string
+  ld a, c
+  cp 1
+  ret z ;no need to swap if only one digit
+
+  srl c;num digits / 2
   dec de
 .swapLoop
   ld a, [hl]

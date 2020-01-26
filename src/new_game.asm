@@ -6,8 +6,6 @@ INCLUDE "img/coaches/doc_hickory.asm"
 INCLUDE "img/coaches/calvin.asm"
 INCLUDE "img/coaches/nolan0.asm"
 
-ReplaceString:
-  DB "%s", 0
 HomeNames:
   DB "NEW NAME\nRED\nCALVIN\nHOMER", 0
 AwayNames:
@@ -277,7 +275,7 @@ ENDC
   call SelectNameOrTextEntry
 
 ; sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
-  ld bc, ReplaceString
+  ld bc, name_buffer
   ld hl, RightSoYourNameString
   ld de, str_buffer
   call str_Replace
@@ -384,7 +382,7 @@ ENDC
 ; sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
   ld hl, IRememberNowString
   ld de, str_buffer
-  ld bc, ReplaceString
+  ld bc, name_buffer
   call str_Replace
 ; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
@@ -439,7 +437,7 @@ ENDC
 ; sprintf(str_buff, "%s!", user_name);
   ld hl, ExclaimNameString
   ld de, str_buffer
-  ld bc, ReplaceString
+  ld bc, name_buffer
   call str_Replace
 
 ; reveal_text(str_buff, NEW_GAME_BANK);

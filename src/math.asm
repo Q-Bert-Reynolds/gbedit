@@ -7,3 +7,12 @@ Multiply:: ; hl = de * a
   dec a
   jr nz, .loop
   ret
+
+Modulo:: ; a = a % b
+  cp b
+  jr c, .found
+.loop
+  sub a, b
+  jr nc, .loop  
+.found
+  ret

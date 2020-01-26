@@ -13,6 +13,10 @@ PlayMenuString:
   DB "PLAY  TEAM"
   DB "          "
   DB "ITEM  RUN "
+TypeSlashText:
+  DB "TYPE/", 0
+QuittingIsNotAnOptionText:
+  DB "Quitting is\nnot an option!", 0
 
 ; Player test_player;
 ; Move move1;
@@ -331,33 +335,158 @@ DrawUI:
   ret 
 
 MovePlayMenuArrow:
-  ;    for (i = 0; i < 2; i++) {
-  ;        for (j = 0; j < 2; j++) {
-  ;            tiles[0] = (x==i && y==j) ? ARROW_RIGHT : 0;
-  ;            set_bkg_tiles(i*6+8,j*2+14,1,1,tiles);
+  xor a
+  ld [_i], a
+.columnLoop ;for (i = 0; i < 2; i++) {
+    xor a
+    ld [_j], a
+.rowLoop ;for (j = 0; j < 2; j++) {
+      ld hl, tile_buffer
+      xor a
+      ld [hl], a
+      ld a, [_x]
+      ld b, a
+      ld a, [_i]
+      cp b
+      jr nz, .notArrow
+      ld a, [_y]
+      ld b, a
+      ld a, [_j]
+      cp b
+      jr nz, .notArrow
+      ld a, ARROW_RIGHT
+      ld [hl], a
+.notArrow ;tiles[0] = (x==i && y==j) ? ARROW_RIGHT : 0;
+      ld a, [_i]
+      add a, a;i*2
+      add a, a;i*4
+      ld b, a
+      ld a, [_i]
+      add a, a;i*2
+      add a, b;i*6
+      add a, 8;i*6+8
+      ld d, a ;x
+      ld a, [_j]
+      add a, a;j*2
+      add a, 14;j*2+14
+      ld e, a;y
+      ld a, 1
+      ld h, a
+      ld l, a
+      ld bc, tile_buffer
+      call gbdk_SetBKGTiles;set_bkg_tiles(i*6+8,j*2+14,1,1,tiles);
+
+      ld a, [_j]
+      inc a
+      ld [_j], a
+      cp 2
+      jr nz, .rowLoop
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp 2
+    jr nz, .columnLoop
   ret
 
 SelectPlayMenuItem:
-  ;    x = play_menu_selection % 2;
-  ;    y = (play_menu_selection & 2) >> 1;
-  ;    move_play_menu_arrow();
-  ;    update_waitpadup();
-  ;    while (1) {
-  ;        k = joypad();
-  ;        if (k & J_UP && y == 1) { y = 0; move_play_menu_arrow(); }
-  ;        else if (k & J_DOWN && y == 0) { y = 1; move_play_menu_arrow(); }
-  ;        else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
-  ;        else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
+  xor a
+  ld [_x], a
+  ld a, [play_menu_selection]
+  bit 0, a
+  jr z, .xIsZero
+  ld a, 1
+.xIsZero
+  ld [_x], a ;x = play_menu_selection % 2;
 
-  ;        if (k & J_A) break;
-  ;        update_vbl();
-  ;    }
-  ;    play_menu_selection = x * 2 + y;
+  xor a
+  ld [_y], a
+  ld a, [play_menu_selection]
+  bit 1, a
+  jr z, .yIsZero
+  ld a, 1
+.yIsZero
+  ld [_y], a ;y = (play_menu_selection & 2) >> 1;
+
+  call MovePlayMenuArrow
+  WAITPAD_UP
+.moveMenuArrowLoop ;while (1) {
+    call UpdateInput ;k = joypad();
+.testUpPressed ;if (k & J_UP && y == 1) { y = 0; move_play_menu_arrow(); }
+    ld a, [button_state]
+    and a, PADF_UP
+    jr z, .testDownPressed
+    ld a, [_y]
+    cp 1
+    jr nz, .testDownPressed
+    xor a
+    ld [_y], a
+    jr .moveArrow
+.testDownPressed ;else if (k & J_DOWN && y == 0) { y = 1; move_play_menu_arrow(); }
+    ld a, [button_state]
+    and a, PADF_DOWN
+    jr z, .testLeftPressed
+    ld a, [_y]
+    and a
+    jr nz, .testLeftPressed
+    ld a, 1
+    ld [_y], a
+    jr .moveArrow    
+.testLeftPressed ;else if (k & J_LEFT && x == 1) { x = 0; move_play_menu_arrow(); }
+    ld a, [button_state]
+    and a, PADF_LEFT
+    jr z, .testRightPressed
+    ld a, [_x]
+    cp 1
+    jr nz, .testRightPressed
+    xor a
+    ld [_x], a
+    jr .moveArrow
+.testRightPressed ;else if (k & J_RIGHT && x == 0) { x = 1; move_play_menu_arrow(); }
+    ld a, [button_state]
+    and a, PADF_RIGHT
+    jr z, .testAPressed
+    ld a, [_x]
+    xor a
+    jr nz, .testAPressed
+    ld a, 1
+    ld [_x], a
+.moveArrow
+    call MovePlayMenuArrow
+    
+.testAPressed ;if (k & J_A) break;
+    ld a, [button_state]
+    and a, PADF_A
+    jr nz, .exitMoveMenuArrowLoop
+    call gbdk_WaitVBL
+    jr .moveMenuArrowLoop
+.exitMoveMenuArrowLoop
+  ld a, [_x]
+  add a, a ;x*2
+  ld b, a
+  ld a, [_y];x*2+y
+  add a, b 
+  ld [play_menu_selection], a
   ret
 
 MoveMoveMenuArrow:; y
-  ;for (i = 0; i < 4; i++) {
-  ;    tiles[i] = (i == y) ? ARROW_RIGHT : 0;
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.setTilesLoop ;for (i = 0; i < 4; i++) {
+    ld a, [_i]
+    ld b, a
+    ld a, [_y]
+    ld a, ARROW_RIGHT
+    cp b
+    jr z, .setTile
+    xor a
+.setTile
+    ld [hli], a;tiles[i] = (i == y) ? ARROW_RIGHT : 0;
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp 4
+    jr nz, .setTilesLoop
 
   ld d, 6
   ld e, 13
@@ -378,7 +507,7 @@ ShowMoveInfo: ;Move *m
   ld e, 9
   ld h, 5
   ld l, 1
-  ; ld bc, "TYPE/"
+  ld bc, TypeSlashText
   call gbdk_SetBKGTiles;set_bkg_tiles(1,9,5,1,"TYPE/");
 
   ; ld hl, types[0]
@@ -626,6 +755,14 @@ PlayBall:; (Player *p, UBYTE move) {
 
 StartGame::
   DISPLAY_OFF
+
+  ld hl, rBGP
+  ld [hl], BG_PALETTE
+  ld hl, rOBP0
+  ld [hl], SPR_PALETTE_0
+  ld hl, rOBP1
+  ld [hl], SPR_PALETTE_1
+
   xor a
   ld [rSCX], a
   ld [rSCY], a ;move_bkg(0,0);
@@ -708,7 +845,7 @@ StartGame::
 .runMenuItemSelected ;case 3:
     cp 3
     jr nz, .playBallLoop
-    ; ld hl, QuittingIsNotAnOptionText
+    ld hl, QuittingIsNotAnOptionText
     call RevealText;reveal_text("Quitting is\nnot an option!", PLAY_BALL_BANK);
     HIDE_WIN
     jp .playBallLoop

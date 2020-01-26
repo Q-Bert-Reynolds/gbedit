@@ -389,22 +389,13 @@ MovePlayMenuArrow:
   ret
 
 SelectPlayMenuItem:
-  xor a
-  ld [_x], a
   ld a, [play_menu_selection]
-  bit 0, a
-  jr z, .xIsZero
-  ld a, 1
-.xIsZero
+  and %00000001
   ld [_x], a ;x = play_menu_selection % 2;
 
-  xor a
-  ld [_y], a
   ld a, [play_menu_selection]
-  bit 1, a
-  jr z, .yIsZero
-  ld a, 1
-.yIsZero
+  and %00000010
+  srl a 
   ld [_y], a ;y = (play_menu_selection & 2) >> 1;
 
   call MovePlayMenuArrow
@@ -460,10 +451,10 @@ SelectPlayMenuItem:
     call gbdk_WaitVBL
     jr .moveMenuArrowLoop
 .exitMoveMenuArrowLoop
-  ld a, [_x]
-  add a, a ;x*2
+  ld a, [_y]
+  add a, a ;y*2
   ld b, a
-  ld a, [_y];x*2+y
+  ld a, [_x];y*2+x
   add a, b 
   ld [play_menu_selection], a
   ret

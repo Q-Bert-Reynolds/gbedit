@@ -13,6 +13,8 @@ PlayMenuString:
   DB "PLAY  TEAM"
   DB "          "
   DB "ITEM  RUN "
+LetsGoText:
+  DB "Let's go!"
 TypeSlashText:
   DB "TYPE/", 0
 QuittingIsNotAnOptionText:
@@ -23,9 +25,23 @@ QuittingIsNotAnOptionText:
 ; Move move2;
 ; Move *moves[4];
 
-; UBYTE balls   () { return (balls_strikes_outs & BALLS_MASK  ) >> 4; }
-; UBYTE strikes () { return (balls_strikes_outs & STRIKES_MASK) >> 2; }
-; UBYTE outs    () { return (balls_strikes_outs & OUTS_MASK   ); }
+Balls:; (balls_strikes_outs & BALLS_MASK) >> 4
+  ld a, [balls_strikes_outs]
+  and BALLS_MASK
+  swap a
+  ret
+
+Strikes:; (balls_strikes_outs & STRIKES_MASK) >> 2
+  ld a, [balls_strikes_outs]
+  and STRIKES_MASK
+  srl a
+  srl a
+  ret
+  
+Outs:; (balls_strikes_outs & OUTS_MASK
+  ld a, [balls_strikes_outs]
+  and OUTS_MASK
+  ret
 
 MoveCoach:
 ; LYC_REG = 0;
@@ -50,57 +66,57 @@ SlideOutLCDInterrupt::
   ret
 
 HealthPct: ;input Player *p, returns str_buff
-; a = p->hp; // * 100 / max_hp; 
-; if (a >= 100) strcpy(str_buff, "100");
-; if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
-; else sprintf(str_buff, "%d%c", a, '%');
-; return str_buff;
+  ; a = p->hp; // * 100 / max_hp; 
+  ; if (a >= 100) strcpy(str_buff, "100");
+  ; if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
+  ; else sprintf(str_buff, "%d%c", a, '%');
+  ; return str_buff;
   ret
 
 BattingAvg: ;input Player *p, returns str_buff
-;     a = p->hits * 1000 / p->at_bats;
-;     if (a >= 1000) strcpy(str_buff, "1.000");
-;     else if (a < 10) sprintf(str_buff, ".00%d", a);
-;     else if (a < 100) sprintf(str_buff, ".0%d", a);
-;     else sprintf(str_buff, ".%d", a);
-;     return str_buff;
+  ; a = p->hits * 1000 / p->at_bats;
+  ; if (a >= 1000) strcpy(str_buff, "1.000");
+  ; else if (a < 10) sprintf(str_buff, ".00%d", a);
+  ; else if (a < 100) sprintf(str_buff, ".0%d", a);
+  ; else sprintf(str_buff, ".%d", a);
+  ; return str_buff;
   ret
 
 EarnedRunAvg: ;input Player *p, returns str_buff
-;     a = p->runs_allowed * 2700 / p->outs_recorded;
-;     b = a/100;
-;     c = a%100;
-;     if (b >= 1000) sprintf(str_buff, "%d", b);
-;     else sprintf(str_buff, "%d.%d", b, c);
-;     return str_buff;
+  ; a = p->runs_allowed * 2700 / p->outs_recorded;
+  ; b = a/100;
+  ; c = a%100;
+  ; if (b >= 1000) sprintf(str_buff, "%d", b);
+  ; else sprintf(str_buff, "%d.%d", b, c);
+  ; return str_buff;
   ret
 
 ; // TODO: this can probably be cleaned up a bit
 SetBkgDataDoubled: ;de = first_tile, bc = nb_tiles, hl = data
-;     for (i = 0; i < nb_tiles*16; i+=16) {
-;         for (j = 0; j < 8; j+=2) {
-;             b = data[i+j];
-;             tiles[i*4+j*2]    = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
-;             tiles[i*4+j*2+16] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
-;             tiles[i*4+j*2+2]  = tiles[i*4+j*2];
-;             tiles[i*4+j*2+18] = tiles[i*4+j*2+16];
-;             b = data[i+j+1];
-;             tiles[i*4+j*2+1]  = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
-;             tiles[i*4+j*2+17] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
-;             tiles[i*4+j*2+3]  = tiles[i*4+j*2+1];
-;             tiles[i*4+j*2+19] = tiles[i*4+j*2+17];
-;             b = data[i+j+8];
-;             tiles[i*4+j*2+32] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
-;             tiles[i*4+j*2+48] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
-;             tiles[i*4+j*2+34] = tiles[i*4+j*2+32];
-;             tiles[i*4+j*2+50] = tiles[i*4+j*2+48];
-;             b = data[i+j+9];
-;             tiles[i*4+j*2+33] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
-;             tiles[i*4+j*2+49] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
-;             tiles[i*4+j*2+35] = tiles[i*4+j*2+33];
-;             tiles[i*4+j*2+51] = tiles[i*4+j*2+49];
-;         }
-;     }
+  ; for (i = 0; i < nb_tiles*16; i+=16) {
+  ;     for (j = 0; j < 8; j+=2) {
+  ;         b = data[i+j];
+  ;         tiles[i*4+j*2]    = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+  ;         tiles[i*4+j*2+16] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+  ;         tiles[i*4+j*2+2]  = tiles[i*4+j*2];
+  ;         tiles[i*4+j*2+18] = tiles[i*4+j*2+16];
+  ;         b = data[i+j+1];
+  ;         tiles[i*4+j*2+1]  = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+  ;         tiles[i*4+j*2+17] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+  ;         tiles[i*4+j*2+3]  = tiles[i*4+j*2+1];
+  ;         tiles[i*4+j*2+19] = tiles[i*4+j*2+17];
+  ;         b = data[i+j+8];
+  ;         tiles[i*4+j*2+32] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+  ;         tiles[i*4+j*2+48] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+  ;         tiles[i*4+j*2+34] = tiles[i*4+j*2+32];
+  ;         tiles[i*4+j*2+50] = tiles[i*4+j*2+48];
+  ;         b = data[i+j+9];
+  ;         tiles[i*4+j*2+33] = (b&128)|((b>>1)&96)|((b>>2)&24)|((b>>3)&6)|((b>>4)&1);
+  ;         tiles[i*4+j*2+49] = ((b<<4)&128)|((b<<3)&96)|((b<<2)&24)|((b<<1)&6)|(b&1);
+  ;         tiles[i*4+j*2+35] = tiles[i*4+j*2+33];
+  ;         tiles[i*4+j*2+51] = tiles[i*4+j*2+49];
+  ;     }
+  ; }
   call mem_CopyVRAM; set_bkg_data(first_tile, nb_tiles*4, tiles);
   ret
 
@@ -125,20 +141,20 @@ PlayIntro:
   ld [rWY], a;move_win(7,96);
   SHOW_WIN
 
-;     for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
-;         for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-;             if (j < 3) {
-;                 set_sprite_tile(
-;                     j*(_CALVIN_BACK_COLUMNS-1)+i, 
-;                     _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
-;                 );
-;             }
-;             else {
-;                 tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = 
-;                     _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
-;             }
-;         }
-;     }
+  ; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
+  ;     for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+  ;         if (j < 3) {
+  ;             set_sprite_tile(
+  ;                 j*(_CALVIN_BACK_COLUMNS-1)+i, 
+  ;                 _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+  ;             );
+  ;         }
+  ;         else {
+  ;             tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = 
+  ;                 _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
+  ;         }
+  ;     }
+  ; }
 
   ld d, 1
   ld e, 16-_CALVIN_BACK_ROWS
@@ -205,7 +221,7 @@ PlayIntro:
   ld [rSCX], a
   ld [rSCY], a ;move_bkg(0,0);
 
-  ; ld hl, LetsGoText
+  ld hl, LetsGoText
   call RevealText ;reveal_text("Let's go!", PLAY_BALL_BANK);
   HIDE_WIN
   ret
@@ -253,24 +269,169 @@ DrawPlayerUI: ;UBYTE team, Player *p
   ret
 
 DrawBases:
-  ;for (i = 0; i < 5; i+=2) tiles[i] = 0;
-  ;tiles[5] = (runners_on_base & FIRST_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
-  ;tiles[1] = (runners_on_base & SECOND_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
-  ;tiles[3] = (runners_on_base & THIRD_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
-  ;set_bkg_tiles(9,0,3,2,tiles);
+  xor a;for (i = 0; i < 5; i+=2) tiles[i] = 0;
+  ld hl, tile_buffer
+  ld [hl], a
+  ld hl, tile_buffer+2
+  ld [hl], a
+  ld hl, tile_buffer+4
+  ld [hl], a
+
+  ld hl, tile_buffer+5 ;tiles[5] = (runners_on_base & FIRST_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
+  ld a, EMPTY_BASE
+  ld [hl], a
+  ld a, [runners_on_base+1]
+  and a, FIRST_BASE_MASK
+  and a
+  jr z, .notOnFirst
+  ld a, OCCUPIED_BASE
+  ld [hl], a
+.notOnFirst
+
+  ld hl, tile_buffer+1 ;tiles[1] = (runners_on_base & SECOND_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
+  ld a, EMPTY_BASE
+  ld [hl], a
+  ld a, [runners_on_base+1]
+  and a, SECOND_BASE_MASK
+  and a
+  jr z, .notOnSecond
+  ld a, OCCUPIED_BASE
+  ld [hl], a
+.notOnSecond
+  
+  ld hl, tile_buffer+3 ;tiles[3] = (runners_on_base & THIRD_BASE_MASK) ? OCCUPIED_BASE : EMPTY_BASE;
+  ld a, EMPTY_BASE
+  ld [hl], a
+  ld a, [runners_on_base]
+  and a, THIRD_BASE_MASK >> 8
+  and a
+  jr z, .notOnThird
+  ld a, OCCUPIED_BASE
+  ld [hl], a
+.notOnThird
+
+  ld d, 9;x
+  ld e, 0;y
+  ld h, 3;w
+  ld l, 2;h
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(9,0,3,2,tiles);
   ret
 
 DrawCountOutsInning:
-  ;tiles[0] = (frame % 2 == 0) ? INNING_TOP : INNING_BOTTOM;
-  ;tiles[1] = 49 + frame/2;
-  ;set_bkg_tiles(1,13,2,1,tiles);
-  ;set_bkg_tiles(1,14,1,3,"BSO");
-  ;for (i = 0; i < 4; i++) tiles[0+i] = (i < balls()  ) ? BASEBALL : DOTTED_CIRCLE;
-  ;for (i = 0; i < 3; i++) tiles[4+i] = (i < strikes()) ? BASEBALL : DOTTED_CIRCLE;
-  ;tiles[7] = 0;
-  ;for (i = 0; i < 3; i++) tiles[8+i] = (i < outs()   ) ? BASEBALL : DOTTED_CIRCLE;
-  ;tiles[11] = 0;
-  ;set_bkg_tiles(2,14,4,3,tiles);
+  ld hl, tile_buffer
+  ld [hl], INNING_BOTTOM
+  ld a, [frame]
+  bit 0, a
+  jr nz, .skip ;tiles[0] = (frame % 2 == 0) ? INNING_TOP : INNING_BOTTOM;
+  ld [hl], INNING_TOP
+.skip
+  inc hl
+  ld d, h
+  ld e, l
+  srl a;frame/2
+  inc a
+  ld l, a
+  xor a
+  ld h, a
+  call str_Number;tiles[1] = 49 + frame/2;
+
+  ld hl, tile_buffer
+  call str_Length
+  ld h, e;w
+  ld l, 1;h
+  ld d, 1;x
+  ld e, 13;y
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(1,13,len,1,tiles);
+
+  ld hl, tile_buffer
+  ld a, "B"
+  ld [hli], a
+  ld a, "S"
+  ld [hli], a
+  ld a, "O"
+  ld [hl], a
+  ld h, 1;w
+  ld l, 3;h
+  ld d, 1;x
+  ld e, 14;y
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(1,14,1,3,"BSO");
+
+  ld hl, tile_buffer
+  xor a
+  ld [_i], a
+.setBallsLoop ;for (i = 0; i < 4; i++) tiles[0+i] = (i < balls()  ) ? BASEBALL : DOTTED_CIRCLE;
+    ld a, DOTTED_CIRCLE
+    ld [hl], a
+    call Balls
+    ld b, a
+    ld a, [_i]
+    cp b
+    jr nc, .skipBall
+    ld a, BASEBALL
+    ld [hl], a
+.skipBall
+    ld a, [_i]
+    inc a
+    inc hl
+    ld [_i], a
+    cp 4
+    jr nz, .setBallsLoop
+
+  xor a
+  ld [_i], a
+.setStrikesLoop ;for (i = 0; i < 3; i++) tiles[4+i] = (i < strikes()) ? BASEBALL : DOTTED_CIRCLE;
+    ld a, DOTTED_CIRCLE
+    ld [hl], a
+    call Strikes
+    ld b, a
+    ld a, [_i]
+    cp b
+    jr nc, .skipStrike
+    ld a, BASEBALL
+    ld [hl], a
+.skipStrike
+    ld a, [_i]
+    inc a
+    inc hl
+    ld [_i], a
+    cp 3
+    jr nz, .setStrikesLoop
+  
+  xor a
+  ld [hli], a;tiles[7] = 0;
+
+  xor a
+  ld [_i], a
+.setOutsLoop ;for (i = 0; i < 3; i++) tiles[8+i] = (i < outs()   ) ? BASEBALL : DOTTED_CIRCLE;
+    ld a, DOTTED_CIRCLE
+    ld [hl], a
+    call Outs
+    ld b, a
+    ld a, [_i]
+    cp b
+    jr nc, .skipOut
+    ld a, BASEBALL
+    ld [hl], a
+.skipOut
+    ld a, [_i]
+    inc a
+    inc hl
+    ld [_i], a
+    cp 3
+    jr nz, .setOutsLoop
+
+  xor a
+  ld [hl], a;tiles[11] = 0;
+
+  ld d, 2;x
+  ld e, 14;y
+  ld h, 4;w
+  ld l, 3;h
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(2,14,4,3,tiles);
   ret
 
 DrawTeamNames:
@@ -282,14 +443,16 @@ DrawTeamNames:
   ld bc, 8
   call mem_Copy;memcpy(name_buff, user_name, 8);
   
+  ld hl, name_buffer
+  call str_Length;l = strlen(name_buff);
+  ld h, e ;w
+  ld l, 1
   ld de, 0;x = y = 0
   ld a, [home_team]
   and a
   jr z, .setPlayerAway
   ld de, 1;x = 0, y = 1  
-.setPlayerAway 
-  ld h, 7
-  ld l, 1
+.setPlayerAway
   ld bc, name_buffer
   call gbdk_SetBKGTiles;set_bkg_tiles(0,y,7,1,name_buff);
 
@@ -298,17 +461,19 @@ DrawTeamNames:
   ld bc, 8
   call mem_Copy;memcpy(name_buff, rival_name, 8);
 
+  ld hl, name_buffer
+  call str_Length;l = strlen(name_buff);
+  ld h, e ;w
+  ld l, 1
   ld de, 0;x = y = 0
   ld a, [home_team]
   and a
   jr nz, .setOpponentAway
   ld de, 1;x = 0, y = 1  
-.setOpponentAway 
-  ld h, 7
-  ld l, 1
+.setOpponentAway
   ld bc, name_buffer
   call gbdk_SetBKGTiles;set_bkg_tiles(0,1,7,1,name_buff);
-  
+
   DISABLE_RAM_MBC5
   ei
   ret
@@ -324,7 +489,6 @@ DrawScore:
 
   ld hl, name_buffer
   call str_Length;l = strlen(name_buff);
-
   ld h, e ;w
   ld l, 1 ;h
   ld d, 9 ;x
@@ -353,10 +517,10 @@ DrawScore:
 
 DrawUI:
   call DrawTeamNames
-  call DrawScore
+  ; call DrawScore
   call DrawBases
-  call DrawPlayerUI ;0, &test_player
-  call DrawPlayerUI ;1, &test_player
+  ; call DrawPlayerUI ;0, &test_player
+  ; call DrawPlayerUI ;1, &test_player
 
   ld b, 0
   ld c, 12

@@ -781,7 +781,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, [_j]
       add a, a; j*2
       ld de, 18
-      call Multiply; hl = 18 * j*2
+      call math_Multiply; hl = 18 * j*2
       ld b, h
       ld c, l ;bc = j*2*18
       ld hl, tile_buffer
@@ -833,7 +833,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       add a, a; j*2
       inc a ;j*2+1
       ld de, 18
-      call Multiply; hl = 18 * (j*2+1)
+      call math_Multiply; hl = 18 * (j*2+1)
       ld b, h
       ld c, l ;bc = (j*2+1)*18
       ld hl, tile_buffer

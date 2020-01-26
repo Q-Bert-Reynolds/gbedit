@@ -121,7 +121,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   push af ;a = num
 
   ld a, 16
-  call Multiply ;returns 
+  call math_Multiply 
   ld de, _VRAM+$1000
   add hl, de ;_VRAM+$1000+vram_offset*16
   ld d, h
@@ -139,7 +139,7 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   add hl, bc
   ld a, [hl]
   ld de, 16
-  call Multiply
+  call math_Multiply
   ld b, h
   ld c, l
 

@@ -67,7 +67,7 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   ld a, h 
   ld e, a ;de = w
   ld a, l ;a = h
-  call Multiply
+  call math_Multiply
   ld a, l ;assumes result is less than 256
   ld [_i], a ;i = w*h
   ld hl, tile_buffer

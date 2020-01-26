@@ -274,29 +274,71 @@ DrawCountOutsInning:
   ret
 
 DrawTeamNames:
-  ;disable_interrupts();
-  ;ENABLE_RAM_MBC5;
-  ;memcpy(name_buff, user_name, 7);
-  ;if (name_buff[0] == 0) {
-  ;    set_bkg_tiles(0,0,4,1,"Home");
-  ;    set_bkg_tiles(0,1,4,1,"Away");
-  ;}
-  ;else {
-  ;    if (home_team) set_bkg_tiles(0,1,7,1,name_buff);
-  ;    else set_bkg_tiles(0,0,7,1,name_buff);
-  ;    memcpy(name_buff, rival_name, 8);
-  ;    if (home_team) set_bkg_tiles(0,0,7,1,name_buff);
-  ;    else set_bkg_tiles(0,1,7,1,name_buff);
-  ;}
-  ;DISABLE_RAM_MBC5;
-  ;enable_interrupts();    
+  di
+  ENABLE_RAM_MBC5
+
+  ld hl, user_name
+  ld de, name_buffer
+  ld bc, 8
+  call mem_Copy;memcpy(name_buff, user_name, 8);
+  
+  ld de, 0;x = y = 0
+  ld a, [home_team]
+  and a
+  jr z, .setPlayerAway
+  ld de, 1;x = 0, y = 1  
+.setPlayerAway 
+  ld h, 7
+  ld l, 1
+  ld bc, name_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(0,y,7,1,name_buff);
+
+  ld hl, rival_name
+  ld de, name_buffer
+  ld bc, 8
+  call mem_Copy;memcpy(name_buff, rival_name, 8);
+
+  ld de, 0;x = y = 0
+  ld a, [home_team]
+  and a
+  jr nz, .setOpponentAway
+  ld de, 1;x = 0, y = 1  
+.setOpponentAway 
+  ld h, 7
+  ld l, 1
+  ld bc, name_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(0,1,7,1,name_buff);
+  
+  DISABLE_RAM_MBC5
+  ei
   ret
 
 DrawScore:
-  ;sprintf(name_buff, "%d", home_score);
-  ;l = strlen(name_buff);
-  ;set_bkg_tiles(9,0,l,1,name_buff);
-  ;sprintf(name_buff, "%d", away_score);
+  ld hl, home_score
+  ld a, [hl]
+  ld l, a
+  xor a
+  ld h, a
+  ld de, name_buffer
+  call str_Number;sprintf(name_buff, "%d", home_score);
+
+  ld hl, name_buffer
+  call str_Length;l = strlen(name_buff);
+
+  ld h, e ;w
+  ld l, 1 ;h
+  ld d, 9 ;x
+  ld e, 0 ;y
+  ld bc, name_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(9,0,l,1,name_buff);
+  
+  ld hl, away_score
+  ld a, [hl]
+  ld l, a
+  xor a
+  ld h, a
+  ld de, name_buffer
+  call str_Number;sprintf(name_buff, "%d", away_score);
 
   ld hl, name_buffer
   call str_Length;l = strlen(name_buff);

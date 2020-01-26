@@ -227,42 +227,135 @@ PlayIntro:
   ret
 
 DrawPlayerUI: ;UBYTE team, Player *p
-  ;if (team) x = 0, y = 2;
-  ;else x = 8, y = 10;
+  push af;team
+  
+  xor a
+  ld [_x], a
+  ld a, 2
+  ld [_y], a;if (team) x = 0, y = 2;
 
-  ;b = (team == home_team) != (frame % 2);
+  pop af
+  push af;team
+  and a
+  jr nz, .skip 
+  ld a, 8
+  ld [_x], a
+  ld a, 10
+  ld [_y], a ;else x = 8, y = 10;
+.skip
 
-  ;tiles[0] = 0;
-  ;for (i = 0; i < 10; i++) tiles[i+2] = BOX_HORIZONTAL;
+  ld a, 1
+  ld b, a
+  pop af
+  push af;team
+  ld c, a
+  ld a, [home_team]
+  cp c
+  jr z, .teamIsHome
+  xor a
+  ld b, a
+.teamIsHome
+  xor a
+  ld [_b], a
+  ld a, [frame]
+  and a, %00000001
+  cp b
+  jr z, .teamIsPitching
+  ld a, 1
+  ld [_b], a;team is batting
+.teamIsPitching ;b = (team == home_team) != (frame % 2);
+
+  xor a
+  ld hl, tile_buffer
+  ld [hli], a;tiles[0] = 0;
+  inc hl
+
+  xor a
+  ld [_i], a
+.nameBarLoop;for (i = 0; i < 10; i++) 
+    ld a, BOX_HORIZONTAL
+    ld [hli], a ;tiles[i+2] = BOX_HORIZONTAL;
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp 10
+    jr nz, .nameBarLoop
+
   ;l = strlen(p->nickname);
   ;w = 1+(12-l)/2;
   ;for (i = 0; i < l; i++) tiles[w+i] = p->nickname[i];
-  ;if (p->level == 100) {
-  ;    tiles[12] = 49; 
-  ;    tiles[13] = 48; 
-  ;    tiles[14] = 48;
-  ;}
-  ;else {
-  ;    tiles[12] = LEVEL;
-  ;    if (p->level < 10) {
-  ;        tiles[13] = 48+p->level;
-  ;        tiles[14] = 0;
-  ;    }
-  ;    else {
-  ;        tiles[13] = 48+p->level/10;
-  ;        tiles[14] = 48+p->level%10;
-  ;    }
-  ;}
-  ;if (b) {
-  ;    tiles[1] = NUMBERS + p->batting_order;
-  ;    tiles[15] = BATTING_AVG;
-  ;}
-  ;else {
-  ;    tiles[1] = p->position;
-  ;    tiles[15] = EARNED_RUN_AVG;
-  ;}
-  ;tiles[20] = 0;
-  ;set_bkg_tiles(x,y,12,2,tiles);
+
+  ld a, 25; replace me with player level
+  push af ;level
+  cp 100
+  jr nz, .levelNot100;if (p->level == 100) {
+    ld hl, tile_buffer+12
+    ld a, "1"
+    ld [hli], a ;tiles[12] = 49; 
+    ld a, "0"
+    ld [hli], a ;tiles[13] = 48; 
+    ld [hli], a ;tiles[14] = 48;
+    pop af ;level
+    jr .doneWithLevel
+.levelNot100 ;else {
+    ld hl, tile_buffer+12
+    ld a, LEVEL
+    ld [hli], a ;tiles[12] = LEVEL;
+    pop af ;level
+    cp 10
+    jr nc, .level10Plus ;if (p->level < 10) {
+      add a, 48
+      ld [hli], a ;tiles[13] = 48+p->level;
+      xor a
+      ld [hl], a ;tiles[14] = 0;
+.level10Plus ;else {
+      push hl
+      ld l, a
+      xor a
+      ld h, a
+      ld c, 10
+      call math_Divide
+      ld b, l ;lv/10
+      ld c, a ;lv%10
+      pop hl
+      ld a, b
+      add a, 48
+      ld [hli], a ;tiles[13] = 48+p->level/10;
+      ld a, c
+      add a, 48
+      ld [hl], a ;tiles[14] = 48+p->level%10;
+.doneWithLevel
+
+  ld a, [_b]
+  and a
+  jr z, .isPitcher ;if (b) {
+    ld hl, tile_buffer+1
+    ld a, "1";TODO: should be batting order
+    ld [hl], a ;tiles[1] = NUMBERS + p->batting_order;
+    ld hl, tile_buffer+15
+    ld a, BATTING_AVG
+    ld [hl], a ;tiles[15] = BATTING_AVG;
+    jr .doneWithPlayerStats
+.isPitcher ;else {
+    ld hl, tile_buffer+1
+    ld a, "ℙ"
+    ld [hl], a ;tiles[1] = p->position;
+    ld hl, tile_buffer+15
+    ld a, EARNED_RUN_AVG
+    ld [hl], a ;tiles[15] = EARNED_RUN_AVG;
+.doneWithPlayerStats
+
+  xor a
+  ld hl, tile_buffer+20 ;tiles[20] = 0;
+  
+  ld a, [_x]
+  ld d, a
+  ld a, [_y]
+  ld e, a
+  ld h, 12
+  ld l, 2
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(x,y,12,2,tiles);
   ;if (b) set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
   ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
   ;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
@@ -479,11 +572,10 @@ DrawTeamNames:
   ret
 
 DrawScore:
-  ld hl, home_score
-  ld a, [hl]
-  ld l, a
   xor a
   ld h, a
+  ld a, [home_score]
+  ld l, a
   ld de, name_buffer
   call str_Number;sprintf(name_buff, "%d", home_score);
 
@@ -491,16 +583,15 @@ DrawScore:
   call str_Length;l = strlen(name_buff);
   ld h, e ;w
   ld l, 1 ;h
-  ld d, 9 ;x
+  ld d, 8 ;x
   ld e, 0 ;y
   ld bc, name_buffer
   call gbdk_SetBKGTiles ;set_bkg_tiles(9,0,l,1,name_buff);
   
-  ld hl, away_score
-  ld a, [hl]
-  ld l, a
   xor a
   ld h, a
+  ld a, [away_score]
+  ld l, a
   ld de, name_buffer
   call str_Number;sprintf(name_buff, "%d", away_score);
 
@@ -509,7 +600,7 @@ DrawScore:
 
   ld h, e ;w
   ld l, 1 ;h
-  ld d, 9 ;x
+  ld d, 8 ;x
   ld e, 1 ;y
   ld bc, name_buffer
   call gbdk_SetBKGTiles ;set_bkg_tiles(9,1,l,1,name_buff);
@@ -517,10 +608,13 @@ DrawScore:
 
 DrawUI:
   call DrawTeamNames
-  ; call DrawScore
+  call DrawScore
   call DrawBases
-  ; call DrawPlayerUI ;0, &test_player
-  ; call DrawPlayerUI ;1, &test_player
+
+  xor a
+  call DrawPlayerUI ;0, &test_player
+  ld a, 1
+  call DrawPlayerUI ;1, &test_player
 
   ld b, 0
   ld c, 12

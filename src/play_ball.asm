@@ -19,6 +19,8 @@ TypeSlashText:
   DB "TYPE/", 0
 QuittingIsNotAnOptionText:
   DB "Quitting is\nnot an option!", 0
+UnsignedPlayerAppearedText:
+  DB "Unsigned %s\nappeared!", 0
 
 ; Player test_player;
 ; Move move1;
@@ -101,7 +103,7 @@ SlideInLCDInterrupt::
   and a
   jr nz, .checkMoveCoach; if (LY_REG == 0){
     ld a, 56
-    ld [rLY], a
+    ld [rLYC], a
     ld a, [_x]
     ld [rSCX], a
     jp EndLCDInterrupt
@@ -116,7 +118,7 @@ SlideOutLCDInterrupt::
   and a
   jr nz, .checkMoveCoach; if (LY_REG == 0){
     ld a, 56
-    ld [rLY], a
+    ld [rLYC], a
     xor a
     ld [rSCX], a
     jp EndLCDInterrupt
@@ -312,20 +314,61 @@ PlayIntro:
   ld [rWY], a;move_win(7,96);
   SHOW_WIN
 
-  ; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
-  ;     for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-  ;         if (j < 3) {
-  ;             set_sprite_tile(
-  ;                 j*(_CALVIN_BACK_COLUMNS-1)+i, 
-  ;                 _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
-  ;             );
-  ;         }
-  ;         else {
-  ;             tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = 
-  ;                 _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
-  ;         }
-  ;     }
-  ; }
+  xor a
+  ld [_j], a
+.rowLoop; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
+    xor a
+    ld [_i], a
+.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+      ld a, [_j]
+      cp 3
+      jr nc, .setTiles ;if (j < 3) {
+        ld a, [_j]
+        ld de, (_CALVIN_BACK_COLUMNS-1)
+        call math_Multiply;j*(_CALVIN_BACK_COLUMNS-1)
+        ld c, l
+        ld a, [_i]
+        add a, c
+        ld c, a ;j*(_CALVIN_BACK_COLUMNS-1)+i
+
+        xor a
+        ld b, a
+        ld hl, _CalvinBackTileMap
+        add hl, bc
+        ld a, [hli]
+        add a, _UI_FONT_TILE_COUNT
+        ld d, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+        call gbdk_SetSpriteTile;set_sprite_tile(j*(_CALVIN_BACK_COLUMNS-1)+i, _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT);
+        jr .skip
+.setTiles ;else {
+        xor a
+        ld b, a
+        ld hl, _CalvinBackTileMap
+        add hl, bc
+        ld a, [hli]
+        add a, _UI_FONT_TILE_COUNT
+        ld b, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+        
+        ld a, [_j]
+        sub a, 3
+        ld de, (_CALVIN_BACK_COLUMNS-1)
+        call math_Multiply;(j-3)*(_CALVIN_BACK_COLUMNS-1)
+        ld a, [_i]
+        add a, l;(j-3)*(_CALVIN_BACK_COLUMNS-1)+i
+        ld hl, tile_buffer
+        ld a, b
+        ld [hl], a ;tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
+.skip
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      cp _CALVIN_BACK_COLUMNS-1
+      jr nz, .columnLoop
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    cp _CALVIN_BACK_ROWS-1
+    jr nz, .rowLoop
 
   ld d, 1
   ld e, 16-_CALVIN_BACK_ROWS
@@ -354,22 +397,56 @@ PlayIntro:
   ld [rSCY], a ;move_bkg(160,0);
   ld [rVBK], a ;VBK_REG = 0;
 
-  DISABLE_LCD_INTERRUPT
   SET_LCD_INTERRUPT SlideInLCDInterrupt
   DISPLAY_ON
-  ; for (x = 160; x >= 0; x-=2) {
-  ;     update_vbl();
-  ; }
+
+  ld a, 160
+  ld [_x], a
+.slideInLoop; for (x = 160; x >= 0; x-=2) {
+    call gbdk_WaitVBL
+    ld a, [_x]
+    sub a, 2
+    ld [_x], a
+    and a
+    jr nz, .slideInLoop
+
   DISABLE_LCD_INTERRUPT
 
-  ; sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
+  ld hl, name_buffer ;TODO; this should come from player data
+  ld a, "L"
+  ld [hli], a
+  ld a, "A"
+  ld [hli], a
+  ld a, "G"
+  ld [hli], a
+  ld [hli], a
+  ld a, "A"
+  ld [hli], a
+  ld a, "R"
+  ld [hli], a
+  ld a, "D"
+  ld [hli], a
+  xor a
+  ld [hli], a
+
+  ld hl, UnsignedPlayerAppearedText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace; sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
   ld hl, str_buffer
   call RevealText ;reveal_text(str_buff, PLAY_BALL_BANK);
 
   SET_LCD_INTERRUPT SlideOutLCDInterrupt
-;     for (x = 0; x > -80; x-=2) {
-;         update_vbl();
-;     }
+
+  xor a
+  ld [_x], a
+.slideOutLoop; for (x = 0; x > -80; x-=2) {
+    call gbdk_WaitVBL
+    ld a, [_x]
+    sub a, 2
+    ld [_x], a
+    cp -80
+    jr nz, .slideOutLoop
   DISABLE_LCD_INTERRUPT
 
   CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_ROWS, _CALVIN_BACK_COLUMNS-1, _CALVIN_BACK_ROWS-4, " "
@@ -1319,7 +1396,7 @@ StartGame::
   ;strcpy(move1.name, "SWING");
   ;strcpy(move2.name, "BUNT");
 
-  ; call PlayIntro
+  call PlayIntro
   call DrawUI
 
   xor a

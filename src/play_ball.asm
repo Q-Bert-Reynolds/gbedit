@@ -44,51 +44,222 @@ Outs:; (balls_strikes_outs & OUTS_MASK
   ret
 
 MoveCoach:
-; LYC_REG = 0;
-; SCX_REG = 256-x;
-; for (j = 0; j < 3; ++j) {
-;     for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-;         move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
+  xor a
+  ld [rLYC], a
+
+  ld a, [_x]
+  ld b, a
+  xor a
+  sub a, b
+  ld [rSCX], a; SCX_REG = 256-x;
+  
+  xor a
+  ld [_j], a
+.rowLoop; for (j = 0; j < 3; ++j) {
+    xor a
+    ld [_i], a
+.columnLoop;for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+      ld a, [_j]
+      ld de, (_CALVIN_BACK_COLUMNS-1)
+      call math_Multiply ;hl = j*(_CALVIN_BACK_COLUMNS-1)
+      ld a, [_i]
+      add a, l
+      ld c, a ;c = j*(_CALVIN_BACK_COLUMNS-1)+i
+
+      ld a, [_i]
+      add a, a;i*2
+      add a, a;i*4
+      add a, a;i*8
+      add a, 16;i*8+16
+      ld b, a
+      ld a, [_x]
+      add a, b;i*8+x+16
+      ld d, a;x = i*8+x+16
+
+      ld a, [_j]
+      add a, a;j*2
+      add a, a;j*4
+      add a, a;j*8
+      add a, 56;i*8+56
+      ld e, a;y = j*8+56
+      call gbdk_MoveSprite;move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
+
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      cp (_CALVIN_BACK_COLUMNS-1)
+      jr nz, .columnLoop
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    cp 3
+    jr nz, .rowLoop
   ret
 
 SlideInLCDInterrupt::
-; if (LY_REG == 0){
-;     LYC_REG = 56;
-;     SCX_REG = x;
-; else if (LY_REG == 56) move_coach();
-  ret
+  ld a, [rLY]
+  and a
+  jr nz, .checkMoveCoach; if (LY_REG == 0){
+    ld a, 56
+    ld [rLY], a
+    ld a, [_x]
+    ld [rSCX], a
+    jp EndLCDInterrupt
+.checkMoveCoach; else if (LY_REG == 56) move_coach();
+    cp 56
+    jp nz, EndLCDInterrupt
+    call MoveCoach
+  jp EndLCDInterrupt
 
 SlideOutLCDInterrupt::
-; if (LY_REG == 0){
-;     LYC_REG = 56;
-;     SCX_REG = 0;
-; else if (LY_REG == 56) move_coach();
-  ret
+  ld a, [rLY]
+  and a
+  jr nz, .checkMoveCoach; if (LY_REG == 0){
+    ld a, 56
+    ld [rLY], a
+    xor a
+    ld [rSCX], a
+    jp EndLCDInterrupt
+.checkMoveCoach; else if (LY_REG == 56) move_coach();
+    cp 56
+    jp nz, EndLCDInterrupt
+    call MoveCoach
+  jp EndLCDInterrupt
 
 HealthPct: ;input Player *p, returns str_buff
-  ; a = p->hp; // * 100 / max_hp; 
-  ; if (a >= 100) strcpy(str_buff, "100");
-  ; if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
-  ; else sprintf(str_buff, "%d%c", a, '%');
-  ; return str_buff;
+  ld a, 85; a = p->hp; // * 100 / max_hp; 
+  ld hl, str_buffer
+  cp 100; if (a >= 100) strcpy(str_buff, "100");
+  jr c, .lessThan100
+  ld a, "1"
+  ld [hli], a
+  ld a, "0"
+  ld [hli], a
+  ld [hli], a
+  ret
+.lessThan100
+  cp 10 ; if (a < 10) sprintf(str_buff, "0%d%c", a, '%');
+  jr nc, .doubleDigits
+  push af
+  ld a, " "
+  ld [hli], a
+  pop af
+  add a, 48
+  ld [hli], a
+  ld a, "%"
+  ld [hl], a
+  ret
+.doubleDigits; else sprintf(str_buff, "%d%c", a, '%');
+  ld d, h
+  ld e, l
+  ld l, a
+  xor a
+  ld h, a
+  call str_Number
+  ld hl, str_buffer+2
+  ld a, "%"
+  ld [hl], a
   ret
 
 BattingAvg: ;input Player *p, returns str_buff
-  ; a = p->hits * 1000 / p->at_bats;
-  ; if (a >= 1000) strcpy(str_buff, "1.000");
-  ; else if (a < 10) sprintf(str_buff, ".00%d", a);
-  ; else if (a < 100) sprintf(str_buff, ".0%d", a);
-  ; else sprintf(str_buff, ".%d", a);
-  ; return str_buff;
+  ld hl, str_buffer
+  ld de, 324; a = p->hits * 1000 / p->at_bats;
+  ld a, d
+  cp $3
+  jr c, .not1000
+  ld a, e
+  cp $E8
+  jr c, .not1000; if (a >= 1000) strcpy(str_buff, "1.000");
+    ld a, "1"
+    ld [hli], a
+    ld a, "."
+    ld [hli], a
+    ld a, "0"
+    ld [hli], a
+    ld [hli], a
+    ld [hl], a
+    ret
+.not1000
+  ld a, d
+  and a
+  jr nz, .notUnder100
+  ld a, e
+  cp 100
+  jr c, .under100; else sprintf(str_buff, ".%d", a);
+.notUnder100
+    ld a, "."
+    push de
+    ld [hli], a
+    ld d, h
+    ld e, l
+    pop hl
+    call str_Number
+    ret
+.under100
+  ld a, e
+  cp 10
+  jr c, .under10; else if (a < 100) sprintf(str_buff, ".0%d", a);
+    ld a, "."
+    ld [hli], a
+    ld a, "0"
+    ld [hli], a
+    push de
+    ld [hl], a
+    ld d, h
+    ld e, l
+    pop hl
+    call str_Number
+    ret
+.under10; else if (a < 10) sprintf(str_buff, ".00%d", a);
+  ld a, "."
+  ld [hli], a
+  ld a, "0"
+  ld [hli], a
+  ld [hli], a
+  ld a, e
+  add a, 48
+  ld [hl], a
   ret
 
+;TODO: fix this broken function
 EarnedRunAvg: ;input Player *p, returns str_buff
-  ; a = p->runs_allowed * 2700 / p->outs_recorded;
-  ; b = a/100;
-  ; c = a%100;
-  ; if (b >= 1000) sprintf(str_buff, "%d", b);
-  ; else sprintf(str_buff, "%d.%d", b, c);
-  ; return str_buff;
+  ld hl, 12443; a = p->runs_allowed * 2700 / p->outs_recorded;
+  ld a, 100
+  call math_Divide; hl = a/100, a = a%100
+  push af
+
+  ld de, str_buffer
+  ld a, h
+  cp $3
+  jr c, .not1000
+  ld a, l
+  cp $E8
+  jr c, .not1000; if (hl >= 1000) sprintf(str_buff, "%d", hl);
+  call str_Number
+  pop af
+  ret
+.not1000; else sprintf(str_buff, "%d.%d", hl, a);
+  ld de, str_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  ld a, "."
+  ld [hli], a
+  xor a
+  ld [hld], a
+  ld de, str_buffer
+  call str_Append
+
+  ld de, name_buffer
+  pop af ;remainder
+  ld h, 0
+  ld l, a
+  call str_Number
+
+  ld de, str_buffer
+  ld hl, name_buffer
+  call str_Append
+
   ret
 
 ; // TODO: this can probably be cleaned up a bit
@@ -356,9 +527,49 @@ DrawPlayerUI: ;UBYTE team, Player *p
   ld l, 2
   ld bc, tile_buffer
   call gbdk_SetBKGTiles;set_bkg_tiles(x,y,12,2,tiles);
-  ;if (b) set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
-  ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
-  ;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
+
+  ld a, [_b]
+  and a
+  jr z, .setERA;if (b) 
+
+  call BattingAvg
+  ld a, [_x]
+  add a, 4
+  ld d, a
+  ld a, [_y]
+  inc a
+  ld e, a
+  ld h, 4
+  ld l, 1
+  ld bc, str_buffer
+  call gbdk_SetBKGTiles ;set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
+  jr .setHealthPct
+
+.setERA
+  call EarnedRunAvg
+  ld a, [_x]
+  add a, 4
+  ld d, a
+  ld a, [_y]
+  inc a
+  ld e, a
+  ld h, 4
+  ld l, 1
+  ld bc, str_buffer
+  call gbdk_SetBKGTiles ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
+
+.setHealthPct  
+  call HealthPct
+  ld a, [_x]
+  add a, 9
+  ld d, a
+  ld a, [_y]
+  inc a
+  ld e, a
+  ld h, 3
+  ld l, 1
+  ld bc, str_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
   ret
 
 DrawBases:

@@ -74,16 +74,16 @@ str_Length::
 ; str_Append - Appends string bc to source hl resulting in destination de
 ;
 ; input:
-;   hl - src string
+;   hl - append string
 ;   de - dest string
-;   bc - append string
 ;
 ;***************************************************************************
 str_Append::
-  call str_Copy
+  ld a, [de]
+  inc de
+  and a
+  jr nz, str_Append
   dec de
-  ld h, b
-  ld l, c
   call str_Copy
   ret 
 

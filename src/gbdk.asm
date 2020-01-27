@@ -169,7 +169,7 @@ ENDM
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
 ;
-; gbdk_MoveSprite - Move sprite number C at XY = DE
+; gbdk_MoveSprite - Move sprite number C to XY = DE
 ;
 ; input:
 ;   c - sprite number

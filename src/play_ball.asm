@@ -294,9 +294,11 @@ SetBkgDataDoubled: ;de = first_tile, bc = nb_tiles, hl = data
   ret
 
 PlayIntro:
-  ld de, _UI_FONT_TILE_COUNT
-  ld bc, _CALVIN_BACK_TILE_COUNT
+  ; ld de, _UI_FONT_TILE_COUNT
+  ; ld bc, _CALVIN_BACK_TILE_COUNT
   ld hl, _CalvinBackTiles
+  ld de, $8800
+  ld bc, _CALVIN_BACK_TILE_COUNT*16
   call SetBkgDataDoubled ;set_bkg_data_doubled(_UI_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
 
   ld a, 80

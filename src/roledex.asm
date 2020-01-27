@@ -124,6 +124,13 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   call math_Multiply 
   ld de, _VRAM+$1000
   add hl, de ;_VRAM+$1000+vram_offset*16
+  ld a, $98
+  cp a, h
+  jr nc, .noWrap
+  ld a, h
+  sub a, $10
+  ld h, a
+.noWrap
   ld d, h
   ld e, l
   pop af

@@ -14,7 +14,7 @@ PlayMenuString:
   DB "          "
   DB "ITEM  RUN "
 LetsGoText:
-  DB "Let's go!"
+  DB "Let's go!", 0
 TypeSlashText:
   DB "TYPE/", 0
 QuittingIsNotAnOptionText:
@@ -575,7 +575,10 @@ PlayIntro:
     ld [_x], a
     and a
     jr nz, .slideInLoop
-
+  call gbdk_WaitVBL
+  xor a
+  ld [_x], a
+  call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
   ld hl, name_buffer ;TODO; this should come from player data

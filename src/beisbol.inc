@@ -267,7 +267,7 @@ ENDM
 
 WAITPAD_UP: MACRO
 .loop\@
-  call gbdk_WaitVBL
+  call UpdateVBL
   call UpdateInput
   ld a, [button_state]
   and a

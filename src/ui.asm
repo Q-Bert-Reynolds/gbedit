@@ -435,7 +435,7 @@ UIShowOptions::
   ld a, [_y]
   and a
   jp z, .checkDownPressed
-  call gbdk_WaitVBL
+  call UpdateVBL
   ld a, [_y]
   dec a
   ld [_y], a
@@ -451,7 +451,7 @@ UIShowOptions::
   ld a, [_y]
   cp b
   jr nc, .checkLeftPressed
-  call gbdk_WaitVBL
+  call UpdateVBL
   ld a, [_y]
   inc a
   ld [_y], a
@@ -465,7 +465,7 @@ UIShowOptions::
   ld a, [_y]
   cp 3
   jr nc, .checkRightPressed
-  call gbdk_WaitVBL
+  call UpdateVBL
 .moveALeft;     if (y == 0 && a > 0) --a;
   ld a, [_y]
   and a
@@ -506,7 +506,7 @@ UIShowOptions::
   ld a, [_y]
   cp 3
   jr nc, .checkStartAPressed
-  call gbdk_WaitVBL
+  call UpdateVBL
 .moveARight;     if (y == 0 && a < 2) ++a;
   ld a, [_y]
   and a
@@ -552,7 +552,7 @@ UIShowOptions::
   and a, PADF_B
   jr nz, .exitMoveOptionsArrowLoop
 .waitVBLAndLoop
-  call gbdk_WaitVBL
+  call UpdateVBL
   jp .moveOptionsArrowLoop
 .exitMoveOptionsArrowLoop
 
@@ -572,7 +572,7 @@ UIShowOptions::
 MoveTextEntryArrow: ; bc = from xy, de = to xy
   push bc ;from xy
   push de ;to xy
-  call gbdk_WaitVBL
+  call UpdateVBL
   ld hl, tile_buffer
   xor a
   ld [hl], a; tiles[0] = 0;
@@ -1035,7 +1035,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       call UpdateTextEntryDisplay ;update_text_entry_display(str, max_len);
       WAITPAD_UP
 .waitVBL
-    call gbdk_WaitVBL
+    call UpdateVBL
     jp .moveArrowLoop
 .exitMoveArrowLoop
     jp .drawTextBoxLoop
@@ -1242,7 +1242,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld a, [_j]
   or a
   jp z, .checkMoveArrowDown
-  call gbdk_WaitVBL ;update_vbl(); 
+  call UpdateVBL
   ld a, [_j]
   dec a
   ld [_j], a ;--j
@@ -1259,7 +1259,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld a, [_j]
   cp b
   jp nc, .selectMenuItem
-  call gbdk_WaitVBL ;update_vbl(); 
+  call UpdateVBL
   ld a, [_j]
   inc a
   ld [_j], a ;++j
@@ -1280,7 +1280,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   xor a ;return 0;
   jr .exitMenu
 .waitVBLThenLoop
-  call gbdk_WaitVBL ;update_vbl();
+  call UpdateVBL ;update_vbl();
   jp .moveMenuArrowLoop
 .exitMenu
   pop bc ;xy

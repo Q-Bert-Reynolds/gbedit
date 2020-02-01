@@ -22,11 +22,6 @@ QuittingIsNotAnOptionText:
 UnsignedPlayerAppearedText:
   DB "Unsigned %s\nappeared!", 0
 
-; Player test_player;
-; Move move1;
-; Move move2;
-; Move *moves[4];
-
 Balls:; (balls_strikes_outs & BALLS_MASK) >> 4
   ld a, [balls_strikes_outs]
   and BALLS_MASK
@@ -569,16 +564,16 @@ PlayIntro:
   ld a, 160
   ld [_x], a
 .slideInLoop; for (x = 160; x >= 0; x-=2) {
-    call gbdk_WaitVBL
+    call UpdateVBL
     ld a, [_x]
     sub a, 2
     ld [_x], a
     and a
     jr nz, .slideInLoop
-  call gbdk_WaitVBL
+  call UpdateVBL
   xor a
   ld [_x], a
-  call gbdk_WaitVBL
+  call UpdateVBL
   DISABLE_LCD_INTERRUPT
 
   ld hl, name_buffer ;TODO; this should come from player data
@@ -610,7 +605,7 @@ PlayIntro:
   xor a
   ld [_x], a
 .slideOutLoop; for (x = 0; x > -80; x-=2) {
-    call gbdk_WaitVBL
+    call UpdateVBL
     ld a, [_x]
     sub a, 2
     ld [_x], a
@@ -633,7 +628,7 @@ PlayIntro:
   call SetBKGTilesWithOffset;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
 
   HIDE_SPRITES
-  call gbdk_WaitVBL
+  call UpdateVBL
   xor a
   ld [rSCX], a
   ld [rSCY], a ;move_bkg(0,0);
@@ -1205,7 +1200,7 @@ SelectPlayMenuItem:
     ld a, [button_state]
     and a, PADF_A
     jr nz, .exitMoveMenuArrowLoop
-    call gbdk_WaitVBL
+    call UpdateVBL
     jr .moveMenuArrowLoop
 .exitMoveMenuArrowLoop
   ld a, [_y]

@@ -43,7 +43,7 @@ SECTION "Serial", ROM0[$0058]
 SECTION "p1thru4", ROM0[$0060]
   reti
 
-SECTION "Main", ROM0
+SECTION "Main", ROM0[$0150]
 Main::
 .setup
   di

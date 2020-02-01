@@ -18,6 +18,11 @@ EndLCDInterrupt::; all interrupts should jump here
   pop af
   reti
 
+UpdateVBL::
+  ; call audio_Update
+  call gbdk_WaitVBL
+  ret
+
 UpdateInput::
   push hl
 

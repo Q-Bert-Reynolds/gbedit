@@ -19,6 +19,8 @@ tile_buffer: DS 512
 str_buffer: DS 64
 name_buffer: DS 16
 player_base: DS 14
+
+;Baseball
 balls_strikes_outs: DB; //0bxBBBSSOO
 runners_on_base: DW; //0bHHHHTTTTSSSSFFFF
 frame: DB
@@ -28,3 +30,8 @@ home_score: DB
 away_score: DB
 move_choice: DB
 play_menu_selection: DB
+
+;Audio
+beat: DW
+music_timer: DB
+loop_num: DB

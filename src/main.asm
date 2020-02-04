@@ -1,6 +1,7 @@
 INCLUDE "src/beisbol.inc"
 INCLUDE "src/roledex.asm"
 INCLUDE "src/core.asm"
+INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
@@ -77,17 +78,17 @@ Main::
   ld a, LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a
   
-; .start ;show intro credits, batting animation
-;   SET_BANK START_BANK
-;   call Start
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   SET_BANK TITLE_BANK
-;   call Title ;should set a to 0 if new game pressed
-;   jr nz, .startGame
-; .newGame
-;   SET_BANK NEW_GAME_BANK
-;   call NewGame
-; .startGame
+.start ;show intro credits, batting animation
+  SET_BANK START_BANK
+  call Start
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  SET_BANK TITLE_BANK
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .startGame
+.newGame
+  SET_BANK NEW_GAME_BANK
+  call NewGame
+.startGame
   SET_BANK PLAY_BALL_BANK
   call StartGame
   SET_BANK 0

@@ -19,7 +19,7 @@ EndLCDInterrupt::; all interrupts should jump here
   reti
 
 UpdateVBL::
-  ; call audio_Update
+  call UpdateAudio
   call gbdk_WaitVBL
   ret
 

@@ -103,7 +103,7 @@ SelectNameOrTextEntry: ;assumes d > 0, bc = title
   xor a
   ld [_i], a
 .moveImageBackLoop;for (i = 0; i <= 48; i+=2) {
-    call UpdateVBL
+    call gbdk_WaitVBL
     ld a, [_i]
     add a, 2
     ld [rSCX], a
@@ -220,7 +220,7 @@ NewGame::
   ld a, -56
   ld [_i], a
 .slideInCalvinLoop; for (i = -56; i <= 48; i+=4) {
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_i]
   ld [rSCX], a
   add a, 4
@@ -235,7 +235,7 @@ NewGame::
   ld a, 48
   ld [_i], a
 .slideOverCalvinLoop; for (i = 48; i >= 0; i-=2) {
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a, 2
   ld [rSCX], a
@@ -322,7 +322,7 @@ ENDC
   FADE_IN
 
 .slideInNolanLoop; for (i = -56; i <= 48; i+=4) {
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_i]
   add a, 4
   ld [rSCX], a
@@ -341,7 +341,7 @@ ENDC
   ld a, 48
   ld [_i], a
 .slideOverNolanLoop; for (i = 48; i >= 0; i-=2) {
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_i]
   sub a, 2
   ld [rSCX], a

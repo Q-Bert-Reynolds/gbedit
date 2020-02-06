@@ -34,7 +34,7 @@ ENDC
   DW 0                     ;$14e - Checksum (not important)
 
 SECTION "VBlank", ROM0[$0040]
-  reti
+  jp VBLInterrupt
 SECTION "LCDC", ROM0[$0048]
   jp LCDInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
@@ -61,10 +61,9 @@ Main::
 .setupAudio
   ld hl, rAUDENA
   ld [hl], AUDENA_ON
-  xor a
+  ld a, $FF
   ld [rAUDTERM], a
-  ld hl, rAUDVOL
-  ld [hl], $FF
+  ld [rAUDVOL], a
   
 .setupDrawing
   CLEAR_SCREEN 0
@@ -77,7 +76,11 @@ Main::
 
   ld a, LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a
-  
+
+.setupInterrupts
+  ld a, IEF_VBLANK
+  ld [rIE], a
+
 .start ;show intro credits, batting animation
   SET_BANK START_BANK
   call Start

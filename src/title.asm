@@ -21,7 +21,7 @@ ShowTitleLCDInterrupt::
   ld a, [rLY]
   and a
   jr z, .dropInTitle
-  sub 255
+  cp 255
   jr nz, .slideVersion
 .dropInTitle
   ld a, 63
@@ -33,7 +33,7 @@ ShowTitleLCDInterrupt::
   jp EndLCDInterrupt
 .slideVersion
   ld a, [rLY]
-  sub 63
+  cp 63
   jr nz, .scrollPlayers
   ld a, 72
   ld [rLYC], a
@@ -44,7 +44,7 @@ ShowTitleLCDInterrupt::
   jp EndLCDInterrupt
 .scrollPlayers
   ld a, [rLY]
-  sub 72
+  cp 72
   jr nz, .screenBottom
   ld a, 135
   ld [rLYC], a
@@ -55,7 +55,7 @@ ShowTitleLCDInterrupt::
   jp EndLCDInterrupt
 .screenBottom
   ld a, [rLY]
-  sub 135
+  cp 135
   jp nz, EndLCDInterrupt
   xor a
   ld [rLYC], a
@@ -67,7 +67,7 @@ CyclePlayersLCDInterrupt::
   ld a, [rLY]
   and a
   jr z, .noScroll
-  sub 72
+  cp 72
   jr nz, .noScroll
   ld a,  135
   ld [rLYC], a
@@ -76,7 +76,7 @@ CyclePlayersLCDInterrupt::
   jp EndLCDInterrupt
 .noScroll
   ld a, [rLY]
-  sub 135
+  cp 135
   jp nz, EndLCDInterrupt
   ld a, 72
   ld [rLYC], a
@@ -109,6 +109,8 @@ ShowPlayer: ;de = player number
   ld de, PLAYER_INDEX
   call SetPlayerBkgTiles; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
 
+  ld a, 72
+  ld [rLYC], a
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
   ret
 
@@ -181,9 +183,9 @@ ShowTitle:
   ld [_y], a
   ld [_x], a
   DISPLAY_ON
-  call UpdateVBL
+  call gbdk_WaitVBL
 .dropInTitleLoop
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_y]
   dec a
   ld [_y], a
@@ -202,7 +204,7 @@ ShowTitle:
   xor a
   ld [_x], a
 .slideInVersionTextLoop
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_x]
   inc a
   inc a
@@ -218,7 +220,10 @@ ShowTitle:
   ld l, _VERSION_ROWS
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
-  call SetBKGTilesWithOffset  
+  call SetBKGTilesWithOffset
+
+  ld a, 72
+  ld [rLYC], a
   SET_LCD_INTERRUPT CyclePlayersLCDInterrupt
 
   ld a, 128
@@ -230,7 +235,7 @@ CyclePlayersLoop:
   ld [_i], a
 .exitableOneSecPauseLoop1
   UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_i]
   dec a
   ld [_i], a
@@ -260,7 +265,7 @@ CyclePlayersLoop:
   ld c, a
   call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
 .skipBallToss
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_j]
   add a, 4
   ld [_j], a
@@ -285,7 +290,7 @@ CyclePlayersLoop:
   ld [_x], a
 .movePlayerOnScreenLoop ;for (j = 0; j <= 128; j+=4) {
   UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
-  call UpdateVBL
+  call gbdk_WaitVBL
   ld a, [_x]
   add a, 4
   ld [_x], a
@@ -350,7 +355,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   cp 1 ;if (y == 1) {
   ret nz ;else return y;
   ld [_y], a
-  call UpdateVBL
+  call gbdk_WaitVBL
 
   ld b, 4
   ld c, 7
@@ -437,7 +442,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
 .showGameStatsLoop ;while (1) {
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;
     JUMP_TO_IF_BUTTONS .backPressed, PADF_B; else if (joypad() & J_B) {
-    call UpdateVBL
+    call gbdk_WaitVBL
     jr .showGameStatsLoop
 .backPressed
   CLEAR_BKG_AREA 4,7,16,10,0
@@ -469,8 +474,8 @@ Title:: ; puts (c-d-1) in a
   xor a
   ld [rSCX], a
 
+  DISABLE_LCD_INTERRUPT
   xor a
-  ld [rIE], a
   ld [_d], a
 .showTitleAndNewGameMenuLoop ; while (d == 0 || d == c)
   ld a, [_d]
@@ -500,8 +505,7 @@ Title:: ; puts (c-d-1) in a
   sub a, b ;d==c
   jr z, .showTitleAndNewGameMenuLoop
 
-  xor a
-  ld [rIE], a
+  DISABLE_LCD_INTERRUPT
 
 ; return c-d-1
   ld a, [_d]

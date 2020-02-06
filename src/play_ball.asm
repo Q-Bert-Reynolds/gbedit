@@ -564,16 +564,16 @@ PlayIntro:
   ld a, 160
   ld [_x], a
 .slideInLoop; for (x = 160; x >= 0; x-=2) {
-    call UpdateVBL
+    call gbdk_WaitVBL
     ld a, [_x]
     sub a, 2
     ld [_x], a
     and a
     jr nz, .slideInLoop
-  call UpdateVBL
+  call gbdk_WaitVBL
   xor a
   ld [_x], a
-  call UpdateVBL
+  call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
   ld hl, name_buffer ;TODO; this should come from player data
@@ -605,7 +605,7 @@ PlayIntro:
   xor a
   ld [_x], a
 .slideOutLoop; for (x = 0; x > -80; x-=2) {
-    call UpdateVBL
+    call gbdk_WaitVBL
     ld a, [_x]
     sub a, 2
     ld [_x], a
@@ -628,7 +628,7 @@ PlayIntro:
   call SetBKGTilesWithOffset;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
 
   HIDE_SPRITES
-  call UpdateVBL
+  call gbdk_WaitVBL
   xor a
   ld [rSCX], a
   ld [rSCY], a ;move_bkg(0,0);
@@ -1200,7 +1200,7 @@ SelectPlayMenuItem:
     ld a, [button_state]
     and a, PADF_A
     jr nz, .exitMoveMenuArrowLoop
-    call UpdateVBL
+    call gbdk_WaitVBL
     jr .moveMenuArrowLoop
 .exitMoveMenuArrowLoop
   ld a, [_y]

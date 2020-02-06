@@ -82,8 +82,13 @@ ENDM
 
 SET_LCD_INTERRUPT: MACRO ;interrupt
   di
-  xor a
+
+  ld b, ~IEF_LCDC
+  ld a, [rIE]
+  and a, b
   ld [rIE], a
+
+  xor a
   ld [rSTAT], a
 
   ld hl, rLCDInterrupt
@@ -93,17 +98,26 @@ SET_LCD_INTERRUPT: MACRO ;interrupt
   ld a, c
   ld [hl], a
 
-  ld a, IEF_LCDC
+  ld b, IEF_LCDC
+  ld a, [rIE]
+  or a, b
   ld [rIE], a
-  ld a, STATF_LYC | STATF_MODE00
+
+  ld a, STATF_LYC
   ld [rSTAT], a
+  
   ei
 ENDM
 
 DISABLE_LCD_INTERRUPT: macro
   di
-  xor a
+    
+  ld b, ~IEF_LCDC
+  ld a, [rIE]
+  and a, b
   ld [rIE], a
+
+  xor a
   ld [rSTAT], a
 
   ld hl, rLCDInterrupt
@@ -112,6 +126,8 @@ DISABLE_LCD_INTERRUPT: macro
   ld [hli], a
   ld a, c
   ld [hl], a
+
+  ei
 ENDM
 
 HIDE_ALL_SPRITES: MACRO
@@ -267,7 +283,7 @@ ENDM
 
 WAITPAD_UP: MACRO
 .loop\@
-  call UpdateVBL
+  call gbdk_WaitVBL
   call UpdateInput
   ld a, [button_state]
   and a

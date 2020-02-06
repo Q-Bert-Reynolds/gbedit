@@ -18,10 +18,17 @@ EndLCDInterrupt::; all interrupts should jump here
   pop af
   reti
 
-UpdateVBL::
+VBLInterrupt::
+  push af
+  push bc
+  push de
+  push hl
   call UpdateAudio
-  call gbdk_WaitVBL
-  ret
+  pop hl 
+  pop de
+  pop bc
+  pop af
+  reti
 
 UpdateInput::
   push hl
@@ -338,45 +345,44 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   xor a
   ld [_j], a
 .rowLoop ;for (j = 0; j < h; j++)
-  xor a
-  ld [_i], a
+    xor a
+    ld [_i], a
 .columnLoop ;for (i = 0; i < w; i++)
-  ld a, [_i]
-  add a ;i*2
-  add a ;i*4
-  add a ;i*8
-  add a, b ;i*8+x
-  ld d, a
+      ld a, [_i]
+      add a ;i*2
+      add a ;i*4
+      add a ;i*8
+      add a, b ;i*8+x
+      ld d, a
 
-  ld a, [_j]
-  add a; j*2
-  add a; j*4
-  add a; j*8
-  add a, c ;j*8+y
-  ld e, a
+      ld a, [_j]
+      add a; j*2
+      add a; j*4
+      add a; j*8
+      add a, c ;j*8+y
+      ld e, a
 
-  push bc
-  ld a, [_a]
-  ld c, a
-  inc a
-  ld [_a], a
+      push bc
+      ld a, [_a]
+      ld c, a
+      inc a
+      ld [_a], a
 
-  push hl
-  call gbdk_MoveSprite;move_sprite(a++, i*8+x, j*8+y);
-  pop hl
-  pop bc
+      push hl
+      call gbdk_MoveSprite;move_sprite(a++, i*8+x, j*8+y);
+      pop hl
+      pop bc
 
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub a, h
-  jr nz, .columnLoop
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      sub a, h
+      jr nz, .columnLoop
 
-  ld a, [_j]
-  inc a
-  ld [_j], a
-  sub a, l
-  jr nz, .rowLoop
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    sub a, l
+    jr nz, .rowLoop
 
   ret
-  

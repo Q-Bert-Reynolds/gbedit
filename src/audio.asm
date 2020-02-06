@@ -82,6 +82,10 @@ Ab8     SET 2013
 B8      SET 2015
 SILENCE SET 0
 
+WaveTable:
+  DB 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+  DB 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+
 ;note struct:
 ; DW pitch;
 ; DB volume_envelope; // channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
@@ -240,12 +244,6 @@ DrumLoop3:
   DB 1,2,1,1
   DB 2,1,2,2
 
-;note struct:
-; DW pitch;
-; DB volume_envelope;
-; DB wave_duty;      
-; DB pitch_sweep;    
-
 SetNote: ;a = channel, hl = note
   push af;channel
   push hl;note
@@ -313,24 +311,38 @@ SetNote: ;a = channel, hl = note
 
 
 PlayMusic:
-  xor a
-  ld d, a
-  ld a, [beat]
-  ld e, a ;beat in de
+
+  ld hl, C3
+  ld a, [hli] ;upper byte of pitch
+  or AUDHIGH_RESTART | AUDHIGH_LENGTH_ON
+  ld [rAUD1HIGH], a
+  ld a, [hl] ;lower byte of pitch
+  ld [rAUD1LOW], a
+  ld a, %11110001 ;channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
+  ld [rAUD1ENV], a
+  ld a, %11000100 ;wave pattern duty (bits 76), length counter load register (bits 543210)
+  ld [rAUD1LEN], a
+  ld a, %00111010 ;ch1 only, rate (bits 654, 0=off), direction (bit 3, 1=down, 0=up), right shift (bits 210, 0=off)
+  ld [rAUD1SWEEP], a
+
+  ; xor a
+  ; ld d, a
+  ; ld a, [beat]
+  ; ld e, a ;beat in de
   
-  ld hl, BassLoop
-  add hl, de;note index
-  ld a, [hl];bass note
+  ; ld hl, BassLoop
+  ; add hl, de;note index
+  ; ld a, [hl];bass note
 
-  ld d, 0
-  ld e, a  
-  ld a, 5 ;len of note struct
-  call math_Multiply ;hl = beat * len(note)
+  ; ld d, 0
+  ; ld e, a  
+  ; ld a, 5 ;len of note struct
+  ; call math_Multiply ;hl = beat * len(note)
 
-  ld bc, BassNotes
-  add hl, bc;note
-  ld a, 1;channel
-  call SetNote
+  ; ld bc, BassNotes
+  ; add hl, bc;note
+  ; ld a, 1;channel
+  ; call SetNote
 
 ; switch (loop_num) {
 ;   case 6:
@@ -371,6 +383,7 @@ PlayMusic:
 ;       set_note(2, &chime_notes[chime_loop[beat]]);
 ;       set_note(4, &drum_notes[drum_loop2[beat]]);
 ;       break;
+
   ret
 
 UpdateAudio::

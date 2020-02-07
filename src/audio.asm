@@ -244,7 +244,7 @@ DrumLoop3:
   DB 1,2,1,1
   DB 2,1,2,2
 
-SetNote: ;a = channel, hl = note
+PlayNote: ;a = channel, hl = note
   push af;channel
   push hl;note
   ld a, [hli] ;first byte of pitch
@@ -318,20 +318,12 @@ SetNote: ;a = channel, hl = note
   ld [rAUD4GO], a
   ret
 
-SET_NOTE: macro
-
-ENDM
-
-PlayMusic:
-  ; ld a, 1
-  ; ld hl, ChimeNotes+5
-  ; call SetNote
-
+PLAY_NOTE: MACRO ;LoopArray, NotesArray, Channel
   ld d, 0
   ld a, [beat]
   ld e, a ;beat in de
   
-  ld hl, BassLoop
+  ld hl, \1
   add hl, de;note index
   ld a, [hl];bass note
 
@@ -340,52 +332,70 @@ PlayMusic:
   ld a, 5 ;len of note struct
   call math_Multiply ;hl = beat * len(note)
 
-  ld bc, BassNotes
+  ld bc, \2
   add hl, bc;note
 
-  ld a, 1;channel
-  call SetNote
+  ld a, \3;channel
+  call PlayNote
+ENDM
 
-; switch (loop_num) {
-;   case 6:
-;   case 0:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop1[beat]]);
-;       break;
-;   case 1:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop2[beat]]);
-;       set_note(2, &chime_notes[chime_loop[beat]]);
-;       break;
-;   case 7:
-;   case 2:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop2[beat]]);
-;       break;
-;   case 3:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(2, &strings_notes[strings_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop2[beat]]);
-;       break;
-;   case 5:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(2, &chime_notes[chime_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop3[beat]]);
-;       break;
-;   case 8:
-;       set_note(2, &chime_notes[chime_loop[beat]]);
-;       set_note(1, &strings_notes[chime_loop[beat]]);
-;       break;
-;   case 9:
-;       set_note(2, &chime_notes[chime_loop[beat]]);
-;       set_note(1, &bass_notes[strings_loop[beat]]);
-;       break;
-;   default:
-;       set_note(1, &bass_notes[bass_loop[beat]]);
-;       set_note(2, &chime_notes[chime_loop[beat]]);
-;       set_note(4, &drum_notes[drum_loop2[beat]]);
-;       break;
-
+PlayMusic:
+  ld a, [loop_num]; switch (loop_num) {
+.part1
+  cp 6
+  jr z, .skip
+  cp 0
+  jr nz, .part2
+.skip
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE DrumLoop1, DrumNotes, 4
+  ret
+.part2
+  cp 1
+  jr nz, .part3
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE DrumLoop2, DrumNotes, 4
+  PLAY_NOTE ChimeLoop, ChimeNotes, 2
+  ret
+.part3
+  cp 7
+  jr z, .skip2
+  cp 2
+  jr nz, .part4
+.skip2
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE DrumLoop2, DrumNotes, 4
+  ret
+.part4
+  cp 3
+  jr nz, .part5
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE StringsLoop, StringsNotes, 2
+  PLAY_NOTE DrumLoop2, DrumNotes, 4
+  ret
+.part5
+  cp 5
+  jr nz, .part6
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE ChimeLoop, ChimeNotes, 2
+  PLAY_NOTE DrumLoop3, DrumNotes, 4
+  ret
+.part6
+  cp 8
+  jr nz, .part7
+  PLAY_NOTE ChimeLoop, ChimeNotes, 2
+  PLAY_NOTE StringsLoop, StringsNotes, 1
+  ret
+.part7
+  cp 9
+  jr nz, .defaultPart
+  PLAY_NOTE ChimeLoop, ChimeNotes, 2
+  PLAY_NOTE StringsLoop, BassNotes, 1
+  ret
+.defaultPart
+  PLAY_NOTE BassLoop, BassNotes, 1
+  PLAY_NOTE ChimeLoop, ChimeNotes, 2
+  PLAY_NOTE DrumLoop2, DrumNotes, 4
   ret
 
 UpdateAudio::

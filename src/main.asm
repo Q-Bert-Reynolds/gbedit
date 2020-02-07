@@ -58,7 +58,12 @@ Main::
   ld [rSCY], a
   ld [rWX], a
   ld [rWY], a
-  
+
+.clearRAM
+  ld hl, _RAM
+  ld bc, $2000
+  call mem_Set
+
 .setupAudio
   ld hl, rAUDENA
   ld [hl], AUDENA_ON

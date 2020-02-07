@@ -9,6 +9,7 @@ INCLUDE "src/gbdk.asm"
 INCLUDE "src/math.asm"
 
 ; banks
+SONG_BANK           EQU 1
 UI_BANK             EQU 2
 START_BANK          EQU 3
 TITLE_BANK          EQU 4

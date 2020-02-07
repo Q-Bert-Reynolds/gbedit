@@ -1,4 +1,5 @@
 SECTION "Gloval Vars", WRAM0
+
 ;temp vars
 _a: DB
 _b: DB

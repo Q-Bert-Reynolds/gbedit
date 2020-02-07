@@ -120,6 +120,7 @@ BallToss:
 ShowTitle:
   di
   DISPLAY_OFF
+  call UpdateAudio
   CLEAR_SCREEN 0
   ld hl, rBGP
   ld [hl], BG_PALETTE
@@ -132,8 +133,10 @@ ShowTitle:
   ld de, _VRAM
   ld bc, _TITLE_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
+  call UpdateAudio
 
   SET_SPRITE_TILES (_CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS), _CalvinTitleTileMap, 0, 0
+  call UpdateAudio
 
   ld a, 96
   ld b, a
@@ -144,6 +147,7 @@ ShowTitle:
   ld l, a
   xor a
   call MoveSprites ;bc = xy, hl = wh, a = offset
+  call UpdateAudio
 
   ld c, 5
   ld d, OAMF_PAL1
@@ -162,6 +166,7 @@ ShowTitle:
   ld de, _VRAM+$1000+_TITLE_TILE_COUNT*16
   ld bc, _VERSION_TILE_COUNT*16
   call mem_CopyVRAM
+  call UpdateAudio
 
   xor a
   ld d, a ; x
@@ -175,7 +180,7 @@ ShowTitle:
   ld d, a
   ld e, a
   call ShowPlayer
-  nop
+  call UpdateAudio
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
 
@@ -316,6 +321,7 @@ TimeStatText:
 ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
+  call UpdateAudio
   CLEAR_SCREEN 0
   call LoadFontTiles
   DISPLAY_ON
@@ -329,6 +335,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call mem_Copy; memcpy(name_buff, user_name, 7);
   DISABLE_RAM_MBC5
   ei 
+  call UpdateAudio
 
   ld hl, name_buffer
   call str_Length

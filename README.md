@@ -9,13 +9,13 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 
 
 # Links:
-- [Rolédex](https://docs.google.com/spreadsheets/d/1IIjJsqXnREAFDcOv2hRcLN3WZhSiNk8bw7BR21-FdMg/edit#gid=2070431085)
-- [Move List](https://docs.google.com/spreadsheets/d/1OaO0aDuWQQxm-jt5bHvgmJ0le7WQDbh3Wp3kto6G5YQ/edit#gid=0)
+- [Rolédex](https://docs.google.com/spreadsheets/d/1IIjJsqXnREAFDcOv2hRcLN3WZhSiNk8bw7BR21-FdMg)
+- [Move List](https://docs.google.com/spreadsheets/d/1OaO0aDuWQQxm-jt5bHvgmJ0le7WQDbh3Wp3kto6G5YQ)
 - [Trainer's Guide](https://drive.google.com/file/d/11NbPeM3DPUOJs8hVLy9bznyHUQPVsvav/view)
 - [Home Version Box](https://drive.google.com/file/d/1-uF70yOGvBDvrCaU4W-j3mZX3pLW1fXw/view)
 - [Away Version Box](https://drive.google.com/file/d/1_kXh6oG8o5cgbJV2eutplZcjUX0jlLqc/view)
 - [Cartridge Labels](https://drive.google.com/file/d/1n6UwmMSDLmREgHvivLpuPbX-q09tqQ74/view)
-- [Old rom hack attempt](https://bitbucket.org/q_bert_reynolds/beisbolromhack/src/master/)
+- [Old rom hack attempt](https://bitbucket.org/q_bert_reynolds/beisbolromhack)
 
 # Compiling:
     python3 png2rgbds.py
@@ -26,6 +26,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # TODO:
 Rewrite in GBZ80
 
+- setting large amounds of OAM data (such as with MoveSprites) should be done with DMA transfer
 - When this section of the TODO is gone, the RGBDS version will be on par with old GBDK version
 
 Python scripts
@@ -76,7 +77,6 @@ Rolédex
 
 Music:
 
-- doesn't play during lcd interrupts because of bank switching
 - Charge (intro anim)
 - Take Me Out to the Ball Game (title screen)
 - Billet Town

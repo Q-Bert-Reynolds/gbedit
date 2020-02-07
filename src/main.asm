@@ -3,6 +3,7 @@ INCLUDE "src/roledex.asm"
 INCLUDE "src/core.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
+
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"

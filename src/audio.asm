@@ -87,30 +87,30 @@ WaveTable:
   DB 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
 
 ;note struct:
-; DW pitch;
-; DB volume_envelope; // channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
-; DB wave_duty;       // wave pattern duty (bits 76), length counter load register (bits 543210)
 ; DB pitch_sweep;     // ch1 only, rate (bits 654, 0=off), direction (bit 3, 1=down, 0=up), right shift (bits 210, 0=off)
+; DB wave_duty;       // wave pattern duty (bits 76), length counter load register (bits 543210)
+; DB volume_envelope; // channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
+; DW pitch;
 
 BassNotes:
-  DW SILENCE 
-  DB $00, $00, $00
+  DB %00000000, %00000000, %00000000
+  DW SILENCE
+  DB %00000000, %00111111, %11111111
   DW E3
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW G3
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW Gb3
-  DB $FF, $FF, $00
+  DB %00000000, %00111111, %11111111
   DW A3
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW B3
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW Cb4
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW D4
-  DB $FF, $3F, $00
+  DB %00000000, %00111111, %11111111
   DW E4
-  DB $FF, $3F, $00
 
 BassLoop:
   DB 1,0,0,0
@@ -127,24 +127,24 @@ BassLoop:
   DB 0,1,2,0
 
 StringsNotes:
-  DW SILENCE 
-  DB $00, $00, $00
-  DW E5      
-  DB $FF, $FF, $00
-  DW G5      
-  DB $FF, $FF, $00
-  DW Gb5     
-  DB $FF, $FF, $00
-  DW A5      
-  DB $FF, $FF, $00
-  DW B5      
-  DB $FF, $FF, $00
-  DW Cb6     
-  DB $FF, $FF, $00
-  DW D6      
-  DB $FF, $FF, $00
-  DW E6      
-  DB $FF, $FF, $00
+  DB %00000000, %00000000, %00000000
+  DW SILENCE
+  DB %00111010, %11000100, %11110001
+  DW E5
+  DB %00111010, %11000100, %11110001
+  DW G5
+  DB %00111010, %11000100, %11110001
+  DW Gb5
+  DB %00111010, %11000100, %11110001
+  DW A5
+  DB %00111010, %11000100, %11110001
+  DW B5
+  DB %00111010, %11000100, %11110001
+  DW Cb6
+  DB %00111010, %11000100, %11110001
+  DW D6
+  DB %00111010, %11000100, %11110001
+  DW E6
 
 StringsLoop:
   DB 1,0,0,0
@@ -161,24 +161,24 @@ StringsLoop:
   DB 0,0,0,0
 
 ChimeNotes:
-  DW SILENCE 
-  DB $00, $00, $00
-  DW E6      
-  DB $F6, $C6, $00
-  DW G6      
-  DB $F6, $C6, $00
-  DW Gb6     
-  DB $F6, $C6, $00
-  DW A6      
-  DB $F6, $C6, $00
-  DW B6      
-  DB $F6, $C6, $00
-  DW Cb7     
-  DB $F6, $C6, $00
-  DW D7      
-  DB $F6, $C6, $00
-  DW E7      
-  DB $F6, $C6, $00
+  DB %00000000, %00000000, %00000000
+  DW SILENCE
+  DB %00111010, %11000100, %11110001
+  DW E6
+  DB %00111010, %11000100, %11110001
+  DW G6
+  DB %00111010, %11000100, %11110001
+  DW Gb6
+  DB %00111010, %11000100, %11110001
+  DW A6
+  DB %00111010, %11000100, %11110001
+  DW B6
+  DB %00111010, %11000100, %11110001
+  DW Cb7
+  DB %00111010, %11000100, %11110001
+  DW D7
+  DB %00111010, %11000100, %11110001
+  DW E7
 
 ChimeLoop:
   DB 1,0,3,1
@@ -195,12 +195,12 @@ ChimeLoop:
   DB 0,3,4,8
 
 DrumNotes:
+  DB %00000000, %00000000, %00000000
   DW SILENCE
-  DB $00, $00, $00
+  DB %00111010, %11000100, %11110001
   DW E5
-  DB $E1, $CF, $00
+  DB %00111010, %11000100, %11110001
   DW A6
-  DB $F0, $CF, $00
 
 DrumLoop1:
   DB 0,0,0,0
@@ -261,88 +261,90 @@ SetNote: ;a = channel, hl = note
   pop af;channel
   cp 1
   jr nz, .checkPulseChannel2
-  ld a, [hli] ;upper byte of pitch
-  ld [rNR14], a
+  ld a, [hli] ;ch1 only, rate (bits 654, 0=off), direction (bit 3, 1=down, 0=up), right shift (bits 210, 0=off)
+  ld [rAUD1SWEEP], a
+  ld a, [hli] ;wave pattern duty (bits 76), length counter load register (bits 543210)
+  ld [rAUD1LEN], a
+  ld a, [hli] ;channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
+  ld [rAUD1ENV], a
   ld a, [hli] ;lower byte of pitch
-  ld [rNR13], a
-  ld a, [hli] ;volume envelope
-  ld [rNR12], a
-  ld a, [hli] ;wave duty
-  ld [rNR11], a
-  ld a, [hl] ;pitch sweep
-  ld [rNR10], a
+  ld [rAUD1LOW], a
+  ld a, [hli] ;upper byte of pitch
+  or AUDHIGH_RESTART ;| AUDHIGH_LENGTH_ON
+  ld [rAUD1HIGH], a
   ret
 .checkPulseChannel2
   cp 2
   jr nz, .checkWaveChannel
-  ld a, [hli] ;upper byte of pitch
-  ld [rNR24], a
+  inc hl ;no sweep
+  ld a, [hli] ;wave pattern duty (bits 76), length counter load register (bits 543210)
+  ld [rAUD2LEN], a
+  ld a, [hli] ;channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
+  ld [rAUD2ENV], a
   ld a, [hli] ;lower byte of pitch
-  ld [rNR23], a
-  ld a, [hli] ;volume envelope
-  ld [rNR22], a
-  ld a, [hl] ;wave duty
-  ld [rNR21], a
+  ld [rAUD2LOW], a
+  ld a, [hli] ;upper byte of pitch
+  or AUDHIGH_RESTART ;| AUDHIGH_LENGTH_ON
+  ld [rAUD2HIGH], a
   ret
 .checkWaveChannel
   cp 3
   jr nz, .checkNoiseChannel
-  ld a, [hli] ;upper byte of pitch
-  ld [rNR34], a
-  ld a, [hli] ;lower byte of pitch
-  ld [rNR33], a
+  ld a, AUDENA_ON ;enable channel 3
+  inc hl ;no sweep
+  ld [rAUD3ENA], a
+  ld a, [hli] ;Sound length = (256-t1)*(1/2) seconds
+  ld [rAUD3LEN], a
   ld a, [hli] ;volume envelope
-  ld [rNR32], a
-  ld a, [hl] ;wave duty
-  ld [rNR31], a
+  ld [rAUD3LEVEL], a
+  ld a, [hli] ;lower byte of pitch
+  ld [rAUD3LOW], a
+  ld a, [hli] ;upper byte of pitch
+  or AUDHIGH_RESTART ;| AUDHIGH_LENGTH_ON
+  ld [rAUD3HIGH], a
   ret
-.checkNoiseChannel ;NOISE
+.checkNoiseChannel
   cp 4
   ret nz
-  ld a, [hli] ;upper byte of pitch (INCORRECT FOR NOISE)
-  ld [rNR44], a
-  ld a, [hli] ;lower byte of pitch (INCORRECT FOR NOISE)
-  ld [rNR43], a
-  ld a, [hli] ;volume envelope
-  ld [rNR42], a
-  ld a, [hl] ;wave duty
-  ld [rNR41], a
+  inc hl ;no sweep
+  ld a, [hli] ;Bit 5-0 - Sound length data (<64)
+  ld [rAUD4LEN], a
+  ld a, [hli] ;channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
+  ld [rAUD4ENV], a
+  ld a, [hli] ;shift clock (bits 7654), step (bit 3, 0=15, 1=7), dividing ratio 1.048576/(n+1) (bits 210)
+  ld [rAUD4POLY], a
+  ld a, [hli] ; reset sound (bit 7), Counter/consecutive selection (bit 6)
+  or AUDHIGH_RESTART ;| AUDHIGH_LENGTH_ON
+  ld [rAUD4GO], a
   ret
 
+SET_NOTE: macro
+
+ENDM
 
 PlayMusic:
-
-  ld hl, C3
-  ld a, [hli] ;upper byte of pitch
-  or AUDHIGH_RESTART | AUDHIGH_LENGTH_ON
-  ld [rAUD1HIGH], a
-  ld a, [hl] ;lower byte of pitch
-  ld [rAUD1LOW], a
-  ld a, %11110001 ;channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
-  ld [rAUD1ENV], a
-  ld a, %11000100 ;wave pattern duty (bits 76), length counter load register (bits 543210)
-  ld [rAUD1LEN], a
-  ld a, %00111010 ;ch1 only, rate (bits 654, 0=off), direction (bit 3, 1=down, 0=up), right shift (bits 210, 0=off)
-  ld [rAUD1SWEEP], a
-
-  ; xor a
-  ; ld d, a
-  ; ld a, [beat]
-  ; ld e, a ;beat in de
-  
-  ; ld hl, BassLoop
-  ; add hl, de;note index
-  ; ld a, [hl];bass note
-
-  ; ld d, 0
-  ; ld e, a  
-  ; ld a, 5 ;len of note struct
-  ; call math_Multiply ;hl = beat * len(note)
-
-  ; ld bc, BassNotes
-  ; add hl, bc;note
-  ; ld a, 1;channel
+  ; ld a, 1
+  ; ld hl, ChimeNotes+5
   ; call SetNote
+
+  ld d, 0
+  ld a, [beat]
+  ld e, a ;beat in de
+  
+  ld hl, BassLoop
+  add hl, de;note index
+  ld a, [hl];bass note
+
+  ld d, 0
+  ld e, a  
+  ld a, 5 ;len of note struct
+  call math_Multiply ;hl = beat * len(note)
+
+  ld bc, BassNotes
+  add hl, bc;note
+
+  ld a, 1;channel
+  call SetNote
 
 ; switch (loop_num) {
 ;   case 6:

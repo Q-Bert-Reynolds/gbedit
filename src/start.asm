@@ -38,7 +38,7 @@ Start::
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
-  ld de, 1000
+  ld de, 2000
   call gbdk_Delay
 
 .showIntroSequence
@@ -50,7 +50,7 @@ Start::
   ld de, _VRAM+$1000
   ld bc, _INTRO_TILE_COUNT*16
   call mem_CopyToTileData
-
+  
   xor a
   ld d, a ; x
   ld e, a ; y
@@ -218,5 +218,4 @@ Start::
 .fadeOutAndExit
   call gbdk_WaitVBL
   FADE_OUT
-  nop
   ret

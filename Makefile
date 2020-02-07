@@ -14,7 +14,7 @@ all:
 	@mkdir -p $(DIST_DIR)
 	
 	rgbasm -D _$(VERSION) -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.asm
-	rgblink -o $(ROM_FILE) $(OBJ_DIR)/main.o
+	rgblink -m $(OBJ_DIR)/main.map -n $(OBJ_DIR)/main.sym -o $(ROM_FILE) $(OBJ_DIR)/main.o
 	rgbfix -jvcs -k 01 -l 0x33 -m 0x1B -p 0 -r 03 -t $(GAME_NAME) $(ROM_FILE)
 
 	open $(ROM_FILE)

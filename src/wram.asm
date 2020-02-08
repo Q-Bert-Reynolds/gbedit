@@ -20,9 +20,14 @@ _y: DW
 _z: DW
 
 ;Audio
+rCurrentSong: DW
+current_song_bank: DB
+music_tempo: DB
 music_timer: DB
-beat: DW
-loop_num: DB
+music_beats: DB
+music_beat_num: DB
+music_loops: DB
+music_loop_num: DB
 
 ;location of LCD interrupt subroutine
 rLCDInterrupt: DW

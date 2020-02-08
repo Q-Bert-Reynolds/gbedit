@@ -70,6 +70,7 @@ Main::
   ld a, $FF
   ld [rAUDTERM], a
   ld [rAUDVOL], a
+  LOAD_SONG LoadTakeMeOutToTheBallGame
   
 .setupDrawing
   CLEAR_SCREEN 0

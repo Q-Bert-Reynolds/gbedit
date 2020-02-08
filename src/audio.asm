@@ -3,10 +3,6 @@ INCLUDE "src/beisbol.inc"
 IF !DEF(AUDIO_ASM)
 AUDIO_ASM SET 1
 
-MEASURES        EQU 8
-BEATS           EQU MEASURES*3
-PLAYBACK_SPEED  EQU 20
-LOOPS           EQU 4
 
 C3      SET 44
 Db3     SET 156
@@ -85,8 +81,8 @@ REST    SET 1
 
 PLAY_NOTE: MACRO ;LoopArray, Tone, Channel
   ld d, 0
-  ld a, [beat]
-  ld e, a ;beat in de
+  ld a, [music_beat_num]
+  ld e, a ;music_beat_num in de
   
   ld hl, \1
   add hl, de;note index
@@ -183,16 +179,19 @@ PlayNote: ;a = channel, de = tone, hl = note
 PlayMusic:
   ld a, [loaded_bank]
   ld [vblank_bank], a
-  ld a, SONG_BANK
+  ld a, [current_song_bank]
   call SetBank
 
-  call TakeMeOutToTheBallGameSong
-
+  ld hl, rCurrentSong
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, b
+  ld l, a
+  jp hl
+EndPlayMusic:: ;song must jump back here
   ld a, [vblank_bank]
   call SetBank
-  ret
-
-LoadSong:: ;a = song bank, hl = song address
   ret
 
 UpdateAudio::
@@ -200,25 +199,31 @@ UpdateAudio::
   and a
   jr nz, .incrementTimer ;if (music_timer == 0) {
     call PlayMusic ;play_music();
-    ld a, [beat]
-    inc a ;beat++;
-    ld [beat], a
-    cp BEATS ;TODO: should be variable
-    jr nz, .incrementTimer ;if (beat == BEATS) {
-      xor a ;beat = 0;
-      ld [beat], a
-      ld a, [loop_num]
-      inc a ;loop_num++;
-      ld [loop_num], a
-      cp LOOPS
-      jr nz, .incrementTimer;if (loop_num == LOOPS) 
+    ld a, [music_beat_num]
+    inc a ;music_beat_num++;
+    ld [music_beat_num], a
+    ld b, a
+    ld a, [music_beats]
+    cp b
+    jr nz, .incrementTimer ;if (music_beat_num == BEATS) {
+      xor a ;music_beat_num = 0;
+      ld [music_beat_num], a
+      ld a, [music_loop_num]
+      inc a ;music_loop_num++;
+      ld [music_loop_num], a
+      ld b, a
+      ld a, [music_loops]
+      cp b
+      jr nz, .incrementTimer;if (music_loop_num == LOOPS) 
         xor a
-        ld [loop_num], a;loop_num = 0;
+        ld [music_loop_num], a;music_loop_num = 0;
 .incrementTimer
   ld a, [music_timer]
   inc a ; music_timer++;
   ld [music_timer], a
-  cp PLAYBACK_SPEED ;TODO: should be variable
+  ld b, a
+  ld a, [music_tempo]
+  cp b
   ret nz;if (music_timer == PLAYBACK_SPEED)
   xor a
   ld [music_timer], a ;music_timer = 0;

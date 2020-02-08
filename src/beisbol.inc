@@ -115,6 +115,18 @@ DISABLE_LCD_INTERRUPT: macro
   ei
 ENDM
 
+LOAD_SONG: MACRO ;\setup address
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, BANK(\1)
+  call SetBank
+
+  call \1
+  
+  ld a, [temp_bank]
+  call SetBank
+ENDM
+
 HIDE_ALL_SPRITES: MACRO
   xor a
   ld b, 160

@@ -3,9 +3,8 @@ INCLUDE "src/audio.asm"
 
 SECTION "Baseball Songs", ROMX, BANK[SONG_BANK]
 
-WaveTable:
-  DB 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-  DB 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
+OrganWaveTable:
+  DB $01, $23, $45, $67, $89, $AB, $CD, $EF, $02, $46, $8A, $CE, $02, $46, $8A, $CE
 
 ;tone struct:
 ; DB pitch_sweep;     // ch1 only, rate (bits 654, 0=off), direction (bit 3, 1=down, 0=up), right shift (bits 210, 0=off)
@@ -64,9 +63,9 @@ DrumLoop:
   DW C3, B8, B8
   DW C3, B8, B8
   DW C3, B8, B8
-  
+
 TakeMeOutToTheBallGameSong::
-  ld a, [loop_num]
+  ld a, [music_loop_num]
   and a
   jr nz, .partB
 .partA
@@ -86,4 +85,32 @@ TakeMeOutToTheBallGameSong::
   PLAY_NOTE TakeMeOutToTheBallGameD, OrganTone, 3
 .drums
   ; PLAY_NOTE DrumLoop, DrumTone, 4
+  jp EndPlayMusic
+
+LoadTakeMeOutToTheBallGame::
+  ld a, BANK(TakeMeOutToTheBallGameSong)
+  ld [current_song_bank], a
+  ld hl, TakeMeOutToTheBallGameSong
+  ld a, h
+  ld [rCurrentSong], a
+  ld a, l
+  ld [rCurrentSong+1], a
+
+  xor a
+  ld [music_timer], a
+  ld [music_beat_num], a
+  ld [music_loop_num], a
+
+  ld a, 4 ;loops
+  ld [music_loops], a
+  ld a, 20 ;more like inverse of tempo
+  ld [music_tempo], a
+  ld a, 24 ;8 measures * 3 beats/measure
+  ld [music_beats], a
+
+  ld hl, OrganWaveTable
+  ld de, _AUD3WAVERAM
+  ld bc, 16
+  call mem_Copy
+
   ret

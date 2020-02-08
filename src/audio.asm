@@ -181,7 +181,6 @@ PlayMusic:
   ld [vblank_bank], a
   ld a, [current_song_bank]
   call SetBank
-
   ld hl, rCurrentSong
   ld a, [hli]
   ld b, a
@@ -194,39 +193,43 @@ EndPlayMusic:: ;song must jump back here
   call SetBank
   ret
 
+StopMusic::
+
+  ret
+
 UpdateAudio::
   ld a, [music_timer]
   and a
-  jr nz, .incrementTimer ;if (music_timer == 0) {
-    call PlayMusic ;play_music();
+  jr nz, .incrementTimer
+    call PlayMusic
     ld a, [music_beat_num]
-    inc a ;music_beat_num++;
+    inc a
     ld [music_beat_num], a
     ld b, a
     ld a, [music_beats]
     cp b
-    jr nz, .incrementTimer ;if (music_beat_num == BEATS) {
-      xor a ;music_beat_num = 0;
+    jr nz, .incrementTimer
+      xor a
       ld [music_beat_num], a
-      ld a, [music_loop_num]
-      inc a ;music_loop_num++;
-      ld [music_loop_num], a
+      ld a, [music_phrase_num]
+      inc a
+      ld [music_phrase_num], a
       ld b, a
-      ld a, [music_loops]
+      ld a, [music_phrases]
       cp b
-      jr nz, .incrementTimer;if (music_loop_num == LOOPS) 
+      jr nz, .incrementTimer
         xor a
-        ld [music_loop_num], a;music_loop_num = 0;
+        ld [music_phrase_num], a
 .incrementTimer
   ld a, [music_timer]
-  inc a ; music_timer++;
+  inc a
   ld [music_timer], a
   ld b, a
   ld a, [music_tempo]
   cp b
-  ret nz;if (music_timer == PLAYBACK_SPEED)
+  ret nz
   xor a
-  ld [music_timer], a ;music_timer = 0;
+  ld [music_timer], a
   ret
 
 

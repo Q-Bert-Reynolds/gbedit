@@ -78,7 +78,6 @@ Rolédex
 Music:
 
 - Charge (intro anim)
-- Take Me Out to the Ball Game (title screen)
 - Billet Town
 - play ball
 
@@ -101,7 +100,8 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
 ROM Banks:
 
-    main.asm      ( bank0 ) - movement/collisions, bank switching
+    most things   ( bank0 ) - movement/collisions, bank switching
+    music         ( bank1 ) - baseball_music.asm, other music that fits
     ui.asm        ( bank2 ) - font, non-realtime UI functions, options
     start.asm     ( bank3 ) - copyrights & intro
     title.asm     ( bank4 ) - title, new game/continue menu

@@ -12,77 +12,77 @@ OrganWaveTable:
 ; DB volume_envelope; // channel volume (bits 7654), direction (bit 3, 0=down, 1=up), step len (bits 210, 0=off)
 
 OrganTone:
-  DB %00000000, %00111111, %11111111
+  DB %00011000, %11111111, %11111111
 
 DrumTone:
   DB %00111010, %11000100, %11110001
 
 TakeMeOutToTheBallGameA:
   DW G3,   HOLD, G4
-  DW E4,   D4,   B4
+  DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
-  DW A4,   HOLD, HOLD
+  DW A3,   HOLD, HOLD
   DW G3,   HOLD, G4
-  DW E4,   D4,   B4
+  DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
   DW HOLD, HOLD, HOLD
 TakeMeOutToTheBallGameB:
   DW E4,   Eb4,  E4
-  DW B4,   C4,   D4
+  DW B3,   C4,   D4
   DW E4,   HOLD, C4
-  DW A4,   HOLD, HOLD
+  DW A3,   HOLD, HOLD
   DW E4,   HOLD, E4
   DW E4,   Gb4,  G4
-  DW A5,   Gb4,  E4
-  DW D4,   B4,   A4
+  DW A4,   Gb4,  E4
+  DW D4,   B3,   A3
 TakeMeOutToTheBallGameC:
   DW G3,   HOLD, G4
-  DW E4,   D4,   B4
+  DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
-  DW A4,   HOLD, A4
-  DW G3,   HOLD, A4
-  DW B4,   C4,   D4
+  DW A3,   HOLD, A3
+  DW G3,   HOLD, A3
+  DW B3,   C4,   D4
   DW E4,   HOLD, HOLD
   DW REST, E4,   Gb4
 TakeMeOutToTheBallGameD:
   DW G4,   HOLD, HOLD
   DW G4,   HOLD, HOLD
   DW G4,   Gb4,  E4
-  DW D4,   Bb4,  D4
+  DW D4,   Db4,  D4
   DW E4,   HOLD, HOLD
   DW Gb4,  HOLD, HOLD
   DW G4,   HOLD, HOLD
   DW HOLD, HOLD, HOLD 
 
 DrumLoop:
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
-  DW C3, B8, B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
+  DW C3,   B8,   B8
 
 TakeMeOutToTheBallGameSong::
-  ld a, [music_loop_num]
+  ld a, [music_phrase_num]
   and a
   jr nz, .partB
 .partA
-  PLAY_NOTE TakeMeOutToTheBallGameA, OrganTone, 3
+  PLAY_NOTE TakeMeOutToTheBallGameA, OrganTone, 1
   jr .drums
 .partB
   cp 1
   jr nz, .partC
-  PLAY_NOTE TakeMeOutToTheBallGameB, OrganTone, 3
+  PLAY_NOTE TakeMeOutToTheBallGameB, OrganTone, 1
   jr .drums
 .partC
   cp 2
   jr nz, .partD
-  PLAY_NOTE TakeMeOutToTheBallGameC, OrganTone, 3
+  PLAY_NOTE TakeMeOutToTheBallGameC, OrganTone, 1
   jr .drums
 .partD
-  PLAY_NOTE TakeMeOutToTheBallGameD, OrganTone, 3
+  PLAY_NOTE TakeMeOutToTheBallGameD, OrganTone, 1
 .drums
   ; PLAY_NOTE DrumLoop, DrumTone, 4
   jp EndPlayMusic
@@ -99,10 +99,10 @@ LoadTakeMeOutToTheBallGame::
   xor a
   ld [music_timer], a
   ld [music_beat_num], a
-  ld [music_loop_num], a
+  ld [music_phrase_num], a
 
-  ld a, 4 ;loops
-  ld [music_loops], a
+  ld a, 4 ;phrases
+  ld [music_phrases], a
   ld a, 20 ;more like inverse of tempo
   ld [music_tempo], a
   ld a, 24 ;8 measures * 3 beats/measure

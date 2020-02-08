@@ -26,8 +26,8 @@ music_tempo: DB
 music_timer: DB
 music_beats: DB
 music_beat_num: DB
-music_loops: DB
-music_loop_num: DB
+music_phrases: DB
+music_phrase_num: DB
 
 ;location of LCD interrupt subroutine
 rLCDInterrupt: DW

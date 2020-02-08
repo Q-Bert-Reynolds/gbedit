@@ -1,4 +1,9 @@
 SECTION "Core", ROM0
+SetBank:: ;a = BANK ;TODO: handle more than 255 banks
+  ld [loaded_bank], a
+  ld [rROMB0], a
+  ret
+  
 LCDInterrupt::
   push af
   push bc
@@ -63,9 +68,15 @@ UpdateInput::
   ret
 
 LoadFontTiles::
-  SWITCH_ROM_MBC5 UI_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
   call UILoadFontTiles
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
@@ -110,10 +121,16 @@ RevealText:: ;hl = text
   ld de, str_buffer
   call str_Copy
 
-  SWITCH_ROM_MBC5 UI_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
   ld hl, str_buffer
   call UIRevealText
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 DrawUIBox: ;Entry: de = wh, Affects: hl
@@ -308,9 +325,18 @@ DisplayText:: ;hl = text
   ret
 
 ShowListMenu:: ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
-  SWITCH_ROM_MBC5 UI_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
   call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
-  RETURN_BANK
+  push af
+
+  ld a, [temp_bank]
+  call SetBank
+
+  pop af
   ret; return a;
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
@@ -325,18 +351,30 @@ ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
   ld de, name_buffer
   call str_Copy; strcpy(name_buffer, str);
 
-  SWITCH_ROM_MBC5 UI_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+  
   ld de, str_buffer
   ld hl, name_buffer
   pop bc ;max_len
   call UIShowTextEntry ;ui_show_text_entry(str_buffer, name_buffer, max_len);
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 ShowOptions::
-  SWITCH_ROM_MBC5 UI_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
   call UIShowOptions
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 ;; moves a grid of sprite tiles

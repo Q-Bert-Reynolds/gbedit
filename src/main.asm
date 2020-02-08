@@ -88,19 +88,28 @@ Main::
   ld [rIE], a
 
 .start ;show intro credits, batting animation
-  SET_BANK START_BANK
+  ld a, START_BANK
+  call SetBank
   call Start
+  
 .title ;show title drop, version slide, cycle of players, new game/continue screen
-  SET_BANK TITLE_BANK
+  ld a, TITLE_BANK
+  call SetBank
   call Title ;should set a to 0 if new game pressed
   jr nz, .startGame
+
 .newGame
-  SET_BANK NEW_GAME_BANK
+  ld a, NEW_GAME_BANK
+  call SetBank
   call NewGame
+
 .startGame
-  SET_BANK PLAY_BALL_BANK
+  ld a, PLAY_BALL_BANK
+  call SetBank
   call StartGame
-  SET_BANK 0
+
+  xor a
+  call SetBank
   jp Main ;restart the game
   nop
   ret

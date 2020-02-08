@@ -17,21 +17,39 @@ INCLUDE "data/player_strings.asm"
 
 SECTION "Roledex", ROM0
 GetPlayerName:: ; a = number, returns name in name_buffer
-  SWITCH_ROM_MBC5 PLAYER_STRINGS_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, PLAYER_STRINGS_BANK
+  call SetBank
+
   ; strcpy(name_buff, player_strings[number]);
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 GetPlayerDescription:: ; a = number, returns description in str_buffer
-  SWITCH_ROM_MBC5 PLAYER_STRINGS_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, PLAYER_STRINGS_BANK
+  call SetBank
+
   ; strcpy(str_buff, (player_strings[number]+11));
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret 
 
 LoadPlayerBaseData:: ; a = number
-  SWITCH_ROM_MBC5 PLAYER_DATA_BANK
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, PLAYER_STRINGS_BANK
+  call SetBank
+
   ; load_base_data(number);
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 PutPlayerTilesInHL: ;A000
@@ -102,13 +120,12 @@ SwitchPlayerImageBank: ; a = number, return adjusted number in a
   add a, PLAYERS_PER_BANK
   jr .findBankLoop
 .setBank
-  ld hl, rROMB0
+  ld a, [loaded_bank]
+  ld [temp_bank], a
   ld a, c
   add a, PLAYER_IMG_BANK
-  ld [hl], a
-  xor a
-  ld hl, rROMB1
-  ld [hl], a
+  call SetBank
+
   pop af 
   ld c, a ;PLAYERS_PER_BANK * (bank+1)
   ld a, b ;num
@@ -164,7 +181,9 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
   pop bc ;tile count
   pop de ;vram dest
   call mem_CopyToTileData
-  RETURN_BANK
+  
+  ld a, [temp_bank]
+  call SetBank
   ret 
   
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
@@ -179,7 +198,10 @@ GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   add hl, bc
   ld a, [hl]
   push af ;columns
-  RETURN_BANK
+
+  ld a, [temp_bank]
+  call SetBank
+  
   pop af ;columns
   ret ;return a
   
@@ -219,7 +241,8 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   pop de ;xy
   call SetBKGTilesWithOffset
 
-  RETURN_BANK
+  ld a, [temp_bank]
+  call SetBank
   ret
 
 

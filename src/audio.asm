@@ -181,9 +181,18 @@ PlayNote: ;a = channel, de = tone, hl = note
   ret
 
 PlayMusic:
-  SWITCH_ROM_MBC5 SONG_BANK
+  ld a, [loaded_bank]
+  ld [vblank_bank], a
+  ld a, SONG_BANK
+  call SetBank
+
   call TakeMeOutToTheBallGameSong
-  RETURN_BANK
+
+  ld a, [vblank_bank]
+  call SetBank
+  ret
+
+LoadSong:: ;a = song bank, hl = song address
   ret
 
 UpdateAudio::

@@ -1,5 +1,10 @@
 SECTION "Gloval Vars", WRAM0
 
+;banking
+temp_bank: DB
+vblank_bank: DB
+loaded_bank: DB
+
 ;temp vars
 _a: DB
 _b: DB
@@ -18,9 +23,6 @@ _z: DW
 music_timer: DB
 beat: DW
 loop_num: DB
-
-;current main bank
-_bank: DB
 
 ;location of LCD interrupt subroutine
 rLCDInterrupt: DW

@@ -94,6 +94,14 @@ PLAY_NOTE: MACRO ;LoopArray, Tone, Channel
   call PlayNote
 ENDM
 
+LOAD_SONG: MACRO ;\1 load address
+  di
+  ld a, BANK(\1)
+  ld hl, \1
+  call LoadSong
+  ei
+ENDM
+
 INCLUDE "music/baseball_songs.asm"
 
 SECTION "Audio", ROM0
@@ -176,7 +184,7 @@ PlayNote: ;a = channel, de = tone, hl = note
   ld [rAUD4GO], a
   ret
 
-PlayMusic:
+UpdateMusic:
   ld a, [loaded_bank]
   ld [vblank_bank], a
   ld a, [current_song_bank]
@@ -188,20 +196,21 @@ PlayMusic:
   ld h, b
   ld l, a
   jp hl
-EndPlayMusic:: ;song must jump back here
+FinishMusicUpdate:: ;song must jump back here
   ld a, [vblank_bank]
   call SetBank
   ret
 
-StopMusic::
-
-  ret
-
 UpdateAudio::
+  ld hl, rAUDENA
+  ld a, [hl]
+  and a, AUDENA_ON
+  ret z ;no need if audio is off
+
   ld a, [music_timer]
   and a
   jr nz, .incrementTimer
-    call PlayMusic
+    call UpdateMusic
     ld a, [music_beat_num]
     inc a
     ld [music_beat_num], a
@@ -232,5 +241,21 @@ UpdateAudio::
   ld [music_timer], a
   ret
 
+LoadSong:: ; a = bank, hl = setup address
+  push af
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  pop af
+  call SetBank
+  jp hl
+DoneLoadingSong:: ;must be called at end of load subroutine
+  ld a, [temp_bank]
+  call SetBank
+  ld hl, rAUDENA
+  ld [hl], AUDENA_ON
+  ld a, $FF
+  ld [rAUDTERM], a
+  ld [rAUDVOL], a
+  ret 
 
 ENDC ;AUDIO_ASM

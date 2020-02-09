@@ -17,7 +17,7 @@ OrganTone:
 DrumTone:
   DB %00111010, %11000100, %11110001
 
-TakeMeOutToTheBallGameA:
+TakeMeOutToTheBallGamePhraseA:
   DW G3,   HOLD, G4
   DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
@@ -26,7 +26,7 @@ TakeMeOutToTheBallGameA:
   DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
   DW HOLD, HOLD, HOLD
-TakeMeOutToTheBallGameB:
+TakeMeOutToTheBallGamePhraseB:
   DW E4,   Eb4,  E4
   DW B3,   C4,   D4
   DW E4,   HOLD, C4
@@ -35,7 +35,7 @@ TakeMeOutToTheBallGameB:
   DW E4,   Gb4,  G4
   DW A4,   Gb4,  E4
   DW D4,   B3,   A3
-TakeMeOutToTheBallGameC:
+TakeMeOutToTheBallGamePhraseC:
   DW G3,   HOLD, G4
   DW E4,   D4,   B3
   DW D4,   HOLD, HOLD
@@ -44,7 +44,7 @@ TakeMeOutToTheBallGameC:
   DW B3,   C4,   D4
   DW E4,   HOLD, HOLD
   DW REST, E4,   Gb4
-TakeMeOutToTheBallGameD:
+TakeMeOutToTheBallGamePhraseD:
   DW G4,   HOLD, HOLD
   DW G4,   HOLD, HOLD
   DW G4,   Gb4,  E4
@@ -54,38 +54,27 @@ TakeMeOutToTheBallGameD:
   DW G4,   HOLD, HOLD
   DW HOLD, HOLD, HOLD 
 
-DrumLoop:
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-  DW C3,   B8,   B8
-
 TakeMeOutToTheBallGameSong::
   ld a, [music_phrase_num]
   and a
   jr nz, .partB
 .partA
-  PLAY_NOTE TakeMeOutToTheBallGameA, OrganTone, 1
+  PLAY_NOTE TakeMeOutToTheBallGamePhraseA, OrganTone, 1
   jr .drums
 .partB
   cp 1
   jr nz, .partC
-  PLAY_NOTE TakeMeOutToTheBallGameB, OrganTone, 1
+  PLAY_NOTE TakeMeOutToTheBallGamePhraseB, OrganTone, 1
   jr .drums
 .partC
   cp 2
   jr nz, .partD
-  PLAY_NOTE TakeMeOutToTheBallGameC, OrganTone, 1
+  PLAY_NOTE TakeMeOutToTheBallGamePhraseC, OrganTone, 1
   jr .drums
 .partD
-  PLAY_NOTE TakeMeOutToTheBallGameD, OrganTone, 1
+  PLAY_NOTE TakeMeOutToTheBallGamePhraseD, OrganTone, 1
 .drums
-  ; PLAY_NOTE DrumLoop, DrumTone, 4
-  jp EndPlayMusic
+  jp FinishMusicUpdate
 
 LoadTakeMeOutToTheBallGame::
   ld a, BANK(TakeMeOutToTheBallGameSong)
@@ -113,4 +102,43 @@ LoadTakeMeOutToTheBallGame::
   ld bc, 16
   call mem_Copy
 
-  ret
+  jp DoneLoadingSong
+
+ChargePhraseA:
+  DW Bb4,  F4,   G4,   A4
+  DW Bb4,  F4,   G4,   A4
+  DW B4,   Gb4,  Ab4,  Bb4
+  DW B4,   Gb4,  Ab4,  Bb4
+  DW C4,   G4,   A4,   B4
+  DW C4,   G4,   A4,   B4
+  DW C4,   HOLD, HOLD, HOLD
+  DW C3,   E3,   G3,   C4
+  DW G3,   C4,   HOLD, HOLD
+  DW C5,   HOLD, HOLD, HOLD  
+
+ChargeSong:
+  PLAY_NOTE ChargePhraseA, OrganTone, 1
+  jp FinishMusicUpdate
+
+LoadChargeSong::
+  ld a, BANK(ChargeSong)
+  ld [current_song_bank], a
+  ld hl, ChargeSong
+  ld a, h
+  ld [rCurrentSong], a
+  ld a, l
+  ld [rCurrentSong+1], a
+
+  xor a
+  ld [music_timer], a
+  ld [music_beat_num], a
+  ld [music_phrase_num], a
+
+  ld a, 1
+  ld [music_phrases], a
+  ld a, 20
+  ld [music_tempo], a
+  ld a, 40 ;10 measures * 4 beats/measure
+  ld [music_beats], a
+
+  jp DoneLoadingSong

@@ -169,6 +169,7 @@ Start::
   jr nz, .exitableOneSecPauseLoop2
 
 .pitchSequence
+  LOAD_SONG LoadChargeSong
   ld d, 0 ; x
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w

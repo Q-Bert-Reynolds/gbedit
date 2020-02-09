@@ -22,6 +22,9 @@ data/*.inc
 *.2bpp
 *.sav
 
+# generated HTML (from markdown)
+*.html
+
 # macOS Desktop Services file
 .DS_Store
 

@@ -7,7 +7,6 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 - Save your Team and game progress on the Game Pak memory.
 - Requires basic reading skills to fully enjoy the entertaining story.
 
-
 # Links:
 - [Rolédex](https://docs.google.com/spreadsheets/d/1IIjJsqXnREAFDcOv2hRcLN3WZhSiNk8bw7BR21-FdMg)
 - [Move List](https://docs.google.com/spreadsheets/d/1OaO0aDuWQQxm-jt5bHvgmJ0le7WQDbh3Wp3kto6G5YQ)

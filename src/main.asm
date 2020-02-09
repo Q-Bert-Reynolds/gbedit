@@ -66,11 +66,10 @@ Main::
 
 .setupAudio
   ld hl, rAUDENA
-  ld [hl], AUDENA_ON
+  ld [hl], AUDENA_OFF
   ld a, $FF
   ld [rAUDTERM], a
   ld [rAUDVOL], a
-  LOAD_SONG LoadTakeMeOutToTheBallGame
   
 .setupDrawing
   CLEAR_SCREEN 0

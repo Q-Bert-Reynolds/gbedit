@@ -17,6 +17,11 @@ OrganTone:
 DrumTone:
   DB %00111010, %11000100, %11110001
 
+TakeMeOutToTheBallGameIntro:
+  DW D4,   HOLD, HOLD
+  DW E4,   HOLD, HOLD
+  DW F4,   HOLD, HOLD
+  DW Gb4,  HOLD, HOLD
 TakeMeOutToTheBallGamePhraseA:
   DW G3,   HOLD, G4
   DW E4,   D4,   B3
@@ -55,6 +60,21 @@ TakeMeOutToTheBallGamePhraseD:
   DW HOLD, HOLD, HOLD 
 
 TakeMeOutToTheBallGameSong::
+  ld a, [song_has_intro]
+  and a
+  jr z, .playLoop
+
+  ld a, [music_beat_num]
+  cp 4*3;measures * beats/measure
+  jr c, .playIntro
+  xor a
+  ld [song_has_intro], a
+  ld [music_beat_num], a
+  jr .playLoop
+.playIntro
+  PLAY_NOTE TakeMeOutToTheBallGameIntro, OrganTone, 1
+  jp .drums
+.playLoop
   ld a, [music_phrase_num]
   and a
   jr nz, .partB
@@ -89,6 +109,9 @@ LoadTakeMeOutToTheBallGame::
   ld [music_timer], a
   ld [music_beat_num], a
   ld [music_phrase_num], a
+
+  ld a, 1
+  ld [song_has_intro], a
 
   ld a, 4 ;phrases
   ld [music_phrases], a
@@ -133,6 +156,7 @@ LoadChargeSong::
   ld [music_timer], a
   ld [music_beat_num], a
   ld [music_phrase_num], a
+  ld [song_has_intro], a
 
   ld a, 1
   ld [music_phrases], a

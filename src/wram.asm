@@ -22,6 +22,7 @@ _z: DW
 ;Audio
 rCurrentSong: DW
 current_song_bank: DB
+song_has_intro: DB
 music_tempo: DB
 music_timer: DB
 music_beats: DB

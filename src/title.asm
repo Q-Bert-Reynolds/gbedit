@@ -189,6 +189,7 @@ ShowTitle:
   ld [_x], a
   DISPLAY_ON
   call gbdk_WaitVBL
+  LOAD_SONG LoadTakeMeOutToTheBallGame
 .dropInTitleLoop
   call gbdk_WaitVBL
   ld a, [_y]
@@ -482,8 +483,6 @@ Title:: ; puts (c-d-1) in a
   ld [rSCX], a
 
   DISABLE_LCD_INTERRUPT
-  LOAD_SONG LoadTakeMeOutToTheBallGame
-  
   xor a
   ld [_d], a
 .showTitleAndNewGameMenuLoop ; while (d == 0 || d == c)

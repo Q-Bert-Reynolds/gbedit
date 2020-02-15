@@ -216,6 +216,9 @@ Start::
   ld [_i], a
   jr nz, .exitableOneSecPauseLoop3
 
+  ld de, 10000
+  call gbdk_Delay
+
 .fadeOutAndExit
   call gbdk_WaitVBL
   FADE_OUT

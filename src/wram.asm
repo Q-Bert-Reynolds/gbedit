@@ -1,4 +1,6 @@
 SECTION "Gloval Vars", WRAM0
+;debug
+_breakpoint: DB
 
 ;banking
 temp_bank: DB

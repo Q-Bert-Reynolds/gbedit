@@ -477,7 +477,7 @@ DrawPlayerUI: ;UBYTE team, Player *p
   xor a
   ld [_b], a
   ld a, [frame]
-  and a, %00000001
+  and a, 1
   cp b
   jr z, .teamIsPitching
   ld a, 1
@@ -543,6 +543,7 @@ DrawPlayerUI: ;UBYTE team, Player *p
       ld a, c
       add a, 48
       ld [hl], a ;tiles[14] = 48+p->level%10;
+      pop af;level
 .doneWithLevel
 
   ld a, [_b]
@@ -949,11 +950,11 @@ MovePlayMenuArrow:
 
 SelectPlayMenuItem:
   ld a, [play_menu_selection]
-  and %00000001
+  and 1
   ld [_x], a ;x = play_menu_selection % 2;
 
   ld a, [play_menu_selection]
-  and %00000010
+  and 2
   srl a 
   ld [_y], a ;y = (play_menu_selection & 2) >> 1;
 
@@ -1400,4 +1401,5 @@ StartGame::
     HIDE_WIN
     jp .playBallLoop
 .exitPlayBallLoop
+  ld [_breakpoint], a
   ret

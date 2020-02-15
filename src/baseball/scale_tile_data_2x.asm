@@ -1,5 +1,3 @@
-INCLUDE "src/beisbol.inc"
-
 SCALE_2X_CALC_A: MACRO
   ld a, [_b]
   swap a

@@ -7,7 +7,7 @@ INCLUDE "src/ui.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"
-INCLUDE "src/play_ball.asm"
+INCLUDE "src/baseball/play_ball.asm"
 
 INCLUDE "src/wram.asm"
 INCLUDE "src/sram.asm"

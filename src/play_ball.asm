@@ -281,68 +281,69 @@ PlayIntro:
   ld [rWY], a;move_win(7,96);
   SHOW_WIN
 
-  xor a
-  ld [_j], a
-.rowLoop; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
-    xor a
-    ld [_i], a
-.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-      ld a, [_j]
-      cp 3
-      jr nc, .setTiles ;if (j < 3) {
-        ld a, [_j]
-        ld de, (_CALVIN_BACK_COLUMNS-1)
-        call math_Multiply;j*(_CALVIN_BACK_COLUMNS-1)
-        ld c, l
-        ld a, [_i]
-        add a, c
-        ld c, a ;j*(_CALVIN_BACK_COLUMNS-1)+i
+;   xor a
+;   ld [_j], a
+; .rowLoop; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
+;     xor a
+;     ld [_i], a
+; .columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+;       ld a, [_j]
+;       cp 3
+;       jr nc, .setTiles ;if (j < 3) {
+;         ld a, [_j]
+;         ld de, (_CALVIN_BACK_COLUMNS-1)
+;         call math_Multiply;j*(_CALVIN_BACK_COLUMNS-1)
+;         ld c, l
+;         ld a, [_i]
+;         add a, c
+;         ld c, a ;j*(_CALVIN_BACK_COLUMNS-1)+i
 
-        xor a
-        ld b, a
-        ld hl, _CalvinBackTileMap
-        add hl, bc
-        ld a, [hli]
-        add a, _UI_FONT_TILE_COUNT
-        ld d, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
-        call gbdk_SetSpriteTile;set_sprite_tile(j*(_CALVIN_BACK_COLUMNS-1)+i, _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT);
-        jr .skip
-.setTiles ;else {
-        xor a
-        ld b, a
-        ld hl, _CalvinBackTileMap
-        add hl, bc
-        ld a, [hli]
-        add a, _UI_FONT_TILE_COUNT
-        ld b, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+;         xor a
+;         ld b, a
+;         ld hl, _CalvinBackTileMap
+;         add hl, bc
+;         ld a, [hli]
+;         add a, _UI_FONT_TILE_COUNT
+;         ld d, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+;         call gbdk_SetSpriteTile;set_sprite_tile(j*(_CALVIN_BACK_COLUMNS-1)+i, _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT);
+;         jr .skip
+; .setTiles ;else {
+;         xor a
+;         ld b, a
+;         ld hl, _CalvinBackTileMap
+;         add hl, bc
+;         ld a, [hli]
+;         add a, _UI_FONT_TILE_COUNT
+;         ld b, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
         
-        ld a, [_j]
-        sub a, 3
-        ld de, (_CALVIN_BACK_COLUMNS-1)
-        call math_Multiply;(j-3)*(_CALVIN_BACK_COLUMNS-1)
-        ld a, [_i]
-        add a, l;(j-3)*(_CALVIN_BACK_COLUMNS-1)+i
-        ld hl, tile_buffer
-        ld a, b
-        ld [hl], a ;tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
-.skip
-      ld a, [_i]
-      inc a
-      ld [_i], a
-      cp _CALVIN_BACK_COLUMNS-1
-      jr nz, .columnLoop
-    ld a, [_j]
-    inc a
-    ld [_j], a
-    cp _CALVIN_BACK_ROWS-1
-    jr nz, .rowLoop
+;         ld a, [_j]
+;         sub a, 3
+;         ld de, (_CALVIN_BACK_COLUMNS-1)
+;         call math_Multiply;(j-3)*(_CALVIN_BACK_COLUMNS-1)
+;         ld a, [_i]
+;         add a, l;(j-3)*(_CALVIN_BACK_COLUMNS-1)+i
+;         ld hl, tile_buffer
+;         ld a, b
+;         ld [hl], a ;tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
+; .skip
+;       ld a, [_i]
+;       inc a
+;       ld [_i], a
+;       cp _CALVIN_BACK_COLUMNS-1
+;       jr nz, .columnLoop
+;     ld a, [_j]
+;     inc a
+;     ld [_j], a
+;     cp _CALVIN_BACK_ROWS-1
+;     jr nz, .rowLoop
 
   ld d, 1
   ld e, 16-_CALVIN_BACK_ROWS
-  ld h, _CALVIN_BACK_COLUMNS-1
-  ld l, _CALVIN_BACK_ROWS-4
-  ld bc, tile_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
+  ld h, _CALVIN_BACK_COLUMNS;-1
+  ld l, _CALVIN_BACK_ROWS;-4
+  ld bc, _CalvinBackTileMap;tile_buffer
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset;gbdk_SetBKGTiles ;set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
 
   ld a, 80
   call GetPlayerImgColumns;c = get_player_img_columns(80, PLAY_BALL_BANK);

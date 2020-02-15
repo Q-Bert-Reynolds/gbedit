@@ -21,31 +21,6 @@ SCALE_2X_CALC_B: MACRO
   ld a, [hl]
 ENDM
 
-SCALE_2X_GET_DATA: MACRO ;\1 = offset
-  ld h, 0
-  ld a, [_i]
-  ld l, a
-  add hl, hl;i*2
-  add hl, hl;i*4
-  add hl, hl;i*8
-  add hl, hl;i*16
-
-  pop bc ;data
-  push bc ;data
-  add hl, bc ;data + i*16
-
-  ld b, 0
-  ld a, [_j]
-  ld c, a
-  add hl, bc ;data + i*16 + j
-
-  ld bc, \1
-  add hl, bc ;data + i*16 + j + offset
-
-  ld a, [hl]
-  ld [_b], a ;data + i*16 + j + offset
-ENDM
-
 ;sets tiles (i*64 + j*2 + offset) and (i*4*16 + j*2 + offset + 2)
 SCALE_2X_SET_TILE: MACRO ;\1 = offset, a = data from calc
   push af ;calc
@@ -87,46 +62,46 @@ SetBkgDataDoubled: ;de = vram location, bc = nb_tiles, hl = data
   ld [_i], a
 .columnLoop ;for (i = 0; i < nb_tiles*16; i+=16) {
     xor a
-    ld [_j], a 
+    ld [_j], a
 .rowLoop ;for (j = 0; j < 8; j+=2) {
 
-      ; pop hl;data
-      ; ld a, [hli]
-      ; ld [_b], a
-      ; push hl;data+1
-      SCALE_2X_GET_DATA 0
+      pop hl;data
+      ld a, [hli]
+      ld [_b], a
+      push hl;data+1
+
       SCALE_2X_CALC_A
       SCALE_2X_SET_TILE 0
       SCALE_2X_CALC_B
       SCALE_2X_SET_TILE 16
 
-      ; pop hl;data+1
-      ; ld a, [hli]
-      ; ld [_b], a
-      ; push hl;data+2
-      ; ld bc, 6
-      ; add hl, bc
-      ; push hl;data+8
-      SCALE_2X_GET_DATA 1
+      pop hl;data+1
+      ld a, [hli]
+      ld [_b], a
+      push hl;data+2
+      ld bc, 6
+      add hl, bc
+      push hl;data+8
+
       SCALE_2X_CALC_A
       SCALE_2X_SET_TILE 1
       SCALE_2X_CALC_B
       SCALE_2X_SET_TILE 17
 
-      ; pop hl;data+8
-      ; ld a, [hli]
-      ; ld [_b], a
-      ; push hl;data+9
-      SCALE_2X_GET_DATA 8
+      pop hl;data+8
+      ld a, [hli]
+      ld [_b], a
+      push hl;data+9
+
       SCALE_2X_CALC_A
       SCALE_2X_SET_TILE 32
       SCALE_2X_CALC_B
       SCALE_2X_SET_TILE 48
 
-      ; pop hl;data+9
-      ; ld a, [hld];data+8
-      ; ld [_b], a
-      SCALE_2X_GET_DATA 9
+      pop hl;data+9
+      ld a, [hld];data+8
+      ld [_b], a
+
       SCALE_2X_CALC_A
       SCALE_2X_SET_TILE 33
       SCALE_2X_CALC_B
@@ -139,17 +114,18 @@ SetBkgDataDoubled: ;de = vram location, bc = nb_tiles, hl = data
       jp nz, .rowLoop
 
     pop hl;data+2*4
-    ; ld bc, 8
-    ; add hl, bc
+    ld bc, 8
+    add hl, bc
+    
+    pop bc;nb_tiles
+    push bc
+    push hl;data+16
 
     ld a, [_i]
     inc a
     ld [_i], a
-    pop bc;nb_tiles
-    push bc
-    push hl;data+16
-    cp c
-    jp nz, .rowLoop
+    cp c;nb_tiles
+    jp nz, .columnLoop
 
 .done
   pop hl ;data

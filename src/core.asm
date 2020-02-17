@@ -228,99 +228,56 @@ DrawWinUIBox:: ; bc = xy, de = wh
   ret
 
 DisplayText:: ;hl = text
-  push hl
-  xor a ; draw_win_ui_box(0,0,20,6);
+  push hl;text
+
+  xor a
   ld b, a
   ld c, a
-  ld a, 20
-  ld d, a
-  ld a, 6
-  ld e, a
+  ld d, 20
+  ld e, 6
   call DrawWinUIBox
-  pop hl
+
+  pop hl;text
+  ld bc, str_buffer
+  ld e, 0;len
+.loop
+    ld a, [hl]
+    cp "\n"
+    jr z, .drawText
+    and a;end of text
+    jr z, .drawText
+    ld [bc], a;copy text to str_buffer
+    inc hl
+    inc bc
+    inc e;len
+    jr .loop
+
+.drawText
+  push hl;text left
+  ld h, e;w
+  ld l, 1;h
+  ld d, 1;x
+  ld e, 2;y
+  ld bc, str_buffer
+  call gbdk_SetWinTiles;line 1
+  pop hl;text left
+  ld a, [hli]
   push hl
+  pop bc;text left
+  and a
+  jr z, .show; if there's not a second line
   call str_Length
-  ld a, e ; assumes that de is less than a byte
-  ld [_l], a ; l = strlen(text);
-  pop hl
-  xor a
-  ld [_w], a
-  ld [_y], a
-  ld [_i], a
-.loopString; for (i = 0; i < l; ++i) {
-  push hl
-  xor a
-  ld b, a
-  ld a, [_i]
-  ld c, a
-  add hl, bc
-  ld a, [hl]
-  sub a, "\n"
-  jr nz, .skip ;if (text[i] == '\n') {
-  pop hl
-  push hl
-  xor a
-  ld b, a
-  ld a, [_w]
-  ld c, a
-  add hl, bc ;text+w
-  ld de, str_buffer
-  ld a, [_i]
-  sub a, c
-  ld c, a ;i-w
-  call mem_Copy ;memcpy(str_buffer,text+w,i-w);
-  ld a, 1
-  ld d, a ;x
-  ld l, a ;height
-  ld a, [_y]
-  add a ;*2
-  add a, 2 ;2+y*2
-  ld e, a ;y
-  ld h, c ;i-w still in c
-  ld bc, str_buffer
-  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buffer);
-  ld a, [_y]
-  inc a
-  ld [_y], a ;++y
-  ld a, [_i]
-  inc a
-  ld [_w], a ;w = i+1;
-.skip
-  pop hl
-  push hl
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  ld b, a
-  ld a, [_l]
-  sub a, b
-  jr nz, .loopString
-  pop hl
-  xor a
-  ld b, a
-  ld a, [_w]
-  ld c, a
-  add hl, bc ;text+w
-  ld de, str_buffer
-  ld a, [_i]
-  sub a, c
-  ld c, a ;i-w
-  call mem_Copy ; memcpy(str_buffer,text+w,i-w);
-  ld a, 1
-  ld d, a ;x
-  ld l, a ;height
-  ld a, [_y]
-  add a ;*2
-  add a, 2 ;2+y*2
-  ld e, a ;y
-  ld h, c ;i-w still in c
-  ld bc, str_buffer
-  call gbdk_SetWinTiles ;set_win_tiles(1, 2+y*2, i-w, 1, str_buffer);
-  ld a, 96
-  ld hl, rWY
-  ld [hli], a
+  ld h, e;w
+  ld l, 1;h
+  ld d, 1;x
+  ld e, 4;y
+  call gbdk_SetWinTiles;line 2
+
+.show
   ld a, 7
-  ld [hl], a ; move_win(7,96);
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a
   SHOW_WIN
   ret
 

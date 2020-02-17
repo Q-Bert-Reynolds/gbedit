@@ -12,6 +12,9 @@
 ;     Length of a string
 ;     Entry: hl = string
 ;     Return: de = length
+;   str_Append
+;     Appends one string to another
+;     Entry: hl = append string, de = dest string
 ;   str_Replace
 ;     Replaces string bc in source hl with string af in destination de
 ;     Entry: hl = src string, de = dest string, bc = replace string, af = with string
@@ -61,13 +64,13 @@ str_Copy::
 ;
 ;***************************************************************************
 str_Length::
-  ld   de, 0
+  ld de, 0
 .loop
-  ld   a, [hli]
-  and  a
+  ld a, [hli]
+  and a
   ret z
-  inc  de
-  jr   .loop
+  inc de
+  jr .loop
 
 ;***************************************************************************
 ;

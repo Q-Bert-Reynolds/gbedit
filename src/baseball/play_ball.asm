@@ -308,14 +308,14 @@ Bat:; (Player *p, UBYTE move) {
 
   xor a
   ld [_c], a
-  ld [_i], a
+  ld [_j], a
   ld a, 4
   ld [_s], a;speed
 .swingLoop;for (i = 0; i < 200; i+=s) {
     ld a, [_s]
     add a, a;s*2
     ld b, a
-    ld a, [_i]
+    ld a, [_j]
     cp b
     jr nz, .aim;if (i == s*2) {
 
@@ -332,7 +332,7 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_c]
     and a
     jp nz, .checkFinishSwing
-    ld a, [_i]
+    ld a, [_j]
     and a
     jp z, .checkFinishSwing ;if (c == 0 && i > 0) {
       call Aim
@@ -340,7 +340,7 @@ Bat:; (Player *p, UBYTE move) {
       ld a, [button_state]
       and PADF_A
       jp z, .moveBaseball ;if (k & J_A) {
-        ld a, [_i]
+        ld a, [_j]
         ld [_c], a
 
         ld d, 0
@@ -361,7 +361,7 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_c]
     add a, b
     ld b, a;c+2*s
-    ld a, [_i]
+    ld a, [_j]
     cp b
     jr nz, .moveBaseball;else if (i == c+2*s) {
       ld d, 0
@@ -373,16 +373,17 @@ Bat:; (Player *p, UBYTE move) {
       call SetBKGTilesWithOffset
 
 .moveBaseball
-    ld a, [_i]
+    ld a, [_j]
     call MoveBaseball
     call gbdk_WaitVBL
 
 .increment
     ld a, [_s]
     ld b, a
-    ld a, [_i]
+    ld a, [_j]
     add a, b;i+=s
-    ld [_i], a
+    ld [_j], a
+    ld [_breakpoint], a
     cp 200
     jp c, .swingLoop
 

@@ -63,3 +63,5 @@ play_menu_selection: DB
 swing_diff_x: DW
 swing_diff_y: DW
 swing_diff_z: DW
+ball_x: DW
+ball_y: DW

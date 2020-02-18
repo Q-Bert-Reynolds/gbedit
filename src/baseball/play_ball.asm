@@ -55,22 +55,66 @@ ShowAimCircle: ;hl = size
   ret
 
 ShowStrikeZone; de = xy
+  ld hl, oam_buffer + 10*4
   ;top left
   ;set_sprite_tile(10, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
   ;set_sprite_prop(10, S_PALETTE);
   ;move_sprite(10, x-8, y-12);
+  ld a, e
+  sub a, 12
+  ld [hli], a;y
+  ld a, d
+  sub a, 8
+  ld [hli], a;x
+  ld a, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT
+  ld [hli], a;tile
+  ld a, OAMF_PAL1
+  ld [hli], a
+
   ;top right
   ;set_sprite_tile(11, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
   ;set_sprite_prop(11, FLIP_X_PAL);
   ;move_sprite(11, x+16, y-12);
+  ld a, e
+  sub a, 12
+  ld [hli], a;y
+  ld a, d
+  add a, 16
+  ld [hli], a;x
+  ld a, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT
+  ld [hli], a;tile
+  ld a, FLIP_X_PAL
+  ld [hli], a
+
   ;bottom left
   ;set_sprite_tile(12, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
   ;set_sprite_prop(12, FLIP_Y_PAL);
   ;move_sprite(12, x-8, y+20);
+  ld a, e
+  add a, 20
+  ld [hli], a;y
+  ld a, d
+  sub a, 8
+  ld [hli], a;x
+  ld a, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT
+  ld [hli], a;tile
+  ld a, FLIP_Y_PAL
+  ld [hli], a
+
   ;bottom right
   ;set_sprite_tile(13, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
   ;set_sprite_prop(13, FLIP_XY_PAL);
   ;move_sprite(13, x+16, y+20);
+  ld a, e
+  add a, 20
+  ld [hli], a;y
+  ld a, d
+  add a, 16
+  ld [hli], a;x
+  ld a, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT
+  ld [hli], a;tile
+  ld a, FLIP_XY_PAL
+  ld [hli], a
   ret
 
 HideStrikeZone:
@@ -78,18 +122,23 @@ HideStrikeZone:
   ;move_sprite(11, 0, 0);
   ;move_sprite(12, 0, 0);
   ;move_sprite(13, 0, 0);
+  ld hl, oam_buffer + 10*4
+  ld bc, 4*4
+  xor a
+  call mem_Set
   ret
 
 HideBaseball;
   ;move_sprite(0,0,0);
   ;move_sprite(1,0,0);
   ;move_sprite(2,0,0);
+  ld hl, oam_buffer
+  ld bc, 3*4
+  xor a
+  call mem_Set
   ret 
 
-; WORD ball_x;
-; WORD ball_y;
 MoveBaseball:; a = i
-  ;// pos = (start_pos * (128-i) + end_pos * i) >> 7;
   ;ball_x = (126*(128-i)+52*i)>>7;
   ;ball_y = (13*(128-i)+87*i)>>7;
   ;t = 6+(i/10)%4;

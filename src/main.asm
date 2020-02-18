@@ -59,6 +59,8 @@ Main::
   ld [rWX], a
   ld [rWY], a
 
+  SETUP_DMA_TRANSFER
+
 .clearRAM
   ld hl, _RAM
   ld bc, $2000
@@ -87,21 +89,21 @@ Main::
   ld a, IEF_VBLANK
   ld [rIE], a
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
   
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;should set a to 0 if new game pressed
-;   jr nz, .startGame
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .startGame
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
 
 .startGame
   ld a, PLAY_BALL_BANK

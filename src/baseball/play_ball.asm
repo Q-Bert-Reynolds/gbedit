@@ -131,7 +131,6 @@ MoveAimCircle: ;de = xy
   ret
 
 Pitch: ; (Player *p, UBYTE move) {
-  ld [_breakpoint], a
   ;sprintf(str_buff, "%s sets.", p->nickname);
   ;reveal_text(str_buff, PLAY_BALL_BANK);
   ;show_aim_circle(3);

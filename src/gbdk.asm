@@ -46,6 +46,29 @@ ENDM
 INCLUDE "src/memory1.asm"
   rev_Check_memory1_asm 1.2
 
+SETUP_DMA_TRANSFER: MACRO
+  ld c, _HRAM % $100
+  ld b, .DMATransferEnd - .DMATransfer
+  ld hl, .DMATransfer
+.copy
+  ld a, [hli]
+  ld [$ff00+c], a
+  inc c
+  dec b
+  jr nz, .copy
+  jp .DMATransferEnd
+
+.DMATransfer
+  ld a, oam_buffer / $100
+  ld [rDMA], a
+  ld a, $28
+.wait
+  dec a
+  jr nz, .wait
+  ret
+.DMATransferEnd
+ENDM
+
 DISPLAY_ON: MACRO
   ld a, [rLCDC]
   or LCDCF_ON
@@ -166,6 +189,10 @@ CGB_COMPATIBILITY: MACRO
   ldh [rOCPD], a
 ENDM
 
+SECTION "GBDK Vars", WRAM0[$cf00]
+oam_buffer: DS 4*40
+vbl_done: DB
+
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
 ;
@@ -177,20 +204,17 @@ SECTION "GBDK Code", ROM0
 ;
 ;***************************************************************************
 gbdk_MoveSprite::
-  ld hl, _OAMRAM ;calculate origin of sprite info
+  ld hl, oam_buffer ;calculate origin of sprite info
   sla c ;multiply c by 4
   sla c
   ld b, 0
   add hl, bc
-  di
-  LCD_WAIT_VRAM
   ld a,e  ;set y
   ld [hl], a
   inc l
-  LCD_WAIT_VRAM
   ld a,d  ;set x
   ld [hl], a
-  reti
+  ret
 
 ;***************************************************************************
 ;
@@ -202,17 +226,14 @@ gbdk_MoveSprite::
 ;
 ;***************************************************************************
 gbdk_SetSpriteTile::
-  ld hl, _OAMRAM+2 ;calculate origin of sprite info
+  ld hl, oam_buffer+2 ;calculate origin of sprite info
   sla c ;multiply c by 4
   sla c
   ld b, 0
   add hl, bc
-  di
-  LCD_WAIT_VRAM ; WTF!? why twice?
-  LCD_WAIT_VRAM
   ld a, d ;set sprite number
   ld [hl], a
-  reti
+  ret
 
 ;***************************************************************************
 ;
@@ -224,13 +245,11 @@ gbdk_SetSpriteTile::
 ;
 ;***************************************************************************
 gbdk_SetSpriteProp::
-  ld hl, _OAMRAM+3 ; calculate origin of sprite info
+  ld hl, oam_buffer+3 ; calculate origin of sprite info
   sla c ;multiply c by 4
   sla c
   ld b, 0
   add hl, bc
-  di
-  LCD_WAIT_VRAM
   ld a, d ;set sprite properties
   ld [hl], a
   reti
@@ -256,11 +275,18 @@ gbdk_DisplayOff::
 ;
 ;***************************************************************************
 gbdk_WaitVBL::
-  ld a, [rLY]
-  cp 144
-  jr c, gbdk_WaitVBL
-  cp 145
-  jr nc, gbdk_WaitVBL
+  ldh a, [rLCDC]
+  add a
+  ret nc; return if screen is off
+.loop
+    halt; wait for any interrupt
+    nop; halt sometimes skips the next instruction
+    ld a, [vbl_done]  ; was it a vblank interrupt?
+    ;; warning: we may lose a vblank interrupt, if it occurs now
+    or a
+    jr z, .loop ; no: back to sleep!
+  xor a
+  ld [vbl_done], a
   ret
 
 ;***************************************************************************

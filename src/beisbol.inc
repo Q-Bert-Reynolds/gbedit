@@ -108,7 +108,7 @@ ENDM
 HIDE_ALL_SPRITES: MACRO
   xor a
   ld b, 160
-  ld hl, _OAMRAM
+  ld hl, oam_buffer
 .loop\@
   ld [hl], a
   inc l

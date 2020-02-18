@@ -637,39 +637,88 @@ ShowMoveInfo: ;Move *m
   ret
 
 SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should be move struct
-  ;get_bkg_tiles(0,8,20,10,bkg_buff);
-  ;draw_bkg_ui_box(5,12,15,6);
-  ;c = 4;
+  ld d, 0
+  ld e, 8
+  ld h, 20
+  ld l, 10
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles;get_bkg_tiles(0,8,20,10,bkg_buff);
+
+  ld b, 5
+  ld c, 12
+  ld d, 15
+  ld e, 6
+  call DrawBKGUIBox;draw_bkg_ui_box(5,12,15,6);
+
+  ld a, 4
+  ld [_c], a
+
   ;for (i = 0; i < 4; ++i) {
   ;  if (moves[i] == NULL) { c = i; break; }
   ;  memcpy(name_buff, moves[i]->name, 16);
   ;  set_bkg_tiles(7,13+i,strlen(name_buff),1,name_buff);
   ;if (c < 4) set_bkg_tiles(7,c+13,2,4-c,"--------");
 
-  ;move_move_menu_arrow(move_choice);
-  ;show_move_info();//p->moves[move_choice]);
+  call MoveMoveMenuArrow;move_move_menu_arrow(move_choice);
+  call ShowMoveInfo;show_move_info();//p->moves[move_choice]);
 
-  ;update_waitpadup();
-  ;while (1) {
-  ;  k = joypad();
-  ;  if (k & J_UP && move_choice > 0) {
-  ;    update_vbl();
-  ;    --move_choice;
-  ;    move_move_menu_arrow(move_choice);
-  ;    show_move_info();//p->moves[move_choice]);
-  ;    update_waitpadup();
-  ;  else if (k & J_DOWN && move_choice < c-1) {
-  ;    update_vbl();
-  ;    ++move_choice;
-  ;    move_move_menu_arrow(move_choice);
-  ;    show_move_info();//p->moves[move_choice]);
-  ;    update_waitpadup();
-  ;  if (k & (J_START | J_A)) {
-  ;    set_bkg_tiles(0,8,20,10,bkg_buff);
-  ;    return move_choice+1;
-  ;  else if (k & J_B) break;
-  ;  update_vbl(); 
-  ;}
-  ;set_bkg_tiles(0,8,20,10,bkg_buff);
-  xor a;return 0;
+  WAITPAD_UP;update_waitpadup();
+.loop ;while (1) {
+    call gbdk_WaitVBL
+    call UpdateInput;  k = joypad();
+.checkButtonUp;  if (k & J_UP && move_choice > 0) {
+    ld a, [button_state]
+    and PADF_UP
+    jr z, .checkButtonDown
+    ld a, [move_choice]
+    and a
+    jr z, .checkButtonDown
+    dec a ;--move_choice;
+    ld [move_choice], a
+    call MoveMoveMenuArrow
+    call ShowMoveInfo
+    WAITPAD_UP
+    jp .loop
+
+.checkButtonDown;  else if (k & J_DOWN && move_choice < c-1) {
+    ld a, [button_state]
+    and PADF_DOWN
+    jr z, .checkButtonStartA
+    ld a, [_c]
+    dec a
+    ld c, a
+    ld a, [move_choice]
+    cp c
+    jr nc, .checkButtonStartA
+    inc a ;++move_choice;
+    ld [move_choice], a
+    call MoveMoveMenuArrow
+    call ShowMoveInfo
+    WAITPAD_UP
+    jp .loop
+
+.checkButtonStartA;  if (k & (J_START | J_A)) {
+    ld a, [button_state]
+    and PADF_START | PADF_A
+    jp z, .checkButtonB
+    jr .exit
+
+.checkButtonB;  else if (k & J_B) break;
+    ld a, [button_state]
+    and PADF_B
+    jp z, .loop
+    ld a, -1
+    ld [move_choice], a
+
+.exit
+  call gbdk_WaitVBL
+  ld d, 0
+  ld e, 8
+  ld h, 20
+  ld l, 10
+  ld bc, bkg_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(0,8,20,10,bkg_buff);
+
+  ld a, [move_choice]
+  inc a
   ret

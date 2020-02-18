@@ -16,6 +16,10 @@ _i: DB
 _j: DB
 _k: DB
 _l: DB
+_s: DB
+_t: DB
+_u: DB
+_v: DB
 _w: DW
 _x: DW
 _y: DW
@@ -40,7 +44,8 @@ last_button_state: DB
 button_state: DB
 
 ;buffers
-tile_buffer: DS 512
+tile_buffer: DS BUFFER_SIZE
+bkg_buffer: DS BUFFER_SIZE
 str_buffer: DS 64
 name_buffer: DS 16
 player_base: DS 14
@@ -55,3 +60,6 @@ home_score: DB
 away_score: DB
 move_choice: DB
 play_menu_selection: DB
+swing_diff_x: DW
+swing_diff_y: DW
+swing_diff_z: DW

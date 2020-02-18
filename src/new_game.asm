@@ -132,14 +132,10 @@ NewGame::
   call mem_CopyVRAM;mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
   CLEAR_SCREEN " "
 
-  ld a, 13
-  ld d, a
-  ld a, 4
-  ld e, a
-  ld a, _DOC_HICKORY_COLUMNS
-  ld h, a
-  ld a, _DOC_HICKORY_ROWS
-  ld l, a
+  ld d, 13
+  ld e, 4
+  ld h, _DOC_HICKORY_COLUMNS
+  ld l, _DOC_HICKORY_ROWS
   ld bc, _DocHickoryTileMap
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset

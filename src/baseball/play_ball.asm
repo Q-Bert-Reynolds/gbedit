@@ -16,16 +16,42 @@ INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
 
-ShowAimCircle: ;a = size
-  ;i = (size%8)+_BASEBALL_TILE_COUNT;
-  ;set_sprite_tile(3, i);
-  ;set_sprite_prop(3, 0);
-  ;set_sprite_tile(4, i);
-  ;set_sprite_prop(4, S_FLIPX);
-  ;set_sprite_tile(5, i);
-  ;set_sprite_prop(5, S_FLIPY);
-  ;set_sprite_tile(6, i);
-  ;set_sprite_prop(6, FLIP_XY);
+ShowAimCircle: ;hl = size
+  ld c, 8
+  call math_Divide ; hl (remainder a) = hl / c
+  add a, _BASEBALL_TILE_COUNT
+  ld [_i], a;i = (size%8)+_BASEBALL_TILE_COUNT;
+
+  ld c, 3
+  ld d, a
+  call gbdk_SetSpriteTile;set_sprite_tile(3, i);
+  ld c, 3
+  ld d, 0
+  call gbdk_SetSpriteProp;set_sprite_prop(3, 0);
+
+  ld c, 4
+  ld a, [_i]
+  ld d, a
+  call gbdk_SetSpriteTile;set_sprite_tile(4, i);
+  ld c, 4
+  ld d, OAMF_XFLIP
+  call gbdk_SetSpriteProp;set_sprite_prop(4, S_FLIPX);
+
+  ld c, 5
+  ld a, [_i]
+  ld d, a
+  call gbdk_SetSpriteTile;set_sprite_tile(5, i);
+  ld c, 5
+  ld d, OAMF_YFLIP
+  call gbdk_SetSpriteProp;set_sprite_prop(5, S_FLIPY);
+  
+  ld c, 6
+  ld a, [_i]
+  ld d, a
+  call gbdk_SetSpriteTile;set_sprite_tile(6, i);
+  ld c, 6
+  ld d, FLIP_XY
+  call gbdk_SetSpriteProp;set_sprite_prop(6, FLIP_XY);
   ret
 
 ShowStrikeZone; de = xy
@@ -79,22 +105,39 @@ MoveBaseball:; a = i
   ret
 
 MoveAimCircle: ;de = xy
-  ;move_sprite(3, x,   y);
-  ;move_sprite(4, x+8, y);
-  ;move_sprite(5, x,   y+8);
-  ;move_sprite(6, x+8, y+8);
+  ld c, 3
+  call gbdk_MoveSprite;move_sprite(3, x,   y);
+
+  inc c
+  ld a, d
+  add a, 8
+  ld d, a
+  call gbdk_MoveSprite;move_sprite(4, x+8, y);
+
+  inc c
+  ld a, d
+  sub a, 8 
+  ld d, a
+  ld a, e
+  add a, 8
+  ld e, a
+  call gbdk_MoveSprite;move_sprite(5, x,   y+8);
+
+  inc c
+  ld a, 8
+  add a, d
+  ld d, a
+  call gbdk_MoveSprite;move_sprite(6, x+8, y+8);
   ret
 
 Pitch: ; (Player *p, UBYTE move) {
+  ld [_breakpoint], a
   ;sprintf(str_buff, "%s sets.", p->nickname);
   ;reveal_text(str_buff, PLAY_BALL_BANK);
   ;show_aim_circle(3);
   ;move_aim_circle(96,32);
   ret
 
-; WORD swing_diff_x;
-; WORD swing_diff_y;
-; WORD swing_diff_z;
 Swing:; (WORD x, WORD y, WORD z) {
   ;move_aim_circle(-8,-8);
   ;hide_strike_zone();
@@ -122,81 +165,259 @@ Swing:; (WORD x, WORD y, WORD z) {
   ;}
   ret
 
+Aim: 
+  call UpdateInput
+.testRight;if (k & J_RIGHT) ++a;
+  ld a, [button_state]
+  and PADF_RIGHT
+  jr z, .testLeft
+  ld a, [_a]
+  inc a
+  ld [_a], a
+  jr .testDown
+.testLeft;else if (k & J_LEFT) --a;
+  ld a, [button_state]
+  and PADF_LEFT
+  jr z, .testDown
+  ld a, [_a]
+  dec a
+  ld [_a], a
+.testDown;if (k & J_DOWN) ++b;
+  ld a, [button_state]
+  and PADF_DOWN
+  jr z, .testUp
+  ld a, [_b]
+  inc a
+  ld [_b], a
+  jr .updateAim
+.testUp;else if (k & J_UP) --b;
+  ld a, [button_state]
+  and PADF_RIGHT
+  jr z, .updateAim
+  ld a, [_b]
+  dec a
+  ld [_b], a
+.updateAim
+  ld a, [_a]
+  srl a
+  ld d, a
+  ld a, [_b]
+  srl a
+  ld e, a
+  call MoveAimCircle;move_aim_circle(a>>1, b>>1);
+  call gbdk_WaitVBL
+  ret
+
 Bat:; (Player *p, UBYTE move) {
-  ;set_bkg_data(_UI_FONT_TILE_COUNT+64, _RIGHTY_PITCHER_OPPONENT_TILE_COUNT, _righty_pitcher_opponent_tiles);
-  ;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
-  ;set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent0_map);
-  ;show_aim_circle(7);
-  ;move_aim_circle(49,85); //TODO: handle lefty batters
-  ;show_strike_zone(49,85);
-  ;sprintf(str_buff, "%s steps\ninto the box.", p->nickname);
-  ;display_text(str_buff);
-  ;a = 49<<1;
-  ;b = 85<<1;
-  ;swing_diff_x = 0;
-  ;swing_diff_y = 0;
-  ;for (i = 0; i < 60; ++i) {
-  ;    k = joypad();
-  ;    if (k & J_RIGHT) ++a;
-  ;    else if (k & J_LEFT) --a;
-  ;    if (k & J_DOWN) ++b;
-  ;    else if (k & J_UP) --b;
-  ;    move_aim_circle(a>>1, b>>1);
-  ;    update_vbl();
-  ;}
-  ;sprintf(str_buff, "%s sets.", "LAGGARD");
-  ;display_text(str_buff);
-  ;for (i = 0; i < 60; ++i) { // TODO: quick pitch should decrease this time
-  ;    k = joypad();
-  ;    if (k & J_RIGHT) ++a;
-  ;    else if (k & J_LEFT) --a;
-  ;    if (k & J_DOWN) ++b;
-  ;    else if (k & J_UP) --b;
-  ;    move_aim_circle(a>>1, b>>1);
+  ld hl, _RightyPitcherOpponentTiles
+  ld de, $8800 + 64*16
+  ld bc, _RIGHTY_PITCHER_OPPONENT_TILE_COUNT*16
+  call mem_CopyVRAM
+  
+  ld d, 0
+  ld e, 5
+  ld h, _RIGHTY_BATTER_USER0_COLUMNS
+  ld l, _RIGHTY_BATTER_USER0_ROWS
+  ld bc, _RightyBatterUser0TileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+  
+  ld d, 12
+  ld e, 0
+  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
+  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
+  ld bc, _RightyPitcherOpponent0TileMap
+  ld a, _UI_FONT_TILE_COUNT+64
+  call SetBKGTilesWithOffset
 
-  ;    if (i == 30) {
-  ;        set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent1_map);
-  ;    }
-  ;    update_vbl();
-  ;}
-  ;set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent2_map);
-  ;display_text("And the pitch.");
-  ;c = 0;
-  ;s = 4; // speed
-  ;for (i = 0; i < 200; i+=s) {
-  ;    if (i == s*2) {
-  ;        set_bkg_tiles_with_offset(12,0,_RIGHTY_PITCHER_OPPONENT0_COLUMNS,_RIGHTY_PITCHER_OPPONENT0_ROWS,_UI_FONT_TILE_COUNT+64,_righty_pitcher_opponent3_map);
-  ;    }
-  ;    k = joypad();
-  ;    if (c == 0 && i > 0) {
-  ;        if (k & J_RIGHT) ++a;
-  ;        else if (k & J_LEFT) --a;
-  ;        if (k & J_DOWN) ++b;
-  ;        else if (k & J_UP) --b;
-  ;        move_aim_circle(a>>1, b>>1);
+  ld hl, 7
+  call ShowAimCircle
+  
+  ld d, 49
+  ld e, 85
+  call MoveAimCircle ;TODO: handle lefty batters
+  
+  ld d, 49
+  ld e, 85
+  call ShowStrikeZone
+  
+  ld bc, TEMP_PLAYER_NAME
+  ld hl, BatterStepsIntoTheBoxText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call DisplayText
 
-  ;        if (k & J_A) {
-  ;            c = i;
-  ;            set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user1_map);
-  ;            swing(a>>1, b>>1, i);
-  ;        }
-  ;    }
-  ;    else if (i == c+2*s) {
-  ;        set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user2_map);
-  ;    }
-  ;    move_baseball(i);
-  ;    update_vbl();
-  ;}
-  ;hide_baseball();
-  ;move_aim_circle(-8,-8);
-  ;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
-  ;update_delay(100);
+  ld a, 49<<1
+  ld [_a], a;a = 49<<1;
+  ld a, 85<<1
+  ld [_b], a;b = 85<<1;
+  
+  xor a
+.preSetAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 60
+    jr nz, .preSetAimLoop
+
+  ld bc, TEMP_OPPONENT_NAME
+  ld hl, PitcherSetsText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call DisplayText
+
+  xor a
+.preWindupAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 30
+    jr nz, .preWindupAimLoop
+
+  ld d, 12
+  ld e, 0
+  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
+  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
+  ld bc, _RightyPitcherOpponent1TileMap
+  ld a, _UI_FONT_TILE_COUNT+64
+  call SetBKGTilesWithOffset
+
+  xor a
+.postWindupAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 30
+    jr nz, .postWindupAimLoop
+
+  ld d, 12
+  ld e, 0
+  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
+  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
+  ld bc, _RightyPitcherOpponent2TileMap
+  ld a, _UI_FONT_TILE_COUNT+64
+  call SetBKGTilesWithOffset
+
+  ld hl, AndThePitchText
+  call DisplayText
+
+  xor a
+  ld [_c], a
+  ld [_i], a
+  ld a, 4
+  ld [_s], a;speed
+.swingLoop;for (i = 0; i < 200; i+=s) {
+    ld a, [_s]
+    add a, a;s*2
+    ld b, a
+    ld a, [_i]
+    cp b
+    jr nz, .aim;if (i == s*2) {
+
+.setFinishPitchFrame
+    ld d, 12
+    ld e, 0
+    ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
+    ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
+    ld bc, _RightyPitcherOpponent3TileMap
+    ld a, _UI_FONT_TILE_COUNT+64
+    call SetBKGTilesWithOffset
+
+.aim
+    ld a, [_c]
+    and a
+    jp nz, .checkFinishSwing
+    ld a, [_i]
+    and a
+    jp z, .checkFinishSwing ;if (c == 0 && i > 0) {
+      call Aim
+
+      ld a, [button_state]
+      and PADF_A
+      jp z, .moveBaseball ;if (k & J_A) {
+        ld a, [_i]
+        ld [_c], a
+
+        ld d, 0
+        ld e, 5
+        ld h, _RIGHTY_BATTER_USER0_COLUMNS
+        ld l, _RIGHTY_BATTER_USER0_ROWS
+        ld bc, _RightyBatterUser1TileMap
+        ld a, _UI_FONT_TILE_COUNT
+        call SetBKGTilesWithOffset
+
+        call Swing;swing(a>>1, b>>1, i);
+      jp .moveBaseball
+
+.checkFinishSwing
+    ld a, [_s]
+    add a, a
+    ld b, a;s*2
+    ld a, [_c]
+    add a, b
+    ld b, a;c+2*s
+    ld a, [_i]
+    cp b
+    jr nz, .moveBaseball;else if (i == c+2*s) {
+      ld d, 0
+      ld e, 5
+      ld h, _RIGHTY_BATTER_USER0_COLUMNS
+      ld l, _RIGHTY_BATTER_USER0_ROWS
+      ld bc, _RightyBatterUser2TileMap
+      ld a, _UI_FONT_TILE_COUNT
+      call SetBKGTilesWithOffset
+
+.moveBaseball
+    ld a, [_i]
+    call MoveBaseball
+    call gbdk_WaitVBL
+
+.increment
+    ld a, [_s]
+    ld b, a
+    ld a, [_i]
+    add a, b;i+=s
+    ld [_i], a
+    cp 200
+    jp c, .swingLoop
+
+  call HideBaseball
+
+  ld d, -8
+  ld e, -8
+  call MoveAimCircle
+  
+  ld d, 0
+  ld e, 5
+  ld h, _RIGHTY_BATTER_USER0_COLUMNS
+  ld l, _RIGHTY_BATTER_USER0_ROWS
+  ld bc, _RightyBatterUser0TileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+  
+  ld de, 100
+  call gbdk_Delay
+  
   ;update_waitpad(J_A);
   ret
 
 PlayBall:; (Player *p, UBYTE move) {
-  ;if (home_team == (frame % 2)) bat(p, move);
-  ;else pitch(p, move);
+  ld a, [frame]
+  and 1
+  ld b, a
+  ld a, [home_team]
+  cp b
+  jr z, .pitch ;if (home_team == (frame % 2)) bat(p, move);
+  call Bat
+  jr .exit
+.pitch
+  call Pitch;else pitch(p, move);
+.exit
   HIDE_WIN
   ret
 
@@ -241,8 +462,9 @@ StartGame::
   ld a, c
   ld [hl], a
 
-  xor a
+  ld a, 1
   ld [frame], a
+  xor a
   ld [move_choice], a
   ld [home_team], a
   ld a, 1

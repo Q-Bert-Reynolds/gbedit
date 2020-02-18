@@ -20,69 +20,53 @@ PlayIntro:
   ld [rWY], a;move_win(7,96);
   SHOW_WIN
 
-;   xor a
-;   ld [_j], a
-; .rowLoop; for (j = 0; j < _CALVIN_BACK_ROWS-1; ++j) {
-;     xor a
-;     ld [_i], a
-; .columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
-;       ld a, [_j]
-;       cp 3
-;       jr nc, .setTiles ;if (j < 3) {
-;         ld a, [_j]
-;         ld de, (_CALVIN_BACK_COLUMNS-1)
-;         call math_Multiply;j*(_CALVIN_BACK_COLUMNS-1)
-;         ld c, l
-;         ld a, [_i]
-;         add a, c
-;         ld c, a ;j*(_CALVIN_BACK_COLUMNS-1)+i
+  xor a
+  ld [_j], a
+  ld bc, 0
+.rowLoop; for (j = 0; j < 3; ++j) {
+    xor a
+    ld [_i], a
+.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
 
-;         xor a
-;         ld b, a
-;         ld hl, _CalvinBackTileMap
-;         add hl, bc
-;         ld a, [hli]
-;         add a, _UI_FONT_TILE_COUNT
-;         ld d, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
-;         call gbdk_SetSpriteTile;set_sprite_tile(j*(_CALVIN_BACK_COLUMNS-1)+i, _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT);
-;         jr .skip
-; .setTiles ;else {
-;         xor a
-;         ld b, a
-;         ld hl, _CalvinBackTileMap
-;         add hl, bc
-;         ld a, [hli]
-;         add a, _UI_FONT_TILE_COUNT
-;         ld b, a ;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
-        
-;         ld a, [_j]
-;         sub a, 3
-;         ld de, (_CALVIN_BACK_COLUMNS-1)
-;         call math_Multiply;(j-3)*(_CALVIN_BACK_COLUMNS-1)
-;         ld a, [_i]
-;         add a, l;(j-3)*(_CALVIN_BACK_COLUMNS-1)+i
-;         ld hl, tile_buffer
-;         ld a, b
-;         ld [hl], a ;tiles[(j-3)*(_CALVIN_BACK_COLUMNS-1)+i] = _calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT;
-; .skip
-;       ld a, [_i]
-;       inc a
-;       ld [_i], a
-;       cp _CALVIN_BACK_COLUMNS-1
-;       jr nz, .columnLoop
-;     ld a, [_j]
-;     inc a
-;     ld [_j], a
-;     cp _CALVIN_BACK_ROWS-1
-;     jr nz, .rowLoop
+      ld de, _CALVIN_BACK_COLUMNS-1
+      ld a, [_j]
+      call math_Multiply
+      ld b, 0
+      ld a, [_i]
+      ld c, a
+      add hl, bc;j*(_CALVIN_BACK_COLUMNS-1)+i
+      ld c, l
+
+      ld d, 0
+      ld a, [_j]
+      ld e, a
+      add hl, de;j*_CALVIN_BACK_COLUMNS+i
+      ld de, _CalvinBackTileMap
+      add hl, de;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]
+      ld a, [hl]
+      add a, _UI_FONT_TILE_COUNT;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+      ld d, a
+      call gbdk_SetSpriteTile
+      
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      cp 3
+      jr nz, .columnLoop
+
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    cp _CALVIN_BACK_ROWS-1
+    jr nz, .rowLoop
 
   ld d, 1
   ld e, 16-_CALVIN_BACK_ROWS
-  ld h, _CALVIN_BACK_COLUMNS;-1
-  ld l, _CALVIN_BACK_ROWS;-4
-  ld bc, _CalvinBackTileMap;tile_buffer
+  ld h, _CALVIN_BACK_COLUMNS
+  ld l, _CALVIN_BACK_ROWS-4
+  ld bc, _CalvinBackTileMap + 3*_CALVIN_BACK_COLUMNS
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset;gbdk_SetBKGTiles ;set_bkg_tiles(1,16-_CALVIN_BACK_ROWS,_CALVIN_BACK_COLUMNS-1,_CALVIN_BACK_ROWS-4,tiles);
+  call SetBKGTilesWithOffset
 
   ld a, 80
   call GetPlayerImgColumns;c = get_player_img_columns(80, PLAY_BALL_BANK);
@@ -122,26 +106,9 @@ PlayIntro:
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
-  ld hl, name_buffer ;TODO; this should come from player data
-  ld a, "L"
-  ld [hli], a
-  ld a, "A"
-  ld [hli], a
-  ld a, "G"
-  ld [hli], a
-  ld [hli], a
-  ld a, "A"
-  ld [hli], a
-  ld a, "R"
-  ld [hli], a
-  ld a, "D"
-  ld [hli], a
-  xor a
-  ld [hli], a
-
   ld hl, UnsignedPlayerAppearedText
   ld de, str_buffer
-  ld bc, name_buffer
+  ld bc, TEMP_OPPONENT_NAME
   call str_Replace; sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
   ld hl, str_buffer
   call RevealText ;reveal_text(str_buff, PLAY_BALL_BANK);
@@ -159,7 +126,7 @@ PlayIntro:
     jr nz, .slideOutLoop
   DISABLE_LCD_INTERRUPT
 
-  CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_ROWS, _CALVIN_BACK_COLUMNS-1, _CALVIN_BACK_ROWS-4, " "
+  CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_ROWS, _CALVIN_BACK_COLUMNS, _CALVIN_BACK_ROWS-4, " "
 
   ld hl, _RightyBatterUserTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16

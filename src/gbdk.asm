@@ -298,60 +298,152 @@ gbdk_SetWinTiles::
 ;
 ;***************************************************************************
 gbdk_SetBKGTiles::
-  push  hl    ; store wh
-  ldh  a,[rLCDC]
-  bit  3, a
-  jr  nz,.loop
-  ld  hl,$9800  ; hl = origin
-  jr  setTiles
-.loop:
-  ld  hl,$9c00  ; hl = origin
+  push hl ; store wh
+  ldh a,[rLCDC]
+  bit 3, a
+  jr nz, .skip
+  ld hl, $9800 ; hl = origin
+  jr setTiles
+.skip
+  ld hl, $9c00 ; hl = origin
 
 setTiles:
-  push  bc    ; store source
-  xor  a
-  or  e
-  jr  z,.loop2
+  push bc ; store source
+  xor a
+  or e
+  jr z,.skip
 
-  ld  bc,$20  ; one line is 20 tiles
-.loop:
-  add  hl,bc    ; y coordinate
-  dec  e
-  jr  nz,.loop
-.loop2:
-  ld  b,$00    ; x coordinate
-  ld  c,d
-  add  hl,bc
+  ld bc,$20 ; one line is 20 tiles
+.rowLoop
+  add hl,bc ; y coordinate
+  dec e
+  jr nz, .rowLoop
+.skip
+  ld b,$00 ; x coordinate
+  ld c,d
+  add hl,bc
 
-  pop bc  ; bc = source
-  pop de  ; de = wh
-  push hl  ; store origin
-  push de  ; store wh
-.waitVRAM:
+  pop bc ; bc = source
+  pop de ; de = wh
+  push hl ; store origin
+  push de ; store wh
+.columnLoop
   ldh a,[rSTAT]
   and STATF_BUSY
-  jr nz,.waitVRAM
+  jr nz, .columnLoop
 
-  ld a,[bc]  ; copy w tiles
+  ld a,[bc] ; copy w tiles
   ld [hl+], a
   inc bc
   dec d
-  jr nz,.waitVRAM
-  pop hl  ; hl = wh
-  ld d,h  ; restore d = w
-  pop hl  ; hl = origin
+  jr nz, .columnLoop
+  pop hl ; hl = wh
+  ld d,h ; restore d = w
+  pop hl ; hl = origin
   dec e
   jr z,.exit
 
-  push bc  ; next line
-  ld bc,$20 ; one line is 20 tiles
+  push bc ; next line
+  ld bc, $20 ; one line is 20 tiles
   add hl,bc
   pop bc
 
-  push hl  ; store current origin
-  push de  ; store wh
-  jr .waitVRAM
-.exit:
+  push hl ; store current origin
+  push de ; store wh
+  jr .columnLoop
+.exit
+  ret
+
+;***************************************************************************
+;
+; gbdk_GetWinTiles - Gets window tile table
+; wh >= (1,1)
+;
+; input:
+;   hl - width, height
+;   de - x pos, y pos
+;   bc - target
+;
+;***************************************************************************
+gbdk_GetWinTiles::
+
+  push hl ; store wh
+  push hl ; store wh
+  ldh a,[rLCDC]
+  bit 6,a
+  jr nz, .skip
+  ld hl, $9800 ; hl = origin
+  jr getTiles
+.skip
+  ld hl, $9c00 ; hl = origin
+  jr getTiles
+
+;***************************************************************************
+;
+; gbdk_GetBkgTiles - Gets background tile table
+; wh >= (1,1)
+;
+; input:
+;   hl - width, height
+;   de - x pos, y pos
+;   bc - target
+;
+;***************************************************************************
+gbdk_GetBkgTiles::
+  push hl  ; store wh
+  ldh a, [rLCDC]
+  bit 3, a
+  jr nz, .skip
+  ld hl, $9800 ; hl = origin
+  jr getTiles
+.skip
+  ld hl, $9c00 ; hl = origin
+
+getTiles:
+  push bc  ; store source
+  xor a
+  or e
+  jr z, .skip
+
+  ld bc, $20 ; one line is 20 tiles
+.rowLoop
+  add hl,bc  ; y coordinate
+  dec e
+  jr nz, .rowLoop
+.skip
+  ld b, $00  ; x coordinate
+  ld c,d
+  add hl,bc
+
+  pop bc ; bc = source
+  pop de ; de = wh
+  push hl ; store origin
+  push de ; store wh
+.columnLoop
+  ldh a, [rSTAT]
+  and $02
+  jr nz, .columnLoop
+
+  ld a, [hli] ; copy w tiles
+  ld [bc], a
+  inc bc
+  dec d
+  jr nz, .columnLoop
+  pop hl ; hl = wh
+  ld d,h ; restore d = w
+  pop hl ; hl = origin
+  dec e
+  jr z, .exit
+
+  push bc ; next line
+  ld bc, $20 ; one line is 20 tiles
+  add hl,bc
+  pop bc
+
+  push hl ; store current origin
+  push de ; store wh
+  jr .columnLoop
+.exit
   ret
 
 ;***************************************************************************

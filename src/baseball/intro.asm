@@ -140,7 +140,7 @@ PlayIntro:
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
 
-  HIDE_SPRITES
+  HIDE_ALL_SPRITES
   call gbdk_WaitVBL
   xor a
   ld [rSCX], a

@@ -108,13 +108,13 @@ MoveAimCircle: ;de = xy
   ld c, 3
   call gbdk_MoveSprite;move_sprite(3, x,   y);
 
-  inc c
+  ld c, 4
   ld a, d
   add a, 8
   ld d, a
   call gbdk_MoveSprite;move_sprite(4, x+8, y);
 
-  inc c
+  ld c, 5
   ld a, d
   sub a, 8 
   ld d, a
@@ -123,7 +123,7 @@ MoveAimCircle: ;de = xy
   ld e, a
   call gbdk_MoveSprite;move_sprite(5, x,   y+8);
 
-  inc c
+  ld c, 6
   ld a, 8
   add a, d
   ld d, a
@@ -192,7 +192,7 @@ Aim:
   jr .updateAim
 .testUp;else if (k & J_UP) --b;
   ld a, [button_state]
-  and PADF_RIGHT
+  and PADF_UP
   jr z, .updateAim
   ld a, [_b]
   dec a
@@ -383,7 +383,6 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_j]
     add a, b;i+=s
     ld [_j], a
-    ld [_breakpoint], a
     cp 200
     jp c, .swingLoop
 
@@ -520,5 +519,4 @@ StartGame::
     HIDE_WIN
     jp .playBallLoop
 .exitPlayBallLoop
-  ld [_breakpoint], a
   ret

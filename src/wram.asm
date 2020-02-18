@@ -1,4 +1,4 @@
-SECTION "Gloval Vars", WRAM0
+SECTION "Gloval Vars", WRAM0[$c000]
 ;debug
 _breakpoint: DB
 

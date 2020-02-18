@@ -51,13 +51,13 @@ PlayIntro:
       ld a, [_i]
       inc a
       ld [_i], a
-      cp 3
+      cp _CALVIN_BACK_COLUMNS-1
       jr nz, .columnLoop
 
     ld a, [_j]
     inc a
     ld [_j], a
-    cp _CALVIN_BACK_ROWS-1
+    cp 3
     jr nz, .rowLoop
 
   ld d, 1

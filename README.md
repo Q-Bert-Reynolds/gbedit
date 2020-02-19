@@ -23,11 +23,6 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
     make
 
 # TODO:
-Rewrite in GBZ80
-
-- setting large amounds of OAM data (such as with MoveSprites) should be done with DMA transfer
-- When this section of the TODO is gone, the RGBDS version will be on par with old GBDK version
-
 Python scripts
 
 - add and parse moves csv

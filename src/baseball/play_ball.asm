@@ -488,8 +488,8 @@ PlayBall:; a = selected move
   and 1
   ld b, a
   ld a, [home_team]
-  cp b
-  jr z, .pitch ;if (home_team == (frame % 2)) bat(p, move);
+  xor b
+  jr nz, .pitch ;if (home_team == (frame % 2)) bat(p, move);
   call Bat
   jr .exit
 .pitch
@@ -539,9 +539,8 @@ StartGame::
   ld a, c
   ld [hl], a
 
-  ld a, 1
-  ld [frame], a
   xor a
+  ld [frame], a
   ld [move_choice], a
   ld [home_team], a
   ld a, 1
@@ -581,19 +580,19 @@ StartGame::
     dec a;selected move
     call PlayBall
     jr .playBallLoop
-.teamMenuItemSelected ;case 1:
+.teamMenuItemSelected
     cp 1
     jr nz, .itemMenuItemSelected
     jr .playBallLoop
-.itemMenuItemSelected ;case 2:
+.itemMenuItemSelected
     cp 2
     jr nz, .runMenuItemSelected
     jr .playBallLoop
-.runMenuItemSelected ;case 3:
+.runMenuItemSelected
     cp 3
     jr nz, .playBallLoop
     ld hl, QuittingIsNotAnOptionText
-    call RevealText;reveal_text("Quitting is\nnot an option!", PLAY_BALL_BANK);
+    call RevealText
     HIDE_WIN
     jp .playBallLoop
 .exitPlayBallLoop

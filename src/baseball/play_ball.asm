@@ -16,50 +16,45 @@ INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
 
+BASEBALL_SPRITE_ID EQU 0
+AIM_CIRCLE_SPRITE_ID EQU 3
+STRIKEZONE_SPRITE_ID EQU 10
+
 ShowAimCircle: ;hl = size
   ld c, 8
   call math_Divide ; hl (remainder a) = hl / c
   add a, _BASEBALL_TILE_COUNT
   ld [_i], a;i = (size%8)+_BASEBALL_TILE_COUNT;
 
-  ld c, 3
-  ld d, a
-  call gbdk_SetSpriteTile;set_sprite_tile(3, i);
-  ld c, 3
-  ld d, 0
-  call gbdk_SetSpriteProp;set_sprite_prop(3, 0);
+  ld bc, 2
+  ld hl, oam_buffer + AIM_CIRCLE_SPRITE_ID*4 + 2
+  ld [hli], a;tile
+  xor a
+  ld [hli], a;prop
 
-  ld c, 4
+  add hl, bc
   ld a, [_i]
-  ld d, a
-  call gbdk_SetSpriteTile;set_sprite_tile(4, i);
-  ld c, 4
-  ld d, OAMF_XFLIP
-  call gbdk_SetSpriteProp;set_sprite_prop(4, S_FLIPX);
+  ld [hli], a;tile
+  ld a, OAMF_XFLIP
+  ld [hli], a;prop
 
-  ld c, 5
+  add hl, bc
   ld a, [_i]
-  ld d, a
-  call gbdk_SetSpriteTile;set_sprite_tile(5, i);
-  ld c, 5
-  ld d, OAMF_YFLIP
-  call gbdk_SetSpriteProp;set_sprite_prop(5, S_FLIPY);
+  ld [hli], a;tile
+  ld a, OAMF_YFLIP
+  ld [hli], a;prop
   
-  ld c, 6
+  add hl, bc
   ld a, [_i]
-  ld d, a
-  call gbdk_SetSpriteTile;set_sprite_tile(6, i);
-  ld c, 6
-  ld d, FLIP_XY
-  call gbdk_SetSpriteProp;set_sprite_prop(6, FLIP_XY);
+  ld [hli], a;tile
+  ld a, FLIP_XY
+  ld [hl], a;prop
   ret
 
 ShowStrikeZone; de = xy
-  ld hl, oam_buffer + 10*4
+  ld hl, oam_buffer + STRIKEZONE_SPRITE_ID*4
+
   ;top left
-  ;set_sprite_tile(10, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
-  ;set_sprite_prop(10, S_PALETTE);
-  ;move_sprite(10, x-8, y-12);
   ld a, e
   sub a, 12
   ld [hli], a;y
@@ -72,9 +67,6 @@ ShowStrikeZone; de = xy
   ld [hli], a
 
   ;top right
-  ;set_sprite_tile(11, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
-  ;set_sprite_prop(11, FLIP_X_PAL);
-  ;move_sprite(11, x+16, y-12);
   ld a, e
   sub a, 12
   ld [hli], a;y
@@ -87,9 +79,6 @@ ShowStrikeZone; de = xy
   ld [hli], a
 
   ;bottom left
-  ;set_sprite_tile(12, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
-  ;set_sprite_prop(12, FLIP_Y_PAL);
-  ;move_sprite(12, x-8, y+20);
   ld a, e
   add a, 20
   ld [hli], a;y
@@ -102,9 +91,6 @@ ShowStrikeZone; de = xy
   ld [hli], a
 
   ;bottom right
-  ;set_sprite_tile(13, _BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT);
-  ;set_sprite_prop(13, FLIP_XY_PAL);
-  ;move_sprite(13, x+16, y+20);
   ld a, e
   add a, 20
   ld [hli], a;y
@@ -118,39 +104,72 @@ ShowStrikeZone; de = xy
   ret
 
 HideStrikeZone:
-  ;move_sprite(10, 0, 0);
-  ;move_sprite(11, 0, 0);
-  ;move_sprite(12, 0, 0);
-  ;move_sprite(13, 0, 0);
-  ld hl, oam_buffer + 10*4
+  ld hl, oam_buffer + STRIKEZONE_SPRITE_ID*4
   ld bc, 4*4
   xor a
   call mem_Set
   ret
 
-HideBaseball;
-  ;move_sprite(0,0,0);
-  ;move_sprite(1,0,0);
-  ;move_sprite(2,0,0);
-  ld hl, oam_buffer
+HideBaseball
+  ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
   ld bc, 3*4
   xor a
   call mem_Set
   ret 
 
+;start = (126,13), end = (52,87)
 MoveBaseball:; a = i
-  ;ball_x = (126*(128-i)+52*i)>>7;
-  ;ball_y = (13*(128-i)+87*i)>>7;
-  ;t = 6+(i/10)%4;
-  ;move_sprite(0, ball_x, ball_y);
-  ;set_sprite_tile(0, 1);
-  ;set_sprite_prop(0, 0);
-  ;move_sprite(1, ball_x, ball_y);
-  ;set_sprite_tile(1, t);
-  ;set_sprite_prop(1, S_PALETTE);
-  ;move_sprite(2, 52, 87);
-  ;set_sprite_tile(2, 4);
-  ;set_sprite_prop(2, 0);
+  push af
+  ld b, a
+  ld a, 126;127-(i>>1)
+  sub a, b
+  ld [ball_x], a
+
+  pop af
+  push af
+  ld b, a
+  ld a, 13
+  add a, b;13+(i>>1)
+  ld [ball_y], a
+
+  pop af
+  ld h, 0
+  ld l, a
+  ld c, 10
+  call math_Divide;i/10
+  ld a, l
+  and a, %00000011;(i/10)%4
+  add a, 6;6+(i/10)%4
+  ld [_t], a;t = 6+(i/10)%4
+
+  ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
+
+  ld a, [ball_y]
+  ld [hli], a;y
+  ld a, [ball_x]
+  ld [hli], a;x
+  ld a, 1
+  ld [hli], a;outline tile
+  xor a
+  ld [hli], a;prop
+
+  ld a, [ball_y]
+  ld [hli], a;y
+  ld a, [ball_x]
+  ld [hli], a;x
+  ld a, [_t]
+  ld [hli], a;tile
+  ld a, OAMF_PAL1
+  ld [hli], a;prop
+  
+  ld a, 87
+  ld [hli], a;y
+  ld a, 52
+  ld [hli], a;x
+  ld a, 4
+  ld [hli], a;projection tile
+  xor a
+  ld [hli], a;prop
   ret
 
 MoveAimCircle: ;de = xy
@@ -186,9 +205,12 @@ Pitch: ; (Player *p, UBYTE move) {
   ;move_aim_circle(96,32);
   ret
 
-Swing:; (WORD x, WORD y, WORD z) {
-  ;move_aim_circle(-8,-8);
-  ;hide_strike_zone();
+Swing:; xy = de, z = a
+  ld d, -8
+  ld e, -8
+  call MoveAimCircle
+  
+  call HideStrikeZone
   ;swing_diff_x = x - ball_x;
   ;swing_diff_y = y - ball_y;
   ;swing_diff_z = z - 128;
@@ -359,13 +381,13 @@ Bat:; (Player *p, UBYTE move) {
   ld [_j], a
   ld a, 4
   ld [_s], a;speed
-.swingLoop;for (i = 0; i < 200; i+=s) {
+.swingLoop;for (j = 0; j < 200; j+=s)
     ld a, [_s]
     add a, a;s*2
     ld b, a
     ld a, [_j]
     cp b
-    jr nz, .aim;if (i == s*2) {
+    jr nz, .aim;if (j == s*2)
 
 .setFinishPitchFrame
     ld d, 12
@@ -382,7 +404,7 @@ Bat:; (Player *p, UBYTE move) {
     jp nz, .checkFinishSwing
     ld a, [_j]
     and a
-    jp z, .checkFinishSwing ;if (c == 0 && i > 0) {
+    jp z, .checkFinishSwing ;if (c == 0 && j > 0) {
       call Aim
 
       ld a, [button_state]
@@ -399,7 +421,14 @@ Bat:; (Player *p, UBYTE move) {
         ld a, _UI_FONT_TILE_COUNT
         call SetBKGTilesWithOffset
 
-        call Swing;swing(a>>1, b>>1, i);
+        ld a, [_a];x
+        srl a
+        ld d, a
+        ld a, [_b];y
+        srl a
+        ld e, a
+        ld a, [_j];z
+        call Swing
       jp .moveBaseball
 
 .checkFinishSwing
@@ -411,7 +440,7 @@ Bat:; (Player *p, UBYTE move) {
     ld b, a;c+2*s
     ld a, [_j]
     cp b
-    jr nz, .moveBaseball;else if (i == c+2*s) {
+    jr nz, .moveBaseball;else if (j == c+2*s)
       ld d, 0
       ld e, 5
       ld h, _RIGHTY_BATTER_USER0_COLUMNS
@@ -429,7 +458,7 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_s]
     ld b, a
     ld a, [_j]
-    add a, b;i+=s
+    add a, b;j+=s
     ld [_j], a
     cp 200
     jp c, .swingLoop
@@ -454,7 +483,7 @@ Bat:; (Player *p, UBYTE move) {
   ;update_waitpad(J_A);
   ret
 
-PlayBall:; (Player *p, UBYTE move) {
+PlayBall:; a = selected move
   ld a, [frame]
   and 1
   ld b, a
@@ -481,24 +510,24 @@ StartGame::
 
   xor a
   ld [rSCX], a
-  ld [rSCY], a ;move_bkg(0,0);
+  ld [rSCY], a
   call LoadFontTiles
   CLEAR_SCREEN " "
   
   ld hl, _BaseballTiles
   ld de, _VRAM
   ld bc, _BASEBALL_TILE_COUNT*16
-  call mem_CopyVRAM;set_sprite_data(0, _BASEBALL_TILE_COUNT, _baseball_tiles);
+  call mem_CopyVRAM
 
   ld hl, _CircleTiles
   ld de, _VRAM+_BASEBALL_TILE_COUNT*16
   ld bc, _CIRCLE_TILE_COUNT*16
-  call mem_CopyVRAM;set_sprite_data(_BASEBALL_TILE_COUNT, _CIRCLE_TILE_COUNT, _circle_tiles);
+  call mem_CopyVRAM
   
   ld hl, _StrikeZoneTiles
   ld de, _VRAM+(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT)*16
   ld bc, _STRIKE_ZONE_TILE_COUNT*16
-  call mem_CopyVRAM;set_sprite_data(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT, _STRIKE_ZONE_TILE_COUNT, _strike_zone_tiles);
+  call mem_CopyVRAM
 
   ld a, (3 << 4) | (2 << 2) | 1
   ld [balls_strikes_outs], a
@@ -540,16 +569,17 @@ StartGame::
   xor a
   ld [play_menu_selection], a
 
-.playBallLoop ;while (1) {
+.playBallLoop
     call SelectPlayMenuItem
-    ld a, [play_menu_selection];switch (play_menu_selection) {
-.playMenuItemSelected ;case 0:
+    ld a, [play_menu_selection]
+.playMenuItemSelected
     and a
     jr nz, .teamMenuItemSelected
-    call SelectMoveMenuItem ;b = select_move_menu_item(&test_player);
+    call SelectMoveMenuItem ;returns selection in a
     and a
-    jp z, .playBallLoop
-    call PlayBall;if (b > 0) play_ball(&test_player, b-1);
+    jp z, .playBallLoop;if selection is 0, back pressed
+    dec a;selected move
+    call PlayBall
     jr .playBallLoop
 .teamMenuItemSelected ;case 1:
     cp 1

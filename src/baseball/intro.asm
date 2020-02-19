@@ -124,9 +124,9 @@ PlayIntro:
     ld [_x], a
     cp -80
     jr nz, .slideOutLoop
-  DISABLE_LCD_INTERRUPT
 
   CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_ROWS, _CALVIN_BACK_COLUMNS, _CALVIN_BACK_ROWS-4, " "
+  DISABLE_LCD_INTERRUPT
 
   ld hl, _RightyBatterUserTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16

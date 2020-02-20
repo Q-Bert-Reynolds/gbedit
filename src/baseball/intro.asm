@@ -106,10 +106,14 @@ PlayIntro:
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
+  ld hl, OpponentLineupPlayer1.number
+  ld a, [hl]
+  call GetPlayerName
+
   ld hl, UnsignedPlayerAppearedText
   ld de, str_buffer
-  ld bc, TEMP_OPPONENT_NAME
-  call str_Replace; sprintf(str_buff, "Unsigned %s\nappeared!", "LAGGARD");
+  ld bc, name_buffer
+  call str_Replace
   ld hl, str_buffer
   call RevealText ;reveal_text(str_buff, PLAY_BALL_BANK);
 

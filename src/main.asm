@@ -4,6 +4,8 @@ INCLUDE "src/core.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
 
+INCLUDE "src/temp_data.asm"
+
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"
@@ -89,6 +91,11 @@ Main::
 .setupInterrupts
   ld a, IEF_VBLANK
   ld [rIE], a
+
+.seed ;load temp data
+  ld a, TEMP_BANK
+  call SetBank
+  call Seed
 
 .start ;show intro credits, batting animation
   ld a, START_BANK

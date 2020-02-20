@@ -17,12 +17,28 @@ INCLUDE "data/player_strings.asm"
 
 SECTION "Roledex", ROM0
 GetPlayerName:: ; a = number, returns name in name_buffer
+  ld b, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
-  ; strcpy(name_buff, player_strings[number]);
+  ld hl, PlayerNames
+  cp 152
+  jr nc, .copy ;name outside of range, return Bubbi
+  dec b
+.loop
+    ld a, b
+    and a
+    jr z, .copy;found name
+    ld a, [hli]
+    and a
+    jr nz, .loop
+    dec b
+    jr .loop
+.copy
+  ld de, name_buffer
+  call str_Copy
 
   ld a, [temp_bank]
   call SetBank
@@ -34,7 +50,22 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
-  ; strcpy(str_buff, (player_strings[number]+11));
+  ld hl, PlayerDescriptions
+  cp 152
+  jr nc, .copy ;name outside of range, return Bubbi's description
+  dec b
+.loop
+    ld a, b
+    and a
+    jr z, .copy;found name
+    ld a, [hli]
+    and a
+    jr nz, .loop
+    dec b
+    jr .loop
+.copy
+  ld de, name_buffer
+  call str_Copy
 
   ld a, [temp_bank]
   call SetBank

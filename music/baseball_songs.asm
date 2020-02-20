@@ -132,8 +132,8 @@ ChargePhraseA:
   DW Bb4,  F4,   G4,   A4
   DW B4,   Gb4,  Ab4,  Bb4
   DW B4,   Gb4,  Ab4,  Bb4
-  DW C4,   G4,   A4,   B4
-  DW C4,   G4,   A4,   B4
+  DW C5,   G4,   A4,   B4
+  DW C5,   G4,   A4,   B4
   DW C4,   HOLD, HOLD, HOLD
   DW C3,   E3,   G3,   C4
   DW G3,   C4,   HOLD, HOLD

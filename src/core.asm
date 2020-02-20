@@ -337,6 +337,17 @@ ShowOptions::
   call SetBank
   ret
 
+ShowLineupFromGame::
+  ld a, UI_BANK
+  call SetBank
+
+  ld a, 1
+  call ShowLineup
+
+  ld a, PLAY_BALL_BANK
+  call SetBank
+  ret
+
 ;; moves a grid of sprite tiles
 MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld [_a], a

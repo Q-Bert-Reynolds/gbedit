@@ -3,30 +3,31 @@ PlayIntro:
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _CALVIN_BACK_TILE_COUNT
   ld hl, _CalvinBackTiles
-  call SetBkgDataDoubled ;set_bkg_data_doubled(_UI_FONT_TILE_COUNT, _CALVIN_BACK_TILE_COUNT, _calvin_back_tiles); 
+  call SetBkgDataDoubled
 
-  ld a, 80
+  ld hl, OpponentLineupPlayer1.number
+  ld a, [hl]
   ld de, _UI_FONT_TILE_COUNT+64
-  call LoadPlayerBkgData ;load_player_bkg_data(80, _UI_FONT_TILE_COUNT+64, PLAY_BALL_BANK);
+  call LoadPlayerBkgData
 
   ld bc, 0
   ld d, 20
   ld e, 6
-  call DrawWinUIBox ;draw_win_ui_box(0,0,20,6);
+  call DrawWinUIBox
 
   ld a, 7
   ld [rWX], a
   ld a, 96
-  ld [rWY], a;move_win(7,96);
+  ld [rWY], a
   SHOW_WIN
 
   xor a
   ld [_j], a
   ld bc, 0
-.rowLoop; for (j = 0; j < 3; ++j) {
+.rowLoop; for (j = 0; j < 3; ++j)
     xor a
     ld [_i], a
-.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i)
 
       ld de, _CALVIN_BACK_COLUMNS-1
       ld a, [_j]
@@ -68,8 +69,9 @@ PlayIntro:
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
 
-  ld a, 80
-  call GetPlayerImgColumns;c = get_player_img_columns(80, PLAY_BALL_BANK);
+  ld hl, OpponentLineupPlayer1.number
+  ld a, [hl]
+  call GetPlayerImgColumns
   ld c, a
 
   ld a, 19
@@ -78,22 +80,23 @@ PlayIntro:
   ld a, 7
   sub a, c
   ld c, a;y
-  ld a, 80
   ld de, _UI_FONT_TILE_COUNT+64
-  call SetPlayerBkgTiles ;set_player_bkg_tiles(19-c, 7-c, 80, _UI_FONT_TILE_COUNT+64, PLAY_BALL_BANK);
+  ld hl, OpponentLineupPlayer1.number
+  ld a, [hl]
+  call SetPlayerBkgTiles
 
   ld a, 160
   ld [rSCX], a
   xor a
-  ld [rSCY], a ;move_bkg(160,0);
-  ld [rVBK], a ;VBK_REG = 0;
+  ld [rSCY], a
+  ld [rVBK], a
 
   SET_LCD_INTERRUPT SlideInLCDInterrupt
   DISPLAY_ON
 
   ld a, 160
   ld [_x], a
-.slideInLoop; for (x = 160; x >= 0; x-=2) {
+.slideInLoop; for (x = 160; x >= 0; x-=2)
     call gbdk_WaitVBL
     ld a, [_x]
     sub a, 2
@@ -121,7 +124,7 @@ PlayIntro:
 
   xor a
   ld [_x], a
-.slideOutLoop; for (x = 0; x > -80; x-=2) {
+.slideOutLoop; for (x = 0; x > -80; x-=2)
     call gbdk_WaitVBL
     ld a, [_x]
     sub a, 2
@@ -135,22 +138,22 @@ PlayIntro:
   ld hl, _RightyBatterUserTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _RIGHTY_BATTER_USER_TILE_COUNT*16
-  call mem_CopyVRAM ;set_bkg_data(_UI_FONT_TILE_COUNT, _RIGHTY_BATTER_USER_TILE_COUNT, _righty_batter_user_tiles); 
+  call mem_CopyVRAM
 
-  ld de, 5 ;x = 0, y = 5
+  ld de, 5
   ld h, _RIGHTY_BATTER_USER0_COLUMNS
   ld l, _RIGHTY_BATTER_USER0_ROWS
   ld bc, _RightyBatterUser0TileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset;set_bkg_tiles_with_offset(0,5,_RIGHTY_BATTER_USER0_COLUMNS,_RIGHTY_BATTER_USER0_ROWS,_UI_FONT_TILE_COUNT,_righty_batter_user0_map);
+  call SetBKGTilesWithOffset
 
   HIDE_ALL_SPRITES
   call gbdk_WaitVBL
   xor a
   ld [rSCX], a
-  ld [rSCY], a ;move_bkg(0,0);
+  ld [rSCY], a
 
   ld hl, LetsGoText
-  call RevealText ;reveal_text("Let's go!", PLAY_BALL_BANK);
+  call RevealText
   HIDE_WIN
   ret

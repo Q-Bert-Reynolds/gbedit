@@ -45,6 +45,7 @@ GetPlayerName:: ; a = number, returns name in name_buffer
   ret
 
 GetPlayerDescription:: ; a = number, returns description in str_buffer
+  ld b, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
@@ -72,12 +73,24 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
   ret 
 
 LoadPlayerBaseData:: ; a = number
+  ld b, 0
+  ld c, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
-  ; load_base_data(number);
+  ld hl, Roledex
+  add hl, bc
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, b
+  ld l, a
+  ld de, player_base
+  ld bc, 14
+  call mem_Copy
 
   ld a, [temp_bank]
   call SetBank

@@ -85,8 +85,8 @@ MyMickData:
 MyMickDataEnd:
 
 OpponentSquirtData:
-  DB 007                   ; .number
-  DB 8                     ; .level
+  DB 006                   ; .number
+  DB 42                    ; .level
   DB 1                     ; .position
   DB 0, 0, 0, 0            ; .moves
   DB 20, 40, 0, 0          ; .pp

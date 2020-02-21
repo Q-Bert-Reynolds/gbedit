@@ -25,8 +25,7 @@ Outs:; (balls_strikes_outs & OUTS_MASK
   and OUTS_MASK
   ret
 
-HealthPct: ;input Player *p, returns str_buff
-  ld a, 85; a = p->hp; // * 100 / max_hp; 
+HealthPctToString: ;a = health_pct, returns str_buff
   ld hl, str_buffer
   cp 100; if (a >= 100) strcpy(str_buff, "100");
   jr c, .lessThan100
@@ -60,9 +59,8 @@ HealthPct: ;input Player *p, returns str_buff
   ld [hl], a
   ret
 
-BattingAvg: ;input Player *p, returns str_buff
+BattingAvgToString: ;de = batting average*1000, returns str_buff
   ld hl, str_buffer
-  ld de, 324; a = p->hits * 1000 / p->at_bats;
   ld a, d
   cp $3
   jr c, .not1000
@@ -121,10 +119,9 @@ BattingAvg: ;input Player *p, returns str_buff
   ret
 
 ;TODO: fix this broken function
-EarnedRunAvg: ;input Player *p, returns str_buff
-  ld hl, 12443; a = p->runs_allowed * 2700 / p->outs_recorded;
+EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
   ld a, 100
-  call math_Divide; hl = a/100, a = a%100
+  call math_Divide; hl = hl/100, a = hl%100
   push af
 
   ld de, str_buffer
@@ -159,4 +156,12 @@ EarnedRunAvg: ;input Player *p, returns str_buff
   ld hl, name_buffer
   call str_Append
 
+  ret
+
+GetCurrentUserPlayer::;puts user's current batter or pitcher in hl
+  ld hl, UserLineupPlayer1
+  ret 
+
+GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher in hl
+  ld hl, OpponentLineupPlayer1
   ret

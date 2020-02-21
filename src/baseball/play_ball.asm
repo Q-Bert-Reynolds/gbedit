@@ -311,7 +311,10 @@ Bat:; (Player *p, UBYTE move) {
   ld e, 85
   call ShowStrikeZone
   
-  ld bc, TEMP_PLAYER_NAME
+  call GetCurrentUserPlayer
+  call GetUserPlayerName
+
+  ld bc, name_buffer
   ld hl, BatterStepsIntoTheBoxText
   ld de, str_buffer
   call str_Replace
@@ -332,7 +335,11 @@ Bat:; (Player *p, UBYTE move) {
     cp 60
     jr nz, .preSetAimLoop
 
-  ld bc, TEMP_OPPONENT_NAME
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
+  call GetPlayerName
+
+  ld bc, name_buffer
   ld hl, PitcherSetsText
   ld de, str_buffer
   call str_Replace

@@ -1,5 +1,5 @@
 
-DrawPlayerUI: ;UBYTE team, Player *p
+DrawPlayerUI: ;a = team
   push af;team
   
   xor a
@@ -54,11 +54,46 @@ DrawPlayerUI: ;UBYTE team, Player *p
     cp 10
     jr nz, .nameBarLoop
 
-  ;l = strlen(p->nickname);
-  ;w = 1+(12-l)/2;
-  ;for (i = 0; i < l; i++) tiles[w+i] = p->nickname[i];
+  pop af;team
+  push af
+  and a
+  jr nz, .setOpponentName
+  call GetCurrentUserPlayer
+  call GetUserPlayerName
+  jr .drawName
+.setOpponentName
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
+  call GetPlayerName
+.drawName
+  ld hl, name_buffer
+  call str_Length;de = len
+  ld a, 12
+  sub a, e;(12-len)
+  srl a;(12-len)/2
+  inc a;1+(12-len)/2
+  ld b, d
+  ld c, e; bc = len
+  ld hl, tile_buffer
+  ld d, 0
+  ld e, a;de = 1+(12-len)/2
+  add hl, de
+  ld d, h
+  ld e, l;de = tile_buffer+1+(12-len)/2
+  ld hl, name_buffer
+  call mem_Copy
 
-  ld a, 25; replace me with player level
+  pop af;team
+  push af
+  and a
+  jr nz, .setOpponentLevel
+  call GetCurrentUserPlayer
+  call GetPlayerLevel
+  jr .drawLevel
+.setOpponentLevel
+  call GetCurrentOpponentPlayer
+  call GetPlayerLevel
+.drawLevel
   push af ;level
   cp 100
   jr nz, .levelNot100;if (p->level == 100) {
@@ -75,14 +110,16 @@ DrawPlayerUI: ;UBYTE team, Player *p
     ld a, LEVEL
     ld [hli], a ;tiles[12] = LEVEL;
     pop af ;level
+    push af
     cp 10
     jr nc, .level10Plus ;if (p->level < 10) {
       add a, 48
       ld [hli], a ;tiles[13] = 48+p->level;
       xor a
       ld [hl], a ;tiles[14] = 0;
+      jr .doneWithLevel
 .level10Plus ;else {
-      push hl
+      push hl;tiles
       ld l, a
       xor a
       ld h, a
@@ -90,16 +127,15 @@ DrawPlayerUI: ;UBYTE team, Player *p
       call math_Divide
       ld b, l ;lv/10
       ld c, a ;lv%10
-      pop hl
+      pop hl;tiles
       ld a, b
       add a, 48
       ld [hli], a ;tiles[13] = 48+p->level/10;
       ld a, c
       add a, 48
       ld [hl], a ;tiles[14] = 48+p->level%10;
-      pop af;level
 .doneWithLevel
-
+  pop af;level
   ld a, [_b]
   and a
   jr z, .isPitcher ;if (b) {
@@ -135,7 +171,10 @@ DrawPlayerUI: ;UBYTE team, Player *p
   and a
   jr z, .setERA;if (b) 
 
-  call BattingAvg
+  pop af;team
+  push af
+  ld de, 324
+  call BattingAvgToString
   ld a, [_x]
   add a, 4
   ld d, a
@@ -149,7 +188,10 @@ DrawPlayerUI: ;UBYTE team, Player *p
   jr .setHealthPct
 
 .setERA
-  call EarnedRunAvg
+  pop af;team
+  push af
+  ld hl, 902
+  call EarnedRunAvgToString
   ld a, [_x]
   add a, 4
   ld d, a
@@ -161,8 +203,10 @@ DrawPlayerUI: ;UBYTE team, Player *p
   ld bc, str_buffer
   call gbdk_SetBKGTiles ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
 
-.setHealthPct  
-  call HealthPct
+.setHealthPct 
+  pop af;team
+  ld a, 85
+  call HealthPctToString
   ld a, [_x]
   add a, 9
   ld d, a
@@ -426,9 +470,9 @@ DrawUI:
   call DrawBases
 
   xor a
-  call DrawPlayerUI ;0, &test_player
+  call DrawPlayerUI ;0
   ld a, 1
-  call DrawPlayerUI ;1, &test_player
+  call DrawPlayerUI ;1
 
   ld b, 0
   ld c, 12

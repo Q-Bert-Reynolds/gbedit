@@ -26,9 +26,3 @@ PitcherSetsText:
 
 AndThePitchText:
   DB "And the pitch.", 0
-
-TEMP_PLAYER_NAME:
-  DB "BUBBIE", 0
-
-TEMP_OPPONENT_NAME:
-  DB "LAGGARD", 0

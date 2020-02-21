@@ -1,19 +1,4 @@
 INCLUDE "src/beisbol.inc"
-INCLUDE "src/roledex.asm"
-INCLUDE "src/core.asm"
-INCLUDE "src/audio.asm"
-INCLUDE "src/ui.asm"
-
-INCLUDE "src/temp_data.asm"
-
-INCLUDE "src/start.asm"
-INCLUDE "src/title.asm"
-INCLUDE "src/new_game.asm"
-INCLUDE "src/baseball/play_ball.asm"
-INCLUDE "src/lineup.asm"
-
-INCLUDE "src/wram.asm"
-INCLUDE "src/sram.asm"
 
 SECTION "Header", ROM0[$100]
 Entry:
@@ -97,21 +82,21 @@ Main::
   call SetBank
   call Seed
 
-.start ;show intro credits, batting animation
-  ld a, START_BANK
-  call SetBank
-  call Start
+; .start ;show intro credits, batting animation
+;   ld a, START_BANK
+;   call SetBank
+;   call Start
   
-.title ;show title drop, version slide, cycle of players, new game/continue screen
-  ld a, TITLE_BANK
-  call SetBank
-  call Title ;should set a to 0 if new game pressed
-  jr nz, .startGame
+; .title ;show title drop, version slide, cycle of players, new game/continue screen
+;   ld a, TITLE_BANK
+;   call SetBank
+;   call Title ;should set a to 0 if new game pressed
+;   jr nz, .startGame
 
-.newGame
-  ld a, NEW_GAME_BANK
-  call SetBank
-  call NewGame
+; .newGame
+;   ld a, NEW_GAME_BANK
+;   call SetBank
+;   call NewGame
 
 .startGame
   ld a, PLAY_BALL_BANK

@@ -5,8 +5,8 @@ PlayIntro:
   ld hl, _CalvinBackTiles
   call SetBkgDataDoubled
 
-  ld hl, OpponentLineupPlayer1.number
-  ld a, [hl]
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
 
@@ -69,8 +69,8 @@ PlayIntro:
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
 
-  ld hl, OpponentLineupPlayer1.number
-  ld a, [hl]
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
   call GetPlayerImgColumns
   ld c, a
 
@@ -81,8 +81,9 @@ PlayIntro:
   sub a, c
   ld c, a;y
   ld de, _UI_FONT_TILE_COUNT+64
-  ld hl, OpponentLineupPlayer1.number
-  ld a, [hl]
+  
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
   call SetPlayerBkgTiles
 
   ld a, 160
@@ -109,10 +110,9 @@ PlayIntro:
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
-  ld hl, OpponentLineupPlayer1.number
-  ld a, [hl]
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
   call GetPlayerName
-
   ld hl, UnsignedPlayerAppearedText
   ld de, str_buffer
   ld bc, name_buffer

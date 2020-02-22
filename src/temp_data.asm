@@ -51,7 +51,7 @@ MyMickData:
   DB BRAIN_MELTER_MOVE     ; .moves
   DB PREDICT_MOVE
   DB SWING_MOVE, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB 5, 40, 10, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -108,14 +108,14 @@ OpponentSquirtData:
 OpponentSquirtDataEnd:
 
 Seed::
-  ld hl, MyBubbiData
+  ld hl, MyMickData
   ld de, UserLineupPlayer1
-  ld bc, MyBubbiDataEnd - MyBubbiData
+  ld bc, MyMickDataEnd - MyMickData
   call mem_Copy
 
-  ld hl, MyMickData
+  ld hl, MyBubbiData
   ld de, UserLineupPlayer2
-  ld bc, MyMickDataEnd - MyMickData
+  ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
   ld hl, OpponentSquirtData

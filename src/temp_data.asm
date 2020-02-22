@@ -16,7 +16,7 @@ MyBubbiData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DB "Buttercup", 0, 0, 0  ; .nickname
+  DS 12;DB "Buttercup", 0, 0, 0  ; .nickname
   DB $00,$01,$FF           ; .xp
   DB $00,$00,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging

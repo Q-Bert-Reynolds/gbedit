@@ -121,7 +121,7 @@ GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
   pop bc
   ret 
 
-GetPlayerMove: ;hl = player, a = player move num, returns move in hl
+GetPlayerMove: ;hl = player, a = player move num, returns move in move_data
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -135,11 +135,25 @@ GetPlayerMove: ;hl = player, a = player move num, returns move in hl
   call GetMove
   jr .exit
 .noMove
-  ld hl, 0
+  ld hl, move_data
+  ld a, 0
+  ld bc, 8
+  call mem_Set
 .exit
   pop de
   pop bc
   ret 
+
+GetPlayerMovePP: ;hl = player, a = player move num, returns pp in a
+  push bc
+  ld bc, UserLineupPlayer1.pp - UserLineupPlayer1
+  add hl, bc
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hl]
+  pop bc
+  ret
 
 GetPlayerNumber: ;hl = player, returns number in a
   push bc

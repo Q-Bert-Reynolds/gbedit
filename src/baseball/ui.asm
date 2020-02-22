@@ -659,10 +659,11 @@ ShowMoveInfo:
   ld bc, TypeSlashText
   call gbdk_SetBKGTiles;set_bkg_tiles(1,9,5,1,"TYPE/");
 
-  ; call GetPlayerMove
-  ; push hl ;move
-
-  ld a, [hl]
+  call GetPlayerMove
+  ld hl, move_data
+  inc hl
+  ld a, [hli]
+  push hl;max play points (pp)
   call GetTypeString
 
   ld hl, name_buffer
@@ -674,11 +675,26 @@ ShowMoveInfo:
   ld bc, name_buffer
   call gbdk_SetBKGTiles;set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
   
+  call GetPlayerMovePP
+  ld h, 0
+  ld l, a
+  ld de, name_buffer
+  call str_Number
+  inc de
+  ld a, "/"
+  ld [de], a
+  inc de
+  pop hl;max play points
+  ld a, [hl]
+  ld h, 0
+  ld l, a
+  call str_Number
+
   ld d, 5
   ld e, 11
   ld h, 5
   ld l, 1
-  ; ld bc, "22/35"
+  ld bc, name_buffer
   call gbdk_SetBKGTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
   ret
 

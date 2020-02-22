@@ -47,6 +47,7 @@ GetMoveName:: ; a = move number, returns name in name_buffer
 
 GetMove:: ; a = move number, returns move in hl
   push bc
+  push de
   ld b, 0
   ld c, a;number
   ld a, [loaded_bank]
@@ -54,16 +55,21 @@ GetMove:: ; a = move number, returns move in hl
   ld a, PLAYER_DATA_BANK
   call SetBank
 
-  ld hl, MoveList
-  add hl, bc
-  ld a, [hli]
-  ld c, a
-  ld a, [hl]
-  ld h, a
-  ld l, c
+  ; ld hl, MoveList;TODO: FIXME
+  ; add hl, bc
+  ; ld a, [hli]
+  ; ld b, a
+  ; ld a, [hl]
+  ; ld h, b
+  ; ld l, a
+  ld hl, SwingMove
+  ld de, move_data
+  ld bc, 8
+  call mem_Copy
 
   ld a, [temp_bank]
   call SetBank
+  pop de
   pop bc
   ret 
 

@@ -49,6 +49,7 @@ bkg_buffer: DS BUFFER_SIZE
 str_buffer: DS 64
 name_buffer: DS 16
 player_base: DS 14
+move_data: DS 8
 
 ;Baseball
 balls_strikes_outs: DB; //0bxBBBSSOO

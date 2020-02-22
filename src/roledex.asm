@@ -45,6 +45,28 @@ GetMoveName:: ; a = move number, returns name in name_buffer
   call SetBank
   ret 
 
+GetMove:: ; a = move number, returns move in hl
+  push bc
+  ld b, 0
+  ld c, a;number
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, PLAYER_DATA_BANK
+  call SetBank
+
+  ld hl, MoveList
+  add hl, bc
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld h, a
+  ld l, c
+
+  ld a, [temp_bank]
+  call SetBank
+  pop bc
+  ret 
+
 GetPlayerName:: ; a = number, returns name in name_buffer
   ld b, a;number
   ld a, [loaded_bank]

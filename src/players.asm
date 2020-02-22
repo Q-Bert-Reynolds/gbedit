@@ -101,7 +101,7 @@ NoMove: DB "--------", 0
 GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
   push bc
   push de
-  ld bc, UserLineupPlayer1.number - UserLineupPlayer1
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
   ld b, 0
   ld c, a
@@ -109,12 +109,33 @@ GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
   ld a, [hl]
   and a
   jr z, .noMove
+  inc a
   call GetMoveName
   jr .exit
 .noMove
   ld hl, NoMove
   ld de, name_buffer
   call str_Copy
+.exit
+  pop de
+  pop bc
+  ret 
+
+GetPlayerMove: ;hl = player, a = player move num, returns move in hl
+  push bc
+  push de
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
+  add hl, bc
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hl]
+  and a
+  jr z, .noMove
+  call GetMove
+  jr .exit
+.noMove
+  ld hl, 0
 .exit
   pop de
   pop bc

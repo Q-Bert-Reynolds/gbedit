@@ -645,7 +645,7 @@ MoveMoveMenuArrow:; y
   call gbdk_SetBKGTiles;set_bkg_tiles(6,13,1,4,tiles);
   ret
 
-ShowMoveInfo: ;Move *m
+ShowMoveInfo:
   ld b, 0
   ld c, 8
   ld d, 11
@@ -659,9 +659,11 @@ ShowMoveInfo: ;Move *m
   ld bc, TypeSlashText
   call gbdk_SetBKGTiles;set_bkg_tiles(1,9,5,1,"TYPE/");
 
-  ; ld hl, types[0]
-  ld de, name_buffer
-  call str_Copy;strcpy(name_buff, types[0]);//m->type]);
+  ; call GetPlayerMove
+  ; push hl ;move
+
+  ld a, [hl]
+  call GetTypeString
 
   ld hl, name_buffer
   call str_Length
@@ -697,6 +699,7 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
   ld a, 4
   ld [_c], a
 
+.drawMoveNames
   xor a
   ld [_i], a
   call GetCurrentUserPlayer
@@ -726,8 +729,8 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
     cp 4
     jr nz, .loopMoves
 
-  call MoveMoveMenuArrow;move_move_menu_arrow(move_choice);
-  call ShowMoveInfo;show_move_info();//p->moves[move_choice]);
+  call MoveMoveMenuArrow
+  call ShowMoveInfo
 
   WAITPAD_UP;update_waitpadup();
 .loop ;while (1) {

@@ -1,4 +1,39 @@
 SECTION "Core", ROM0
+Types:
+DB "Normal", 0
+DB "Fire", 0
+DB "Water", 0
+DB "Electric", 0
+DB "Grass", 0
+DB "Ice", 0
+DB "Fighting", 0
+DB "Poison", 0
+DB "Ground", 0
+DB "Flying", 0
+DB "Psychic", 0
+DB "Bug", 0
+DB "Rock", 0
+DB "Ghost", 0
+DB "Dragon", 0
+
+GetTypeString:: ;a = type, string in name_buffer
+  ld hl, Types
+  ld b, a
+  dec b
+.loop
+    ld a, b
+    and a
+    jr z, .copy;found name
+    ld a, [hli]
+    and a
+    jr nz, .loop
+    dec b
+    jr .loop
+.copy
+  ld de, name_buffer
+  call str_Copy
+  ret
+
 SetBank:: ;a = BANK ;TODO: handle more than 255 banks
   ld [loaded_bank], a
   ld [rROMB0], a

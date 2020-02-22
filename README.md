@@ -25,8 +25,6 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # TODO:
 Python scripts
 
-- add and parse moves csv
-- generate all player data
 - handle 1bpp and rle images
 - only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)

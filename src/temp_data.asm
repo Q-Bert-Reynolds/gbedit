@@ -6,7 +6,8 @@ MyBubbiData:
   DB 001                   ; .number
   DB 5                     ; .level
   DB 1                     ; .position
-  DB 0, 0, 0, 0            ; .moves
+  DB TOSS_MOVE             ; .moves
+  DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
@@ -47,7 +48,9 @@ MyMickData:
   DB 151                   ; .number
   DB 10                    ; .level
   DB 2                     ; .position
-  DB 0, 0, 0, 0            ; .moves
+  DB BRAIN_MELTER_MOVE     ; .moves
+  DB PREDICT_MOVE
+  DB SWING_MOVE, 0
   DB 20, 40, 0, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
@@ -85,10 +88,11 @@ MyMickData:
 MyMickDataEnd:
 
 OpponentSquirtData:
-  DB 006                   ; .number
+  DB 007                   ; .number
   DB 42                    ; .level
   DB 1                     ; .position
-  DB 0, 0, 0, 0            ; .moves
+  DB TOSS_MOVE             ; .moves
+  DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp

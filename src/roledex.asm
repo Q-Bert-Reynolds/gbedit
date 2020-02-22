@@ -4,18 +4,47 @@ ROLEDEX SET 1
 IMG_BANK_COUNT EQU 6
 PLAYERS_PER_BANK = 151 / IMG_BANK_COUNT
 
+INCLUDE "data/move_data.asm"
+INCLUDE "data/move_strings.asm"
 INCLUDE "data/player_img.asm"
 INCLUDE "data/player_data.asm"
 INCLUDE "data/player_strings.asm"
 
+; GetMoveName - a = move number, returns name_buffer
 ; GetPlayerName - a = number, returns name_buffer
 ; GetPlayerDescription - a = number, returns str_buffer
-; LoadPlayerBaseData - a = number
+; LoadPlayerBaseData - a = number, returns player_base
 ; LoadPlayerBkgData - a = number, de = vram_offset
 ; GetPlayerImgColumns - a = number, returns num columns of img in a
 ; SetPlayerBkgTiles - a = number, de = vram_offset, de = xy
 
 SECTION "Roledex", ROM0
+GetMoveName:: ; a = move number, returns name in name_buffer
+  ld b, a;number
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, PLAYER_STRINGS_BANK
+  call SetBank
+
+  ld hl, MoveNames
+  dec b
+.loop
+    ld a, b
+    and a
+    jr z, .copy;found name
+    ld a, [hli]
+    and a
+    jr nz, .loop
+    dec b
+    jr .loop
+.copy
+  ld de, name_buffer
+  call str_Copy
+
+  ld a, [temp_bank]
+  call SetBank
+  ret 
+
 GetPlayerName:: ; a = number, returns name in name_buffer
   ld b, a;number
   ld a, [loaded_bank]

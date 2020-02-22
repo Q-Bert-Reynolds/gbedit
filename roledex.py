@@ -72,19 +72,14 @@ def generate_player_strings(roledex):
       c_file.write("DB \"{0}\", 0\n".format(description))
     c_file.write("\n")
 
-type_names = [
-  "NORMAL", "FIRE", "WATER", "ELECTRIC", "GRASS", 
-  "ICE", "FIGHTING", "POISON", "GROUND", "FLYING", 
-  "PSYCHIC", "BUG", "ROCK", "GHOST", "DRAGON"
-]
 def player_type_string(player):
-  t1 = type_names.index(player["Type1"].upper())
-  s =  "DB " + str(t1) + " ;" + player["Type1"] + "\n"
+  t1 = player["Type1"].upper()
+  s =  "DB " + t1 + "\n"
   if player["Type2"]:
-    t2 = type_names.index(player["Type2"].upper())
-    s += "DB " + str(t2) + " ;" + player["Type2"] + "\n"
+    t2 = player["Type2"].upper()
+    s += "DB " + t2 + "\n"
   else:
-    s += "DB " + str(t1) + "\n"
+    s += "DB NONE\n"
   return s
 
 def evolves_to_string(roledex, player):

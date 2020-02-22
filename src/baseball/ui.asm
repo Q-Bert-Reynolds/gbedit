@@ -697,11 +697,34 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
   ld a, 4
   ld [_c], a
 
-  ;for (i = 0; i < 4; ++i) {
-  ;  if (moves[i] == NULL) { c = i; break; }
-  ;  memcpy(name_buff, moves[i]->name, 16);
-  ;  set_bkg_tiles(7,13+i,strlen(name_buff),1,name_buff);
-  ;if (c < 4) set_bkg_tiles(7,c+13,2,4-c,"--------");
+  xor a
+  ld [_i], a
+  call GetCurrentUserPlayer
+  push hl
+.loopMoves
+    pop hl;player
+    push hl
+    ld a, [_i]
+    call GetPlayerMoveName
+
+    ld hl, name_buffer
+    call str_Length
+
+    ld h, e
+    ld l, 1
+    ld d, 7
+    ld a, [_i]
+    add a, 13
+    ld e, a
+    
+    ld bc, name_buffer
+    call gbdk_SetBKGTiles
+
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp 4
+    jr nz, .loopMoves
 
   call MoveMoveMenuArrow;move_move_menu_arrow(move_choice);
   call ShowMoveInfo;show_move_info();//p->moves[move_choice]);

@@ -728,6 +728,7 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
     ld [_i], a
     cp 4
     jr nz, .loopMoves
+  pop hl;player
 
   call MoveMoveMenuArrow
   call ShowMoveInfo

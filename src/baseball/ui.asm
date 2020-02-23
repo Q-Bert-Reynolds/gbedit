@@ -685,7 +685,6 @@ ShowMoveInfo:
   push de;max play points
   ld a, [move_choice]
   call GetPlayerMovePP
-  ld [_breakpoint], a
   ld h, 0
   ld l, a
   ld de, name_buffer
@@ -713,7 +712,7 @@ ShowMoveInfo:
   call gbdk_SetBKGTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
   ret
 
-SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should be move struct
+SelectMoveMenuItem: ;returns selection in a
   ld d, 0
   ld e, 8
   ld h, 20
@@ -727,14 +726,13 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
   ld e, 6
   call DrawBKGUIBox;draw_bkg_ui_box(5,12,15,6);
 
-  ld a, 4
-  ld [_c], a
-
 .drawMoveNames
   xor a
   ld [_i], a
   call GetCurrentUserPlayer
   push hl
+  call GetPlayerMoveCount
+  ld [_c], a
 .loopMoves
     pop hl;player
     push hl
@@ -757,7 +755,7 @@ SelectMoveMenuItem: ;returns selection in a, input = Player *p // input should b
     ld a, [_i]
     inc a
     ld [_i], a
-    cp 4
+    cp MAX_MOVES
     jr nz, .loopMoves
   pop hl;player
 

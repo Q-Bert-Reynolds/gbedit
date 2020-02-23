@@ -118,6 +118,11 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
+  xor a
+  ld hl, UserLineupPlayer3
+  ld bc, OpponentLineup - UserLineupPlayer3
+  call mem_Set;TODO: why isn't this RAM already set to 0 in main?
+
   ld hl, OpponentSquirtData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentSquirtDataEnd - OpponentSquirtData

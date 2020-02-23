@@ -47,7 +47,7 @@ Battle
 - doubled back & player front images should be different batting/pitching images
 - hit the ball
 - handle different moves
-- batting 
+- show X next to pitches when batting / swings when pitching 
 - opponent batting / user pitching
     - animation
     - move ball

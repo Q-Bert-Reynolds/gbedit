@@ -28,7 +28,7 @@ def generate_move_data(moves):
       move = moves[i]
       var_name = move["Move"].replace(" ","").replace("-","") + "Move"
       var_names += "DW " + var_name + "\n"
-      constants += move["Move"].upper().replace(" ","_").replace("-","_") + "_MOVE EQU " + str(i) + "\n"
+      constants += move["Move"].upper().replace(" ","_").replace("-","_") + "_MOVE EQU " + str(i+1) + "\n"
       c_file.write("\n" + var_name + ":;" + move["Description"] + "\n")
       if move["Category"] == "Pitching":
         c_file.write("DB 0;Pitch\n")

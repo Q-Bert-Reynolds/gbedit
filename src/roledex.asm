@@ -20,6 +20,13 @@ INCLUDE "data/player_strings.asm"
 
 SECTION "Roledex", ROM0
 GetMoveName:: ; a = move number, returns name in name_buffer
+  and a
+  jr nz, .findName
+  ld [name_buffer], a; 0 means no move
+  ret
+
+.findName
+  dec a
   ld b, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
@@ -45,9 +52,20 @@ GetMoveName:: ; a = move number, returns name in name_buffer
   call SetBank
   ret 
 
-GetMove:: ; a = move number, returns move in hl
+GetMove:: ; a = move number, returns move_data
   push bc
   push de
+  and a
+  jr nz, .loadMove
+
+  ld de, move_data
+  ld bc, 8
+  xor a
+  call mem_Set
+  jr .exit
+
+.loadMove
+  dec a;since 0 means no move
   ld h, 0
   ld l, a;number
   add hl, hl
@@ -71,6 +89,7 @@ GetMove:: ; a = move number, returns move in hl
 
   ld a, [temp_bank]
   call SetBank
+.exit
   pop de
   pop bc
   ret 

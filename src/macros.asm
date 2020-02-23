@@ -84,17 +84,18 @@ CLEAR_SCREEN: MACRO ;\1 = tile
 ENDM
 
 CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
-  xor a
-  ld [_i], a
+  ld de, \3 * \4
   ld hl, tile_buffer
 .tilesLoop\@
-  ld a, \5
-  ld [hli], a
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub a, \3 * \4
-  jr nz, .tilesLoop\@
+    ld a, \5
+    ld [hli], a
+    dec de
+    ld a, d
+    and a
+    jr nz, .tilesLoop\@
+    ld a, e
+    and a
+    jr nz, .tilesLoop\@
   ld d, \1
   ld e, \2
   ld h, \3
@@ -104,17 +105,18 @@ CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
 ENDM
 
 CLEAR_WIN_AREA: MACRO ;x, y, w, h, tile
-  xor a
-  ld [_i], a
+  ld de, \3 * \4
   ld hl, tile_buffer
 .tilesLoop\@
-  ld a, \5
-  ld [hli], a
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub a, \3 * \4
-  jr nz, .tilesLoop\@
+    ld a, \5
+    ld [hli], a
+    dec de
+    ld a, d
+    and a
+    jr nz, .tilesLoop\@
+    ld a, e
+    and a
+    jr nz, .tilesLoop\@
   ld d, \1
   ld e, \2
   ld h, \3

@@ -566,7 +566,7 @@ StartGame::
     call SelectPlayMenuItem
     ld a, [play_menu_selection]
 .playMenuItemSelected
-    and a
+    cp 0
     jr nz, .teamMenuItemSelected
     call SelectMoveMenuItem ;returns selection in a
     and a
@@ -577,6 +577,7 @@ StartGame::
 .teamMenuItemSelected
     cp 1
     jr nz, .itemMenuItemSelected
+    call ShowLineupFromGame
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

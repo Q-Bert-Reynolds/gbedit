@@ -373,7 +373,7 @@ ShowOptions::
   ret
 
 ShowLineupFromGame::
-  ld a, UI_BANK
+  ld a, LINEUP_BANK
   call SetBank
 
   ld a, 1

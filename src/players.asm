@@ -121,6 +121,27 @@ GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
   pop bc
   ret 
 
+GetPlayerMoveCount:;hl = player, returns move count in a
+  push bc
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
+  add hl, bc
+  xor a
+  ld c, a;count
+  ld b, MAX_MOVES
+.loop
+    ld a, [hli]
+    and a
+    jr z, .skip
+    inc c
+.skip
+    dec b
+    ld a, b
+    and a
+    jr nz, .loop
+  ld a, c;count
+  pop bc
+  ret
+
 GetPlayerMove: ;hl = player, a = player move num, returns move in move_data
   push bc
   push de

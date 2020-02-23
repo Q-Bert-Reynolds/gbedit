@@ -64,7 +64,7 @@ def generate_player_strings(roledex):
     c_file.write("SECTION \"Player Strings\", ROMX, BANK[PLAYER_STRINGS_BANK]\n")
     c_file.write("\nPlayerNames::\n")
     for player in roledex:
-      c_file.write("DB \"{0}\", 0\n".format(player["Nickname"]))
+      c_file.write("DB \"{0}\", 0\n".format(player["Nickname"].upper()))
     c_file.write("\n\nPlayerDescriptions::\n")
     for player in roledex:
       lines = textwrap.wrap(player["Description"], 18)

@@ -151,6 +151,7 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
   ret 
 
 LoadPlayerBaseData:: ; a = number
+  dec a
   ld b, 0
   ld c, a;number
   ld a, [loaded_bank]
@@ -160,11 +161,12 @@ LoadPlayerBaseData:: ; a = number
 
   ld hl, Roledex
   add hl, bc
+  add hl, bc
   ld a, [hli]
   ld b, a
   ld a, [hl]
-  ld l, a
-  ld h, b
+  ld h, a
+  ld l, b
   ld de, player_base
   ld bc, PLAYER_BASE_SIZE
   call mem_Copy

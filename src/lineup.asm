@@ -9,20 +9,20 @@ DrawPlayers:
   ld hl, UserLineup
   xor a
 .loop
-    ld [_y], a
+    ld [_j], a
     ld a, [hl]
     cp 0
     ret z
     call DrawPlayer;doesn't change hl
     ld bc, UserLineupPlayer2 - UserLineupPlayer1
     add hl, bc
-    ld a, [_y]
+    ld a, [_j]
     inc a
     cp 9
     jr nz, .loop
   ret
 
-DrawPlayer: ;hl = player, _y is order on screen
+DrawPlayer: ;hl = player, _j is order on screen
   push hl
   ld hl, tile_buffer
   xor a
@@ -75,7 +75,7 @@ DrawPlayer: ;hl = player, _y is order on screen
   ld [hli], a
 
   ld d, 0
-  ld a, [_y]
+  ld a, [_j]
   add a, a
   ld e, a
   ld h, 20
@@ -90,12 +90,16 @@ DrawPlayer: ;hl = player, _y is order on screen
   pop hl
   ret
 
+BodyPartsLookup:;a = body ID, returns other body part offset or 0 in a
+  DB 0, 0, 0, 0, 0, 1, 0, -12, 0, 1, 0, 0
+
+
 DrawPlayerSprites
   ld a, [hl]
   call LoadPlayerBaseData
   
   ld hl, oam_buffer
-  ld a, [_y]
+  ld a, [_j]
   add a, a;y*2
   add a, a;y*4
   add a, a;y*8
@@ -103,31 +107,72 @@ DrawPlayerSprites
   ld b, 0
   ld c, a
   add hl, bc;sprite id
-  push hl
+  push hl;oam 
 
-  ld a, [_y]
+  ld a, 0
+  ld bc, 16
+  call mem_Set;clear oam for player
+
+  ld a, [_j]
   inc a
   ld de, 16
   call math_Multiply
   ld a, l
-  add a, 8;y position
-  pop hl
+  add a, 8
+  ld [_y], a
+
+  ld hl, player_base+11;body
+  ld a, [hl]
+  ld b, 0
+  ld c, a;body tile
+
+  ld hl, BodyPartsLookup
+  add hl, bc
+  ld a, [hl];other body tile
+  ld d, a
+
+  pop hl;oam start
+  ld a, [_y]
+  ld [hli], a;y
+  ld a, d
+  cp 1
+  jr z, .shiftLeft
+  ld a, 20
+  ld [hli], a;x
+  jr .skipShift
+.shiftLeft
+  ld a, 16
+  ld [hli], a;x
+.skipShift
+  ld a, c
+  add a, 24;tile
+  ld [hli], a
+  inc hl;skip pal
+
+  ld a, d
+  cp 0
+  jr z, .doneWithSecondBodyPart
+  cp 1
+  jr z, .shiftRight
+  ld a, [_y]
+  sub a, 8
   ld [hli], a;y
   ld a, 20
   ld [hli], a;x
-  
-  ld bc, player_base+11
-  ld a, [bc];body tile
-  ld [_breakpoint], a
-  add a, 12*2;columns*row
-  ld [hli], a;tile
+  jr .setSecondBodyTile
+.shiftRight
+  ld a, [_y]
+  ld [hli], a;y
+  ld a, 24
+  ld [hli], a;x
+.setSecondBodyTile
+  ld a, d
+  add a, c
+  add a, 24;tile
+  ld [hli], a
+  inc hl;skip pal
+.doneWithSecondBodyPart
 
-  ; ld de, player_base+14
-  ; ld a, [de]
-  ; ld [hli], a;palette
-
-  inc bc
-  ld a, [bc];head tile
   ret
 
 ShowLineup::; a = playing_game?

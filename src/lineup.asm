@@ -11,7 +11,6 @@ DrawPlayers:
 .loop
     ld [_y], a
     ld a, [hl]
-    ld [_breakpoint], a
     cp 0
     ret z
     call DrawPlayer;doesn't change hl
@@ -110,7 +109,8 @@ DrawPlayerSprites
   inc a
   ld de, 16
   call math_Multiply
-  ld a, l;y position
+  ld a, l
+  add a, 8;y position
   pop hl
   ld [hli], a;y
   ld a, 20
@@ -118,12 +118,13 @@ DrawPlayerSprites
   
   ld bc, player_base+11
   ld a, [bc];body tile
-  add a, 32
+  ld [_breakpoint], a
+  add a, 12*2;columns*row
   ld [hli], a;tile
 
-  ld de, player_base+14
-  ld a, [de]
-  ld [hli], a;palette
+  ; ld de, player_base+14
+  ; ld a, [de]
+  ; ld [hli], a;palette
 
   inc bc
   ld a, [bc];head tile

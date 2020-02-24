@@ -145,20 +145,7 @@ def generate_player_data(roledex):
       c_file.write("DB " + str(player["HeadID"]) + " ;Lineup Head\n")
       c_file.write("DB " + str(player["HatID"]) + " ;Lineup Hat\n")
       c_file.write("DB " + str(player["GBPal"]) + " ;Palette\n")
-    c_file.write("\nRoledex:\n"+var_names+"\n")
-
-    c_file.write("LoadBaseData:: ;bc = number\n")
-    c_file.write("  ld hl, Roledex\n")
-    c_file.write("  add hl, bc\n")
-    c_file.write("  ld a, [hli]\n")
-    c_file.write("  ld b, a\n")
-    c_file.write("  ld a, [hl]\n")
-    c_file.write("  ld l, a\n")
-    c_file.write("  ld h, b\n")
-    c_file.write("  ld de, player_base\n")
-    c_file.write("  ld bc, 14\n")
-    c_file.write("  call mem_Copy\n")
-    c_file.write("  ret\n")
+    c_file.write("\nRoledex:\n"+var_names)
 
 if __name__ == "__main__":
   main()

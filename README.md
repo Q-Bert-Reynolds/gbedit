@@ -55,6 +55,7 @@ Battle
 Team Menu
 
 - layout
+- restore tiles from previous screen
 
 Overworld
 

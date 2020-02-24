@@ -155,19 +155,18 @@ LoadPlayerBaseData:: ; a = number
   ld c, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
-  ld a, PLAYER_STRINGS_BANK
+  ld a, PLAYER_DATA_BANK
   call SetBank
 
   ld hl, Roledex
   add hl, bc
-  add hl, bc
   ld a, [hli]
   ld b, a
-  ld a, [hli]
-  ld h, b
+  ld a, [hl]
   ld l, a
+  ld h, b
   ld de, player_base
-  ld bc, 16
+  ld bc, PLAYER_BASE_SIZE
   call mem_Copy
 
   ld a, [temp_bank]

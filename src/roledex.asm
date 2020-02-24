@@ -167,7 +167,7 @@ LoadPlayerBaseData:: ; a = number
   ld h, b
   ld l, a
   ld de, player_base
-  ld bc, 14
+  ld bc, 16
   call mem_Copy
 
   ld a, [temp_bank]

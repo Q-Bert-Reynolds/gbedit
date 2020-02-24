@@ -48,7 +48,7 @@ tile_buffer: DS BUFFER_SIZE
 bkg_buffer: DS BUFFER_SIZE
 str_buffer: DS 64
 name_buffer: DS 16
-player_base: DS 14
+player_base: DS 16
 move_data: DS 8
 
 ;Baseball

@@ -90,9 +90,20 @@ DrawPlayer: ;hl = player, _j is order on screen
   pop hl
   ret
 
-BodyPartsLookup:;a = body ID, returns other body part offset or 0 in a
+BodyPartsLookup:;maps body ID to other body part offset or 0
   DB 0, 0, 0, 0, 0, 1, 0, -12, 0, 1, 0, 0
 
+BodyHeightLookup:;maps body ID to height
+  DB 2, 6, 6, 5, 6, 7, 0, 8, 7, 7, 0, 8
+
+BodyHeadXLookup:;maps body ID to x offset
+  DB -1, -1, -1, 0, 0, 0, 0, 2, 0, -1, 0, -1
+
+HeadPartsLookup:;maps head ID to other head part offset or 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0
+
+HeadHeightLookup:;maps head ID to height
+  DB 6, 5, 5, 4, 4, 4, 4, 0, 4, 5, 5, 4
 
 DrawPlayerSprites
   ld a, [hl]
@@ -130,6 +141,16 @@ DrawPlayerSprites
   add hl, bc
   ld a, [hl];other body tile
   ld d, a
+
+  ld hl, BodyHeadXLookup
+  add hl, bc
+  ld a, [hl];head x offset
+  ld [_x], a
+
+  ld hl, BodyHeightLookup
+  add hl, bc
+  ld a, [hl];body height
+  ld e, a
 
   pop hl;oam start
   ld a, [_y]
@@ -172,6 +193,37 @@ DrawPlayerSprites
   ld [hli], a
   inc hl;skip pal
 .doneWithSecondBodyPart
+
+  push hl
+  ld a, [_y]
+  sub a, e;sub body height
+  ld [_y], a
+
+  ld hl, player_base+12;head
+  ld a, [hl]
+  ld b, 0
+  ld c, a;head tile
+
+  ld hl, HeadHeightLookup
+  add hl, bc
+  ld a, [hl];head height
+  ld e, a
+
+  pop hl
+  ld a, [_y];y pos - body height
+  sub a, e;head height
+  ld [_y], a;store hat pos
+  add a, 8
+  ld [hli], a
+
+  ld a, [_x]
+  add a, 20
+  ld [hli], a
+
+  ld a, c
+  add a, 12;head tile
+  ld [hli], a
+  inc a;skip pal
 
   ret
 

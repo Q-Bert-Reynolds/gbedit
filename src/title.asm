@@ -174,7 +174,7 @@ ShowTitle:
   ld h, _BEISBOL_LOGO_COLUMNS ; w
   ld l, _BEISBOL_LOGO_ROWS ; h
   ld bc, _BeisbolLogoTileMap
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   xor a
   ld d, a
@@ -376,7 +376,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld h, 5
   ld l, 1
   ld bc, CoachStatText
-  call gbdk_SetBKGTiles ;set_bkg_tiles(5,9,5,1,"COACH");
+  call gbdk_SetBkgTiles ;set_bkg_tiles(5,9,5,1,"COACH");
 
   di
   SWITCH_RAM_MBC5 0
@@ -394,14 +394,14 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld e, 9
   ld l, 1
   ld bc, name_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(11,9,strlen(name_buff),1,name_buff);
 
   ld d, 5
   ld e, 11
   ld h, 8
   ld l, 1
   ld bc, PennantsStatText
-  call gbdk_SetBKGTiles ;set_bkg_tiles(5,11,8,1,"PENNANTS");
+  call gbdk_SetBkgTiles ;set_bkg_tiles(5,11,8,1,"PENNANTS");
 
   ld d, 18
   ld e, 11
@@ -410,14 +410,14 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld bc, str_buffer
   ld a, "0"
   ld [bc], a
-  call gbdk_SetBKGTiles ;set_bkg_tiles(18,11,1,1,"0");//+penant_count);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(18,11,1,1,"0");//+penant_count);
   
   ld d, 5
   ld e, 13
   ld h, 7
   ld l, 1
   ld bc, RoledexStatText
-  call gbdk_SetBKGTiles ;set_bkg_tiles(5,13,7,1, "ROLéDEX");
+  call gbdk_SetBkgTiles ;set_bkg_tiles(5,13,7,1, "ROLéDEX");
 
   ;sprintf(str_buff, "%d", 151);
   ld d, 16
@@ -434,18 +434,18 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld a, "5"
   ld [bc], a
   dec bc
-  call gbdk_SetBKGTiles ;set_bkg_tiles(16,13,3,1,str_buff);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(16,13,3,1,str_buff);
 
   ld d, 5
   ld e, 15
   ld h, 4
   ld l, 1
   ld bc, TimeStatText
-  call gbdk_SetBKGTiles ;set_bkg_tiles(5,15,4,1,"TIME");
+  call gbdk_SetBkgTiles ;set_bkg_tiles(5,15,4,1,"TIME");
 
   ; sprintf(str_buff, "%d:%d", 999, 59);
   ; l = strlen(str_buff);
-  ; call gbdk_SetBKGTiles ;set_bkg_tiles(19-l,15,l,1,str_buff);
+  ; call gbdk_SetBkgTiles ;set_bkg_tiles(19-l,15,l,1,str_buff);
   WAITPAD_UP
 .showGameStatsLoop ;while (1) {
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;

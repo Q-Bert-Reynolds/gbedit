@@ -82,7 +82,7 @@ DrawPlayer: ;hl = player, _j is order on screen
   ld h, 20
   ld l, 2
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   pop hl
   push hl
@@ -145,11 +145,11 @@ DrawPlayerSprites
   cp 1
   jr z, .pal1
   ld a, OAMF_PAL0
-  ld [_a], a
+  ld [_s], a
   jr .drawBody
 .pal1
   ld a, OAMF_PAL1
-  ld [_a], a
+  ld [_s], a
 
 .drawBody
   ld hl, player_base+11;body
@@ -188,7 +188,7 @@ DrawPlayerSprites
   ld a, c
   add a, 24;tile
   ld [hli], a
-  ld a, [_a]
+  ld a, [_s]
   ld [hli], a;pal
 
   ld a, d
@@ -212,7 +212,7 @@ DrawPlayerSprites
   add a, c
   add a, 24;tile
   ld [hli], a
-  ld a, [_a]
+  ld a, [_s]
   ld [hli], a;pal
 .doneWithSecondBodyPart
 
@@ -245,7 +245,7 @@ DrawPlayerSprites
   ld a, c
   add a, 12;head tile
   ld [hli], a
-  ld a, [_a]
+  ld a, [_s]
   ld [hli], a;pal
 
   push hl
@@ -278,12 +278,78 @@ DrawPlayerSprites
   ld a, c
   ld [hli], a;tile
 
-  ld a, [_a]
+  ld a, [_s]
   ld [hli], a;pal
 
   ret
 
+FromWorldMenuText:
+  DB "ORDER\n"
+FromGameMenuText:
+  DB "SWITCH\nSTATS\nCANCEL", 0
+
+ShowPlayerMenu:
+  ld a, [_c]
+  ld b, a
+  ld a, [_j]
+  ld c, a
+  push bc
+  ld a, [_a]
+  and a
+  jr z, .notPlaying
+  ld hl, FromGameMenuText
+  ld c, 3
+  jr .setStrBuff
+.notPlaying
+  ld hl, FromWorldMenuText
+  ld c, 4
+.setStrBuff
+  ld de, str_buffer
+  call str_Copy
+
+  ld hl, name_buffer
+  xor a
+  ld [hl], a
+
+  ld h, 9
+  ld a, c
+  add a, c
+  add a, 2
+  ld l, a
+
+  ld d, 11
+  ld a, 18
+  sub a, c
+  sub a, c
+  sub a, 2
+  ld e, a
+
+  push de;xy
+  push hl;wh
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+
+  pop de;wh
+  pop bc;xy
+  push de;wh
+  push bc;xy
+  call ShowListMenu; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+
+  pop de;xy
+  pop hl;wh
+  ld bc, bkg_buffer
+  call gbdk_SetBkgTiles
+  WAITPAD_UP
+  pop bc
+  ld a, b
+  ld [_c], a
+  ld a, c
+  ld [_j], a
+  ret 
+
 ShowLineup::; a = playing_game?
+  ld [_a], a
+
   DISPLAY_OFF
   ld hl, _LineupSpritesTiles
   ld de, $8000
@@ -312,13 +378,22 @@ ShowLineup::; a = playing_game?
   call DrawListMenuArrow
 
   DISPLAY_ON
+  WAITPAD_UP
 .loop
     call UpdateInput
     ld de, 0
     call MoveListMenuArrow
+.testStartOrA
+    ld a, [button_state]
+    and a, PADF_A | PADF_START
+    jr z, .testBButton
+    call ShowPlayerMenu
+    jr .waitVBLAndLoop
+.testBButton
     ld a, [button_state]
     and a, PADF_B
     jr nz, .exit
+.waitVBLAndLoop
     call gbdk_WaitVBL
     jr .loop
 .exit

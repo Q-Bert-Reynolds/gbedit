@@ -33,7 +33,7 @@ Start::
   ld h, _COPYRIGHT_COLUMNS ; w
   ld l, _COPYRIGHT_ROWS ; h
   ld bc, _CopyrightTileMap
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
@@ -57,7 +57,7 @@ Start::
   ld h, _INTRO_LIGHTS_COLUMNS ; w
   ld l, _INTRO_LIGHTS_ROWS ; h
   ld bc, _IntroLightsTileMap
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   ld hl, _IntroSpritesTiles
   ld de, _VRAM
@@ -128,7 +128,7 @@ Start::
   ld h, _INTRO_LIGHT_OUT_COLUMNS ; w
   ld l, _INTRO_LIGHT_OUT_ROWS ; h
   ld bc, _IntroLightOutTileMap
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
   
 ; TODO: start playing stars animation
   xor a
@@ -175,7 +175,7 @@ Start::
   ld h, _INTRO_PITCH_COLUMNS ; w
   ld l, _INTRO_PITCH_ROWS ; h
   ld bc, _IntroPitchTileMap
-  call gbdk_SetBKGTiles 
+  call gbdk_SetBkgTiles 
   ld hl, rBGP
   ld [hl], BG_PALETTE
 

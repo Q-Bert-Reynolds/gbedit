@@ -28,7 +28,7 @@
 ;   gbdk_DisplayOff
 ;   gbdk_WaitVBL
 ;   gbdk_SetWinTiles
-;   gbdk_SetBKGTiles
+;   gbdk_SetBkgTiles
 ;   gbdk_Delay
 ;   gbdk_CPUSlow
 ;   gbdk_CPUFast
@@ -314,7 +314,7 @@ gbdk_SetWinTiles::
 
 ;***************************************************************************
 ;
-; gbdk_SetBKGTiles - Sets background tile table
+; gbdk_SetBkgTiles - Sets background tile table
 ; width and height >= (1,1); 
 ;
 ; input:
@@ -323,7 +323,7 @@ gbdk_SetWinTiles::
 ;   bc - firstTile
 ;
 ;***************************************************************************
-gbdk_SetBKGTiles::
+gbdk_SetBkgTiles::
   push hl ; store wh
   ldh a,[rLCDC]
   bit 3, a

@@ -152,7 +152,7 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   pop hl ;xy
   pop de ;wh
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x,y,w,h,tiles);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(x,y,w,h,tiles);
   ret
 
 RevealText:: ;hl = text
@@ -252,7 +252,7 @@ DrawBKGUIBox:: ; bc = xy, de = wh
   pop hl ;wh
   pop de ;xy
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
   ret
 
 DrawWinUIBox:: ; bc = xy, de = wh
@@ -353,7 +353,7 @@ DrawListMenuArrow:: ;de = xy, _j = current index, _c = count
   ld l, a ;h=_c*2
   
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(x,y,1,c*2,tile_buffer);
+  call gbdk_SetBkgTiles;set_bkg_tiles(x,y,1,c*2,tile_buffer);
   ret
 
 MoveListMenuArrow::;de = upper left, must call UpdateInput first

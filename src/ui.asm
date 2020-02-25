@@ -239,49 +239,49 @@ MoveOptionsArrow:
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 0
-  call gbdk_SetBKGTiles; set_bkg_tiles(1,3,1,1,tile_buffer + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(1,3,1,1,tile_buffer + (a==0 ? 2 : 0) - (y==0 ? 1 : 0));
   
   ld d, 7 ;x
   ld e, 3 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 1
-  call gbdk_SetBKGTiles; set_bkg_tiles(7,3,1,1,tile_buffer + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(7,3,1,1,tile_buffer + (a==1 ? 2 : 0) - (y==0 ? 1 : 0));
   
   ld d, 14 ;x
   ld e, 3 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _a, 0, 2
-  call gbdk_SetBKGTiles; set_bkg_tiles(14,3,1,1,tile_buffer + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(14,3,1,1,tile_buffer + (a==2 ? 2 : 0) - (y==0 ? 1 : 0));
   
   ld d, 1 ;x
   ld e, 8 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 0
-  call gbdk_SetBKGTiles; set_bkg_tiles(1,8,1,1,tile_buffer + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(1,8,1,1,tile_buffer + (b==0 ? 2 : 0) - (y==1 ? 1 : 0));
   
   ld d, 10 ;x
   ld e, 8 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _b, 1, 1
-  call gbdk_SetBKGTiles; set_bkg_tiles(10,8,1,1,tile_buffer + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(10,8,1,1,tile_buffer + (b==1 ? 2 : 0) - (y==1 ? 1 : 0));
 
   ld d, 1 ;x
   ld e, 13 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 0
-  call gbdk_SetBKGTiles; set_bkg_tiles(1,13,1,1,tile_buffer + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(1,13,1,1,tile_buffer + (c==0 ? 2 : 0) - (y==2 ? 1 : 0));
   
   ld d, 10 ;x
   ld e, 13 ;y
   ld h, 1 ;w
   ld l, 1 ;h
   SET_MOVE_OPTIONS_ARROW_TILE _c, 2, 1
-  call gbdk_SetBKGTiles; set_bkg_tiles(10,13,1,1,tile_buffer + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
+  call gbdk_SetBkgTiles; set_bkg_tiles(10,13,1,1,tile_buffer + (c==1 ? 2 : 0) - (y==2 ? 1 : 0));
 
   ld a, ARROW_RIGHT
   ld bc, tile_buffer
@@ -296,7 +296,7 @@ MoveOptionsArrow:
   ld a, ARROW_RIGHT_BLANK
   ld [bc], a
 .setCancelTile
-  call gbdk_SetBKGTiles; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
+  call gbdk_SetBkgTiles; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
   ret
 
 TextSpeedOptionString:
@@ -368,7 +368,7 @@ UIShowOptions::
   ld h, 18
   ld l, 3
   ld bc, TextSpeedOptionString
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   xor a
   ld b, a
@@ -387,7 +387,7 @@ UIShowOptions::
   ld h, 18
   ld l, 3
   ld bc, AnimationOptionString
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   xor a
   ld b, a
@@ -407,7 +407,7 @@ UIShowOptions::
   ld h, 18
   ld l, 3
   ld bc, CoachingOptionString
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   ; set_bkg_tiles(2,16,6,1,
   ;   "CANCEL"
@@ -416,7 +416,7 @@ UIShowOptions::
   ld h, 6
   ld l, 1
   ld bc, CancelOptionString
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   DISPLAY_ON
 
@@ -1050,7 +1050,7 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   push de ;wh
   push hl ;text
 
-  ;reorganize registers to use with gbdk_SetBKGTiles
+  ;reorganize registers to use with gbdk_SetBkgTiles
   pop bc ;text
   pop hl ;wh
   pop de ;xy
@@ -1069,7 +1069,7 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   ld a, 1
   ld l, a;h = 1
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 
   ;restore initial register state
   pop hl ;text
@@ -1147,7 +1147,10 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   push bc
   xor a
   ld [_j], a
-  ld de, $0101
+  ld d, b
+  inc d
+  ld e, c
+  inc e
   call DrawListMenuArrow
   pop bc
 
@@ -1179,7 +1182,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld bc, name_buffer
   pop hl ;wh
   pop de ;xy
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x+i,y,l,1,title);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(x+i,y,l,1,title);
 .skipTitle
   pop de ;wh
   pop bc ;xy
@@ -1190,7 +1193,10 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
     call UpdateInput
-    ld de, $0101
+    pop de;xy
+    push de
+    inc d
+    inc e
     call MoveListMenuArrow
 .selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
     ld a, [button_state]

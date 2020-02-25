@@ -101,7 +101,7 @@ CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile
   ld h, \3
   ld l, \4
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles
+  call gbdk_SetBkgTiles
 ENDM
 
 CLEAR_WIN_AREA: MACRO ;x, y, w, h, tile

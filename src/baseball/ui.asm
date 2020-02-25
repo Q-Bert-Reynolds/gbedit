@@ -165,7 +165,7 @@ DrawPlayerUI: ;a = team
   ld h, 12
   ld l, 2
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(x,y,12,2,tiles);
+  call gbdk_SetBkgTiles;set_bkg_tiles(x,y,12,2,tiles);
 
   ld a, [_b]
   and a
@@ -184,7 +184,7 @@ DrawPlayerUI: ;a = team
   ld h, 4
   ld l, 1
   ld bc, str_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
+  call gbdk_SetBkgTiles ;set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
   jr .setHealthPct
 
 .setERA
@@ -201,7 +201,7 @@ DrawPlayerUI: ;a = team
   ld h, 4
   ld l, 1
   ld bc, str_buffer
-  call gbdk_SetBKGTiles ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
+  call gbdk_SetBkgTiles ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));
 
 .setHealthPct 
   pop af;team
@@ -216,7 +216,7 @@ DrawPlayerUI: ;a = team
   ld h, 3
   ld l, 1
   ld bc, str_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
+  call gbdk_SetBkgTiles;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
   ret
 
 DrawBases:
@@ -266,7 +266,7 @@ DrawBases:
   ld h, 3;w
   ld l, 2;h
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(9,0,3,2,tiles);
+  call gbdk_SetBkgTiles;set_bkg_tiles(9,0,3,2,tiles);
   ret
 
 DrawCountOutsInning:
@@ -294,7 +294,7 @@ DrawCountOutsInning:
   ld d, 1;x
   ld e, 13;y
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(1,13,len,1,tiles);
+  call gbdk_SetBkgTiles;set_bkg_tiles(1,13,len,1,tiles);
 
   ld hl, tile_buffer
   ld a, "B"
@@ -308,7 +308,7 @@ DrawCountOutsInning:
   ld d, 1;x
   ld e, 14;y
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(1,14,1,3,"BSO");
+  call gbdk_SetBkgTiles;set_bkg_tiles(1,14,1,3,"BSO");
 
   ld hl, tile_buffer
   xor a
@@ -382,7 +382,7 @@ DrawCountOutsInning:
   ld h, 4;w
   ld l, 3;h
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(2,14,4,3,tiles);
+  call gbdk_SetBkgTiles;set_bkg_tiles(2,14,4,3,tiles);
   ret
 
 DrawTeamNames:
@@ -405,7 +405,7 @@ DrawTeamNames:
   ld de, 1;x = 0, y = 1  
 .setPlayerAway
   ld bc, name_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(0,y,7,1,name_buff);
+  call gbdk_SetBkgTiles;set_bkg_tiles(0,y,7,1,name_buff);
 
   ld hl, rival_name
   ld de, name_buffer
@@ -423,7 +423,7 @@ DrawTeamNames:
   ld de, 1;x = 0, y = 1  
 .setOpponentAway
   ld bc, name_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(0,1,7,1,name_buff);
+  call gbdk_SetBkgTiles;set_bkg_tiles(0,1,7,1,name_buff);
 
   DISABLE_RAM_MBC5
   ei
@@ -444,7 +444,7 @@ DrawScore:
   ld d, 8 ;x
   ld e, 0 ;y
   ld bc, name_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(9,0,l,1,name_buff);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(9,0,l,1,name_buff);
   
   xor a
   ld h, a
@@ -461,7 +461,7 @@ DrawScore:
   ld d, 8 ;x
   ld e, 1 ;y
   ld bc, name_buffer
-  call gbdk_SetBKGTiles ;set_bkg_tiles(9,1,l,1,name_buff);
+  call gbdk_SetBkgTiles ;set_bkg_tiles(9,1,l,1,name_buff);
   ret
 
 DrawPlayBallUI:
@@ -487,7 +487,7 @@ DrawPlayBallUI:
   ld h, 10
   ld l, 3
   ld bc, PlayMenuString
-  call gbdk_SetBKGTiles;set_bkg_tiles(9,14,10,3,
+  call gbdk_SetBkgTiles;set_bkg_tiles(9,14,10,3,
 
   DISPLAY_ON
   ret 
@@ -532,7 +532,7 @@ MovePlayMenuArrow:
       ld h, a
       ld l, a
       ld bc, tile_buffer
-      call gbdk_SetBKGTiles;set_bkg_tiles(i*6+8,j*2+14,1,1,tiles);
+      call gbdk_SetBkgTiles;set_bkg_tiles(i*6+8,j*2+14,1,1,tiles);
 
       ld a, [_j]
       inc a
@@ -644,7 +644,7 @@ MoveMoveMenuArrow:
   ld h, 1
   ld l, 4
   ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(6,13,1,4,tiles);
+  call gbdk_SetBkgTiles;set_bkg_tiles(6,13,1,4,tiles);
   ret
 
 ShowMoveInfo:
@@ -659,7 +659,7 @@ ShowMoveInfo:
   ld h, 5
   ld l, 1
   ld bc, TypeSlashText
-  call gbdk_SetBKGTiles;set_bkg_tiles(1,9,5,1,"TYPE/");
+  call gbdk_SetBkgTiles;set_bkg_tiles(1,9,5,1,"TYPE/");
 
   call GetCurrentUserPlayer
   push hl;current user player
@@ -678,7 +678,7 @@ ShowMoveInfo:
   ld d, 2
   ld e, 10
   ld bc, name_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
+  call gbdk_SetBkgTiles;set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
   
   pop de;max play points
   pop hl;current user player
@@ -709,7 +709,7 @@ ShowMoveInfo:
   ld d, 5
   ld e, 11
   ld bc, name_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
+  call gbdk_SetBkgTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
   ret
 
 SelectMoveMenuItem: ;returns selection in a
@@ -750,7 +750,7 @@ SelectMoveMenuItem: ;returns selection in a
     ld e, a
     
     ld bc, name_buffer
-    call gbdk_SetBKGTiles
+    call gbdk_SetBkgTiles
 
     ld a, [_i]
     inc a
@@ -819,7 +819,7 @@ SelectMoveMenuItem: ;returns selection in a
   ld h, 20
   ld l, 10
   ld bc, bkg_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(0,8,20,10,bkg_buff);
+  call gbdk_SetBkgTiles;set_bkg_tiles(0,8,20,10,bkg_buff);
 
   pop af
   inc a

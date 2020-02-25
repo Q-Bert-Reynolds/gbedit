@@ -34,7 +34,6 @@ Intro
 - sfx
 - sparks after ball hits light
 - pitch/bat anim
-- bounce title
 - delay version slide
 - randomize players
 

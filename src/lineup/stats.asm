@@ -1,10 +1,12 @@
 DrawStatScreen:;player in hl
   push hl
+  DISPLAY_OFF
   CLEAR_SCREEN " "
 
   pop hl
   push hl
   call DrawPageOne
+  DISPLAY_ON
 .loop
     call gbdk_WaitVBL
     call UpdateInput

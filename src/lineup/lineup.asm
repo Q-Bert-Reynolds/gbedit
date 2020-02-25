@@ -348,7 +348,7 @@ ShowPlayerMenu:
   ld bc, UserLineup
   add hl, bc
   call DrawStatScreen
-  
+
   ;restore lineup card
   jr .exit
 .skip
@@ -356,7 +356,6 @@ ShowPlayerMenu:
   ld a, [_a]
   add a, b;offset by 1 if in game so player can't reorder
   ;TODO: order and switch
-
 .exit
   pop hl;wh
   pop de;xy
@@ -411,6 +410,7 @@ ShowLineup::; a = playing_game?
     and a, PADF_A | PADF_START
     jr z, .testBButton
     call ShowPlayerMenu
+    WAITPAD_UP
     jr .waitVBLAndLoop
 .testBButton
     ld a, [button_state]

@@ -2,10 +2,12 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "Lineup", ROMX, BANK[LINEUP_BANK]
 
+INCLUDE "src/lineup/stats.asm"
+
 INCLUDE "img/health_bar.asm"
 INCLUDE "img/lineup_sprites.asm"
 
-DrawPlayers:
+DrawLineupPlayers:
   ld hl, UserLineup
   xor a
 .loop
@@ -13,7 +15,7 @@ DrawPlayers:
     ld a, [hl]
     cp 0
     ret z
-    call DrawPlayer;doesn't change hl
+    call DrawLineupPlayer;doesn't change hl
     ld bc, UserLineupPlayer2 - UserLineupPlayer1
     add hl, bc
     ld a, [_j]
@@ -23,7 +25,7 @@ DrawPlayers:
     jr nz, .loop
   ret
 
-DrawPlayer: ;hl = player, _j is order on screen
+DrawLineupPlayer: ;hl = player, _j is order on screen
   push hl
   ld hl, tile_buffer
   xor a
@@ -86,7 +88,7 @@ DrawPlayer: ;hl = player, _j is order on screen
 
   pop hl
   push hl
-  call DrawPlayerSprites
+  call DrawLineupPlayerSprites
 
   pop hl
   ret
@@ -112,7 +114,7 @@ HatPartsLookup:;maps hat ID to other hat part offset or 0
 HatXLookup:;maps hat ID to x offset
   DB 0, 1, 1, 1, 1, 1, 1, 1, 1, -6, 0, -7
 
-DrawPlayerSprites
+DrawLineupPlayerSprites
   ld a, [hl]
   call LoadPlayerBaseData
   
@@ -284,16 +286,17 @@ DrawPlayerSprites
   ret
 
 FromWorldMenuText:
-  DB "ORDER\n"
+  DB "STATS\nORDER\nSWITCH\nCANCEL", 0
 FromGameMenuText:
-  DB "SWITCH\nSTATS\nCANCEL", 0
+  DB "STATS\nSWITCH\nCANCEL", 0
 
 ShowPlayerMenu:
-  ld a, [_c]
+  ld a, [_c];number of players
   ld b, a
-  ld a, [_j]
+  ld a, [_j];selected player
   ld c, a
   push bc
+
   ld a, [_a]
   and a
   jr z, .notPlaying
@@ -331,12 +334,32 @@ ShowPlayerMenu:
 
   pop de;wh
   pop bc;xy
-  push de;wh
   push bc;xy
+  push de;wh
   call ShowListMenu; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+  and a
+  jr z, .exit
+  cp 1
+  jr nz, .skip
 
-  pop de;xy
+  ld de, UserLineupPlayer2 - UserLineupPlayer1
+  ld a, [_j]
+  call math_Multiply
+  ld bc, UserLineup
+  add hl, bc
+  call DrawStatScreen
+  
+  ;restore lineup card
+  jr .exit
+.skip
+  ld b, a
+  ld a, [_a]
+  add a, b;offset by 1 if in game so player can't reorder
+  ;TODO: order and switch
+
+.exit
   pop hl;wh
+  pop de;xy
   ld bc, bkg_buffer
   call gbdk_SetBkgTiles
   WAITPAD_UP
@@ -370,7 +393,7 @@ ShowLineup::; a = playing_game?
   ld hl, rOBP1
   ld [hl], %11111000
 
-  call DrawPlayers
+  call DrawLineupPlayers
 
   xor a
   ld [_j], a
@@ -397,7 +420,16 @@ ShowLineup::; a = playing_game?
     call gbdk_WaitVBL
     jr .loop
 .exit
+
+  DISPLAY_OFF
   ld hl, rOBP1
   ld [hl], SPR_PALETTE_1
-  HIDE_ALL_SPRITES
+  
+  xor a
+  ld hl, bkg_buffer
+  ld bc, BUFFER_SIZE
+  call mem_Set
+
+  CLEAR_SCREEN " "
+  DISPLAY_ON
   ret

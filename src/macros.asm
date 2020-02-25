@@ -61,20 +61,9 @@ ENDM
 
 CLEAR_SCREEN: MACRO ;\1 = tile
   ld a, \1
-  ld d, a
-  ld bc, 1384
+  ld bc, 32*32+20*18
   ld hl, _SCRN0
-
-.loop\@
-  ld a, d
-  ld [hli], a
-  dec bc
-  ld a, b
-  and a
-  jr nz, .loop\@
-  ld a, c
-  and a
-  jr nz, .loop\@
+  call mem_Set
 
   ld a, 166
   ld [rWX], a

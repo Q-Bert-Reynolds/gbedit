@@ -522,6 +522,58 @@ SetPlayBallTiles:
   call mem_CopyVRAM
   ret 
 
+ShowPlayBallWindow:
+  ld bc, 0
+  ld d, 20
+  ld e, 6
+  call DrawWinUIBox
+
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a
+  SHOW_WIN
+  ret 
+
+ReturnToGame:
+  call SetPlayBallTiles
+  call DrawPlayBallUI
+  HIDE_WIN
+  
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
+  push af
+  ld de, _UI_FONT_TILE_COUNT+64
+  call LoadPlayerBkgData
+  pop af
+  push af
+  call GetPlayerImgColumns
+  ld c, a
+
+  ld a, 19
+  sub a, c
+  ld b, a;x
+  ld a, 7
+  sub a, c
+  ld c, a;y
+  ld de, _UI_FONT_TILE_COUNT+64
+  pop af
+  call SetPlayerBkgTiles
+
+  ld hl, _RightyBatterUserTiles
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld bc, _RIGHTY_BATTER_USER_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld de, 5
+  ld h, _RIGHTY_BATTER_USER0_COLUMNS
+  ld l, _RIGHTY_BATTER_USER0_ROWS
+  ld bc, _RightyBatterUser0TileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  ret
+
 StartGame::
   DISPLAY_OFF
 
@@ -582,9 +634,7 @@ StartGame::
     cp 1
     jr nz, .itemMenuItemSelected
     call ShowLineupFromGame
-    call SetPlayBallTiles
-    call DrawPlayBallUI
-    ;call DrawPlayers
+    call ReturnToGame
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

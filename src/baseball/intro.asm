@@ -10,16 +10,7 @@ PlayIntro:
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
 
-  ld bc, 0
-  ld d, 20
-  ld e, 6
-  call DrawWinUIBox
-
-  ld a, 7
-  ld [rWX], a
-  ld a, 96
-  ld [rWY], a
-  SHOW_WIN
+  call ShowPlayBallWindow
 
   xor a
   ld [_j], a

@@ -319,6 +319,76 @@ DisplayText:: ;hl = text
   SHOW_WIN
   ret
 
+DrawListMenuArrow:: ;de = xy, _j = current index, _c = count
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.tilesLoop; for (i = 0; i < c; ++i) {
+  xor a
+  ld [hli], a;   tiles[i*2] = 0;
+  ld a, [_j]
+  ld c, a
+  ld a, [_i]
+  sub a, c ;_i - _j
+  jp nz, .setZero ;if (i == _j)
+  ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
+  jr .skip
+.setZero
+  xor a ;else tiles[i*2+1] = 0;
+.skip
+  ld [hli], a ;tiles[i*2+1]
+
+  ld a, [_i]
+  inc a
+  ld [_i], a;++_i
+  ld b, a
+  ld a, [_c]
+  sub a, b ;_c-_i
+  jp nz, .tilesLoop
+
+  ld a, 1
+  ld h, a ;w=1
+  ld a, [_c]
+  add a, a
+  ld l, a ;h=_c*2
+  
+  ld bc, tile_buffer
+  call gbdk_SetBKGTiles;set_bkg_tiles(x,y,1,c*2,tile_buffer);
+  ret
+
+MoveListMenuArrow::;de = upper left, must call UpdateInput first
+.checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
+  ld a, [button_state]
+  and a, PADF_UP
+  jp z, .checkMoveArrowDown
+  ld a, [_j]
+  or a
+  jp z, .checkMoveArrowDown
+  call gbdk_WaitVBL
+  ld a, [_j]
+  dec a
+  ld [_j], a ;--j
+  call DrawListMenuArrow;move_menu_arrow(--j);
+  WAITPAD_UP ;update_waitpadup();
+  ret
+.checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
+  ld a, [button_state]
+  and a, PADF_DOWN
+  ret z
+  ld a, [_c]
+  dec a
+  ld b, a
+  ld a, [_j]
+  cp b
+  ret nc
+  call gbdk_WaitVBL
+  ld a, [_j]
+  inc a
+  ld [_j], a ;++j
+  call DrawListMenuArrow;move_menu_arrow(++j);
+  WAITPAD_UP ;update_waitpadup();
+  ret
+
 ShowListMenu:: ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
   ld a, [loaded_bank]
   ld [temp_bank], a

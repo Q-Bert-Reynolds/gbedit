@@ -1044,52 +1044,6 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   pop af;a = max_len
   ret
 
-MoveMenuArrow: ;xy on stack, must stay there
-  xor a
-  ld [_i], a
-  ld hl, tile_buffer
-.tilesLoop; for (i = 0; i < c; ++i) {
-  xor a
-  ld [hli], a;   tiles[i*2] = 0;
-  ld a, [_j]
-  ld c, a
-  ld a, [_i]
-  sub a, c ;_i - _j
-  jp nz, .setZero ;if (i == _j)
-  ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
-  jr .skip
-.setZero
-  xor a ;else tiles[i*2+1] = 0;
-.skip
-  ld [hli], a ;tiles[i*2+1]
-
-  ld a, [_i]
-  inc a
-  ld [_i], a;++_i
-  ld b, a
-  ld a, [_c]
-  sub a, b ;_c-_i
-  jp nz, .tilesLoop
-
-  ; pop de ;xy
-  ; push de ;xy must stay on stack
-  ld a, 1
-  ; add a, d
-  ld d, a ;x=x+1
-  ld a, 1
-  ; add a, e
-  ld e, a ;y=y+1
-
-  ld a, 1
-  ld h, a ;w=1
-  ld a, [_c]
-  add a, a
-  ld l, a ;h=_c*2
-  
-  ld bc, tile_buffer
-  call gbdk_SetBKGTiles;set_bkg_tiles(x+1,y+1,1,c*2,tile_buffer);
-  ret
-
 DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   ;store register state
   push bc ;xy
@@ -1193,7 +1147,8 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   push bc
   xor a
   ld [_j], a
-  call MoveMenuArrow
+  ld de, $0101
+  call DrawListMenuArrow
   pop bc
 
   pop de ;wh
@@ -1234,54 +1189,25 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   xor a
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
-  call UpdateInput
-.checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
-  ld a, [button_state]
-  and a, PADF_UP
-  jp z, .checkMoveArrowDown
-  ld a, [_j]
-  or a
-  jp z, .checkMoveArrowDown
-  call gbdk_WaitVBL
-  ld a, [_j]
-  dec a
-  ld [_j], a ;--j
-  call MoveMenuArrow;move_menu_arrow(--j);
-  WAITPAD_UP ;update_waitpadup();
-  jr .waitVBLThenLoop
-.checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
-  ld a, [button_state]
-  and a, PADF_DOWN
-  jp z, .selectMenuItem
-  ld a, [_c]
-  dec a
-  ld b, a
-  ld a, [_j]
-  cp b
-  jp nc, .selectMenuItem
-  call gbdk_WaitVBL
-  ld a, [_j]
-  inc a
-  ld [_j], a ;++j
-  call MoveMenuArrow;move_menu_arrow(++j);
-  WAITPAD_UP ;update_waitpadup();
-  jr .waitVBLThenLoop
+    call UpdateInput
+    ld de, $0101
+    call MoveListMenuArrow
 .selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
-  ld a, [button_state]
-  and a, PADF_START | PADF_A
-  jr z, .back
-  ld a, [_j]
-  inc a ;return j+1;
-  jr .exitMenu
+    ld a, [button_state]
+    and a, PADF_START | PADF_A
+    jr z, .back
+    ld a, [_j]
+    inc a ;return j+1;
+    jr .exitMenu
 .back ;else if (button_state & PADF_B) 
-  ld a, [button_state]
-  and a, PADF_B
-  jr z, .waitVBLThenLoop
-  xor a ;return 0;
-  jr .exitMenu
+    ld a, [button_state]
+    and a, PADF_B
+    jr z, .waitVBLThenLoop
+    xor a ;return 0;
+    jr .exitMenu
 .waitVBLThenLoop
-  call gbdk_WaitVBL ;update_vbl();
-  jp .moveMenuArrowLoop
+    call gbdk_WaitVBL ;update_vbl();
+    jp .moveMenuArrowLoop
 .exitMenu
   pop bc ;xy
   ret ;return a

@@ -18,6 +18,7 @@ DrawPlayers:
     add hl, bc
     ld a, [_j]
     inc a
+    ld [_c], a;count, used for arrow
     cp 9
     jr nz, .loop
   ret
@@ -81,7 +82,7 @@ DrawPlayer: ;hl = player, _j is order on screen
   ld h, 20
   ld l, 2
   ld bc, tile_buffer
-  call gbdk_SetWinTiles
+  call gbdk_SetBKGTiles
 
   pop hl
   push hl
@@ -296,20 +297,25 @@ ShowLineup::; a = playing_game?
 
   CLEAR_SCREEN " "
 
-  CLEAR_WIN_AREA 0, 0, 20, 18, " "
-  ld a, 7
-  ld [rWX], a
   xor a
-  ld [rWY], a; move_win(7,0);
+  ld [rSCX], a
+  ld [rSCY], a
 
   ld hl, rOBP1
   ld [hl], %11111000
 
   call DrawPlayers
-  SHOW_WIN
+
+  xor a
+  ld [_j], a
+  ld de, 0
+  call DrawListMenuArrow
+
   DISPLAY_ON
 .loop
     call UpdateInput
+    ld de, 0
+    call MoveListMenuArrow
     ld a, [button_state]
     and a, PADF_B
     jr nz, .exit
@@ -319,7 +325,4 @@ ShowLineup::; a = playing_game?
   ld hl, rOBP1
   ld [hl], SPR_PALETTE_1
   HIDE_ALL_SPRITES
-  ;TODO: restore tiles
-
-  HIDE_WIN
   ret

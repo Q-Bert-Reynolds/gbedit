@@ -505,6 +505,23 @@ PlayBall:; a = selected move
   HIDE_WIN
   ret
 
+SetPlayBallTiles:
+  ld hl, _BaseballTiles
+  ld de, _VRAM
+  ld bc, _BASEBALL_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld hl, _CircleTiles
+  ld de, _VRAM+_BASEBALL_TILE_COUNT*16
+  ld bc, _CIRCLE_TILE_COUNT*16
+  call mem_CopyVRAM
+  
+  ld hl, _StrikeZoneTiles
+  ld de, _VRAM+(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT)*16
+  ld bc, _STRIKE_ZONE_TILE_COUNT*16
+  call mem_CopyVRAM
+  ret 
+
 StartGame::
   DISPLAY_OFF
 
@@ -521,20 +538,7 @@ StartGame::
   call LoadFontTiles
   CLEAR_SCREEN " "
   
-  ld hl, _BaseballTiles
-  ld de, _VRAM
-  ld bc, _BASEBALL_TILE_COUNT*16
-  call mem_CopyVRAM
-
-  ld hl, _CircleTiles
-  ld de, _VRAM+_BASEBALL_TILE_COUNT*16
-  ld bc, _CIRCLE_TILE_COUNT*16
-  call mem_CopyVRAM
-  
-  ld hl, _StrikeZoneTiles
-  ld de, _VRAM+(_BASEBALL_TILE_COUNT+_CIRCLE_TILE_COUNT)*16
-  ld bc, _STRIKE_ZONE_TILE_COUNT*16
-  call mem_CopyVRAM
+  call SetPlayBallTiles
 
   ld a, (3 << 4) | (2 << 2) | 1
   ld [balls_strikes_outs], a
@@ -557,7 +561,7 @@ StartGame::
   ld [away_score], a
 
   call PlayIntro
-  call DrawUI
+  call DrawPlayBallUI
 
   xor a
   ld [play_menu_selection], a
@@ -578,6 +582,9 @@ StartGame::
     cp 1
     jr nz, .itemMenuItemSelected
     call ShowLineupFromGame
+    call SetPlayBallTiles
+    call DrawPlayBallUI
+    ;call DrawPlayers
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

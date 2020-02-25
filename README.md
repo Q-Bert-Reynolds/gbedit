@@ -54,7 +54,10 @@ Battle
 
 Team Menu
 
-- layout
+- health bar
+- stat pages
+- swap batting order
+- change position
 - restore tiles from previous screen
 
 Overworld
@@ -86,6 +89,7 @@ SFX:
 
 Player images:
 
+- X flipped image in roledex and lineup stats
 - batting/pitching -> front/back -> ready/action (8 each)
 
 # Cart

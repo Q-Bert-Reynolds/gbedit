@@ -105,6 +105,12 @@ HeadPartsLookup:;maps head ID to other head part offset or 0
 HeadHeightLookup:;maps head ID to height
   DB 6, 5, 5, 4, 4, 4, 4, 0, 4, 5, 5, 4
 
+HatPartsLookup:;maps hat ID to other hat part offset or 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0
+
+HatXLookup:;maps hat ID to x offset
+  DB 0, 1, 1, 1, 1, 1, 1, 1, 1, -6, 0, -7
+
 DrawPlayerSprites
   ld a, [hl]
   call LoadPlayerBaseData
@@ -132,6 +138,19 @@ DrawPlayerSprites
   add a, 8
   ld [_y], a
 
+  ld hl, player_base+14;palette
+  ld a, [hl]
+  and a
+  cp 1
+  jr z, .pal1
+  ld a, OAMF_PAL0
+  ld [_a], a
+  jr .drawBody
+.pal1
+  ld a, OAMF_PAL1
+  ld [_a], a
+
+.drawBody
   ld hl, player_base+11;body
   ld a, [hl]
   ld b, 0
@@ -157,31 +176,32 @@ DrawPlayerSprites
   ld [hli], a;y
   ld a, d
   cp 1
-  jr z, .shiftLeft
+  jr z, .shiftBodyLeft
   ld a, 20
   ld [hli], a;x
-  jr .skipShift
-.shiftLeft
+  jr .skipBodyShift
+.shiftBodyLeft
   ld a, 16
   ld [hli], a;x
-.skipShift
+.skipBodyShift
   ld a, c
   add a, 24;tile
   ld [hli], a
-  inc hl;skip pal
+  ld a, [_a]
+  ld [hli], a;pal
 
   ld a, d
   cp 0
   jr z, .doneWithSecondBodyPart
   cp 1
-  jr z, .shiftRight
+  jr z, .shiftBody2Right
   ld a, [_y]
   sub a, 8
   ld [hli], a;y
   ld a, 20
   ld [hli], a;x
   jr .setSecondBodyTile
-.shiftRight
+.shiftBody2Right
   ld a, [_y]
   ld [hli], a;y
   ld a, 24
@@ -191,7 +211,8 @@ DrawPlayerSprites
   add a, c
   add a, 24;tile
   ld [hli], a
-  inc hl;skip pal
+  ld a, [_a]
+  ld [hli], a;pal
 .doneWithSecondBodyPart
 
   push hl
@@ -223,7 +244,41 @@ DrawPlayerSprites
   ld a, c
   add a, 12;head tile
   ld [hli], a
-  inc a;skip pal
+  ld a, [_a]
+  ld [hli], a;pal
+
+  push hl
+  ld hl, player_base+13;hat
+  ld a, [hl]
+  ld b, 0
+  ld c, a;hat tile
+
+  ld hl, HatPartsLookup;TODO: use me
+  add hl, bc
+  ld a, [hl];other hat tile
+  ld d, a
+
+  ld hl, HatXLookup
+  add hl, bc
+  ld a, [_x]
+  ld b, a
+  ld a, [hl];head x offset
+  add a, b
+  ld [_x], a
+
+  pop hl
+  ld a, [_y]
+  ld [hli], a;y
+
+  ld a, [_x]
+  add a, 20
+  ld [hli], a;x
+
+  ld a, c
+  ld [hli], a;tile
+
+  ld a, [_a]
+  ld [hli], a;pal
 
   ret
 
@@ -246,6 +301,10 @@ ShowLineup::; a = playing_game?
   ld [rWX], a
   xor a
   ld [rWY], a; move_win(7,0);
+
+  ld hl, rOBP1
+  ld [hl], %11111000
+
   call DrawPlayers
   SHOW_WIN
   DISPLAY_ON
@@ -257,5 +316,10 @@ ShowLineup::; a = playing_game?
     call gbdk_WaitVBL
     jr .loop
 .exit
+  ld hl, rOBP1
+  ld [hl], SPR_PALETTE_1
+  HIDE_ALL_SPRITES
+  ;TODO: restore tiles
+
   HIDE_WIN
   ret

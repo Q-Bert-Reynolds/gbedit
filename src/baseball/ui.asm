@@ -464,7 +464,7 @@ DrawScore:
   call gbdk_SetBKGTiles ;set_bkg_tiles(9,1,l,1,name_buff);
   ret
 
-DrawUI:
+DrawPlayBallUI:
   call DrawTeamNames
   call DrawScore
   call DrawBases

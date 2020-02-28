@@ -170,18 +170,21 @@ DrawPlayerUI: ;a = team
   ld a, [_b]
   and a
   jr z, .setERA;if (b) 
-
+.setBatAvg
   pop af;team
   push af
   ld de, 324
   call BattingAvgToString
+  ld hl, str_buffer+4
+  ld a, " "
+  ld [hl], a
   ld a, [_x]
   add a, 4
   ld d, a
   ld a, [_y]
   inc a
   ld e, a
-  ld h, 4
+  ld h, 5
   ld l, 1
   ld bc, str_buffer
   call gbdk_SetBkgTiles ;set_bkg_tiles(x+4,y+1,4,1,batting_avg(p));
@@ -192,13 +195,17 @@ DrawPlayerUI: ;a = team
   push af
   ld hl, 902
   call EarnedRunAvgToString
+  ld hl, str_buffer+4
+  ld a, " "
+  ld [hl], a
+
   ld a, [_x]
   add a, 4
   ld d, a
   ld a, [_y]
   inc a
   ld e, a
-  ld h, 4
+  ld h, 5
   ld l, 1
   ld bc, str_buffer
   call gbdk_SetBkgTiles ;else set_bkg_tiles(x+4,y+1,4,1,earned_run_avg(p));

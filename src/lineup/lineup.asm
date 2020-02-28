@@ -297,6 +297,12 @@ ShowPlayerMenu:
   ld c, a
   push bc
 
+  ld de, 0
+  ld h, 20
+  ld l, 18
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+
   ld a, [_a]
   and a
   jr z, .notPlaying
@@ -314,28 +320,18 @@ ShowPlayerMenu:
   xor a
   ld [hl], a
 
-  ld h, 9
+  ld d, 9
   ld a, c
   add a, c
   add a, 2
-  ld l, a
+  ld e, a
 
-  ld d, 11
+  ld b, 11
   ld a, 18
   sub a, c
   sub a, c
   sub a, 2
-  ld e, a
-
-  push de;xy
-  push hl;wh
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
-
-  pop de;wh
-  pop bc;xy
-  push bc;xy
-  push de;wh
+  ld c, a
   call ShowListMenu; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
   and a
   jr z, .exit
@@ -348,8 +344,6 @@ ShowPlayerMenu:
   ld bc, UserLineup
   add hl, bc
   call DrawStatScreen
-
-  ;restore lineup card
   jr .exit
 .skip
   ld b, a
@@ -357,8 +351,9 @@ ShowPlayerMenu:
   add a, b;offset by 1 if in game so player can't reorder
   ;TODO: order and switch
 .exit
-  pop hl;wh
-  pop de;xy
+  ld de, 0
+  ld h, 20
+  ld l, 18
   ld bc, bkg_buffer
   call gbdk_SetBkgTiles
   WAITPAD_UP

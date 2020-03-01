@@ -25,11 +25,11 @@ DrawStatScreen:;player in hl
 
   WAITPAD_UP
   call WaitForABStart
-  DISPLAY_OFF
+  ; DISPLAY_OFF
   
   pop hl
   call DrawPageTwo
-  DISPLAY_ON
+  ; DISPLAY_ON
   
   call WaitForABStart
 
@@ -126,11 +126,41 @@ DrawPageOne:
 
 DrawPageTwo:
   ;img and name already drawn
+  push hl;player
 
-
+  ;moves box
   ld b, 0
   ld c, 8
   ld d, 20
   ld e, 10
   call DrawBKGUIBox
+
+  xor a
+  ld [_i], a
+.loopMoveNames
+    pop hl;player
+    push hl
+    ld a, [_i]
+    call GetPlayerMoveName
+
+    ld hl, name_buffer
+    call str_Length
+
+    ld h, e
+    ld l, 1
+    ld d, 2
+    ld a, [_i]
+    add a, a;i*2
+    add a, 9
+    ld e, a
+    ld bc, name_buffer
+    call gbdk_SetBkgTiles
+    
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp 4
+    jr nz, .loopMoveNames
+
+  pop hl
   ret

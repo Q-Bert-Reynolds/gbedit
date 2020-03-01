@@ -338,8 +338,10 @@ ShowPlayerMenu:
   cp 1
   jr nz, .skip
 
+  pop bc
+  push bc;player count, selected player
+  ld a, c
   ld de, UserLineupPlayer2 - UserLineupPlayer1
-  ld a, [_j]
   call math_Multiply
   ld bc, UserLineup
   add hl, bc

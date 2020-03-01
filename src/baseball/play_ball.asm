@@ -535,7 +535,7 @@ ShowPlayBallWindow:
   SHOW_WIN
   ret 
 
-ReturnToGame:
+SetupGameUI:
   call SetPlayBallTiles
   call DrawPlayBallUI
   HIDE_WIN
@@ -612,8 +612,8 @@ StartGame::
   ld a, 3
   ld [away_score], a
 
-  call PlayIntro
-  call DrawPlayBallUI
+  ; call PlayIntro
+  call SetupGameUI
 
   xor a
   ld [play_menu_selection], a
@@ -634,7 +634,7 @@ StartGame::
     cp 1
     jr nz, .itemMenuItemSelected
     call ShowLineupFromGame
-    call ReturnToGame
+    call SetupGameUI
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

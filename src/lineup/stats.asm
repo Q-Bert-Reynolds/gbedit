@@ -22,15 +22,11 @@ DrawStatScreen:;player in hl
   push hl
   call DrawPageOne
   DISPLAY_ON
-
   WAITPAD_UP
   call WaitForABStart
-  ; DISPLAY_OFF
-  
+
   pop hl
   call DrawPageTwo
-  ; DISPLAY_ON
-  
   call WaitForABStart
 
   ld a, 40
@@ -47,7 +43,6 @@ DrawStatScreen:;player in hl
     ld [_i], a
     and a
     jr nz, .showSpritesLoop
-
   ret 
 
 WaitForABStart:
@@ -68,6 +63,9 @@ StatNames:
   DB "     "
   DB "THROW"
 
+TypeString:
+  DB "TYPE",0
+
 DrawPageOne:
   push hl;player
   call GetPlayerNumber
@@ -76,7 +74,18 @@ DrawPageOne:
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
 
-  ld bc, 0
+  pop af;num
+  push af
+  call GetPlayerImgColumns
+  ld b, a
+  ld a, 7
+  sub a, b
+  ld c, a
+  ld b, a
+  and a
+  jr nz, .setPlayerTiles
+  inc b
+.setPlayerTiles
   ld de, _UI_FONT_TILE_COUNT+64
   pop af;num
   push af

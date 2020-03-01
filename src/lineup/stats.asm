@@ -70,6 +70,7 @@ DrawPageOne:
   ld bc, 0
   ld de, _UI_FONT_TILE_COUNT+64
   pop af;num
+  ; push af
   call SetPlayerBkgTiles
 
   pop hl;player
@@ -84,8 +85,52 @@ DrawPageOne:
   ld e, 1
   ld bc, name_buffer
   call gbdk_SetBkgTiles
+
+  ; pop af;num
+  ; ld h, 0
+  ; ld l, a
+  ; ld de, name_buffer
+  ; call str_Number
+
+  ; ld hl, str_buffer
+  ; ld a, "#"
+  ; ld [hli], a
+  ; ld a, "0"
+  ; ld [hli], a
+  ; ld [hli], a
+  ; ld [hli], a
+
+  ; ; ld hl, name_buffer
+  ; ; call str_Length
+  ; ; ld hl, str_buffer
+  ; ; add hl, de
+  ; ; ld d, h
+  ; ; ld e, l
+  ; ; ld hl, name_buffer
+  ; ; call str_Copy
+
+  ; ld h, 4
+  ; ld l, 1
+  ; ld d, 2
+  ; ld e, 7
+  ; ld bc, name_buffer
+  ; call gbdk_SetBkgTiles
+
+  ld b, 0
+  ld c, 8
+  ld d, 10
+  ld e, 10
+  call DrawBKGUIBox
+
   ret
 
 DrawPageTwo:
   ;img and name already drawn
+
+
+  ld b, 0
+  ld c, 8
+  ld d, 20
+  ld e, 10
+  call DrawBKGUIBox
   ret

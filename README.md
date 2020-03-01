@@ -54,7 +54,9 @@ Battle
 Team Menu
 
 - health bar
-- stat pages
+- stat page
+  - missing moves in move list should show "-" instead of "--------"
+  - should be accessible from PC as well
 - swap batting order
 - change position
 - restore tiles from previous screen

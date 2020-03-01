@@ -224,36 +224,52 @@ GetPlayerMaxHP: ;hl = player, returns max hp in a
   ld a, [hl]
   ret
 
-GetPlayerBat: ;hl = player, returns bat in a
+GetPlayerBat: ;hl = player, returns bat in hl
   push bc
   ld bc, UserLineupPlayer1.bat - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
-GetPlayerField: ;hl = player, returns field in a
+GetPlayerField: ;hl = player, returns field in hl
   push bc
   ld bc, UserLineupPlayer1.field - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
-GetPlayerSpeed: ;hl = player, returns speed in a
+GetPlayerSpeed: ;hl = player, returns speed in hl
   push bc
   ld bc, UserLineupPlayer1.speed - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
-GetPlayerThrow: ;hl = player, returns throw in a
+GetPlayerThrow: ;hl = player, returns throw in hl
   push bc
   ld bc, UserLineupPlayer1.throw - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
 GetUserPlayerName:;hl = user player, returns name in name_buffer

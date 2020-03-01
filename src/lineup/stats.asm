@@ -72,7 +72,7 @@ DrawPageOne:
   push af;num
 
   ld de, _UI_FONT_TILE_COUNT+64
-  call LoadPlayerBkgData
+  call LoadPlayerBkgDataXFlipped
 
   pop af;num
   push af
@@ -89,7 +89,7 @@ DrawPageOne:
   ld de, _UI_FONT_TILE_COUNT+64
   pop af;num
   push af
-  call SetPlayerBkgTiles
+  call SetPlayerBkgTilesFlipped
 
   pop af;num
   pop hl;player

@@ -90,7 +90,6 @@ SFX:
 
 Player images:
 
-- X flipped image in roledex and lineup stats
 - batting/pitching -> front/back -> ready/action (8 each)
 
 # Cart

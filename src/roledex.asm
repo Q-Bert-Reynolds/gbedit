@@ -256,7 +256,7 @@ SwitchPlayerImageBank: ; a = number, return adjusted number in a
   add a, PLAYERS_PER_BANK
   ret
 
-LoadPlayerBkgData:: ; a = number, de = vram_offset
+PreLoadPlayerBkgData:
   dec a ;roledex entry 1 = index 0
   push af ;a = num
 
@@ -303,12 +303,47 @@ LoadPlayerBkgData:: ; a = number, de = vram_offset
 
   pop bc ;tile count
   pop de ;vram dest
+  ret
+
+LoadPlayerBkgData:: ; a = number, de = vram_offset
+  call PreLoadPlayerBkgData
   call mem_CopyToTileData
-  
   ld a, [temp_bank]
   call SetBank
   ret 
-  
+
+CopyToTileDataFlipped:
+  inc b
+  inc c
+  jr  .skip
+.loop
+  ld a, $98
+  cp a, d
+  jr nz, .noWrap
+  sub $10
+  ld d, a
+.noWrap
+  di
+  LCD_WAIT_VRAM
+  ld  a,[hl+]
+  call ReverseByte
+  ld  [de],a
+  ei
+  inc de
+.skip
+  dec c
+  jr  nz,.loop
+  dec b
+  jr  nz,.loop
+  ret
+
+LoadPlayerBkgDataXFlipped:: ; a = number, de = vram_offset
+  call PreLoadPlayerBkgData
+  call CopyToTileDataFlipped
+  ld a, [temp_bank]
+  call SetBank
+  ret 
+
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   dec a ;roledex entry 1 = index 0
   call SwitchPlayerImageBank
@@ -328,7 +363,7 @@ GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   pop af ;columns
   ret ;return a
   
-SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
+PreSetPlayerBkgTiles:
   dec a ;roledex entry 1 = index 0
   push bc ;xy
   push de ;vram off
@@ -362,11 +397,31 @@ SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   pop de ;vram_offset
   ld a, e 
   pop de ;xy
+  ret
+
+SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
+  call PreSetPlayerBkgTiles
   call SetBKGTilesWithOffset
 
   ld a, [temp_bank]
   call SetBank
   ret
 
+SetPlayerBkgTilesFlipped:: ; a = number, bc = xy, de = vram_offset
+  call PreSetPlayerBkgTiles
+  push hl
+  push de
+  push af
+  ld de, str_buffer
+  call FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles
+  pop af
+  pop de
+  pop hl
+  ld bc, str_buffer;because SetBKGTilesWithOffset uses tile buffer
+  call SetBKGTilesWithOffset;hl=wh, de=xy, bc=in_tiles, a=offset
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
 
 ENDC ;ROLEDEX

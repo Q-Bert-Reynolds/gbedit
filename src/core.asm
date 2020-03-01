@@ -134,19 +134,18 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   ld hl, tile_buffer
   pop bc ;in_tiles
 .loop ;for (i = w*h; i > 0; --i)
-
-  ld a, [bc]
-  inc bc
-  ld d, a
-  pop af ;offset
-  push af ;store off
-  add a, d
-  ld [hli], a; tiles[i] = in_tiles[i]+offset;
-  
-  ld a, [_i]
-  dec a
-  ld [_i], a
-  jr nz, .loop
+    ld a, [bc]
+    inc bc
+    ld d, a
+    pop af ;offset
+    push af ;store off
+    add a, d
+    ld [hli], a; tiles[i] = in_tiles[i]+offset;
+    
+    ld a, [_i]
+    dec a
+    ld [_i], a
+    jr nz, .loop
 
   pop af ;offset
   pop hl ;xy
@@ -499,4 +498,62 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
     sub a, l
     jr nz, .rowLoop
 
+  ret
+
+FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles
+  push hl;wh
+  xor a
+  ld [_j], a
+.rowLoop
+    pop hl;wh
+    push hl
+    ld a, h
+    ld [_i], a
+
+    push de;out_tiles
+    ld d, 0
+    ld e, a
+    ld a, [_j]
+    inc a
+    call math_Multiply
+    dec hl
+    add hl, bc
+    pop de;out_tiles
+.columnLoop
+      ld a, [hld]
+      ld [de], a
+      inc de
+
+      ld a, [_i]
+      dec a
+      ld [_i], a
+      jr nz, .columnLoop
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    pop hl;wh
+    push hl
+    cp l
+    jr nz, .rowLoop
+
+  pop hl
+  ret
+
+ReverseByte:;byte in a
+  push bc
+  ld b,a    ; a = 76543210
+  rlca
+  rlca      ; a = 54321076
+  xor b
+  and $AA
+  xor b     ; a = 56341270
+  ld b,a
+  rlca
+  rlca
+  rlca      ; a = 41270563
+  rrc b     ; b = 05634127
+  xor b
+  and $66
+  xor b     ; a = 01234567
+  pop bc
   ret

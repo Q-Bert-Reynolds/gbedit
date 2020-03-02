@@ -1,25 +1,42 @@
 SECTION "Core", ROM0
 Types:
-DB "Normal", 0
-DB "Fire", 0
-DB "Water", 0
-DB "Electric", 0
-DB "Grass", 0
-DB "Ice", 0
-DB "Fighting", 0
-DB "Poison", 0
-DB "Ground", 0
-DB "Flying", 0
-DB "Psychic", 0
-DB "Bug", 0
-DB "Rock", 0
-DB "Ghost", 0
-DB "Dragon", 0
+  DB "", 0
+  DB "Normal", 0
+  DB "Fire", 0
+  DB "Water", 0
+  DB "Electric", 0
+  DB "Grass", 0
+  DB "Ice", 0
+  DB "Fighting", 0
+  DB "Poison", 0
+  DB "Ground", 0
+  DB "Flying", 0
+  DB "Psychic", 0
+  DB "Bug", 0
+  DB "Rock", 0
+  DB "Ghost", 0
+  DB "Dragon", 0
+
+Status:
+  DB "OK", 0
+  DB "BRN", 0
+  DB "FRZ", 0
+  DB "PAR", 0
+  DB "PSN", 0
+  DB "SLP", 0
 
 GetTypeString:: ;a = type, string in name_buffer
   ld hl, Types
+  call GetStringAFromListHL
+  ret
+
+GetStatusString:: ;a = status, string in name_buffer
+  ld hl, Status
+  call GetStringAFromListHL
+  ret
+
+GetStringAFromListHL:: ;a = type, hl = list, returns string in name_buffer
   ld b, a
-  dec b
 .loop
     ld a, b
     and a

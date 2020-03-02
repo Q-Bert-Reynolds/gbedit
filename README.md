@@ -53,7 +53,7 @@ Battle
 
 Team Menu
 
-- health bar
+- functional health bar
 - stat page
   - missing moves in move list should show "-" instead of "--------"
   - should be accessible from PC as well

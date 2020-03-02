@@ -74,7 +74,7 @@ str_Length::
 
 ;***************************************************************************
 ;
-; str_Append - Appends string bc to source hl resulting in destination de
+; str_Append - Appends string hl to de
 ;
 ; input:
 ;   hl - append string

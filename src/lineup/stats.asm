@@ -63,8 +63,10 @@ StatNames:
   DB "     "
   DB "THROW"
 
-TypeString:
-  DB "TYPE",0
+StatScreenStatusText:
+  DB "STATUS/", 0
+StatScreenTypeText:
+  DB "TYPE", 0
 
 DrawPageOne:
   push hl;player
@@ -83,14 +85,15 @@ DrawPageOne:
   ld c, a
   ld b, a
   and a
-  jr nz, .setPlayerTiles
+  jr nz, .setPlayerImg
   inc b
-.setPlayerTiles
+.setPlayerImg
   ld de, _UI_FONT_TILE_COUNT+64
   pop af;num
   push af
   call SetPlayerBkgTilesFlipped
 
+.setPlayerName
   pop af;num
   pop hl;player
   push hl;player
@@ -107,6 +110,7 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+.setPlayerNumber
   pop af;num
   ld h, 0
   ld l, a
@@ -140,7 +144,7 @@ DrawPageOne:
   ld bc, str_buffer
   call gbdk_SetBkgTiles
 
-  ;stat box
+.drawStatNames
   ld b, 0
   ld c, 8
   ld d, 10
@@ -154,6 +158,7 @@ DrawPageOne:
   ld bc, StatNames
   call gbdk_SetBkgTiles
 
+.drawBattingStat
   pop hl;player
   push hl
   call GetPlayerBat
@@ -170,6 +175,7 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+.drawFieldingStat
   pop hl;player
   push hl
   call GetPlayerField
@@ -186,6 +192,7 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+.drawSpeedStat
   pop hl;player
   push hl
   call GetPlayerSpeed
@@ -202,6 +209,7 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+.drawThrowingStat
   pop hl;player
   push hl
   call GetPlayerThrow
@@ -218,6 +226,7 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+.drawLevel
   pop de;player
   push de
   ld hl, tile_buffer
@@ -229,6 +238,7 @@ DrawPageOne:
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
 
+.drawHPBar
   pop de;player
   push de
   ld hl, tile_buffer
@@ -240,6 +250,153 @@ DrawPageOne:
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
 
+.drawHPNumbers
+  pop hl;player
+  push hl
+  call GetPlayerHP
+  ld de, str_buffer
+  call str_Number
+
+  ld de, name_buffer
+  ld a, "/"
+  ld [de], a
+  inc de
+  xor a
+  ld [de], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  pop hl;player
+  push hl
+  call GetPlayerMaxHP
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld a, 18
+  sub a, e
+  ld d, a
+  ld e, 4
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+
+.drawStatus
+  pop hl;player
+  push hl
+  call GetPlayerStatus
+  call GetStatusString
+  ld hl, StatScreenStatusText
+  ld de, str_buffer
+  call str_Copy
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld d, 9
+  ld e, 6
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+
+.drawType1
+  ld hl, StatScreenTypeText
+  ld de, str_buffer
+  call str_Copy
+  ld hl, name_buffer
+  ld a, "1"
+  ld [hli], a
+  ld a, "/"
+  ld [hli], a
+  xor a
+  ld [hli], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld h, 6
+  ld l, 1
+  ld d, 10
+  ld e, 9
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+
+  pop hl;player
+  push hl
+  call GetPlayerNumber
+  call LoadPlayerBaseData
+  ld hl, player_base+1
+  ld a, [hl]
+  call GetTypeString
+
+  ld hl, name_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld d, 11
+  ld e, 10
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+
+.drawType2
+  pop hl;player
+  push hl
+  call GetPlayerNumber
+  call LoadPlayerBaseData
+  ld hl, player_base+2
+  ld a, [hl]
+  and a
+  jr z, .drawPay
+
+  ld hl, StatScreenTypeText
+  ld de, str_buffer
+  call str_Copy
+  ld hl, name_buffer
+  ld a, "2"
+  ld [hli], a
+  ld a, "/"
+  ld [hli], a
+  xor a
+  ld [hli], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld h, 6
+  ld l, 1
+  ld d, 10
+  ld e, 11
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+
+  ld hl, player_base+2
+  ld a, [hl]
+  call GetTypeString
+
+  ld hl, name_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld d, 11
+  ld e, 12
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+  
+.drawPay
   pop hl
   ret
 

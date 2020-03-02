@@ -208,20 +208,28 @@ GetPlayerStatus: ;hl = player, returns status in a
   ld a, [hl]
   ret
 
-GetPlayerHP: ;hl = player, returns hp in a
+GetPlayerHP: ;hl = player, returns hp in hl
   push bc
   ld bc, UserLineupPlayer1.hp - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
-GetPlayerMaxHP: ;hl = player, returns max hp in a
+GetPlayerMaxHP: ;hl = player, returns max hp in hl
   push bc
   ld bc, UserLineupPlayer1.max_hp - UserLineupPlayer1
   add hl, bc
-  pop bc
+  ld a, [hli]
+  ld b, a
   ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc
   ret
 
 GetPlayerBat: ;hl = player, returns bat in hl

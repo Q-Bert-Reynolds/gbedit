@@ -218,6 +218,28 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
+  pop de;player
+  push de
+  ld hl, tile_buffer
+  call SetLevelTiles;de = player, hl = address
+  ld h, 3
+  ld l, 1
+  ld d, 15
+  ld e, 2
+  ld bc, tile_buffer
+  call gbdk_SetBkgTiles
+
+  pop de;player
+  push de
+  ld hl, tile_buffer
+  call SetHPBarTiles
+  ld h, 8
+  ld l, 1
+  ld d, 11
+  ld e, 3
+  ld bc, tile_buffer
+  call gbdk_SetBkgTiles
+
   pop hl
   ret
 

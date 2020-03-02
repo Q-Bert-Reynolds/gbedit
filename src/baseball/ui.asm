@@ -88,54 +88,15 @@ DrawPlayerUI: ;a = team
   and a
   jr nz, .setOpponentLevel
   call GetCurrentUserPlayer
-  call GetPlayerLevel
   jr .drawLevel
 .setOpponentLevel
   call GetCurrentOpponentPlayer
-  call GetPlayerLevel
 .drawLevel
-  push af ;level
-  cp 100
-  jr nz, .levelNot100;if (p->level == 100) {
-    ld hl, tile_buffer+12
-    ld a, "1"
-    ld [hli], a ;tiles[12] = 49; 
-    ld a, "0"
-    ld [hli], a ;tiles[13] = 48; 
-    ld [hli], a ;tiles[14] = 48;
-    pop af ;level
-    jr .doneWithLevel
-.levelNot100 ;else {
-    ld hl, tile_buffer+12
-    ld a, LEVEL
-    ld [hli], a ;tiles[12] = LEVEL;
-    pop af ;level
-    push af
-    cp 10
-    jr nc, .level10Plus ;if (p->level < 10) {
-      add a, 48
-      ld [hli], a ;tiles[13] = 48+p->level;
-      xor a
-      ld [hl], a ;tiles[14] = 0;
-      jr .doneWithLevel
-.level10Plus ;else {
-      push hl;tiles
-      ld l, a
-      xor a
-      ld h, a
-      ld c, 10
-      call math_Divide
-      ld b, l ;lv/10
-      ld c, a ;lv%10
-      pop hl;tiles
-      ld a, b
-      add a, 48
-      ld [hli], a ;tiles[13] = 48+p->level/10;
-      ld a, c
-      add a, 48
-      ld [hl], a ;tiles[14] = 48+p->level%10;
+  ld d, h
+  ld e, l
+  ld hl, tile_buffer+12
+  call SetLevelTiles
 .doneWithLevel
-  pop af;level
   ld a, [_b]
   and a
   jr z, .isPitcher ;if (b) {

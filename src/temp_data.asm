@@ -48,9 +48,11 @@ MyZaphData:
   DB 145                   ; .number
   DB 89                    ; .level
   DB 9                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB ELECTRIC_SLIDER_MOVE  ; .moves
+  DB THUNDER_STICK_MOVE
+  DB RISER_MOVE
+  DB PSYCH_OUT_MOVE
+  DB 10, 10, 10, 10        ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -88,11 +90,12 @@ MyZaphDataEnd:
 
 MyGioData:
   DB 17                    ; .number
-  DB 8                     ; .level
+  DB 18                    ; .level
   DB 7                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB RISER_MOVE            ; .moves
+  DB SWING_MOVE
+  DB CUTTER_MOVE, 0
+  DB 20, 40, 20, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -132,9 +135,11 @@ MyBearData:
   DB 143                   ; .number
   DB 50                    ; .level
   DB 3                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB THUNDERBALL_MOVE      ; .moves
+  DB SWING_MOVE
+  DB SMASH_MOVE
+  DB ROCK_MOVE
+  DB 20, 40, 15, 10        ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -174,8 +179,8 @@ MyStarchildData:
   DB 120                   ; .number
   DB 12                    ; .level
   DB 5                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
+  DB BUBBLEBALL_MOVE       ; .moves
+  DB SHELL_MOVE, 0, 0
   DB 20, 40, 0, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
@@ -216,9 +221,10 @@ MyMetaData:
   DB 11                    ; .number
   DB 4                     ; .level
   DB 4                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB HARDEN_MOVE           ; .moves
+  DB SILKY_SWING_MOVE
+  DB SWING_MOVE, 0
+  DB 20, 40, 15, 0          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -258,16 +264,18 @@ MyChuData:
   DB 25                    ; .number
   DB 23                    ; .level
   DB 8                     ; .position
-  DB TOSS_MOVE             ; .moves
-  DB SWING_MOVE, 0, 0
-  DB 20, 40, 0, 0          ; .pp
+  DB LIGHTNING_BOLT_MOVE   ; .moves
+  DB SWING_MOVE
+  DB CIRCLE_CHANGE_MOVE
+  DB CURVEBALL_MOVE
+  DB 20, 40, 30, 20        ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
-  DW 45                    ; .max_hp 
+  DW 49                    ; .max_hp 
   DW 49                    ; .bat
-  DW 49                    ; .field
-  DW 45                    ; .speed
-  DW 65                    ; .throw
+  DW 55                    ; .field
+  DW 60                    ; .speed
+  DW 30                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
   DB $00,$00,$FF           ; .pay
@@ -300,10 +308,11 @@ MyYogiData:
   DB 9                     ; .number
   DB 69                    ; .level
   DB 2                     ; .position
-  DB BRAIN_MELTER_MOVE     ; .moves
-  DB PREDICT_MOVE
-  DB SWING_MOVE, 0
-  DB 5, 40, 10, 0          ; .pp
+  DB HYDRO_CANNON_MOVE     ; .moves
+  DB SHELL_MOVE
+  DB SPITBALL_MOVE
+  DB SMASH_MOVE
+  DB 5, 5, 10, 20          ; .pp
   DB NONE                  ; .status
   DW 32                    ; .hp
   DW 45                    ; .max_hp 
@@ -343,17 +352,18 @@ MyFrecklesData:
   DB 5                     ; .number
   DB 18                    ; .level
   DB 1                     ; .position
-  DB BRAIN_MELTER_MOVE     ; .moves
-  DB PREDICT_MOVE
-  DB SWING_MOVE, 0
-  DB 5, 40, 10, 0          ; .pp
+  DB HIGH_HEAT_MOVE        ; .moves
+  DB SWING_MOVE
+  DB HEATER_MOVE
+  DB CURVEBALL_MOVE
+  DB 5, 40, 15, 20         ; .pp
   DB NONE                  ; .status
-  DW 32                    ; .hp
-  DW 45                    ; .max_hp 
-  DW 49                    ; .bat
-  DW 49                    ; .field
-  DW 45                    ; .speed
-  DW 65                    ; .throw
+  DW 69                    ; .hp
+  DW 101                   ; .max_hp 
+  DW 109                   ; .bat
+  DW 111                   ; .field
+  DW 99                    ; .speed
+  DW 130                   ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
   DB $FF,$FF,$FF           ; .pay

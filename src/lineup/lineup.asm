@@ -45,37 +45,15 @@ DrawLineupPlayer: ;hl = player, _j is order on screen
   ld de, tile_buffer+4
   call str_Copy
 
-  ld a, LEVEL
+  pop de;player
+  push de
   ld hl, tile_buffer+15
-  ld [hl], a
+  call SetLevelTiles
 
-  pop hl
-  push hl
-  call GetPlayerLevel
-  ld h, 0
-  ld l, a
-  ld de, tile_buffer+16
-  call str_Number
-
-  ;TODO: health bar doesn't work
-  ; pop hl
-  ; push hl
-  ; call GetPlayerHP
-  ; pop hl
-  ; push hl
-  ; call GetPlayerMaxHP
+  pop de;player
+  push de
   ld hl, tile_buffer+24
-  ld a, 128
-  ld [hli], a
-  ld a, 129
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld a, 138
-  ld [hli], a
+  call SetHPBarTiles
 
   ld d, 0
   ld a, [_j]

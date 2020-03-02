@@ -497,7 +497,6 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
     ld [_j], a
     sub a, l
     jr nz, .rowLoop
-
   ret
 
 FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles
@@ -556,4 +555,38 @@ ReverseByte:;byte in a
   and $66
   xor b     ; a = 01234567
   pop bc
+  ret
+
+SetHPBarTiles::;de = player, hl = address
+  ; call GetPlayerHP
+  ; call GetPlayerMaxHP
+  ld a, 128
+  ld [hli], a
+  ld a, 129
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld a, 138
+  ld [hli], a
+  ret
+
+SetLevelTiles::;de = player, hl = address
+  push hl;address
+  push de;player
+  ld a, LEVEL
+  ld [hl], a
+
+  pop hl;player
+  call GetPlayerLevel
+  ld h, 0
+  ld l, a
+  pop de; address
+  cp 100
+  jr z, .level100
+  inc de
+.level100
+  call str_Number
   ret

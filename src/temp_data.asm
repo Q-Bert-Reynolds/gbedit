@@ -18,7 +18,7 @@ MyBubbiData:
   DW 65                    ; .throw
   DS 12;DB "Buttercup", 0, 0, 0  ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -62,7 +62,7 @@ MyZaphData:
   DW 65                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -105,7 +105,7 @@ MyGioData:
   DW 65                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -149,7 +149,7 @@ MyBearData:
   DW 65                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -191,7 +191,7 @@ MyStarchildData:
   DW 65                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -234,7 +234,7 @@ MyMetaData:
   DW 65                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -278,7 +278,7 @@ MyChuData:
   DW 30                    ; .throw
   DS 12                    ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $00,$00,$FF           ; .pay
+  DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc

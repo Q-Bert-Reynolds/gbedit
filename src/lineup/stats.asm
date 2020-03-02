@@ -67,6 +67,8 @@ StatScreenStatusText:
   DB "STATUS/", 0
 StatScreenTypeText:
   DB "TYPE", 0
+StatScreenPayText:
+  DB "PAY/", 0
 
 DrawPageOne:
   push hl;player
@@ -397,6 +399,35 @@ DrawPageOne:
   call gbdk_SetBkgTiles
   
 .drawPay
+  ld bc, StatScreenPayText
+  ld h, 4
+  ld l, 1
+  ld d, 10
+  ld e, 13
+  call gbdk_SetBkgTiles
+
+  ld hl, name_buffer
+  ld a, "$"
+  ld [hl], a
+
+  pop hl;player
+  push hl
+  call GetUserPlayerPay
+  ld de, name_buffer+1
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+  ld h, e
+  ld l, 1
+  ld d, 11
+  ld e, 14
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+
+.drawOriginalTrainer
+  ; TODO: add OT to player data
+
   pop hl
   ret
 

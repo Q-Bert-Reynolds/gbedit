@@ -17,7 +17,7 @@ ENDM
 USER_PLAYER_DATA: MACRO
 .nickname          DS NICKNAME_LENGTH
 .xp                DS 3
-.pay               DW ;paid each game
+.pay               DS 3 ;paid each game
 ;hitting stats
 .strikeouts        DW ;both looking and swinging
 .sacrifices        DW ;both sac flies and sac bunts
@@ -323,15 +323,17 @@ GetUserPlayerXPToNextLevel: ;hl = player, returns xp in ehl
   ret
 
 ; TODO: pay should be 24 bit number
-GetUserPlayerPay: ;hl = player, returns pay in hl
+GetUserPlayerPay: ;hl = player, returns pay in ehl
   push bc
   ld bc, UserLineupPlayer1.pay - UserLineupPlayer1
   add hl, bc
   ld a, [hli]
+  ld e, a
+  ld a, [hli]
   ld b, a
   ld a, [hl]
-  ld h, a
-  ld l, b
+  ld h, b
+  ld l, a
   pop bc
   ret
 

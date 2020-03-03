@@ -409,8 +409,8 @@ DrawPageOne:
   pop hl;player
   push hl
   call GetUserPlayerPay
-  ld de, name_buffer+1
-  call str_Number
+  ld bc, name_buffer+1
+  call str_Number24
 
   ld hl, name_buffer
   call str_Length
@@ -445,11 +445,17 @@ DrawPageTwo:
   ld e, 10
   call DrawBKGUIBox
 
+
+  pop hl;player
+  push hl
+  call GetPlayerMoveCount
+  ld b, a
   xor a
   ld [_i], a
 .loopMoveNames
     pop hl;player
     push hl
+    push bc;move count
     ld a, [_i]
     call GetPlayerMoveName
 
@@ -465,11 +471,50 @@ DrawPageTwo:
     ld e, a
     ld bc, name_buffer
     call gbdk_SetBkgTiles
+
+    ld bc, name_buffer
+    ld a, "ℙ"
+    ld [bc], a
+    inc bc
+    ld [bc], a
+    ld h, 2
+    ld l, 1
+    ld d, 12
+    ld a, [_i]
+    add a, a;i*2
+    add a, 10
+    ld e, a
+    ld bc, name_buffer
+    call gbdk_SetBkgTiles
+
+    xor a
+    ld hl, tile_buffer
+    ld bc, 16
+    call mem_Set
+
+    pop bc;move count
+    pop de;player
+    push de;player
+    push bc;move count
+    ld a, [_i]
+    ld hl, tile_buffer
+    call SetMovePPTiles;a = move, de = player, hl = tile address
+
+    ld h, 5
+    ld l, 1
+    ld d, 14
+    ld a, [_i]
+    add a, a;i*2
+    add a, 10
+    ld e, a
+    ld bc, str_buffer
+    call gbdk_SetBkgTiles
     
     ld a, [_i]
     inc a
     ld [_i], a
-    cp 4
+    pop bc;move count
+    cp b
     jr nz, .loopMoveNames
 
 .drawExperience

@@ -61,9 +61,7 @@ Team Menu
 
 - functional health bar
 - stat page
-  - move PP data
-  - convert pay to 24 bit number
-  - missing moves in move list should show "-" instead of "--------"
+  - missing moves in move list should show "-"
   - should be accessible from PC as well
 - swap batting order
 - change position

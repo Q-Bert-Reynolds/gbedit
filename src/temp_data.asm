@@ -18,7 +18,7 @@ MyBubbiData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH;DB "Buttercup", 0, 0, 0  ; .nickname
   DB $FF,$FF,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -62,7 +62,7 @@ MyZaphData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -105,7 +105,7 @@ MyGioData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -149,7 +149,7 @@ MyBearData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -191,7 +191,7 @@ MyStarchildData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -234,7 +234,7 @@ MyMetaData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -278,7 +278,7 @@ MyChuData:
   DW 30                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DW 10000                 ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -322,7 +322,7 @@ MyYogiData:
   DW 65                    ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $FF,$FF,$FF           ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc
@@ -366,7 +366,7 @@ MyFrecklesData:
   DW 130                   ; .throw
   DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
-  DB $FF,$FF,$FF           ; .pay
+  DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
   DW 100                   ; .batted_outs       DW ;groundout, lineout, flyout, popout, GIDP, etc

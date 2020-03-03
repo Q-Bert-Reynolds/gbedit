@@ -608,6 +608,56 @@ SetLevelTiles::;de = player, hl = address
   call str_Number
   ret
 
-SetMovePPTiles::;a = move, de = player, hl = address
+SetMovePPTiles::;a = move, de = player, hl = tile address
+  push hl;address
+  push de;player
+
+  pop hl;player
+  push hl;player  
+  push af;move
+  call GetPlayerMove
+
+  pop af;move
+  pop hl;player
+  call GetPlayerMovePP
+  ld h, 0
+  ld l, a
+  ld de, str_buffer
+  cp 10
+  jr nc, .twoDigitPP
+  ld a, " "
+  ld [de], a
+  inc de
+.twoDigitPP
+  call str_Number
+
+  ld hl, name_buffer
+  ld a, "/"
+  ld [hli], a
+  xor a
+  ld [hld], a
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, move_data+2;max move pp
+  ld a, [hl]
+  ld de, name_buffer
+  cp 10
+  jr nc, .twoDigitMaxPP
+  ld a, " "
+  ld [de], a
+  inc de
+.twoDigitMaxPP
+  ld a, [hl]
+  ld h, 0
+  ld l, a
+  call str_Number
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  pop de; address
+  call str_Copy
 
   ret

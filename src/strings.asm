@@ -154,20 +154,20 @@ str_Number::
   push de ;dest string
   ld c, 0 ;num digits
 .divLoop
-  push bc
-  ld c, 10
-  call math_Divide
-  add a, 48;convert num to string
-  ld [de], a
-  inc de
-  pop bc
-  inc c ;num digits
-  ld a, h ; if hl > 0, loop
-  and a
-  jr nz, .divLoop
-  ld a, l
-  and a
-  jr nz, .divLoop
+    push bc
+    ld c, 10
+    call math_Divide
+    add a, 48;convert num to string
+    ld [de], a
+    inc de
+    pop bc
+    inc c ;num digits
+    ld a, h ; if hl > 0, loop
+    and a
+    jr nz, .divLoop
+    ld a, l
+    and a
+    jr nz, .divLoop
 
   pop hl ;dest string
   xor a
@@ -179,15 +179,92 @@ str_Number::
   srl c;num digits / 2
   dec de
 .swapLoop
+    ld a, [hl]
+    ld b, a
+    ld a, [de]
+    ld [hli], a
+    ld a, b
+    ld [de], a
+    dec de
+    dec c
+    jr nz, .swapLoop
+  ret
+
+;***************************************************************************
+;
+; str_Number24 - converts number ehl to string de
+;
+; input:
+;   ehl - number
+;   bc - dest string
+;
+;***************************************************************************
+str_Number24::
+  ld a, e ; if ehl == 0, return "0",0
+  and a
+  jr nz, .skip
+  ld a, h
+  and a
+  jr nz, .skip
+  ld a, l
+  and a
+  jr nz, .skip
+  ld a, "0"
+  ld [bc], a
+  inc bc
+  xor a
+  ld [bc], a
+  ret
+
+.skip
+  xor a
+  push bc ;dest string start
+  push af ;num digits
+  push bc ;dest string
+.divLoop
+    ld d, 10
+    call math_Divide24
+    add a, 48;convert num to string
+
+    pop bc;dest string
+    ld [bc], a
+    inc bc
+    pop af;num digits
+    inc a 
+    push af;num digits
+    push bc;dest string
+    
+    ld a, e ; if ehl > 0, loop
+    and a
+    jr nz, .divLoop
+    ld a, h
+    and a
+    jr nz, .divLoop
+    ld a, l
+    and a
+    jr nz, .divLoop
+
+  pop bc ;dest string
+  xor a
+  ld [bc], a;terminate string
+  pop af;num digits
+  cp 1
+  ret z ;no need to swap if only one digit
+
+  pop hl ;dest string start
+  ld d, a;num digits
+  srl d;num digits / 2
+  dec bc
+.swapLoop
   ld a, [hl]
-  ld b, a
-  ld a, [de]
+  ld e, a
+  ld a, [bc]
   ld [hli], a
-  ld a, b
-  ld [de], a
-  dec de
-  dec c
+  ld a, e
+  ld [bc], a
+  dec bc
+  dec d
   jr nz, .swapLoop
-  ret 
+  ret
 
 ENDC ;STRINGS_ASM

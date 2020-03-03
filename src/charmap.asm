@@ -10,6 +10,8 @@ charmap "ℭ", 8 ; center
 charmap "ℝ", 9 ; right
 charmap "◌", 10
 charmap "⚾︎", 11
+charmap "℔", 15 ; to
+charmap "ℒ", 16 ; lv
 charmap "↵", 30 ; end/return
 charmap "é",  127
 charmap "\n", 128

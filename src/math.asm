@@ -35,17 +35,33 @@ math_Multiply:: ; hl = de * a
 math_Divide:: ; hl (remainder a) = hl / c
   xor a
   ld b, 16
-.loop:
-  add hl, hl
-  rla
-  jr c, .skip
-  cp c
-  jr c, .skip
-  sub c
-  inc l
+.loop
+    add hl, hl
+    rla
+    jr c, .skip
+    cp c
+    jr c, .skip
+    sub c
+    inc l
 .skip
-  dec b
-  jr nz, .loop
+    dec b
+    jr nz, .loop
+  ret
+
+math_Divide24:: ; ehl (remainder a) = ehl / d
+  xor a
+  ld b, 24
+.loop
+    add hl,hl
+    rl e
+    rla
+    cp d
+    jr c, .skip
+    sub d
+    inc l
+.skip
+    dec b
+    jr nz, .loop
   ret
 
 ENDC

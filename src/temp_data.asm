@@ -16,8 +16,8 @@ MyBubbiData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12;DB "Buttercup", 0, 0, 0  ; .nickname
-  DB $00,$01,$FF           ; .xp
+  DS NICKNAME_LENGTH;DB "Buttercup", 0, 0, 0  ; .nickname
+  DB $FF,$FF,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
   DW 1                     ; .sacrifices        DW ;both sac flies and sac bunts
@@ -60,7 +60,7 @@ MyZaphData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -103,7 +103,7 @@ MyGioData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -147,7 +147,7 @@ MyBearData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -189,7 +189,7 @@ MyStarchildData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -232,7 +232,7 @@ MyMetaData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -276,7 +276,7 @@ MyChuData:
   DW 55                    ; .field
   DW 60                    ; .speed
   DW 30                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DW 10000                 ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -320,7 +320,7 @@ MyYogiData:
   DW 49                    ; .field
   DW 45                    ; .speed
   DW 65                    ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DB $FF,$FF,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -364,7 +364,7 @@ MyFrecklesData:
   DW 111                   ; .field
   DW 99                    ; .speed
   DW 130                   ; .throw
-  DS 12                    ; .nickname
+  DS NICKNAME_LENGTH       ; .nickname
   DB $00,$01,$FF           ; .xp
   DB $FF,$FF,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging

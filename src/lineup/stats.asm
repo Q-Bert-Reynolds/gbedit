@@ -354,10 +354,6 @@ DrawPageOne:
   call gbdk_SetBkgTiles
 
 .drawType2
-  pop hl;player
-  push hl
-  call GetPlayerNumber
-  call LoadPlayerBaseData
   ld hl, player_base+2
   ld a, [hl]
   and a
@@ -431,6 +427,13 @@ DrawPageOne:
   pop hl
   ret
 
+StatScreenExperienceText:
+ DB "          "
+ DB "EXPERIENCE"
+ DB "          "
+ DB "NEXT LEVEL"
+ DB "      ℔ℒ  ";to lv
+
 DrawPageTwo:
   ;img and name already drawn
   push hl;player
@@ -468,6 +471,32 @@ DrawPageTwo:
     ld [_i], a
     cp 4
     jr nz, .loopMoveNames
+
+.drawExperience
+  ld h, 10
+  ld l, 5
+  ld d, 9
+  ld e, 2
+  ld bc, StatScreenExperienceText
+  call gbdk_SetBkgTiles
+
+  pop hl;player
+  push hl
+  call GetUserPlayerXP
+  ld bc, str_buffer
+  call str_Number24
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld a, 19
+  sub a, e
+  ld d, a
+  ld e, 4
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
 
   pop hl
   ret

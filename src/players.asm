@@ -280,6 +280,21 @@ GetPlayerThrow: ;hl = player, returns throw in hl
   pop bc
   ret
 
+GetUserPlayerXP: ;hl = player, returns xp in ehl
+  push bc
+  ld bc, UserLineupPlayer1.xp - UserLineupPlayer1
+  add hl, bc
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, b
+  ld l, a
+  pop bc
+  ret
+
+; TODO: pay should be 24 bit number
 GetUserPlayerPay: ;hl = player, returns pay in hl
   push bc
   ld bc, UserLineupPlayer1.pay - UserLineupPlayer1

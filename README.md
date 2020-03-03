@@ -29,6 +29,10 @@ Python scripts
 - only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
 
+Utils
+
+- math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
+
 Intro
 
 - sfx
@@ -55,6 +59,7 @@ Team Menu
 
 - functional health bar
 - stat page
+  - convert pay to 24 bit number
   - missing moves in move list should show "-" instead of "--------"
   - should be accessible from PC as well
 - swap batting order

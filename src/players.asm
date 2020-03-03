@@ -294,6 +294,34 @@ GetUserPlayerXP: ;hl = player, returns xp in ehl
   pop bc
   ret
 
+GetUserPlayerXPToNextLevel: ;hl = player, returns xp in ehl
+  push hl;player
+  call GetUserPlayerXP
+  ld b, e
+  ld c, h
+  ld d, l
+  pop hl;player
+  push bc;current xp in bcd
+  push de
+  call GetPlayerLevel
+  inc a
+  push af;next level
+  ld d, 0
+  ld e, a
+  call math_Multiply; hl = de * a
+  pop af;next level
+  ld d, 0
+  ld e, a
+  call math_Multiply16;bcde = de * hl
+  ld a, c;next level xp in ahl
+  ld h, d
+  ld l, e
+  pop de;current level in bcd
+  pop bc
+  ld e, a;next level xp in ehl
+  call math_Sub24;ehl = ehl - bcd
+  ret
+
 ; TODO: pay should be 24 bit number
 GetUserPlayerPay: ;hl = player, returns pay in hl
   push bc

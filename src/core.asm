@@ -607,3 +607,7 @@ SetLevelTiles::;de = player, hl = address
 .level100
   call str_Number
   ret
+
+SetMovePPTiles::;a = move, de = player, hl = address
+
+  ret

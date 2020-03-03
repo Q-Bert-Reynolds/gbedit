@@ -498,5 +498,61 @@ DrawPageTwo:
   ld bc, str_buffer
   call gbdk_SetBkgTiles
 
+.checkNextLevel
+  pop hl;player
+  push hl
+  call GetPlayerLevel
+  cp 100
+  jr z, .atMaxLevel
+  inc a  
+  pop hl;player
+  push hl
+  push af
+  call GetUserPlayerXPToNextLevel
+  ld bc, str_buffer
+  call str_Number24
+  
+  ld hl, str_buffer
+  call str_Length
+
+  ld a, 15
+  sub e
+  ld h, e
+  ld l, 1
+  ld d, a
+  ld e, 6
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+
+  pop af
+.atMaxLevel
+  ld h, 0
+  ld l, a
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+  ld a, e
+  cp 3
+  jr z, .is100
+  ld h, e
+  ld l, 1
+  ld d, 17
+  ld e, 6
+  jr .drawNextLevel
+.is100
+  ld h, 3
+  ld l, 1
+  ld d, 16
+  ld e, 6
+.drawNextLevel
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+
+
+
+  
+
   pop hl
   ret

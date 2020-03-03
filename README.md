@@ -23,15 +23,17 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
     make
 
 # TODO:
+General
+
+- math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
+- big list of "real names" to use in place of ID and OT
+
 Python scripts
 
 - handle 1bpp and rle images
 - only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
 
-Utils
-
-- math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 
 Intro
 
@@ -59,6 +61,7 @@ Team Menu
 
 - functional health bar
 - stat page
+  - move PP data
   - convert pay to 24 bit number
   - missing moves in move list should show "-" instead of "--------"
   - should be accessible from PC as well

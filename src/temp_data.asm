@@ -54,8 +54,8 @@ MyZaphData:
   DB PSYCH_OUT_MOVE
   DB 10, 10, 10, 10        ; .pp
   DB NONE                  ; .status
-  DW 20                    ; .hp
-  DW 45                    ; .max_hp 
+  DW 47                    ; .hp
+  DW 48                    ; .max_hp 
   DW 49                    ; .bat
   DW 49                    ; .field
   DW 45                    ; .speed

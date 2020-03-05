@@ -131,6 +131,7 @@ math_Divide:: ; hl (remainder a) = hl / c
     jr nz, .loop
   ret
 
+;TODO: this is slow, make it more like div and div24
 math_Divide16:: ;de (remainder hl) = hl / bc
   ld de, 0 ;quotient
 .loop ;while remainder ≥ denominator

@@ -582,7 +582,7 @@ SetHPBarTiles::;de = player, hl = address
   call GetPlayerHP
   ld d, h
   ld e, l
-  ld a, 100
+  ld a, 96;makes the math easier than multiplying by 100
   call math_Multiply
   ld d, h
   ld e, l;hp*100
@@ -599,15 +599,24 @@ SetHPBarTiles::;de = player, hl = address
   ld [hli], a
 
   ld b, 6
-  ld c, 0
+  ld c, 16
 .loop
-    ld a, e
-    cp c
-    jr c, .drawPartial
+    ld a, c;tile*16
+    sub a, e;hp pct
+    jr nc, .drawPartial
     ld a, 129
     ld [hli], a
     jr .next
-.drawPartial
+.drawPartial;c-e < 16
+    cp 16
+    jr nc, .drawEmpty
+    srl a;(c-e)/2 < 8
+    ld d, a
+    ld a, 129
+    add a, d
+    ld [hli], a
+    jr .next
+.drawEmpty
     ld a, 137
     ld [hli], a
 .next

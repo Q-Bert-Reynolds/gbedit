@@ -7,8 +7,128 @@ INCLUDE "src/lineup/stats.asm"
 INCLUDE "img/health_bar.asm"
 INCLUDE "img/lineup_sprites.asm"
 
-SwapPositions:;a = player 1, b = player 2
+SwapPositions: ;bc = player count, selected player
+  ld a, b
+  ld [_c], a
+  ld a, c
+  ld [_j], a
+  ld [_k], a
+  ld de, 0
+  call DrawListMenuArrow
+  WAITPAD_UP
+.loop
+    call UpdateInput
+    ld de, 0
+    call MoveListMenuArrow ;de = xy, _j = current index, _c = count, must call UpdateInput first
+    ld a, [_j]
+    ld b, a
+    ld a, [_k]
+    cp b
+    jr z, .checkA
+    ld a, ARROW_RIGHT_BLANK
+    ld hl, name_buffer
+    ld [hl], a
 
+    ld d, 0
+    ld a, [_k]
+    add a, a
+    inc a
+    ld e, a
+    ld h, 1
+    ld l, 1
+    ld bc, name_buffer
+    call gbdk_SetBkgTiles
+.checkA
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .checkB
+
+    ld a, [_k]
+    call GetUserPlayer
+    call GetPlayerPosition
+    push hl;store player k position location
+    push af;store player k position
+    ld a, [_j]
+    call GetUserPlayer
+    call GetPlayerPosition
+    ld b, a;player j position
+    pop af;get player k position
+    ld [hl], a;set player j's new position
+    pop hl;get player k position location
+    ld a, b;player j's old position
+    ld [hl], a;set player k to j's old position
+
+    ld de, 40
+    ld a, [_k]
+    call math_Multiply
+    ld bc, bkg_buffer
+    add hl, bc
+    ld bc, 3
+    add hl, bc
+    push hl ;k's position tile
+
+    ld de, 40
+    ld a, [_j]
+    call math_Multiply
+    ld bc, bkg_buffer
+    add hl, bc
+    ld bc, 3
+    add hl, bc;j's position tile
+
+    ld a, [hl]
+    ld d, a
+    pop bc;k's position tile
+    ld a, [bc]
+    ld [hl], a
+    ld a, d
+    ld [bc], a
+
+    ret
+.checkB
+    ld a, [button_state]
+    and a, PADF_B
+    jr z, .loop
+  ret
+
+ReorderLineup: ;bc = player count, selected player
+  ld a, b
+  ld [_c], a
+  ld a, c
+  ld [_j], a
+  ld [_k], a
+  WAITPAD_UP
+.loop
+    call UpdateInput
+    ld de, 0
+    call MoveListMenuArrow ;de = xy, _j = current index, _c = count, must call UpdateInput first
+    ld a, [_j]
+    ld b, a
+    ld a, [_k]
+    cp b
+    jr z, .checkA
+    ld a, ARROW_RIGHT_BLANK
+    ld hl, name_buffer
+    ld [hl], a
+
+    ld d, 0
+    ld a, [_k]
+    add a, a
+    inc a
+    ld e, a
+    ld h, 1
+    ld l, 1
+    ld bc, name_buffer
+    call gbdk_SetBkgTiles
+.checkA
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .checkB
+    ;SWAP
+    ret
+.checkB
+    ld a, [button_state]
+    and a, PADF_B
+    jr z, .loop
   ret
 
 DrawLineupPlayers:
@@ -323,6 +443,7 @@ ShowPlayerMenu:
   add a, 2
   ld e, a
 
+.showList
   ld b, 11
   ld a, 18
   sub a, c
@@ -333,8 +454,23 @@ ShowPlayerMenu:
   and a
   jr z, .exit
   cp 1
-  jr nz, .skip
-
+  jr z, .showStatScreen
+  ld b, a;selection
+  ld a, [_a]
+  and a;if 0, can reorder lineup
+  ld a, b
+  jr z, .outOfGameMenu
+.inGameMenu
+  cp 2
+  jr z, .swapPositions
+  jr .exit
+.outOfGameMenu
+  cp 2
+  jr z, .reorderLineup
+  cp 3
+  jr z, .swapPositions
+  jr .exit
+.showStatScreen
   pop bc
   push bc;player count, selected player
   ld a, c
@@ -344,11 +480,15 @@ ShowPlayerMenu:
   add hl, bc
   call DrawStatScreen
   jr .exit
-.skip
-  ld b, a
-  ld a, [_a]
-  add a, b;offset by 1 if in game so player can't reorder
-  ;TODO: order and switch
+.reorderLineup
+  pop bc
+  push bc;player count, selected player
+  call ReorderLineup
+  jr .exit
+.swapPositions
+  pop bc
+  push bc;player count, selected player
+  call SwapPositions
 .exit
   ld de, 0
   ld h, 20

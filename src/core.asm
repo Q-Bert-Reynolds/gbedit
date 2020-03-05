@@ -372,7 +372,7 @@ DrawListMenuArrow:: ;de = xy, _j = current index, _c = count
   call gbdk_SetBkgTiles;set_bkg_tiles(x,y,1,c*2,tile_buffer);
   ret
 
-MoveListMenuArrow::;de = upper left, must call UpdateInput first
+MoveListMenuArrow:: ;de = xy, _j = current index, _c = count, must call UpdateInput first
 .checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
   ld a, [button_state]
   and a, PADF_UP

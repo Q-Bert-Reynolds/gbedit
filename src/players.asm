@@ -356,3 +356,10 @@ GetUserPlayerName:;hl = user player, returns name in name_buffer
   call GetPlayerName
   pop bc
   ret
+
+GetUserPlayer:;a = lineup index, returns player in hl
+  ld bc, UserLineup
+  ld de, UserLineupPlayer2 - UserLineupPlayer1
+  call math_Multiply
+  add hl, bc
+  ret

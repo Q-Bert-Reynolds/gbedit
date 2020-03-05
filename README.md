@@ -25,6 +25,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # TODO:
 General
 
+- link cable support!
 - give math subroutines more appropriate names
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - big list of "real names" to use in place of ID and OT
@@ -64,7 +65,6 @@ Team Menu
   - missing moves in move list should show "-"
   - should be accessible from PC as well
 - swap batting order
-- change position
 - restore tiles from previous screen
 
 Overworld
@@ -116,3 +116,10 @@ ROM Banks:
 RAM Banks
 
     save0.asm (bank0) - main save file
+
+# Thanks
+
+- Jeff Frohwein, http://devrs.com/gb/
+- John Metcalf, http://www.retroprogramming.com
+- http://z80-heaven.wikidot.com/
+- https://gbdev.github.io/pandocs/

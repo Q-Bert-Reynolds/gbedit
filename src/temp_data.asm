@@ -10,7 +10,7 @@ MyBubbiData:
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0          ; .pp
   DB NONE                  ; .status
-  DW 32                    ; .hp
+  DW 45                    ; .hp
   DW 45                    ; .max_hp 
   DW 49                    ; .bat
   DW 49                    ; .field
@@ -54,7 +54,7 @@ MyZaphData:
   DB PSYCH_OUT_MOVE
   DB 10, 10, 10, 10        ; .pp
   DB NONE                  ; .status
-  DW 32                    ; .hp
+  DW 20                    ; .hp
   DW 45                    ; .max_hp 
   DW 49                    ; .bat
   DW 49                    ; .field
@@ -226,7 +226,7 @@ MyMetaData:
   DB SWING_MOVE, 0
   DB 20, 40, 15, 0          ; .pp
   DB NONE                  ; .status
-  DW 32                    ; .hp
+  DW 15                    ; .hp
   DW 45                    ; .max_hp 
   DW 49                    ; .bat
   DW 49                    ; .field
@@ -270,7 +270,7 @@ MyChuData:
   DB CURVEBALL_MOVE
   DB 20, 40, 30, 20        ; .pp
   DB NONE                  ; .status
-  DW 32                    ; .hp
+  DW 5                     ; .hp
   DW 49                    ; .max_hp 
   DW 49                    ; .bat
   DW 55                    ; .field

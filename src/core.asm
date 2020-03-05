@@ -593,19 +593,32 @@ SetHPBarTiles::;de = player, hl = address
   ld h, d
   ld l, e;hp*100
   call math_Divide16;de (remainder hl) = hl / bc
-  ld [_breakpoint], a
   ;de = HP * 100 / maxHP
   pop hl;address
   ld a, 128
   ld [hli], a
 
-  ld a, 129
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
+  ld b, 6
+  ld c, 0
+.loop
+    ld a, e
+    cp c
+    jr c, .drawPartial
+    ld a, 129
+    ld [hli], a
+    jr .next
+.drawPartial
+    ld a, 137
+    ld [hli], a
+.next
+    ld a, c
+    add a, 16
+    ld c, a
+    
+    dec b
+    ld a, b
+    and a
+    jr nz, .loop  
 
   ld a, 138
   ld [hli], a

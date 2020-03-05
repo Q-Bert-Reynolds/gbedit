@@ -7,6 +7,10 @@ INCLUDE "src/lineup/stats.asm"
 INCLUDE "img/health_bar.asm"
 INCLUDE "img/lineup_sprites.asm"
 
+SwapPositions:;a = player 1, b = player 2
+
+  ret
+
 DrawLineupPlayers:
   ld hl, UserLineup
   xor a
@@ -280,6 +284,21 @@ ShowPlayerMenu:
   ld l, 18
   ld bc, bkg_buffer
   call gbdk_GetBkgTiles
+  
+.showEmptyArrow
+  ld a, ARROW_RIGHT_BLANK
+  ld hl, name_buffer
+  ld [hl], a
+
+  ld d, 0
+  ld a, [_j]
+  add a, a
+  inc a
+  ld e, a
+  ld h, 1
+  ld l, 1
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
 
   ld a, [_a]
   and a

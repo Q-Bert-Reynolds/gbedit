@@ -21,6 +21,34 @@ rev_Check_math_asm: MACRO
   ENDC
 ENDM
 
+adcHL: MACRO;\1 = r1, \2 = r2
+  ld a, l
+  jr c, .carry\@
+  add a, \2
+  jr .end\@
+.carry\@
+  adc a, \2
+.end\@
+  ld l, a
+  ld a, h
+  adc a, \1
+  ld h, a
+ENDM
+
+sbcHL: MACRO;\1 = r1, \2 = r2
+  ld a, l
+  jr c, .borrow\@
+  sub a, \2
+  jr .end\@
+.borrow\@
+  sbc a, \2
+.end\@
+  ld l, a
+  ld a, h
+  sbc a, \1
+  ld h, a
+ENDM
+
 SECTION "Math Code", ROM0
 math_Multiply:: ; hl = de * a
   ld hl, 0
@@ -101,6 +129,16 @@ math_Divide:: ; hl (remainder a) = hl / c
 .skip
     dec b
     jr nz, .loop
+  ret
+
+math_Divide16:: ;de (remainder hl) = hl / bc
+  ld de, 0 ;quotient
+.loop ;while remainder ≥ denominator
+    inc de
+    sbcHL b, c;remainder − denominator
+    jr nc, .loop
+  add hl, bc
+  dec de
   ret
 
 math_Divide24:: ; ehl (remainder a) = ehl / d

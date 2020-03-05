@@ -25,6 +25,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # TODO:
 General
 
+- give math subroutines more appropriate names
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - big list of "real names" to use in place of ID and OT
 

@@ -575,10 +575,30 @@ ReverseByte:;byte in a
   ret
 
 SetHPBarTiles::;de = player, hl = address
-  ; call GetPlayerHP
-  ; call GetPlayerMaxHP
+  push hl;address
+  ld h, d
+  ld l, e
+  push hl;player
+  call GetPlayerHP
+  ld d, h
+  ld e, l
+  ld a, 100
+  call math_Multiply
+  ld d, h
+  ld e, l;hp*100
+  pop hl;player
+  call GetPlayerMaxHP
+  ld b, h
+  ld c, l;maxHP
+  ld h, d
+  ld l, e;hp*100
+  call math_Divide16;de (remainder hl) = hl / bc
+  ld [_breakpoint], a
+  ;de = HP * 100 / maxHP
+  pop hl;address
   ld a, 128
   ld [hli], a
+
   ld a, 129
   ld [hli], a
   ld [hli], a
@@ -586,6 +606,7 @@ SetHPBarTiles::;de = player, hl = address
   ld [hli], a
   ld [hli], a
   ld [hli], a
+
   ld a, 138
   ld [hli], a
   ret

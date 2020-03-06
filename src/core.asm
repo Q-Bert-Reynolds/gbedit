@@ -500,6 +500,37 @@ SetSpriteTiles:: ;bc = count, hl = map, de = offset\flags
     jr nz, .loop
   ret
 
+SetSpriteTilesProps:: ;bc = offset\count, hl = tilemap, de = propmap
+  xor a
+  ld [_i], a
+.loop
+    push bc;offset\count
+    ld a, [_i]
+    ld c, a
+    ld a, [hli]
+    push hl;tilemap index
+    add a, b;offset
+    push de;propmap
+    ld d, a ;tile
+    call gbdk_SetSpriteTile
+    ld a, [_i]
+    ld c, a
+    pop de;propmap
+    ld a, [de]
+    inc de
+    push de;propmap
+    ld d, a
+    call gbdk_SetSpriteProp
+    pop de;propmap
+    pop hl;tilemap
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    pop bc; count
+    dec c
+    jr nz, .loop
+  ret
+
 ;; moves a grid of sprite tiles
 MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld [_a], a

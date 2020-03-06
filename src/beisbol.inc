@@ -23,6 +23,7 @@ INCLUDE "src/temp_data.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"
+INCLUDE "src/overworld.asm"
 INCLUDE "src/baseball/play_ball.asm"
 INCLUDE "src/lineup/lineup.asm"
 

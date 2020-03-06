@@ -84,8 +84,11 @@ def folder_to_asm (root, files):
     rows, cols, hex_vals = gb_encode(img)
 
     if "avatar" in img_name:
-      parts = ["_idle_down","_idle_up","_idle_left","_walk_down","_walk_up","_walk_left"] 
-      for p in range(6):
+      parts = [
+        "_idle_down","_idle_up","_idle_left","_idle_right",
+        "_walk_down","_walk_up","_walk_left","_walk_right"
+      ] 
+      for p in range(8):
         part_name = parts[p]
         tilemaps[img_name + part_name] = []
         properties[img_name + part_name] = []
@@ -121,8 +124,9 @@ def folder_to_asm (root, files):
 
     for img_name in tilemaps.keys():
       rows, cols = dimensions[img_name]
-      asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
-      asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
+      if "avatar" not in img_name:
+        asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
+        asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
       asm_file.write("_" + PascalCase(img_name)+"TileMap: INCBIN \"")
       asm_file.write(os.path.join(root, img_name) + ".tilemap\"\n")
 
@@ -132,7 +136,8 @@ def folder_to_asm (root, files):
           hex_string += "".join(tilemaps[img_name][i:i+cols])
         bin_file.write(bytes.fromhex(hex_string))
 
-      if ("avatar" in img_name):
+      if "avatar" in img_name:
+        asm_file.write("_" + PascalCase(img_name)+"PropMap: INCBIN \"")
         asm_file.write(os.path.join(root, img_name) + ".propmap\"\n")
         with open(os.path.join(root, img_name) + ".propmap", "wb") as bin_file:
           hex_string = ""

@@ -32,10 +32,10 @@ General
 
 Python scripts
 
+- avatar directional maps should be organized into arrays
 - handle 1bpp and rle images
 - only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
-
 
 Intro
 

@@ -179,7 +179,11 @@ Start::
   ld hl, rBGP
   ld [hl], BG_PALETTE
 
-  SET_SPRITE_TILES (_INTRO0_COLUMNS*_INTRO0_ROWS), _Intro0TileMap, OAMF_PRI, _INTRO_SPRITES_TILE_COUNT
+  ld bc, _INTRO0_COLUMNS*_INTRO0_ROWS
+  ld hl, _Intro0TileMap
+  ld d, _INTRO_SPRITES_TILE_COUNT
+  ld e, OAMF_PRI
+  call SetSpriteTiles
 
   xor a
   ld [_k], a

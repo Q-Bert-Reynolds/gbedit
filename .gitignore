@@ -6,6 +6,7 @@ img/**/*.c
 img/**/*.h
 img/**/*.asm
 img/**/*.tilemap
+img/**/*.propmap
 img/**/*.tiles
 data/*.c
 data/*.h

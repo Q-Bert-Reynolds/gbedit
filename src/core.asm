@@ -469,6 +469,37 @@ ShowLineupFromGame::
   call SetBank
   ret
 
+SetSpriteTiles:: ;bc = count, hl = map, de = offset\flags
+  xor a
+  ld [_i], a
+.loop
+    push bc;count
+    ld a, [_i]
+    ld c, a
+    ld a, [hli]
+    push hl;map index
+    add a, d;offset
+    push de;offset\flags
+    ld d, a ;tile
+    call gbdk_SetSpriteTile
+    ld a, [_i]
+    ld c, a
+    pop de;offset\flags
+    push de;offset\flags
+    ld d, e
+    call gbdk_SetSpriteProp
+    pop de;offset\flags
+    pop hl;map index
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    pop bc; count
+    dec bc
+    ld a, b
+    or c
+    jr nz, .loop
+  ret
+
 ;; moves a grid of sprite tiles
 MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld [_a], a

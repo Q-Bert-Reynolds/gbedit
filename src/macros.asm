@@ -153,31 +153,6 @@ FADE_IN: MACRO
   call gbdk_Delay
 ENDM
 
-SET_SPRITE_TILES: MACRO ;count, map, flags, offset
-  xor a
-  ld [_i], a
-  ld hl, \2
-  ld e, \3 ;flags
-.setSprite\@
-  ld a, [_i]
-  ld c, a
-  ld a, [hli]
-  push hl
-  add a, \4
-  ld d, a ;tile
-  call gbdk_SetSpriteTile
-  ld a, [_i]
-  ld c, a
-  ld d, e
-  call gbdk_SetSpriteProp
-  pop hl
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub a, \1
-  jr nz, .setSprite\@
-ENDM
-
 UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS: MACRO ;address, buttons
   call UpdateInput
   JUMP_TO_IF_BUTTONS \1, \2

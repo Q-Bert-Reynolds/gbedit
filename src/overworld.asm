@@ -2,17 +2,19 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 
-INCLUDE "img/overworld/player_sprites/player_sprites.asm"
+INCLUDE "img/overworld/overworld.asm"
 
 Overworld::
   DISPLAY_OFF
 
-  ld hl, _SpritesTiles
+  ld hl, _OverworldTiles
   ld de, $8000
-  ld bc, _SPRITES_TILE_COUNT*16
+  ld bc, _OVERWORLD_TILE_COUNT*16
   call mem_CopyVRAM
 
-  ;loop
+.moveLoop
     ;look
     ;move from current position to position in direction
+    call gbdk_WaitVBL
+    jr .moveLoop
   ret

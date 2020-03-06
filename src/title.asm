@@ -141,7 +141,11 @@ ShowTitle:
   call mem_CopyVRAM
   call UpdateAudio
 
-  SET_SPRITE_TILES (_CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS), _CalvinTitleTileMap, 0, 0
+  ld bc, _CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS
+  ld hl, _CalvinTitleTileMap
+  ld de, 0
+  call SetSpriteTiles
+
   call UpdateAudio
 
   ld a, 96

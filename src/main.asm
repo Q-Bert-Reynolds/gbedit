@@ -91,15 +91,14 @@ Main::
   ld a, TITLE_BANK
   call SetBank
   call Title ;should set a to 0 if new game pressed
-  jr nz, .startGame
+  jr nz, .overworld
 
 .newGame
   ld a, NEW_GAME_BANK
   call SetBank
   call NewGame
 
-.mainLoop; walk around, find a game, repeate
-.overworld
+.overworld; walk around, find a game, repeat
     ld a, OVERWORLD_BANK
     call SetBank
     call Overworld
@@ -109,7 +108,7 @@ Main::
     call SetBank
     call StartGame
 
-    jr .mainLoop; TODO: if game finished, exit
+    jr .overworld; TODO: if game finished, exit
 
   xor a
   call SetBank

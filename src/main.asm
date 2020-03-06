@@ -82,26 +82,34 @@ Main::
   call SetBank
   call Seed
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
   
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;should set a to 0 if new game pressed
-;   jr nz, .startGame
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .startGame
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
+
+.mainLoop; walk around, find a game, repeate
+.overworld
+    ld a, OVERWORLD_BANK
+    call SetBank
+    call Overworld
 
 .startGame
-  ld a, PLAY_BALL_BANK
-  call SetBank
-  call StartGame
+    ld a, PLAY_BALL_BANK
+    call SetBank
+    call StartGame
+
+    jr .mainLoop; TODO: if game finished, exit
 
   xor a
   call SetBank

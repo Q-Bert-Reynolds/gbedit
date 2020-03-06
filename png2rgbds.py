@@ -35,10 +35,44 @@ def gb_encode (img):
         hex_vals.append("{:02X}".format(int(lower_binary, 2)))
   return (rows, cols, hex_vals)
 
+def flipTileX (tile):
+  flipped = ""
+  for i in range(16):
+    h = tile[i*2:(i+1)*2]
+    b = "{0:08b}".format(int(h, 16))[::-1]
+    flipped += "{:02X}".format(int(b, 2))
+  return flipped
+
+def flipTileY (tile):
+  flipped = ""
+  for i in range(8):
+    flipped = tile[i*4:(i+1)*4] + flipped
+  return flipped
+
+def addTileGetFlipsIndex (tile, tileset):
+  if tile in tileset:
+    return ("00", tileset.index(tile))
+
+  xFlip = flipTileX(tile)
+  if xFlip in tileset:
+    return ("20", tileset.index(xFlip))
+
+  yFlip = flipTileY(tile)
+  if yFlip in tileset:
+    return ("40", tileset.index(yFlip))
+
+  xyFlip = flipTileY(xFlip)
+  if xyFlip in tileset:
+    return ("60", tileset.index(xyFlip))
+
+  tileset.append(tile)
+  return ("00", tileset.index(tile))
+
 def folder_to_asm (root, files):
   tileset = []
   tilemaps = {}
   dimensions = {}
+  properties = {}
   name = os.path.basename(root)
   for file in files:
     path = os.path.join(root, file)
@@ -49,13 +83,27 @@ def folder_to_asm (root, files):
     img_name = os.path.basename(base)
     rows, cols, hex_vals = gb_encode(img)
 
-    tilemaps[img_name] = []
-    dimensions[img_name] = (rows, cols)
-    for i in range(0, len(hex_vals), 16):
-      tile = "".join(hex_vals[i:i+16])
-      if tile not in tileset:
-        tileset.append(tile)
-      tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
+    if "avatar" in img_name:
+      parts = ["_idle_down","_idle_up","_idle_left","_walk_down","_walk_up","_walk_left"] 
+      for p in range(6):
+        part_name = parts[p]
+        tilemaps[img_name + part_name] = []
+        properties[img_name + part_name] = []
+        dimensions[img_name + part_name] = (2, 2)#this seems unnecessary
+        for i in range(0, len(hex_vals), 16):
+          tile = "".join(hex_vals[i:i+16])
+          flips, index = addTileGetFlipsIndex(tile, tileset)
+          properties[img_name + part_name].append(flips)
+          tilemaps[img_name + part_name].append("{:02X}".format(index))
+      
+    else:
+      tilemaps[img_name] = []
+      dimensions[img_name] = (rows, cols)
+      for i in range(0, len(hex_vals), 16):
+        tile = "".join(hex_vals[i:i+16])
+        if tile not in tileset:
+          tileset.append(tile)
+        tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
         
   name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".asm"), "w+") as asm_file:
@@ -83,6 +131,15 @@ def folder_to_asm (root, files):
         for i in range(0, len(tilemaps[img_name]), cols):
           hex_string += "".join(tilemaps[img_name][i:i+cols])
         bin_file.write(bytes.fromhex(hex_string))
+
+      if ("avatar" in img_name):
+        asm_file.write(os.path.join(root, img_name) + ".propmap\"\n")
+        with open(os.path.join(root, img_name) + ".propmap", "wb") as bin_file:
+          hex_string = ""
+          for i in range(0, len(properties[img_name])):
+            hex_string += "".join(properties[img_name][i])
+          bin_file.write(bytes.fromhex(hex_string))
+
     asm_file.write("ENDC\n")
 
 def png_to_asm (path):

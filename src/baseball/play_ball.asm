@@ -612,7 +612,7 @@ StartGame::
   ld a, 3
   ld [away_score], a
 
-  ; call PlayIntro
+  call PlayIntro
   call SetupGameUI
 
   xor a

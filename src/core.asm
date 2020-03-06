@@ -462,7 +462,7 @@ ShowLineupFromGame::
   ld a, LINEUP_BANK
   call SetBank
 
-  ld a, 0;1;TODO: change back to one when done testing
+  ld a, 1
   call ShowLineup
 
   ld a, PLAY_BALL_BANK

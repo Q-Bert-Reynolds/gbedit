@@ -87,7 +87,7 @@ SwapPositions: ;bc = player count, selected player
 .checkB
     ld a, [button_state]
     and a, PADF_B
-    jr z, .loop
+    jp z, .loop
   ret
 
 ReorderLineup: ;bc = player count, selected player
@@ -122,13 +122,90 @@ ReorderLineup: ;bc = player count, selected player
 .checkA
     ld a, [button_state]
     and a, PADF_A
-    jr z, .checkB
-    ;SWAP
+    jp z, .checkB
+    
+    ld a, [_k]
+    call GetUserPlayer
+    push hl;player k
+    ld de, tile_buffer
+    ld bc, UserLineupPlayer2 - UserLineupPlayer1
+    call mem_Copy
+  
+    ld a, [_j]
+    call GetUserPlayer
+    pop de;player k
+    push hl;player j
+    ld bc, UserLineupPlayer2 - UserLineupPlayer1
+    call mem_Copy
+
+    ld hl, tile_buffer
+    pop de
+    ld bc, UserLineupPlayer2 - UserLineupPlayer1
+    call mem_Copy
+
+    ld de, 40
+    ld a, [_k]
+    call math_Multiply
+    ld de, bkg_buffer
+    add hl, de
+    push hl;k's lineup card
+    ld de, tile_buffer
+    ld bc, 40
+    call mem_Copy
+
+    ld de, 40
+    ld a, [_j]
+    call math_Multiply
+    ld de, bkg_buffer
+    add hl, de
+    pop de;k's lineup card
+    push hl;j's lineup card
+    ld bc, 40
+    call mem_Copy
+
+    ld hl, tile_buffer
+    pop de;j's lineup card
+    ld bc, 40
+    call mem_Copy
+
+    ld hl, oam_buffer
+    ld a, [_j]
+    add a, a;y*2
+    add a, a;y*4
+    add a, a;y*8
+    add a, a;y*16
+    ld b, 0
+    ld c, a
+    add hl, bc;sprite id
+    push hl;j's oam
+    ld de, tile_buffer
+    ld bc, 16
+    call mem_Copy ;TODO: move sprites
+
+    ld hl, oam_buffer
+    ld a, [_k]
+    add a, a;y*2
+    add a, a;y*4
+    add a, a;y*8
+    add a, a;y*16
+    ld b, 0
+    ld c, a
+    add hl, bc;sprite id
+    pop de;j's oam
+    push hl;k's oam
+    ld bc, 16
+    call mem_Copy ;TODO: move sprites
+
+    ld hl, tile_buffer
+    pop de;k's oam
+    ld bc, 16
+    call mem_Copy
+
     ret
 .checkB
     ld a, [button_state]
     and a, PADF_B
-    jr z, .loop
+    jp z, .loop
   ret
 
 DrawLineupPlayers:

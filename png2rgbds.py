@@ -93,7 +93,7 @@ def folder_to_asm (root, files):
         tilemaps[img_name + part_name] = []
         properties[img_name + part_name] = []
         dimensions[img_name + part_name] = (2, 2)#this seems unnecessary
-        for i in range(0, len(hex_vals), 16):
+        for i in range(p*64, (p+1)*64, 16):
           tile = "".join(hex_vals[i:i+16])
           flips, index = addTileGetFlipsIndex(tile, tileset)
           properties[img_name + part_name].append(flips)

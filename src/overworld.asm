@@ -5,12 +5,42 @@ SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 INCLUDE "img/overworld/overworld.asm"
 
 Look:;a = button_state
-  ld b, 0
-  ld c, 4
+  push af
+.checkUp
+  and a, PADF_UP
+  jr z, .checkDown
+  ld hl, _CalvinAvatarIdleUpTileMap
+  ld de, _CalvinAvatarIdleUpPropMap
+  jr .apply
+.checkDown
+  pop af
+  push af
+  and a, PADF_DOWN
+  jr z, .checkRight
   ld hl, _CalvinAvatarIdleDownTileMap
   ld de, _CalvinAvatarIdleDownPropMap
+  jr .apply
+.checkRight
+  pop af
+  push af
+  and a, PADF_RIGHT
+  jr z, .checkLeft
+  ld hl, _CalvinAvatarIdleRightTileMap
+  ld de, _CalvinAvatarIdleRightPropMap
+  jr .apply
+.checkLeft
+  pop af
+  push af
+  and a, PADF_LEFT
+  jr z, .exit
+  ld hl, _CalvinAvatarIdleLeftTileMap
+  ld de, _CalvinAvatarIdleLeftPropMap
+.apply
+  ld b, 0
+  ld c, 4
   call SetSpriteTilesProps ;bc = offset\count, hl = tilemap, de = propmap
-
+.exit
+  pop af
   ret 
 
 Move:

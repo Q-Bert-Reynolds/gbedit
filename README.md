@@ -22,12 +22,16 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
     make clean
     make
 
+# Cart:
+MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
+
 # TODO:
 General
 
 - link cable support!
 - give math subroutines more appropriate names
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
+- SetSpriteTiles and SetSpriteTilesProps can likely be merged
 - big list of "real names" to use in place of ID and OT
 
 Python scripts
@@ -97,25 +101,6 @@ SFX:
 Player images:
 
 - batting/pitching -> front/back -> ready/action (8 each)
-
-# Cart
-MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
-
-ROM Banks:
-
-    most things   ( bank0 ) - movement/collisions, bank switching
-    music         ( bank1 ) - baseball_music.asm, other music that fits
-    ui.asm        ( bank2 ) - font, non-realtime UI functions, options
-    start.asm     ( bank3 ) - copyrights & intro
-    title.asm     ( bank4 ) - title, new game/continue menu
-    new_game.asm  ( bank5 ) - prologue, name entry
-    play_ball.asm ( bank6 ) - baseball
-    lineup.asm    ( bank8 ) - change batting order & positions
-    roledexX.asm  ( bank1X) - player images, descriptions, base stats
-
-RAM Banks
-
-    save0.asm (bank0) - main save file
 
 # Thanks
 

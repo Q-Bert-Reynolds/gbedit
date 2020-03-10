@@ -36,7 +36,8 @@ General
 
 Python scripts
 
-- duplicate functioality (like the PascalCase function) should be moved to library file
+- load map chunks into banked regions (like player img data)
+- duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
 - only update .asm file when PNG or TMX files change
 - handle 1bpp and rle images

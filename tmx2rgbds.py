@@ -31,7 +31,7 @@ def tmx_to_asm(path):
       hex_string = ""
       for j in range(32):
         for i in range(32):
-          tile = tiles[y*32*32+j*32+x*32+i]
+          tile = tiles[(y*32+j)*32*x_chunks+x*32+i]
           tile_hex = "{:02X}".format(int(tile)+127)
           hex_string += tile_hex
       hex_strings.append(hex_string)    

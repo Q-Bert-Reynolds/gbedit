@@ -36,9 +36,10 @@ General
 
 Python scripts
 
+- duplicate functioality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
+- only update .asm file when PNG or TMX files change
 - handle 1bpp and rle images
-- only update .asm file when png changes
 - identify animations - same size, numbered names (name0, name1, etc)
 
 Intro
@@ -73,8 +74,10 @@ Team Menu
 
 Overworld
 
+- function to lookup map chunk
 - walking
 - collisions
+- animated tiles
 
 Rolédex
 

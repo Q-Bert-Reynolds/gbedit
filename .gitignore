@@ -8,6 +8,8 @@ img/**/*.asm
 img/**/*.tilemap
 img/**/*.propmap
 img/**/*.tiles
+maps/**/*.asm
+maps/**/*.tilemap
 data/*.c
 data/*.h
 data/*.asm
@@ -22,6 +24,9 @@ data/*.inc
 *.1bpp
 *.2bpp
 *.sav
+
+# generated python
+__pycache__/*
 
 # generated HTML (from markdown)
 *.html

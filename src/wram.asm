@@ -66,3 +66,7 @@ swing_diff_y: DW
 swing_diff_z: DW
 ball_x: DB
 ball_y: DB
+
+;map
+map_x: DW
+map_y: DW

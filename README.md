@@ -75,6 +75,7 @@ Team Menu
 
 Overworld
 
+- make legs go behind things
 - function to lookup map chunk
 - walking
 - collisions

@@ -1,7 +1,7 @@
 IF !DEF(MAP_LOADER)
 MAP_LOADER SET 1
 
-INCLUDE "maps/billetTown.asm"
+INCLUDE "maps/map_data.asm"
 
 SECTION "Map Loader", ROM0
 LoadMapData::; loads appropriate map from positional data
@@ -15,7 +15,7 @@ LoadMapData::; loads appropriate map from positional data
   ld e, a ; y
   ld h, 32 ; w
   ld l, 32 ; h
-  ld bc, _BilletTown0Tiles
+  ld bc, _BilletTown8Tiles
   call gbdk_SetBkgTiles
 
   ld a, [temp_bank]

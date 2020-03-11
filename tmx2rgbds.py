@@ -4,18 +4,22 @@ import xml.etree.ElementTree as tree
 bank = 0
 
 def main():
+  asm = ""
   for root, folders, files in os.walk("./maps"):
     name = os.path.basename(root)
     for name in files:
       path = os.path.join(root, name)
       base, ext = os.path.splitext(path)
-      tmx_to_asm(path)
+      asm += tmx_to_asm(path)
+
+  with open("./maps/map_data.asm", "w+") as asm_file:
+    asm_file.write(asm)
 
 def tmx_to_asm(path):
   global bank
   base, ext = os.path.splitext(path)
   if ext != ".tmx":
-    return
+    return ""
   name = os.path.basename(base)
   
   tmx = tree.parse(path).getroot()
@@ -28,6 +32,7 @@ def tmx_to_asm(path):
   y_chunks = int(height / 32)
   
   hex_strings = []
+  asm = ""
   for y in range(y_chunks):
     for x in range(x_chunks):
       hex_string = ""
@@ -38,22 +43,18 @@ def tmx_to_asm(path):
           hex_string += tile_hex
       hex_strings.append(hex_string)    
     
-  with open(base + ".asm", "w+") as asm_file:
-    asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
-    asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
-    asm_file.write("_" + name.upper() + "_WIDTH EQU " + str(width) + "\n")
-    asm_file.write("_" + name.upper() + "_HEIGHT EQU " + str(height) + "\n")
-    asm_file.write("SECTION \""+name+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n")
-    for i in range(x_chunks*y_chunks):
-      hex_string = hex_strings[i]
-      asm_file.write("_" + PascalCase(name) + str(i) + "Tiles: INCBIN \"")
-      asm_file.write(base + str(i) + ".tilemap\"\n")
-      
-      with open(base + str(i) + ".tilemap", "wb") as bin_file:
-        bin_file.write(bytes.fromhex(hex_string))
+  asm += "SECTION \""+name+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n"
+  asm +=  "_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n"
+  asm += "_" + name.upper() + "_WIDTH EQU " + str(width) + "\n"
+  asm += "_" + name.upper() + "_HEIGHT EQU " + str(height) + "\n"
+  for i in range(x_chunks*y_chunks):
+    asm += "_" + PascalCase(name) + str(i) + "Tiles: INCBIN \""
+    asm += base + str(i) + ".tilemap\"\n"
+    with open(base + str(i) + ".tilemap", "wb") as bin_file:
+      bin_file.write(bytes.fromhex(hex_strings[i]))
 
-    asm_file.write("ENDC\n")
-    bank += 1
+  bank += 1
+  return asm
 
 def PascalCase(name):
   s = name.split("_")

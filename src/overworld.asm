@@ -4,8 +4,6 @@ SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 
 INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
-; INCLUDE "maps/billetTown.asm"
-BilletTownTemp: INCBIN "./maps/billetTown10.tilemap"
 
 Look:;a = button_state
   push af
@@ -179,16 +177,8 @@ Overworld::
   ld de, $8800
   ld bc, _OVERWORLD_TILE_COUNT*16
   call mem_CopyVRAM
-  
-  ;HACK
-  xor a
-  ld d, a ; x
-  ld e, a ; y
-  ld h, 32 ; w
-  ld l, 32 ; h
-  ld bc, BilletTownTemp
-  call gbdk_SetBkgTiles
-  ;ENDHACK
+
+  call LoadMapData
 
   ld b, 72
   ld c, 76

@@ -1,6 +1,7 @@
 import os
 import csv
 import xml.etree.ElementTree as tree
+bank = 0
 
 def main():
   for root, folders, files in os.walk("./maps"):
@@ -11,6 +12,7 @@ def main():
       tmx_to_asm(path)
 
 def tmx_to_asm(path):
+  global bank
   base, ext = os.path.splitext(path)
   if ext != ".tmx":
     return
@@ -41,14 +43,17 @@ def tmx_to_asm(path):
     asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
     asm_file.write("_" + name.upper() + "_WIDTH EQU " + str(width) + "\n")
     asm_file.write("_" + name.upper() + "_HEIGHT EQU " + str(height) + "\n")
+    asm_file.write("SECTION \""+name+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n")
     for i in range(x_chunks*y_chunks):
       hex_string = hex_strings[i]
       asm_file.write("_" + PascalCase(name) + str(i) + "Tiles: INCBIN \"")
       asm_file.write(base + str(i) + ".tilemap\"\n")
+      
       with open(base + str(i) + ".tilemap", "wb") as bin_file:
         bin_file.write(bytes.fromhex(hex_string))
 
     asm_file.write("ENDC\n")
+    bank += 1
 
 def PascalCase(name):
   s = name.split("_")
@@ -59,4 +64,4 @@ def PascalCase(name):
   return s
 
 if __name__ == "__main__":
-    main()
+  main()

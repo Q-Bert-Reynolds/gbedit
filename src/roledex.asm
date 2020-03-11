@@ -347,11 +347,9 @@ LoadPlayerBkgDataXFlipped:: ; a = number, de = vram_offset
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   dec a ;roledex entry 1 = index 0
   call SwitchPlayerImageBank
-  push af ;num
+  ld c, a
   xor a
   ld b, a
-  pop af ;num
-  ld c, a
   call PutPlayerColumnsInHL
   add hl, bc
   ld a, [hl]

@@ -14,6 +14,7 @@ INCLUDE "src/macros.asm"
 INCLUDE "src/roledex.asm"
 INCLUDE "src/core.asm"
 INCLUDE "src/players.asm"
+INCLUDE "src/map_loader.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
 

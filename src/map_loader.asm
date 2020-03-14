@@ -15,9 +15,9 @@ SetMapTiles::; sets full background using positional data
   ld a, [hli]
   ld h, a
   ld l, b
-  ld c, 16
+  ld c, 32
   call math_Divide
-  ld d, l; assumes x/16 < 256
+  ld d, l; assumes x/32 < 256
 
   ld hl, map_y;little endian
   ld a, [hli]
@@ -25,9 +25,9 @@ SetMapTiles::; sets full background using positional data
   ld a, [hli]
   ld h, a
   ld l, b
-  ld c, 16
+  ld c, 32
   call math_Divide
-  ld e, l; assumes y/16 < 256
+  ld e, l; assumes y/32 < 256
 
   call LoadMapData
   push bc ;map id
@@ -62,6 +62,35 @@ SetMapTiles::; sets full background using positional data
   ld l, a
 .skipHeight
   
+  call DrawMapTilesChunk
+  pop bc;map id
+  push bc;map id
+  
+  push de;xy
+  push hl;wh
+
+  ld a, 20
+  cp h
+  jr nc, .skipRightMap
+  sub a, h
+  ld h, a; right map width
+  inc bc;map id to right
+  push bc
+  ld d, 0;wrap x
+  call DrawMapTilesChunk
+  pop bc;map id to right
+
+.skipRightMap
+  pop hl;wh
+  pop de;xy
+  pop bc;map id
+
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
+DrawMapTilesChunk:;bc = map id, hl=wh, de=xy; returns de=xy, hl=wh
   push hl;wh
   push de;xy
   push bc;map id... also on stack before wh
@@ -80,9 +109,9 @@ SetMapTiles::; sets full background using positional data
 
   pop de;xy
   pop bc;wh
+
   push bc;wh
   push de;xy
-
   ld a, c;c = height
   ld c, b
   ld b, 0;bc = width
@@ -102,13 +131,13 @@ SetMapTiles::; sets full background using positional data
 
   pop de;xy
   pop hl;wh
+  push hl
+  push de
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
 
-  pop bc;map id
-
-  ld a, [temp_bank]
-  call SetBank
+  pop de;xy
+  pop hl;wh
   ret
 
 LoadMapData:;de = xy (map id, not position), returns map data in bc

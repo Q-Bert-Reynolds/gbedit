@@ -82,7 +82,6 @@ Move:;a = button_state
   ret 
 
 MoveUp:
-  call SetMapTiles
   ld hl, map_y
   ld a, [hl]
   sub a, 1
@@ -100,10 +99,10 @@ MoveUp:
     ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
+  call SetMapTiles
   ret
 
 MoveDown:
-  call SetMapTiles
   ld hl, map_y
   ld a, [hl]
   add a, 1
@@ -121,10 +120,10 @@ MoveDown:
     ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
+  call SetMapTiles
   ret
 
 MoveLeft:
-  call SetMapTiles
   ld hl, map_x
   ld a, [hl]
   sub a, 1
@@ -142,10 +141,10 @@ MoveLeft:
     ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
+  call SetMapTiles
   ret
 
 MoveRight:
-  call SetMapTiles
   ld hl, map_x
   ld a, [hl]
   add a, 1
@@ -163,6 +162,7 @@ MoveRight:
     ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
+  call SetMapTiles
   ret
 
 Overworld::

@@ -1,60 +1,61 @@
 import os
 import csv
 import xml.etree.ElementTree as tree
+
 bank = 0
+data_written = 0
 
 def main():
-  asm = ""
   for root, folders, files in os.walk("./maps"):
     name = os.path.basename(root)
     for name in files:
       path = os.path.join(root, name)
       base, ext = os.path.splitext(path)
-      asm += tmx_to_asm(path)
-
-  with open("./maps/map_data.asm", "w+") as asm_file:
-    asm_file.write(asm)
+      tmx_to_asm(path)
 
 def tmx_to_asm(path):
   global bank
+  global data_written
+
   base, ext = os.path.splitext(path)
   if ext != ".tmx":
-    return ""
+    return
   name = os.path.basename(base)
   
   tmx = tree.parse(path).getroot()
   tiles = tmx.find("layer").find("data").text.replace("\n","").split(',')
-  tile_count = len(tiles)
 
-  width = int(tmx.attrib["width"])
-  height = int(tmx.attrib["height"])
-  x_chunks = int(width / 32)
-  y_chunks = int(height / 32)
+  width = int(int(tmx.attrib["width"]) / 32)
+  height = int(int(tmx.attrib["height"]) / 32)
   
   hex_strings = []
-  asm = ""
-  for y in range(y_chunks):
-    for x in range(x_chunks):
+  for y in range(height):
+    for x in range(width):
       hex_string = ""
       for j in range(32):
         for i in range(32):
-          tile = tiles[(y*32+j)*32*x_chunks+x*32+i]
+          tile = tiles[(y*32+j)*32*width+x*32+i]
           tile_hex = "{:02X}".format(int(tile)+127)
           hex_string += tile_hex
       hex_strings.append(hex_string)    
     
-  asm += "SECTION \""+name+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n"
-  asm +=  "_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n"
-  asm += "_" + name.upper() + "_WIDTH EQU " + str(width) + "\n"
-  asm += "_" + name.upper() + "_HEIGHT EQU " + str(height) + "\n"
-  for i in range(x_chunks*y_chunks):
-    asm += "_" + PascalCase(name) + str(i) + "Tiles: INCBIN \""
-    asm += base + str(i) + ".tilemap\"\n"
-    with open(base + str(i) + ".tilemap", "wb") as bin_file:
-      bin_file.write(bytes.fromhex(hex_strings[i]))
+  with open(base + ".asm", "w+") as asm_file:
+    asm_file.write("_" + name.upper() + "_WIDTH EQU " + str(width) + "\n")
+    asm_file.write("_" + name.upper() + "_HEIGHT EQU " + str(height) + "\n")
+    for i in range(width*height):
+      if data_written == 0:
+        asm_file.write("SECTION \""+name+str(bank)+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n")
+      hex_string = hex_strings[i]
+      asm_file.write("_" + PascalCase(name) + str(i) + "Tiles: INCBIN \"")
+      asm_file.write(base + str(i) + ".tilemap\"\n")
+      
+      with open(base + str(i) + ".tilemap", "wb") as bin_file:
+        bin_file.write(bytes.fromhex(hex_string))
 
-  bank += 1
-  return asm
+      data_written += 1024
+      if data_written >= 16384:
+        bank += 1
+        data_written = 0
 
 def PascalCase(name):
   s = name.split("_")

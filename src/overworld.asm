@@ -82,27 +82,28 @@ Move:;a = button_state
   ret 
 
 MoveUp:
+  call SetMapTiles
   ld hl, map_y
   ld a, [hl]
   sub a, 1
   ld [hli], a
-  jr c, .move;skip if no borrow
+  jr nc, .move;skip if no borrow
   ld a, [hl]
   dec a
   ld [hl], a
 .move
-  ;TODO: load map tiles off screen
   ld b, 8
 .loop
     ld a, [rSCY]
     dec a
     ld [rSCY], a
-    call gbdk_WaitVBL
+    ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
   ret
 
 MoveDown:
+  call SetMapTiles
   ld hl, map_y
   ld a, [hl]
   add a, 1
@@ -112,39 +113,39 @@ MoveDown:
   inc a
   ld [hl], a
 .move
-  ;TODO: load map tiles off screen
   ld b, 8
 .loop
     ld a, [rSCY]
     inc a
     ld [rSCY], a
-    call gbdk_WaitVBL
+    ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
   ret
 
 MoveLeft:
+  call SetMapTiles
   ld hl, map_x
   ld a, [hl]
   sub a, 1
   ld [hli], a
-  jr c, .move;skip if no borrow
+  jr nc, .move;skip if no borrow
   ld a, [hl]
   dec a
   ld [hl], a
 .move
-  ;TODO: load map tiles off screen
   ld b, 8
 .loop
     ld a, [rSCX]
     dec a
     ld [rSCX], a
-    call gbdk_WaitVBL
+    ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
   ret
 
 MoveRight:
+  call SetMapTiles
   ld hl, map_x
   ld a, [hl]
   add a, 1
@@ -154,13 +155,12 @@ MoveRight:
   inc a
   ld [hl], a
 .move
-  ;TODO: load map tiles off screen
   ld b, 8
 .loop
     ld a, [rSCX]
     inc a
     ld [rSCX], a
-    call gbdk_WaitVBL
+    ; call gbdk_WaitVBL
     dec b
     jr nz, .loop
   ret
@@ -178,8 +178,6 @@ Overworld::
   ld bc, _OVERWORLD_TILE_COUNT*16
   call mem_CopyVRAM
 
-  call LoadMapData
-
   ld b, 72
   ld c, 76
   ld h, 2
@@ -194,6 +192,11 @@ Overworld::
   xor a
   ld [rSCX], a
   ld [rSCY], a
+  ld [map_x], a
+  ld [map_y], a
+  ld [map_x+1], a
+  ld [map_y+1], a
+  call SetMapTiles
 
   DISPLAY_ON
 .moveLoop

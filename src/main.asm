@@ -50,7 +50,7 @@ Main::
   SETUP_DMA_TRANSFER
 
 .clearRAM
-  ld hl, _RAM
+  ld hl, _RAM+1;TODO: remove +1, currently skips clearing breakpoint
   ld bc, $2000
   call mem_Set
 

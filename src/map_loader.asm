@@ -1,25 +1,140 @@
 IF !DEF(MAP_LOADER)
 MAP_LOADER SET 1
 
-INCLUDE "maps/map_data.asm"
+INCLUDE "src/beisbol.inc"
+INCLUDE "maps/overworld.asm"
 
 SECTION "Map Loader", ROM0
-LoadMapData::; loads appropriate map from positional data
+SetMapTiles::; sets full background using positional data
   ld a, [loaded_bank]
   ld [temp_bank], a
-  ld a, MAPS_BANK
-  call SetBank
 
-  xor a
+  ld hl, map_x;little endian
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ld c, 16
+  call math_Divide
+  ld d, l; assumes x/16 < 256
+
+  ld hl, map_y;little endian
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ld c, 16
+  call math_Divide
+  ld e, l; assumes y/16 < 256
+
+  call LoadMapData
+  push bc ;map id
+
+  ld a, [rSCX]
+  rra;x/2
+  rra;x/4
+  rra;x/8
   ld d, a ; x
+  
+  ld a, [rSCY]
+  rra;x/2
+  rra;x/4
+  rra;x/8
   ld e, a ; y
-  ld h, 32 ; w
-  ld l, 32 ; h
-  ld bc, _BilletTown8Tiles
+
+  ld a, 32
+  sub a, d
+  ld h, a ; w
+  ld a, 20
+  cp h
+  jr nc, .skipWidth
+  ld h, a
+.skipWidth
+
+  ld a, 32
+  sub a, l
+  ld l, a ; h
+  ld a, 18
+  cp l
+  jr nc, .skipHeight
+  ld l, a
+.skipHeight
+  
+  push hl;wh
+  push de;xy
+  push bc;map id... also on stack before wh
+
+  ld a, e;y
+  ld de, 32
+  call math_Multiply
+  pop bc;map id
+  pop de;xy
+  push de;xy
+
+  ld e, d
+  ld d, 0
+  add hl, de;first index
+  add hl, bc;first index + map id
+
+  pop de;xy
+  pop bc;wh
+  push bc;wh
+  push de;xy
+
+  ld a, c;c = height
+  ld c, b
+  ld b, 0;bc = width
+  ld de, tile_buffer
+.loop
+    push af
+    push bc
+    push hl
+    call mem_Copy
+    pop hl
+    ld bc, 32
+    add hl, bc
+    pop bc
+    pop af
+    dec a
+    jr nz, .loop
+
+  pop de;xy
+  pop hl;wh
+  ld bc, tile_buffer
   call gbdk_SetBkgTiles
+
+  pop bc;map id
 
   ld a, [temp_bank]
   call SetBank
+  ret
+
+LoadMapData:;de = xy (map id, not position), returns map data in bc
+  push de;xy
+  ld a, e
+  ld de, _OVERWORLD_WIDTH
+  call math_Multiply
+  pop de;xy
+  ld e, d;x
+  xor a
+  ld d, a
+  add hl, de
+  ld c, 16;maps per bank
+  call math_Divide ;hl = bank offset, a = map in bank
+  push af;map
+  ld a, MAPS_BANK
+  add a, l;MAPS_BANK + bank offset
+  call SetBank
+
+  pop af;map
+  ld de, 1024;number of tiles per map
+  call math_Multiply;first tile of map in hl
+  ld bc, $4000
+  add hl, bc
+  ld b, h
+  ld c, l
   ret
 
 ENDC ;MAP_LOADER

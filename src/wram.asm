@@ -2,6 +2,10 @@ SECTION "Gloval Vars", WRAM0[$c000]
 ;debug
 _breakpoint: DB
 
+;map
+map_x: DW
+map_y: DW
+
 ;banking
 temp_bank: DB
 vblank_bank: DB
@@ -66,7 +70,3 @@ swing_diff_y: DW
 swing_diff_z: DW
 ball_x: DB
 ball_y: DB
-
-;map
-map_x: DW
-map_y: DW

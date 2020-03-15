@@ -5,44 +5,168 @@ INCLUDE "src/beisbol.inc"
 INCLUDE "maps/overworld.asm"
 
 SECTION "Map Loader", ROM0
+SetMapTilesLeftRight: ;hl = bank shift, a = screen offset
+  push hl;bank shift
+  push af;screen offset
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+
+  call LoadMapData
+
+  pop af;screen offset
+  add a, d
+  ld d, a
+
+  ld a, 31
+  cp d
+  pop hl;bank shift
+  jr nc, .skipBankShift
+  ld a, d
+  ld d, 32
+  sub a, d
+  ld d, a
+  add hl, bc
+  ld b, h
+  ld c, l
+.skipBankShift
+
+  ld h, 2 ;width
+
+  ld a, 32
+  sub a, e
+  ld l, a ;height
+  ld a, 18
+  cp l
+  jr nc, .skipHeight
+  ld l, a
+.skipHeight
+
+  push bc;map id
+  push de;xy
+  push hl;wh
+
+  call DrawMapTilesChunk
+  
+  pop hl;wh
+  pop de;xy
+  pop bc;map id
+  
+  ld a, 14
+  cp e
+  jr nc, .skipBottomMap
+  ld a, 18
+  sub a, l
+  ld l, a; bottom map height
+  push hl;wh
+  ld hl, 1024*_OVERWORLD_WIDTH
+  add hl, bc
+  ld b, h
+  ld c, l
+  pop hl;wh
+  ld e, 0;wrap y
+  call DrawMapTilesChunk
+.skipBottomMap
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
+SetMapTilesUpDown: ;hl = bank shift, a = screen offset
+  push hl;bank shift
+  push af;screen offset
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+
+  call LoadMapData
+
+  pop af;screen offset
+  add a, e
+  ld e, a
+
+  ld a, 31
+  cp e
+  pop hl;bank shift
+  jr nc, .skipBankShift
+  ld a, e
+  ld e, 32
+  sub a, e
+  ld e, a
+  add hl, bc
+  ld b, h
+  ld c, l
+.skipBankShift
+
+  ld l, 2 ;height
+
+  ld a, 32
+  sub a, d
+  ld h, a ;width
+  ld a, 20
+  cp h
+  jr nc, .skipHeight
+  ld h, a
+.skipHeight
+
+  push bc;map id
+  push de;xy
+  push hl;wh
+
+  call DrawMapTilesChunk
+  
+  pop hl;wh
+  pop de;xy
+  pop bc;map id
+  
+  ld a, 12
+  cp d
+  jr nc, .skipRightMap
+  ld a, 20
+  sub a, h
+  ld h, a; right map width
+  push hl;wh
+  ld hl, 1024
+  add hl, bc
+  ld b, h
+  ld c, l
+  pop hl;wh
+  ld d, 0;wrap x
+  call DrawMapTilesChunk
+.skipRightMap
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
+SetMapTilesRight:: ;sets 2 columns of tiles offscreen right
+  ld hl, 1024
+  ld a, 20
+  call SetMapTilesLeftRight
+  ret
+
+SetMapTilesLeft:: ;sets 2 columns of tiles offscreen left
+  ld hl, -1024
+  ld a, -2
+  call SetMapTilesLeftRight
+  ret
+
+SetMapTilesUp:: ;sets 2 rows of tiles offscreen up
+  ld hl, -1024*_OVERWORLD_WIDTH
+  ld a, -2
+  call SetMapTilesUpDown
+  ret
+
+SetMapTilesDown:: ;sets 2 rows of tiles offscreen down
+  ld hl, 1024*_OVERWORLD_WIDTH
+  ld a, 18
+  call SetMapTilesUpDown
+  ret
+
 SetMapTiles::; sets full background using positional data
   ld a, [loaded_bank]
   ld [temp_bank], a
 
-  ld hl, map_x;little endian
-  ld a, [hli]
-  ld b, a
-  ld a, [hli]
-  ld h, a
-  ld l, b
-  ld c, 32
-  call math_Divide
-  ld d, l; assumes x/32 < 256
-
-  ld hl, map_y;little endian
-  ld a, [hli]
-  ld b, a
-  ld a, [hli]
-  ld h, a
-  ld l, b
-  ld c, 32
-  call math_Divide
-  ld e, l; assumes y/32 < 256
-
-  call LoadMapData
+  call LoadMapData;return bc = map id, de = xy
   push bc ;map id
-
-  ld a, [rSCX]
-  rra;x/2
-  rra;x/4
-  rra;x/8
-  ld d, a ; x
-  
-  ld a, [rSCY]
-  rra;x/2
-  rra;x/4
-  rra;x/8
-  ld e, a ; y
 
   ld a, 32
   sub a, d
@@ -137,7 +261,7 @@ DrawMapTilesChunk:;bc = map id, hl=wh, de=xy; returns de=xy, hl=wh
   ld de, 32
   call math_Multiply
   pop bc;map id
-
+  
   ld a, b
   cp $80
   jr c, .noOverflow
@@ -194,7 +318,27 @@ DrawMapTilesChunk:;bc = map id, hl=wh, de=xy; returns de=xy, hl=wh
   call SetBank
   ret
 
-LoadMapData:;de = xy (map id, not position), returns map data in bc
+LoadMapData:;returns bc = map data, de = screen tile xy
+  ld hl, map_x;little endian
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ld c, 32
+  call math_Divide
+  ld d, l; assumes x/32 < 256
+
+  ld hl, map_y;little endian
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ld c, 32
+  call math_Divide
+  ld e, l; assumes y/32 < 256
+
   push de;xy
   ld a, e
   ld de, _OVERWORLD_WIDTH
@@ -219,6 +363,19 @@ LoadMapData:;de = xy (map id, not position), returns map data in bc
   add hl, bc
   ld b, h
   ld c, l
+
+  ld a, [rSCX]
+  rra;x/2
+  rra;x/4
+  rra;x/8
+  ld d, a ; x
+  
+  ld a, [rSCY]
+  rra;x/2
+  rra;x/4
+  rra;x/8
+  ld e, a ; y
+
   ret
 
 ENDC ;MAP_LOADER

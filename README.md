@@ -36,7 +36,6 @@ General
 
 Python scripts
 
-- load map chunks into banked regions (like player img data)
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
 - only update .asm file when PNG or TMX files change
@@ -76,10 +75,10 @@ Team Menu
 Overworld
 
 - make legs go behind things
-- function to lookup map chunk
 - walking
 - collisions
 - animated tiles
+- load black tiles outside of map bounds
 
 Rolédex
 

@@ -82,87 +82,87 @@ Move:;a = button_state
   ret 
 
 MoveUp:
+  call SetMapTilesUp
   ld hl, map_y
   ld a, [hl]
-  sub a, 1
+  sub a, 2
   ld [hli], a
   jr nc, .move;skip if no borrow
   ld a, [hl]
   dec a
   ld [hl], a
 .move
-  ld b, 8
+  ld b, 16
 .loop
     ld a, [rSCY]
     dec a
     ld [rSCY], a
-    ; call gbdk_WaitVBL
+    call gbdk_WaitVBL
     dec b
     jr nz, .loop
-  call SetMapTiles
   ret
 
 MoveDown:
+  call SetMapTilesDown
   ld hl, map_y
   ld a, [hl]
-  add a, 1
+  add a, 2
   ld [hli], a
   jr nc, .move;skip if no carry
   ld a, [hl]
   inc a
   ld [hl], a
 .move
-  ld b, 8
+  ld b, 16
 .loop
     ld a, [rSCY]
     inc a
     ld [rSCY], a
-    ; call gbdk_WaitVBL
+    call gbdk_WaitVBL
     dec b
     jr nz, .loop
-  call SetMapTiles
   ret
 
 MoveLeft:
+  call SetMapTilesLeft
   ld hl, map_x
   ld a, [hl]
-  sub a, 1
+  sub a, 2
   ld [hli], a
   jr nc, .move;skip if no borrow
   ld a, [hl]
   dec a
   ld [hl], a
 .move
-  ld b, 8
+  ld b, 16
 .loop
     ld a, [rSCX]
     dec a
     ld [rSCX], a
-    ; call gbdk_WaitVBL
+    call gbdk_WaitVBL
     dec b
     jr nz, .loop
-  call SetMapTiles
   ret
 
 MoveRight:
+  call SetMapTilesRight
   ld hl, map_x
   ld a, [hl]
-  add a, 1
+  add a, 2
   ld [hli], a
   jr nc, .move;skip if no carry
   ld a, [hl]
   inc a
   ld [hl], a
 .move
-  ld b, 8
+  ld b, 16
 .loop
     ld a, [rSCX]
     inc a
     ld [rSCX], a
-    ; call gbdk_WaitVBL
+    call gbdk_WaitVBL
     dec b
     jr nz, .loop
-  call SetMapTiles
   ret
 
 Overworld::

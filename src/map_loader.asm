@@ -69,22 +69,29 @@ SetMapTiles::; sets full background using positional data
   push de;xy
   push hl;wh
 
-  ld a, 20
-  cp h
+  ld a, 12
+  cp d
   jr nc, .skipRightMap
+  ld a, 20
   sub a, h
   ld h, a; right map width
-  inc bc;map id to right
+  push hl;wh
+  ld hl, 1024
+  add hl, bc
+  ld b, h
+  ld c, l
+  pop hl;wh
   push bc
   ld d, 0;wrap x
   call DrawMapTilesChunk
   pop bc;map id to right
 
 .skipRightMap
+
+
   pop hl;wh
   pop de;xy
   pop bc;map id
-
 
   ld a, [temp_bank]
   call SetBank

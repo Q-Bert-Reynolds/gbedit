@@ -54,7 +54,7 @@ SetMapTiles::; sets full background using positional data
 .skipWidth
 
   ld a, 32
-  sub a, l
+  sub a, e
   ld l, a ; h
   ld a, 18
   cp l
@@ -86,12 +86,42 @@ SetMapTiles::; sets full background using positional data
   call DrawMapTilesChunk
   pop bc;map id to right
 
-.skipRightMap
+  ld a, 14
+  cp e
+  jr nc, .skipRightMap;skip bottom right
+  ld a, 18
+  sub a, l
+  ld l, a; bottom right map height
+  push hl;wh
+  ld hl, 1024*_OVERWORLD_WIDTH;TODO: this needs to be dynamic
+  add hl, bc
+  ld b, h
+  ld c, l
+  pop hl;wh
+  ld e, 0;wrap y
+  call DrawMapTilesChunk
 
+.skipRightMap
 
   pop hl;wh
   pop de;xy
   pop bc;map id
+  
+  ld a, 14
+  cp e
+  jr nc, .skipBottomMap
+  ld a, 18
+  sub a, l
+  ld l, a; bottom map height
+  push hl;wh
+  ld hl, 1024*_OVERWORLD_WIDTH
+  add hl, bc
+  ld b, h
+  ld c, l
+  pop hl;wh
+  ld e, 0;wrap y
+  call DrawMapTilesChunk
+.skipBottomMap
 
   ld a, [temp_bank]
   call SetBank

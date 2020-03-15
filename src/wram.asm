@@ -10,6 +10,7 @@ map_y: DW
 temp_bank: DB
 vblank_bank: DB
 loaded_bank: DB
+map_bank: DB
 
 ;temp vars
 _a: DB

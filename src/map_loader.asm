@@ -97,6 +97,7 @@ SetMapTiles::; sets full background using positional data
   add hl, bc
   ld b, h
   ld c, l
+
   pop hl;wh
   ld e, 0;wrap y
   call DrawMapTilesChunk
@@ -131,11 +132,24 @@ DrawMapTilesChunk:;bc = map id, hl=wh, de=xy; returns de=xy, hl=wh
   push hl;wh
   push de;xy
   push bc;map id... also on stack before wh
-
+  
   ld a, e;y
   ld de, 32
   call math_Multiply
   pop bc;map id
+
+  ld a, b
+  cp $80
+  jr c, .noOverflow
+  ld a, b
+  ld b, $40
+  sub a, b
+  ld b, a
+  ld a, [map_bank]
+  inc a
+  call SetBank
+.noOverflow
+
   pop de;xy
   push de;xy
 
@@ -175,6 +189,9 @@ DrawMapTilesChunk:;bc = map id, hl=wh, de=xy; returns de=xy, hl=wh
 
   pop de;xy
   pop hl;wh
+
+  ld a, [map_bank]
+  call SetBank
   ret
 
 LoadMapData:;de = xy (map id, not position), returns map data in bc
@@ -192,6 +209,7 @@ LoadMapData:;de = xy (map id, not position), returns map data in bc
   push af;map
   ld a, MAPS_BANK
   add a, l;MAPS_BANK + bank offset
+  ld [map_bank], a
   call SetBank
 
   pop af;map

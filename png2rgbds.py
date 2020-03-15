@@ -85,10 +85,10 @@ def folder_to_asm (root, files):
 
     if "avatar" in img_name:
       parts = [
-        "_idle_down","_idle_up","_idle_left","_idle_right",
-        "_walk_down","_walk_up","_walk_left","_walk_right"
+        "_idle_down","_idle_up","_idle_right",
+        "_walk_down","_walk_up","_walk_right"
       ] 
-      for p in range(8):
+      for p in range(len(parts)):
         part_name = parts[p]
         tilemaps[img_name + part_name] = []
         properties[img_name + part_name] = []

@@ -75,10 +75,10 @@ Team Menu
 Overworld
 
 - make legs go behind things
-- walking
 - collisions
 - animated tiles
 - load black tiles outside of map bounds
+- fix move left/up bug where boundary tiles don't load sometimes
 
 Rolédex
 

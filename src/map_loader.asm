@@ -30,7 +30,7 @@ SetMapTilesLeftRight: ;hl = bank shift, a = screen offset
   ld c, l
 .skipBankShift
 
-  ld h, 2 ;width
+  ld h, MAP_STEP_SIZE/8 ;width
 
   ld a, 32
   sub a, e
@@ -96,7 +96,7 @@ SetMapTilesUpDown: ;hl = bank shift, a = screen offset
   ld c, l
 .skipBankShift
 
-  ld l, 2 ;height
+  ld l, MAP_STEP_SIZE/8 ;height
 
   ld a, 32
   sub a, d
@@ -137,21 +137,21 @@ SetMapTilesUpDown: ;hl = bank shift, a = screen offset
   call SetBank
   ret
 
+SetMapTilesLeft:: ;sets 2 columns of tiles offscreen left
+  ld hl, -1024
+  ld a, -MAP_STEP_SIZE/8
+  call SetMapTilesLeftRight
+  ret
+
 SetMapTilesRight:: ;sets 2 columns of tiles offscreen right
   ld hl, 1024
   ld a, 20
   call SetMapTilesLeftRight
   ret
 
-SetMapTilesLeft:: ;sets 2 columns of tiles offscreen left
-  ld hl, -1024
-  ld a, -2
-  call SetMapTilesLeftRight
-  ret
-
 SetMapTilesUp:: ;sets 2 rows of tiles offscreen up
   ld hl, -1024*_OVERWORLD_WIDTH
-  ld a, -2
+  ld a, -MAP_STEP_SIZE/8
   call SetMapTilesUpDown
   ret
 

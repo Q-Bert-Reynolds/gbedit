@@ -319,6 +319,8 @@ CancelOptionString:
 
 UIShowOptions::
   DISPLAY_OFF
+  CLEAR_BKG_AREA 0,0,20,18," "
+
   di
   SWITCH_RAM_MBC5 0
   ENABLE_RAM_MBC5

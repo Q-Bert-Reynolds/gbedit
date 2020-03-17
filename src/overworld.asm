@@ -393,6 +393,8 @@ ShowPauseMenu:
   cp 2
   jr nz, .item
   call ShowLineupFromWorld
+  call LoadAvatarSprites
+  call ShowPlayerAvatar
   call SetMapTiles
   jp ShowPauseMenu
 .item
@@ -413,7 +415,24 @@ ShowPauseMenu:
 .option
   cp 6
   jr nz, .exit
-
+  HIDE_WIN
+  HIDE_ALL_SPRITES
+  ld a, [rSCX]
+  ld h, a
+  ld a, [rSCY]
+  ld l, a
+  push hl
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
+  call ShowOptions
+  pop hl
+  ld a, h
+  ld [rSCX], a
+  ld a, l
+  ld [rSCY], a
+  call ShowPlayerAvatar
+  call SetMapTiles
   jp ShowPauseMenu
 .exit
   HIDE_WIN
@@ -426,31 +445,40 @@ CheckActions:
 
   ret
 
-Overworld::
-  DISPLAY_OFF
-  SET_DEFAULT_PALETTE
-
-  call LoadFontTiles
-  
-  ld hl, _AvatarsTiles
-  ld de, $8000
-  ld bc, _AVATARS_TILE_COUNT*16
-  call mem_CopyVRAM
-
-  ld hl, _OverworldTiles
-  ld de, $8800
-  ld bc, _OVERWORLD_TILE_COUNT*16
-  call mem_CopyVRAM
-
+ShowPlayerAvatar:
   ld b, 72
   ld c, 76
   ld h, 2
   ld l, 2
   ld a, 0
   call MoveSprites ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
+  ld a, [last_map_button_state]
+  call Look
+  ret 
+
+LoadAvatarSprites:
+  ld hl, _AvatarsTiles
+  ld de, $8000
+  ld bc, _AVATARS_TILE_COUNT*16
+  call mem_CopyVRAM
+  ret
+
+Overworld::
+  DISPLAY_OFF
+  SET_DEFAULT_PALETTE
+
+  call LoadFontTiles
+
+  ld hl, _OverworldTiles
+  ld de, $8800
+  ld bc, _OVERWORLD_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  call LoadAvatarSprites
 
   ld a, PADF_DOWN
-  call Look
+  ld [last_map_button_state], a
+  call ShowPlayerAvatar
   
   ;TODO: load initial map position
   xor a
@@ -469,6 +497,8 @@ Overworld::
     call gbdk_WaitVBL
     call UpdateInput
     ld a, [button_state]
+    ld [last_map_button_state], a
+.checkStart
     and a, PADF_START
     jr z, .checkA
     call ShowPauseMenu

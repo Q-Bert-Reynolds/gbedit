@@ -50,11 +50,13 @@ ENDM
 
 HIDE_ALL_SPRITES: MACRO
   xor a
-  ld b, 160
+  ld b, 40
   ld hl, oam_buffer
 .loop\@
-  ld [hl], a
-  inc l
+  ld [hli], a
+  ld [hli], a
+  inc hl
+  inc hl
   dec b
   jr nz, .loop\@
 ENDM

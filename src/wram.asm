@@ -3,6 +3,7 @@ SECTION "Gloval Vars", WRAM0[$c000]
 _breakpoint: DB
 
 ;map
+last_map_button_state: DB
 anim_frame: DW
 map_x: DW
 map_y: DW

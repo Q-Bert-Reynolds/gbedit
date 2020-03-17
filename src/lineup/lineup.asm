@@ -664,6 +664,7 @@ ShowLineup::; a = playing_game?
 .loop
     call UpdateInput
     ld de, 0
+    xor a
     call MoveListMenuArrow
 .testStartOrA
     ld a, [button_state]

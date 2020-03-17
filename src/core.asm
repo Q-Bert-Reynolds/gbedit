@@ -350,27 +350,27 @@ DrawListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count
   ld [_i], a
   ld hl, tile_buffer
 .tilesLoop; for (i = 0; i < c; ++i) {
-  xor a
-  ld [hli], a;   tiles[i*2] = 0;
-  ld a, [_j]
-  ld c, a
-  ld a, [_i]
-  sub a, c ;_i - _j
-  jp nz, .setZero ;if (i == _j)
-  ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
-  jr .skip
+    xor a
+    ld [hli], a;   tiles[i*2] = 0;
+    ld a, [_j]
+    ld c, a
+    ld a, [_i]
+    sub a, c ;_i - _j
+    jp nz, .setZero ;if (i == _j)
+    ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
+    jr .skip
 .setZero
-  xor a ;else tiles[i*2+1] = 0;
+    xor a ;else tiles[i*2+1] = 0;
 .skip
-  ld [hli], a ;tiles[i*2+1]
+    ld [hli], a ;tiles[i*2+1]
 
-  ld a, [_i]
-  inc a
-  ld [_i], a;++_i
-  ld b, a
-  ld a, [_c]
-  sub a, b ;_c-_i
-  jp nz, .tilesLoop
+    ld a, [_i]
+    inc a
+    ld [_i], a;++_i
+    ld b, a
+    ld a, [_c]
+    sub a, b ;_c-_i
+    jp nz, .tilesLoop
 
   ld a, 1
   ld h, a ;w=1

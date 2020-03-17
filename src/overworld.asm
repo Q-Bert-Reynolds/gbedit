@@ -382,8 +382,41 @@ ShowPauseMenu:
   ld a, 1;draw on win
   call ShowListMenu ;returns choice in a
 
-  HIDE_WIN
+  and a
+  jr z, .exit
+.roledex
+  cp 1
+  jr nz, .lineup
 
+  jp ShowPauseMenu
+.lineup
+  cp 2
+  jr nz, .item
+  call ShowLineupFromWorld
+  call SetMapTiles
+  jp ShowPauseMenu
+.item
+  cp 3
+  jr nz, .user
+
+  jp ShowPauseMenu
+.user
+  cp 4
+  jr nz, .save
+
+  jp ShowPauseMenu
+.save
+  cp 5
+  jr nz, .option
+
+  jp ShowPauseMenu
+.option
+  cp 6
+  jr nz, .exit
+
+  jp ShowPauseMenu
+.exit
+  HIDE_WIN
   call SetMapTiles
   WAITPAD_UP
 

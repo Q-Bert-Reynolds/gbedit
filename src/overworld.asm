@@ -390,6 +390,7 @@ CheckActions:
 
 Overworld::
   DISPLAY_OFF
+  SET_DEFAULT_PALETTE
 
   call LoadFontTiles
   
@@ -423,6 +424,8 @@ Overworld::
   ld [map_y+1], a
   call SetMapTiles
 
+  SHOW_BKG
+  HIDE_WIN
   DISPLAY_ON
 .moveLoop
     call gbdk_WaitVBL

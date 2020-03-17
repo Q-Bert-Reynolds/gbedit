@@ -63,12 +63,7 @@ Main::
   
 .setupDrawing
   CLEAR_SCREEN 0
-  ld hl, rBGP
-  ld [hl], BG_PALETTE
-  ld hl, rOBP0
-  ld [hl], SPR_PALETTE_0
-  ld hl, rOBP1
-  ld [hl], SPR_PALETTE_1
+  SET_DEFAULT_PALETTE
 
   ld a, LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a

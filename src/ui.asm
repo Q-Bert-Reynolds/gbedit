@@ -1172,7 +1172,6 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   push bc ;xy
   push de ;wh
 
-  push bc
   push af ;isWin
   xor a
   ld [_j], a
@@ -1184,15 +1183,14 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   push af ;isWin
   call DrawListMenuArrow
   pop af ;isWin
-  pop bc
 
   pop de ;wh
   pop bc ;xy
   
   push bc ;xy
   push de ;wh
-.drawTitle
   push af ;isWin?
+.drawTitle
   push de ;wh
   ld hl, name_buffer
   call str_Length; puts length in de
@@ -1220,8 +1218,8 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   call SetTiles ;set_bkg_tiles(x+i,y,l,1,title);
   pop af
   pop de
-  push af
   push de
+  push af
 .skipTitle
   pop af
   pop de ;wh
@@ -1258,6 +1256,6 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
-  pop hl ;discard isWin
+  pop de ;discard isWin
   pop bc ;xy
   ret ;return a

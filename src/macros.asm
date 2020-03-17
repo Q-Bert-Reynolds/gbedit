@@ -176,3 +176,12 @@ WAITPAD_UP: MACRO
   and a
   jr nz, .loop\@
 ENDM
+
+SET_DEFAULT_PALETTE: MACRO
+  ld hl, rBGP
+  ld [hl], BG_PALETTE
+  ld hl, rOBP0
+  ld [hl], SPR_PALETTE_0
+  ld hl, rOBP1
+  ld [hl], SPR_PALETTE_1
+ENDM

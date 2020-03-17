@@ -28,6 +28,7 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 # TODO:
 General
 
+- move all strings to separate (generated) file
 - link cable support!
 - give math subroutines more appropriate names
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions

@@ -797,7 +797,7 @@ SetMovePPTiles::;a = move, de = player, hl = tile address
 
   ret
 
-CopyBkgToWin::
+ScrollXYToTileXY::;returns xy in de
   ld a, [rSCX]
   rra;x/2
   rra;x/4
@@ -809,49 +809,117 @@ CopyBkgToWin::
   rra;x/4
   rra;x/8
   ld e, a ; y
+  ret
 
-  ld h, 20
-  ld l, 18
-
-  push hl;wh
-  push de;xy
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
-
-  pop de;xy
-  pop hl;wh
-  push hl
-  push de
-  ld bc, bkg_buffer
-  call gbdk_SetWinTiles
-
-  pop de;xy
-  pop hl;wh
-  push hl
-  push de
-  
+DistanceToScreenOrVRAMEdge::;tile xy in de, returns wh in hl
   ld a, 32
-  sub d
-  cp h
-  jr nc, .skipRight
   sub a, d
+  ld h, a ; w
+  ld a, 20
+  cp h
+  jr nc, .skipWidth
   ld h, a
+.skipWidth
+
+  ld a, 32
+  sub a, e
+  ld l, a ; h
+  ld a, 18
+  cp l
+  jr nc, .skipHeight
+  ld l, a
+.skipHeight
+
+  ret 
+
+CopyBkgToWin::
+  call ScrollXYToTileXY;de
+  call DistanceToScreenOrVRAMEdge;hl
+  
   push hl;wh
   push de;xy
   ld bc, bkg_buffer
   call gbdk_GetBkgTiles
+
   pop de;xy
   pop hl;wh
   push hl
   push de
+  ld de, 0
   ld bc, bkg_buffer
   call gbdk_SetWinTiles
+
   pop de;xy
   pop hl;wh
-  
+  push hl
+  push de
+
+    ld a, 32-20
+    cp d
+    jr nc, .skipRight
+    ld d, h;x = left width
+    ld a, 20
+    sub a, h
+    ld h, a; right width
+
+    push hl;wh
+    push de;xy
+    ld d, 0
+    ld bc, bkg_buffer
+    call gbdk_GetBkgTiles
+
+    pop de;xy
+    pop hl;wh
+    push hl
+    push de
+    ld e, 0
+    ld bc, bkg_buffer
+    call gbdk_SetWinTiles
+
+    pop de;xy
+    pop hl;wh
+    
+    ld a, 32-18
+    cp e
+    jr nc, .skipRight;skip bottom right
+    ld e, l;y = upper height
+    ld a, 18
+    sub a, l
+    ld l, a; bottom right height
+
+    push hl;wh
+    push de;xy
+    ld de, 0
+    ld bc, bkg_buffer
+    call gbdk_GetBkgTiles
+
+    pop de;xy
+    pop hl;wh
+    ld bc, bkg_buffer
+    call gbdk_SetWinTiles
 .skipRight
 
   pop de;xy
   pop hl;wh
+  ld a, 32-18
+  cp e
+  jr nc, .skipBottom;skip bottom 
+  ld e, l;y = upper height
+  ld a, 18
+  sub a, l
+  ld l, a; bottom height
+
+  push hl;wh
+  push de;xy
+  ld e, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+
+  pop de;xy
+  pop hl;wh
+  ld d, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+.skipBottom
   
   ret

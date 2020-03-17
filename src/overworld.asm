@@ -363,17 +363,11 @@ ShowPauseMenu:
 
   ld hl, LowerStartMenuText
   ld de, str_buffer
-  call str_Append
+  call str_Append;text
 
   ld hl, name_buffer
   xor a
-  ld [hl], a
-
-  ld b, 30
-  ld c, 0
-  ld d, 10
-  ld e, 16
-  call ShowListMenu ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+  ld [hl], a;no title
 
   ld a, 7
   ld [rWX], a
@@ -381,7 +375,18 @@ ShowPauseMenu:
   ld [rWY], a
   SHOW_WIN
 
+  ld b, 10;x
+  ld c, 0 ;y
+  ld d, 10;w
+  ld e, 16;h
+  ld a, 1;draw on win
+  call ShowListMenu ;returns choice in a
+
+  HIDE_WIN
+
   call SetMapTiles
+  WAITPAD_UP
+
   ret
 
 CheckActions:

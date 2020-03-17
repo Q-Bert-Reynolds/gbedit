@@ -165,35 +165,18 @@ SetMapTiles::; sets full background using positional data
   ld a, [loaded_bank]
   ld [temp_bank], a
 
-  call LoadMapData;return bc = map id, de = xy
+  call LoadMapData;returns bc = map id, de = xy
   push bc ;map id
 
-  ld a, 32
-  sub a, d
-  ld h, a ; w
-  ld a, 20
-  cp h
-  jr nc, .skipWidth
-  ld h, a
-.skipWidth
-
-  ld a, 32
-  sub a, e
-  ld l, a ; h
-  ld a, 18
-  cp l
-  jr nc, .skipHeight
-  ld l, a
-.skipHeight
-  
-  call DrawMapTilesChunk
+  call DistanceToScreenOrVRAMEdge;returns hl = wh
+  call DrawMapTilesChunk;returns de = xy, hl = wh
   pop bc;map id
   push bc;map id
   
   push de;xy
   push hl;wh
 
-  ld a, 12
+  ld a, 32-20
   cp d
   jr nc, .skipRightMap
   ld a, 20
@@ -210,7 +193,7 @@ SetMapTiles::; sets full background using positional data
   call DrawMapTilesChunk
   pop bc;map id to right
 
-  ld a, 14
+  ld a, 32-18
   cp e
   jr nc, .skipRightMap;skip bottom right
   ld a, 18
@@ -232,7 +215,7 @@ SetMapTiles::; sets full background using positional data
   pop de;xy
   pop bc;map id
   
-  ld a, 14
+  ld a, 32-18
   cp e
   jr nc, .skipBottomMap
   ld a, 18
@@ -364,17 +347,7 @@ LoadMapData:;returns bc = map data, de = screen tile xy
   ld b, h
   ld c, l
 
-  ld a, [rSCX]
-  rra;x/2
-  rra;x/4
-  rra;x/8
-  ld d, a ; x
-  
-  ld a, [rSCY]
-  rra;x/2
-  rra;x/4
-  rra;x/8
-  ld e, a ; y
+  call ScrollXYToTileXY
 
   ret
 

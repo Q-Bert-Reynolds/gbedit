@@ -638,7 +638,7 @@ StartGame::
     cp 3
     jr nz, .playBallLoop
     ld hl, QuittingIsNotAnOptionText
-    call RevealText
+    call RevealTextAndWait
     HIDE_WIN
     jp .playBallLoop
 .exitPlayBallLoop

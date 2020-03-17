@@ -4,10 +4,11 @@ SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
 
 ;UILoadFontTiles
-;UIRevealText - hl = text
+;UIRevealText - a = draw flags, hl = text, de = xy
+;UIRevealTextAndWait - a = draw flags, hl = text
 ;UIShowOptions
-;UIShowTextEntry - de = title, hl = str, c = max_len
-;UIShowListMenu - returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+;UIShowTextEntry - a = draw flags, de = title, hl = str, c = max_len
+;UIShowListMenu - a = draw flags, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
 
 UILoadFontTiles::
   ld hl, _UiFontTiles
@@ -68,37 +69,36 @@ FlashNextArrow: ;de = xy
 .exitFlashNextArrow
   ret
 
-UIRevealText::
+UIRevealText:: ;a = draw flags, hl = text, de = xy
+  push af;draw flags
   push hl;text
+  push de;xy
 
-  xor a
-  ld b, a
-  ld c, a
-  ld a, 20
-  ld d, a
-  ld a, 6
-  ld e, a
+  ld b, d
+  ld c, e
+  ld d, 20
+  ld e, 6
   call DrawWinUIBox; bc = xy, de = wh; draw_win_ui_box(0,0,20,6);
-
-  ld a, 7
-  ld [rWX], a
-  ld a, 96
-  ld [rWY], a; move_win(7,96);
-  SHOW_WIN
   
+  SHOW_WIN
+
   xor a
   ld [_i], a
   ld [_x], a
   ld [_y], a
   ld [_w], a
-  pop hl ;text
-  push hl
+  pop de;xy
+  pop hl;text
+  push hl;text
+  push de;xy
   call str_Length ;de = length
   ld a, e ;assumes length < 256
   ld [_l], a; l = strlen(text);
 .revealTextLoop; for (i = 0; i < l; ++i) {
+    pop de;xy
     pop hl;text
-    push hl
+    push hl;text
+    push de;xy
 .testNewLine;   if (text[i] == '\n') {
     xor a
     ld b, a
@@ -107,22 +107,30 @@ UIRevealText::
     add hl, bc;text[i]
     ld a, [hl]
     cp "\n"
-    jr nz, .drawCharacter
+    jp nz, .drawCharacter
 
       ld a, [_y]
       inc a
       ld [_y], a
       sub a, 2
-      jr nz, .skipFlash ;if (y == 2) {
-        ld d, 18
-        ld e, 4
+      jp nz, .skipFlash ;if (y == 2) {
+        pop de;xy
+        push de;xy
+        ld a, d
+        add a, 18
+        ld d, a
+        ld a, e
+        add a, 4
+        ld e, a
         call FlashNextArrow ;flash_next_arrow(18,4);
 
         ld a, 1
         ld [_y], a
 
+        pop de;xy
         pop hl;text
-        push hl
+        push hl;text
+        push de;xy
         xor a
         ld b, a
         ld a, [_w]
@@ -148,8 +156,20 @@ UIRevealText::
         call mem_Set
 .skipWhiteSpace
 
-        ld d, 1 ;x
-        ld e, 2 ;y
+        pop de;xy
+        pop hl;text
+        pop af;draw flags
+        push af;draw flags
+        push hl;text
+        push de;xy
+        and a, DRAW_FLAGS_PAD_TOP
+        rr a
+        add a, e
+        add a, 1
+        ld e, a;y
+        ld a, d
+        add a, 1
+        ld d, a;x
         ld h, 17 ;w
         ld l, 1 ;h
         ld bc, str_buffer
@@ -159,8 +179,20 @@ UIRevealText::
         ld hl, str_buffer
         ld a, " "
         call mem_Set
-        ld d, 1 ;x
-        ld e, 4 ;y
+        pop de;xy
+        pop hl;text
+        pop af;draw flags
+        push af;draw flags
+        push hl;text
+        push de;xy
+        and a, DRAW_FLAGS_PAD_TOP
+        rr a
+        add a, e
+        add a, 3
+        ld e, a;y
+        ld a, d
+        add a, 1
+        ld d, a;x
         ld h, 17 ;w
         ld l, 1 ;h
         ld bc, str_buffer
@@ -174,8 +206,13 @@ UIRevealText::
       ld [_w], a
       jr .delay
 .drawCharacter ;else {
-    pop hl; text
-    push hl
+    pop de;xy
+    pop hl;text
+    pop af;draw flags
+    push af;draw flags
+    push hl;text
+    push de;xy
+    push af;draw flags
     xor a
     ld b, a
     ld a, [_i]
@@ -189,8 +226,21 @@ UIRevealText::
     ld d, a ;_x+1
     ld a, [_y]
     add a, a;_y*2
-    add a, 2;_y*2+2
-    ld e, a ;y=_y*2+2
+    add a, 1;_y*2+1
+    ld e, a ;y=_y*2+1
+    pop af;draw flags
+    and a, DRAW_FLAGS_PAD_TOP
+    rr a
+    add a, e
+    ld e, a;if pad top, y=_y*2+2
+    pop hl;xy
+    push hl;xy
+    ld a, d
+    add a, h
+    ld d, a
+    ld a, e
+    add a, l
+    ld e, a
     ld h, 1 ;w
     ld l, 1 ;h
     call gbdk_SetWinTiles;set_win_tiles(x+1,y*2+2,1,1,text+i);
@@ -207,10 +257,24 @@ UIRevealText::
     sub b
     jp nz, .revealTextLoop
 
+  pop de;xy
+  pop hl;text
+  pop af;draw flags
+  ret
+
+UIRevealTextAndWait::
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a; move_win(7,96);
+  
+  ld de, 0
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call UIRevealText
+
   ld d, 18
   ld e, 4
   call FlashNextArrow ;flash_next_arrow(18,4);
-  pop hl ;text
   ret
 
 SET_MOVE_OPTIONS_ARROW_TILE: MACRO ;var, row, column
@@ -1046,7 +1110,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   pop af;a = max_len
   ret
 
-DrawListEntry:; a=isWin, bc=xy, de=wh, hl=text
+DrawListEntry:; a=draw flags, bc=xy, de=wh, hl=text
   ;store register state
   push bc ;xy
   push de ;wh
@@ -1060,20 +1124,25 @@ DrawListEntry:; a=isWin, bc=xy, de=wh, hl=text
   push hl ;wh
   push bc ;text
 
-  push af ;isWin
+  push af ;draw flags
 
   ld a, d
   add a, 2
   ld d, a;x = x+2
   ld a, [_j]
   ld e, a;y = _j
-  ld a, a
+  pop af ;draw flags
+  push af ;draw flags
+  and a, DRAW_FLAGS_PAD_TOP
+  rr a
+  add a, e
+  ld e, a;+1 if pad
   ld a, [_l]
   ld h, a;w = _l
   ld a, 1
   ld l, a;h = 1
   ld bc, tile_buffer
-  pop af;isWin?
+  pop af;draw flags
   call SetTiles
 
   ;restore initial register state
@@ -1082,14 +1151,14 @@ DrawListEntry:; a=isWin, bc=xy, de=wh, hl=text
   pop bc ;xy
   ret 
 
-UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
-  push af ;isWin?
+UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
+  push af ;draw flags
   push bc ;xy
   push de ;wh
   call DrawUIBox
   pop hl ;wh
   pop de ;xy
-  pop af ;isWin?
+  pop af ;draw flags
   push af
   push de ;xy
   push hl ;wh
@@ -1097,27 +1166,27 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   call SetTiles
   pop de ;wh
   pop bc ;xy
-  pop af ;isWin?
+  pop af ;draw flags
   push af
 
   xor a
   ld [_l], a ; length of current entry
   ld [_c], a ; number of rows (used later)
   ld a, c
-  add a, 2
+  add a, 1
   ld [_j], a ;y position to draw entry
   ld hl, str_buffer ; first letter of current entry (from text)
-  pop af ;isWin?
+  pop af ;draw flags
 .drawListEntriesLoop
     push bc ;xy
     push de ;wh
     push hl ;text
-    push af ;isWin?
+    push af ;draw flags
 .testNewLine; if (text[k] == '\n') {
     ld a, [hl] ;text
     cp "\n"
     jr nz, .testStringEnd
-    pop af ;isWin?
+    pop af ;draw flags
     push af
     call DrawListEntry
     xor a
@@ -1128,7 +1197,7 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
     ld a, [_c]
     inc a
     ld [_c], a
-    pop af;isWin?
+    pop af;draw flags
     pop hl;text
     push af
     push hl
@@ -1136,13 +1205,13 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
 .testStringEnd; else if (text[k] == '\0') {
     and a
     jr nz, .copyCharacterToTiles
-    pop af ;isWin?
+    pop af ;draw flags
     push af
     call DrawListEntry
     ld a, [_c]
     inc a
     ld [_c], a
-    pop af ;isWin?
+    pop af ;draw flags
     pop hl ;text
     pop de ;wh
     pop bc ;xy
@@ -1156,15 +1225,15 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
     inc a
     ld [_l], a
     add hl, bc
-    pop af;isWin?
+    pop af;draw flags
     pop bc ;text
-    push af;isWin?
+    push af;draw flags
     ld a, [bc]
     ld [hl], a
     push bc ;text
 .nextCharacter
     pop hl ;text
-    pop af ;isWin?
+    pop af ;draw flags
     inc hl
     pop de ;wh
     pop bc ;xy
@@ -1174,24 +1243,24 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   push bc ;xy
   push de ;wh
 
-  push af ;isWin
+  push af ;draw flags
   xor a
   ld [_j], a
   ld d, b
   inc d
   ld e, c
   inc e
-  pop af ;isWin
-  push af ;isWin
+  pop af ;draw flags
+  push af ;draw flags
   call DrawListMenuArrow
-  pop af ;isWin
+  pop af ;draw flags
 
   pop de ;wh
   pop bc ;xy
   
   push bc ;xy
   push de ;wh
-  push af ;isWin?
+  push af ;draw flags
 .drawTitle
   push de ;wh
   ld hl, name_buffer
@@ -1210,7 +1279,7 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   ld a, 1
   ld e, a ;h = 1
   ;surely there's a better way to do this than rearrange registers
-  pop af ;isWin?
+  pop af ;draw flags
   push bc ;xy
   push de ;wh
   ld bc, name_buffer
@@ -1228,18 +1297,18 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
   pop bc ;xy
 
   push bc ;xy
-  push af;isWin?
+  push af;draw flags
   WAITPAD_UP;update_waitpadup();
   xor a
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
     call UpdateInput
-    pop af;isWin
+    pop af;draw flags
     pop de;xy
     push de
     inc d
     inc e
-    push af;isWin
+    push af;draw flags
     call MoveListMenuArrow
 .selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
     ld a, [button_state]
@@ -1258,6 +1327,6 @@ UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [na
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
-  pop de ;discard isWin
+  pop de ;discard draw flags
   pop bc ;xy
   ret ;return a

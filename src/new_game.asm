@@ -145,11 +145,11 @@ NewGame::
   
 ; reveal_text("Hello there!\nWelcome to the\nworld of BéiSBOL.", NEW_GAME_BANK);
   ld hl, HelloThereString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("My name is DOC!\nPeople call me\nthe BéiSBOL PROF!", NEW_GAME_BANK);
   ld hl, MyNameIsDocString
-  call RevealText
+  call RevealTextAndWait
   FADE_OUT
 
 ;set image to Muchacho
@@ -170,19 +170,19 @@ NewGame::
   FADE_IN
 ; reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!", NEW_GAME_BANK);
   ld hl, ThisWorldIsString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams", NEW_GAME_BANK);
   ld hl, ForSomeString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("Myself...", NEW_GAME_BANK);
   ld hl, MyselfString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("I study BéiSBOL\nas a profession.", NEW_GAME_BANK);
   ld hl, IStudyBeisbolString
-  call RevealText
+  call RevealTextAndWait
   FADE_OUT
 
 ; set image to Calvin
@@ -226,7 +226,7 @@ NewGame::
 
 ; reveal_text("First, what is\nyour name?", NEW_GAME_BANK);
   ld hl, WhatIsYourNameString
-  call RevealText
+  call RevealTextAndWait
 
   ld a, 48
   ld [_i], a
@@ -254,12 +254,13 @@ ENDC
   ld de, name_buffer
   call str_Copy
   
-  ld a, 12
-  ld d, a
-  ld e, a
   xor a
   ld b, a
   ld c, a
+  ld a, 12
+  ld d, a
+  ld e, a
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
   ld [_d], a
   and a
@@ -278,7 +279,7 @@ ENDC
 
 ; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
-  call RevealText
+  call RevealTextAndWait
 
   FADE_OUT
 
@@ -328,11 +329,11 @@ ENDC
 
 ; reveal_text("This is my grand-\nson. He's been\nyour rival since\nyou were a rookie", NEW_GAME_BANK);
   ld hl, MyGrandsonString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("...Erm, what is\nhis name again?", NEW_GAME_BANK);
   ld hl, WhatIsYourRivalString
-  call RevealText
+  call RevealTextAndWait
 
   ld a, 48
   ld [_i], a
@@ -360,12 +361,13 @@ ENDC
   ld de, name_buffer
   call str_Copy
   
-  ld a, 12
-  ld d, a
-  ld e, a
   xor a
   ld b, a
   ld c, a
+  ld a, 12
+  ld d, a
+  ld e, a
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
   ld [_d], a
   and a
@@ -382,7 +384,7 @@ ENDC
   call str_Replace
 ; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
-  call RevealText
+  call RevealTextAndWait
   FADE_OUT
 
 ;save rival name
@@ -438,15 +440,15 @@ ENDC
 
 ; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("Your very own\nBéiSBOL legend is\nabout to unfold!", NEW_GAME_BANK);
   ld hl, YourBeisbolLegendString
-  call RevealText
+  call RevealTextAndWait
 
 ; reveal_text("A world of dreams\nand adventures\nwith BéiSBOL\nawaits! Let's go!", NEW_GAME_BANK); //don't wait for input at the end
   ld hl, AWorldOfDreamsString
-  call RevealText
+  call RevealTextAndWait
 
   ;TODO: shrink image
   FADE_OUT

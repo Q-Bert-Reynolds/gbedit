@@ -570,7 +570,7 @@ ShowPlayerMenu:
   sub a, c
   sub a, 2
   ld c, a
-  xor a
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call ShowListMenu; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
   and a
   jr z, .exit

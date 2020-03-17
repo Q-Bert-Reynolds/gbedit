@@ -379,7 +379,7 @@ ShowPauseMenu:
   ld c, 0 ;y
   ld d, 10;w
   ld e, 16;h
-  ld a, 1;draw on win
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call ShowListMenu ;returns choice in a
 
   and a
@@ -410,8 +410,8 @@ ShowPauseMenu:
 .save
   cp 5
   jr nz, .option
-
-  jp ShowPauseMenu
+  call SaveGame
+  jp .exit
 .option
   cp 6
   jr nz, .exit

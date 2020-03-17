@@ -134,8 +134,8 @@ LoadFontTiles::
   call SetBank
   ret
 
-SetTiles::;a = isWin?
-  and a
+SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
+  and a, DRAW_FLAGS_WIN
   jr z, .skip
   call gbdk_SetWinTiles
   ret
@@ -180,7 +180,7 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   call gbdk_SetBkgTiles ;set_bkg_tiles(x,y,w,h,tiles);
   ret
 
-RevealText:: ;hl = text
+RevealTextAndWait:: ;hl = text
   ld de, str_buffer
   call str_Copy
 
@@ -189,6 +189,27 @@ RevealText:: ;hl = text
   ld a, UI_BANK
   call SetBank
 
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_PAD_TOP
+  call UIRevealTextAndWait
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
+RevealText:: ;a = draw flags, de = xy hl = text
+  push af;draw flags
+  push de;xy
+  ld de, str_buffer
+  call str_Copy
+
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
+  pop de;xy
+  pop af;draw flags
   ld hl, str_buffer
   call UIRevealText
 
@@ -344,8 +365,8 @@ DisplayText:: ;hl = text
   SHOW_WIN
   ret
 
-DrawListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count
-  push af;isWin?
+DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
+  push af;draw flags
   xor a
   ld [_i], a
   ld hl, tile_buffer
@@ -372,19 +393,29 @@ DrawListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count
     sub a, b ;_c-_i
     jp nz, .tilesLoop
 
+  xor a
+  ld [hl], a
+
   ld a, 1
   ld h, a ;w=1
   ld a, [_c]
   add a, a
   ld l, a ;h=_c*2
   
+  pop af;draw flags
+  push af
   ld bc, tile_buffer
-  pop af;isWin?
+  and a, DRAW_FLAGS_PAD_TOP
+  jr nz, .setTiles
+  inc bc
+  dec l
+.setTiles
+  pop af;draw flags
   call SetTiles
   ret
 
-MoveListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count, must call UpdateInput first
-  push af;isWin
+MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first
+  push af;draw flags
 .checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
   ld a, [button_state]
   and a, PADF_UP
@@ -396,7 +427,7 @@ MoveListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count, must c
   ld a, [_j]
   dec a
   ld [_j], a ;--j
-  pop af;isWin
+  pop af;draw flags
   call DrawListMenuArrow;move_menu_arrow(--j);
   WAITPAD_UP ;update_waitpadup();
   ret
@@ -414,7 +445,7 @@ MoveListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count, must c
   ld a, [_j]
   inc a
   ld [_j], a ;++j
-  pop af;isWin
+  pop af;draw flags
   call DrawListMenuArrow;move_menu_arrow(++j);
   WAITPAD_UP ;update_waitpadup();
   ret
@@ -422,15 +453,15 @@ MoveListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count, must c
   pop af
   ret
 
-ShowListMenu:: ;a = isWin? bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
-  push af;isWin
+ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+  push af;draw flags
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, UI_BANK
   call SetBank
   
-  pop af;isWin
-  call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
+  pop af;draw flags
+  call UIShowListMenu
   push af;choice
 
   ld a, [temp_bank]
@@ -922,4 +953,29 @@ CopyBkgToWin::
   call gbdk_SetWinTiles
 .skipBottom
   
+  ret
+
+YesNoText:
+  DB "YES\nNO",0
+
+SaveGameText:
+  DB "Would you like to\nSAVE the game?",0
+
+SaveGame::
+  ld de, 12;(0,12)
+  ld hl, SaveGameText
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+
+  ld hl, YesNoText
+  ld de, str_buffer
+  call str_Copy
+  ld hl, name_buffer
+  xor a
+  ld [hl], a
+  ld bc, 7;(0,7)
+  ld d, 6
+  ld e, 5
+  ld a, DRAW_FLAGS_WIN
+  call ShowListMenu
   ret

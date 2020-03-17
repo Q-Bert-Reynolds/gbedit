@@ -109,7 +109,7 @@ PlayIntro:
   ld bc, name_buffer
   call str_Replace
   ld hl, str_buffer
-  call RevealText ;reveal_text(str_buff, PLAY_BALL_BANK);
+  call RevealTextAndWait ;reveal_text(str_buff, PLAY_BALL_BANK);
 
   SET_LCD_INTERRUPT SlideOutLCDInterrupt
 
@@ -145,6 +145,6 @@ PlayIntro:
   ld [rSCY], a
 
   ld hl, LetsGoText
-  call RevealText
+  call RevealTextAndWait
   HIDE_WIN
   ret

@@ -134,6 +134,15 @@ LoadFontTiles::
   call SetBank
   ret
 
+SetTiles::;a = isWin?
+  and a
+  jr z, .skip
+  call gbdk_SetWinTiles
+  ret
+.skip
+  call gbdk_SetBkgTiles
+  ret
+
 SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   push de ;xy
   push hl ;wh
@@ -335,7 +344,8 @@ DisplayText:: ;hl = text
   SHOW_WIN
   ret
 
-DrawListMenuArrow:: ;de = xy, _j = current index, _c = count
+DrawListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count
+  push af;isWin?
   xor a
   ld [_i], a
   ld hl, tile_buffer
@@ -369,10 +379,12 @@ DrawListMenuArrow:: ;de = xy, _j = current index, _c = count
   ld l, a ;h=_c*2
   
   ld bc, tile_buffer
-  call gbdk_SetBkgTiles;set_bkg_tiles(x,y,1,c*2,tile_buffer);
+  pop af;isWin?
+  call SetTiles
   ret
 
-MoveListMenuArrow:: ;de = xy, _j = current index, _c = count, must call UpdateInput first
+MoveListMenuArrow:: ;a = isWin?, de = xy, _j = current index, _c = count, must call UpdateInput first
+  push af;isWin
 .checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
   ld a, [button_state]
   and a, PADF_UP
@@ -384,41 +396,48 @@ MoveListMenuArrow:: ;de = xy, _j = current index, _c = count, must call UpdateIn
   ld a, [_j]
   dec a
   ld [_j], a ;--j
+  pop af;isWin
   call DrawListMenuArrow;move_menu_arrow(--j);
   WAITPAD_UP ;update_waitpadup();
   ret
 .checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
   ld a, [button_state]
   and a, PADF_DOWN
-  ret z
+  jr z, .exit
   ld a, [_c]
   dec a
   ld b, a
   ld a, [_j]
   cp b
-  ret nc
+  jr nc, .exit
   call gbdk_WaitVBL
   ld a, [_j]
   inc a
   ld [_j], a ;++j
+  pop af;isWin
   call DrawListMenuArrow;move_menu_arrow(++j);
   WAITPAD_UP ;update_waitpadup();
   ret
+.exit
+  pop af
+  ret
 
-ShowListMenu:: ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+ShowListMenu:: ;a = isWin? bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+  push af;isWin
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, UI_BANK
   call SetBank
-
+  
+  pop af;isWin
   call UIShowListMenu ;a = ui_show_list_menu(x,y,w,h,name_buffer,str_buffer);
-  push af
+  push af;choice
 
   ld a, [temp_bank]
   call SetBank
 
-  pop af
-  ret; return a;
+  pop af;choice
+  ret; return a=choice;
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
   push hl ;max_len
@@ -455,6 +474,17 @@ ShowOptions::
   call UIShowOptions
 
   ld a, [temp_bank]
+  call SetBank
+  ret
+
+ShowLineupFromWorld::
+  ld a, LINEUP_BANK
+  call SetBank
+
+  ld a, 0
+  call ShowLineup
+
+  ld a, OVERWORLD_BANK
   call SetBank
   ret
 
@@ -765,4 +795,63 @@ SetMovePPTiles::;a = move, de = player, hl = tile address
   pop de; address
   call str_Copy
 
+  ret
+
+CopyBkgToWin::
+  ld a, [rSCX]
+  rra;x/2
+  rra;x/4
+  rra;x/8
+  ld d, a ; x
+  
+  ld a, [rSCY]
+  rra;x/2
+  rra;x/4
+  rra;x/8
+  ld e, a ; y
+
+  ld h, 20
+  ld l, 18
+
+  push hl;wh
+  push de;xy
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+
+  pop de;xy
+  pop hl;wh
+  push hl
+  push de
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+
+  pop de;xy
+  pop hl;wh
+  push hl
+  push de
+  
+  ld a, 32
+  sub d
+  cp h
+  jr nc, .skipRight
+  sub a, d
+  ld h, a
+  push hl;wh
+  push de;xy
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+  pop de;xy
+  pop hl;wh
+  push hl
+  push de
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+  pop de;xy
+  pop hl;wh
+  
+.skipRight
+
+  pop de;xy
+  pop hl;wh
+  
   ret

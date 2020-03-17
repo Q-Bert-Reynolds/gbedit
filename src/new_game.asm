@@ -254,12 +254,12 @@ ENDC
   ld de, name_buffer
   call str_Copy
   
-  xor a
-  ld b, a
-  ld c, a
   ld a, 12
   ld d, a
   ld e, a
+  xor a
+  ld b, a
+  ld c, a
   call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
   ld [_d], a
   and a
@@ -360,12 +360,12 @@ ENDC
   ld de, name_buffer
   call str_Copy
   
-  xor a
-  ld b, a
-  ld c, a
   ld a, 12
   ld d, a
   ld e, a
+  xor a
+  ld b, a
+  ld c, a
   call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
   ld [_d], a
   and a

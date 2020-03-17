@@ -1044,7 +1044,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   pop af;a = max_len
   ret
 
-DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
+DrawListEntry:; a=isWin, bc=xy, de=wh, hl=text
   ;store register state
   push bc ;xy
   push de ;wh
@@ -1058,6 +1058,8 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   push hl ;wh
   push bc ;text
 
+  push af ;isWin
+
   ld a, d
   add a, 2
   ld d, a;x = x+2
@@ -1069,7 +1071,8 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   ld a, 1
   ld l, a;h = 1
   ld bc, tile_buffer
-  call gbdk_SetBkgTiles
+  pop af;isWin?
+  call SetTiles
 
   ;restore initial register state
   pop hl ;text
@@ -1077,12 +1080,23 @@ DrawListEntry: ;set_bkg_tiles(b+2,_j,_l,1,hl);
   pop bc ;xy
   ret 
 
-UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
+UIShowListMenu::; a = isWin?, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
+  push af ;isWin?
   push bc ;xy
   push de ;wh
-  call DrawBKGUIBox; draw_bkg_ui_box(x,y,w,h);
+  call DrawUIBox
+  pop hl ;wh
+  pop de ;xy
+  pop af ;isWin?
+  push af
+  push de ;xy
+  push hl ;wh
+  ld bc, tile_buffer
+  call SetTiles
   pop de ;wh
   pop bc ;xy
+  pop af ;isWin?
+  push af
 
   xor a
   ld [_l], a ; length of current entry
@@ -1091,67 +1105,85 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   add a, 2
   ld [_j], a ;y position to draw entry
   ld hl, str_buffer ; first letter of current entry (from text)
+  pop af ;isWin?
 .drawListEntriesLoop
-  push bc ;xy
-  push de ;wh
-  push hl ;text
+    push bc ;xy
+    push de ;wh
+    push hl ;text
+    push af ;isWin?
 .testNewLine; if (text[k] == '\n') {
-  ld a, [hl] ;text
-  cp "\n"
-  jr nz, .testStringEnd
-  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tile_buffer);
-  xor a
-  ld [_l], a
-  ld a, [_j]
-  add a, 2
-  ld [_j], a
-  ld a, [_c]
-  inc a
-  ld [_c], a
-  jr .nextCharacter
+    ld a, [hl] ;text
+    cp "\n"
+    jr nz, .testStringEnd
+    pop af ;isWin?
+    push af
+    call DrawListEntry
+    xor a
+    ld [_l], a
+    ld a, [_j]
+    add a, 2
+    ld [_j], a
+    ld a, [_c]
+    inc a
+    ld [_c], a
+    pop af;isWin?
+    pop hl;text
+    push af
+    push hl
+    jr .nextCharacter
 .testStringEnd; else if (text[k] == '\0') {
-  and a
-  jr nz, .copyCharacterToTiles
-  call DrawListEntry;set_bkg_tiles(x+2,j,l,1,tile_buffer);
-  ld a, [_c]
-  inc a
-  ld [_c], a
-  pop hl ;text
-  pop de ;wh
-  pop bc ;xy
-  jr .exitDrawListEntriesLoop ;break;
+    and a
+    jr nz, .copyCharacterToTiles
+    pop af ;isWin?
+    push af
+    call DrawListEntry
+    ld a, [_c]
+    inc a
+    ld [_c], a
+    pop af ;isWin?
+    pop hl ;text
+    pop de ;wh
+    pop bc ;xy
+    jr .exitDrawListEntriesLoop ;break;
 .copyCharacterToTiles; else tiles[++l] = text[k];
-  ld hl, tile_buffer
-  xor a
-  ld b, a
-  ld a, [_l]
-  ld c, a
-  inc a
-  ld [_l], a
-  add hl, bc
-  pop bc ;text
-  ld a, [bc]
-  ld [hl], a
-  push bc ;text
+    ld hl, tile_buffer
+    xor a
+    ld b, a
+    ld a, [_l]
+    ld c, a
+    inc a
+    ld [_l], a
+    add hl, bc
+    pop af;isWin?
+    pop bc ;text
+    push af;isWin?
+    ld a, [bc]
+    ld [hl], a
+    push bc ;text
 .nextCharacter
-  pop hl ;text
-  inc hl
-  pop de ;wh
-  pop bc ;xy
-  jp .drawListEntriesLoop
-.exitDrawListEntriesLoop
+    pop hl ;text
+    pop af ;isWin?
+    inc hl
+    pop de ;wh
+    pop bc ;xy
+    jp .drawListEntriesLoop
 
+.exitDrawListEntriesLoop
   push bc ;xy
   push de ;wh
 
   push bc
+  push af ;isWin
   xor a
   ld [_j], a
   ld d, b
   inc d
   ld e, c
   inc e
+  pop af ;isWin
+  push af ;isWin
   call DrawListMenuArrow
+  pop af ;isWin
   pop bc
 
   pop de ;wh
@@ -1160,6 +1192,7 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   push bc ;xy
   push de ;wh
 .drawTitle
+  push af ;isWin?
   push de ;wh
   ld hl, name_buffer
   call str_Length; puts length in de
@@ -1177,26 +1210,36 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
   ld a, 1
   ld e, a ;h = 1
   ;surely there's a better way to do this than rearrange registers
+  pop af ;isWin?
   push bc ;xy
   push de ;wh
   ld bc, name_buffer
   pop hl ;wh
   pop de ;xy
-  call gbdk_SetBkgTiles ;set_bkg_tiles(x+i,y,l,1,title);
+  push af
+  call SetTiles ;set_bkg_tiles(x+i,y,l,1,title);
+  pop af
+  pop de
+  push af
+  push de
 .skipTitle
+  pop af
   pop de ;wh
   pop bc ;xy
 
   push bc ;xy
+  push af;isWin?
   WAITPAD_UP;update_waitpadup();
   xor a
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
     call UpdateInput
+    pop af;isWin
     pop de;xy
     push de
     inc d
     inc e
+    push af;isWin
     call MoveListMenuArrow
 .selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
     ld a, [button_state]
@@ -1215,5 +1258,6 @@ UIShowListMenu::; returns a, bc = xy, de = wh, text = [str_buffer], title = [nam
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
+  pop hl ;discard isWin
   pop bc ;xy
   ret ;return a

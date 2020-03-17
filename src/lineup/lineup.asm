@@ -14,6 +14,7 @@ SwapPositions: ;bc = player count, selected player
   ld [_j], a
   ld [_k], a
   ld de, 0
+  xor a
   call DrawListMenuArrow
   WAITPAD_UP
 .loop
@@ -569,6 +570,7 @@ ShowPlayerMenu:
   sub a, c
   sub a, 2
   ld c, a
+  xor a
   call ShowListMenu; returns a, bc = xy, de = wh, text = [str_buffer], title = [name_buff]
   and a
   jr z, .exit

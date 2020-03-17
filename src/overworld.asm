@@ -337,8 +337,61 @@ MoveRight:
     jr nz, .loop
   ret
 
+UpperStartMenuText:
+  DB "ROLéDEX\nLINEUP\nITEM\n", 0
+LowerStartMenuText:
+  DB "\nSAVE\nOPTION\nEXIT", 0
+
+ShowPauseMenu:
+  call CopyBkgToWin
+
+  ld hl, UpperStartMenuText
+  ld de, str_buffer
+  call str_Copy
+
+  di
+  ENABLE_RAM_MBC5
+  ld hl, user_name
+  ld de, name_buffer
+  call str_Copy
+  DISABLE_RAM_MBC5
+  ei
+
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, LowerStartMenuText
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, name_buffer
+  xor a
+  ld [hl], a
+
+  ld b, 30
+  ld c, 0
+  ld d, 10
+  ld e, 16
+  call ShowListMenu ; bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  SHOW_WIN
+
+  call SetMapTiles
+  ret
+
+CheckActions:
+
+  ret
+
 Overworld::
   DISPLAY_OFF
+
+  call LoadFontTiles
   
   ld hl, _AvatarsTiles
   ld de, $8000
@@ -374,6 +427,16 @@ Overworld::
 .moveLoop
     call gbdk_WaitVBL
     call UpdateInput
+    ld a, [button_state]
+    and a, PADF_START
+    jr z, .checkA
+    call ShowPauseMenu
+.checkA
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .look
+    call CheckActions
+.look
     ld a, [last_button_state]
     and a, PADF_LEFT|PADF_RIGHT|PADF_UP|PADF_DOWN
     jr nz, .move

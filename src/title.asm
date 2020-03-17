@@ -372,6 +372,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld bc, 0
   ld d, 15
   ld e, 8
+  xor a
   call ShowListMenu ;y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
   cp 1 ;if (y == 1) {
   ret nz ;else return y;
@@ -484,10 +485,8 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   xor a
   ld b, a
   ld c, a ;bc=xy
-  ld a, 15
-  ld d, a ;width
-  ld a, 6
-  ld e, a ;height
+  ld d, 15 ;width
+  ld e, 6 ;height
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret
 

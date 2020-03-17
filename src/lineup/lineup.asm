@@ -14,13 +14,14 @@ SwapPositions: ;bc = player count, selected player
   ld [_j], a
   ld [_k], a
   ld de, 0
-  xor a
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
   WAITPAD_UP
 .loop
     call UpdateInput
     ld de, 0
-    call MoveListMenuArrow ;de = xy, _j = current index, _c = count, must call UpdateInput first
+    ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
+    call MoveListMenuArrow
     ld a, [_j]
     ld b, a
     ld a, [_k]
@@ -217,6 +218,7 @@ ReorderLineup: ;bc = player count, selected player
 .loop
     call UpdateInput
     ld de, 0
+    ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
     call MoveListMenuArrow ;de = xy, _j = current index, _c = count, must call UpdateInput first
     ld a, [_j]
     ld b, a
@@ -657,6 +659,7 @@ ShowLineup::; a = playing_game?
   xor a
   ld [_j], a
   ld de, 0
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
 
   DISPLAY_ON
@@ -664,7 +667,7 @@ ShowLineup::; a = playing_game?
 .loop
     call UpdateInput
     ld de, 0
-    xor a
+    ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
     call MoveListMenuArrow
 .testStartOrA
     ld a, [button_state]

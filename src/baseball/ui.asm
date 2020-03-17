@@ -446,7 +446,8 @@ DrawPlayBallUI:
   ld c, 12
   ld d, 20
   ld e, 6
-  call DrawBKGUIBox ;draw_bkg_ui_box(0,12,20,6);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
 
   call DrawCountOutsInning
 
@@ -620,7 +621,8 @@ ShowMoveInfo:
   ld c, 8
   ld d, 11
   ld e, 5
-  call DrawBKGUIBox;draw_bkg_ui_box(0,8,11,5);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
 
   ld d, 1
   ld e, 9
@@ -692,7 +694,8 @@ SelectMoveMenuItem: ;returns selection in a
   ld c, 12
   ld d, 15
   ld e, 6
-  call DrawBKGUIBox;draw_bkg_ui_box(5,12,15,6);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
 
 .drawMoveNames
   xor a

@@ -217,7 +217,7 @@ RevealText:: ;a = draw flags, de = xy hl = text
   call SetBank
   ret
 
-DrawUIBox: ;Entry: de = wh, Affects: hl
+GetUIBoxTiles: ;Entry: de = wh, Affects: hl
   ld hl, tile_buffer
   xor a
   ld [_j], a
@@ -291,24 +291,16 @@ DrawUIBox: ;Entry: de = wh, Affects: hl
   jr nz, .rowLoop
   ret
 
-DrawBKGUIBox:: ; bc = xy, de = wh
+DrawUIBox::;a=draw flags, bc = xy, de = wh
+  push af ;draw flags
   push bc ;xy
   push de ;wh
-  call DrawUIBox
+  call GetUIBoxTiles
   pop hl ;wh
   pop de ;xy
+  pop af;draw flags
   ld bc, tile_buffer
-  call gbdk_SetBkgTiles
-  ret
-
-DrawWinUIBox:: ; bc = xy, de = wh
-  push bc ;xy
-  push de ;wh
-  call DrawUIBox
-  pop hl ;wh
-  pop de ;xy
-  ld bc, tile_buffer
-  call gbdk_SetWinTiles
+  call SetTiles
   ret
 
 DisplayText:: ;hl = text
@@ -319,7 +311,8 @@ DisplayText:: ;hl = text
   ld c, a
   ld d, 20
   ld e, 6
-  call DrawWinUIBox
+  ld a, DRAW_FLAGS_WIN
+  call DrawUIBox
 
   pop hl;text
   ld bc, str_buffer
@@ -503,6 +496,22 @@ ShowOptions::
   call SetBank
 
   call UIShowOptions
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
+DrawSaveStats::;draw flags, de = xy
+  push af;draw flags
+  push de;xy
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
+  pop de;xy
+  pop af;draw flags
+  call UIDrawSaveStats
 
   ld a, [temp_bank]
   call SetBank
@@ -962,6 +971,11 @@ SaveGameText:
   DB "Would you like to\nSAVE the game?",0
 
 SaveGame::
+  ld d, 4
+  ld e, 0
+  ld a, DRAW_FLAGS_WIN
+  call DrawSaveStats
+
   ld de, 12;(0,12)
   ld hl, SaveGameText
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN

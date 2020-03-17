@@ -78,7 +78,8 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy
   ld c, e
   ld d, 20
   ld e, 6
-  call DrawWinUIBox; bc = xy, de = wh; draw_win_ui_box(0,0,20,6);
+  ld a, DRAW_FLAGS_WIN
+  call DrawUIBox
   
   SHOW_WIN
 
@@ -424,7 +425,8 @@ UIShowOptions::
   ld d, a
   ld a, 5
   ld e, a
-  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,0,20,5);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
   ; set_bkg_tiles(1,1,18,3,
   ;   "TEXT SPEED        "
   ;   "                  "
@@ -443,7 +445,8 @@ UIShowOptions::
   ld e, a
   ld a, 20
   ld d, a
-  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,5,20,5);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
   ; set_bkg_tiles(1,6,18,3,
   ;   "AT-BAT ANIMATIONS "
   ;   "                  "
@@ -463,7 +466,8 @@ UIShowOptions::
   ld d, a
   ld a, 5
   ld e, a
-  call DrawBKGUIBox; bc = xy, de = wh ; draw_bkg_ui_box(0,10,20,5);
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
   ; set_bkg_tiles(1,11,18,3,
   ;   "COACHING STYLE    "
   ;   "                  "
@@ -806,7 +810,8 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   ld d, a
   ld a, 11
   ld e, a
-  call DrawWinUIBox; draw_win_ui_box(0,4,20,11);
+  ld a, DRAW_FLAGS_WIN
+  call DrawUIBox
   DISPLAY_ON
   pop hl ;str
   pop de; e = max_len
@@ -1156,14 +1161,6 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   push bc ;xy
   push de ;wh
   call DrawUIBox
-  pop hl ;wh
-  pop de ;xy
-  pop af ;draw flags
-  push af
-  push de ;xy
-  push hl ;wh
-  ld bc, tile_buffer
-  call SetTiles
   pop de ;wh
   pop bc ;xy
   pop af ;draw flags
@@ -1330,3 +1327,158 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   pop de ;discard draw flags
   pop bc ;xy
   ret ;return a
+
+CoachStatText:
+  db "COACH"
+PennantsStatText:
+  db "PENNANTS"
+RoledexStatText:
+  db "ROLéDEX"
+TimeStatText:
+  db "TIME"
+UIDrawSaveStats::;a = draw flags, de = xy
+  push de;xy
+  push af;draw flags
+  HIDE_ALL_SPRITES
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  ld b, d
+  ld c, e
+  ld d, 16
+  ld e, 10
+  pop af;draw flags
+  push af
+  call DrawUIBox
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  inc d;x+1
+  inc e
+  inc e;y+2
+  ld h, 5
+  ld l, 1
+  ld bc, CoachStatText
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  di
+  SWITCH_RAM_MBC5 0
+  ENABLE_RAM_MBC5
+  ld hl, user_name
+  ld de, name_buffer
+  ld bc, 8
+  call mem_Copy
+  DISABLE_RAM_MBC5
+  ei
+  ld hl, name_buffer
+  call str_Length
+  ld h, e
+  ld l, 1
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  ld a, 10
+  add a, d
+  ld d, a;x+10
+  inc e
+  inc e;y+2
+  ld bc, name_buffer
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  inc d;x+1
+  ld a, 4
+  add a, e
+  ld e, a;y+4
+  ld h, 8
+  ld l, 1
+  ld bc, PennantsStatText
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  ld a, 14
+  add a, d
+  ld d, a;x+14
+  ld a, 4
+  add a, e
+  ld e, a;y+4
+  ld h, 1
+  ld l, 1
+  ld bc, str_buffer
+  ld a, "0"
+  ld [bc], a
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  inc d;x+1
+  ld a, 6
+  add a, e
+  ld e, a;y+6
+  ld h, 7
+  ld l, 1
+  ld bc, RoledexStatText
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  pop af;draw flags
+  pop de;xy
+  push de;xy
+  push af;draw flags
+  ld a, 12
+  add a, d
+  ld d, a;x+12
+  ld a, 6
+  add a, e
+  ld e, a;y+6
+  ld h, 3
+  ld l, 1
+  ld bc, str_buffer
+  ld a, "1"
+  ld [bc], a
+  inc bc
+  inc bc
+  ld [bc], a
+  dec bc
+  ld a, "5"
+  ld [bc], a
+  dec bc
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  pop af;draw flags
+  pop de;xy
+  push af;draw flags
+  inc d;x+1
+  ld a, 8
+  add a, e
+  ld e, a;y+8
+  ld h, 4
+  ld l, 1
+  ld bc, TimeStatText
+  pop af;draw flags
+  call SetTiles
+  ret

@@ -151,7 +151,8 @@ DrawPageOne:
   ld c, 8
   ld d, 10
   ld e, 10
-  call DrawBKGUIBox
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
 
   ld d, 1
   ld e, 9
@@ -443,7 +444,8 @@ DrawPageTwo:
   ld c, 8
   ld d, 20
   ld e, 10
-  call DrawBKGUIBox
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
 
 
   pop hl;player

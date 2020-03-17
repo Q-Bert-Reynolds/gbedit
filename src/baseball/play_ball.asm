@@ -526,7 +526,8 @@ ShowPlayBallWindow:
   ld bc, 0
   ld d, 20
   ld e, 6
-  call DrawWinUIBox
+  ld a, DRAW_FLAGS_WIN
+  call DrawUIBox
 
   ld a, 7
   ld [rWX], a

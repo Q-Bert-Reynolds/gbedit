@@ -411,6 +411,8 @@ ShowPauseMenu:
   cp 5
   jr nz, .option
   call SaveGame
+  call ShowPlayerAvatar
+  call SetMapTiles
   jp .exit
 .option
   cp 6
@@ -445,7 +447,7 @@ CheckActions:
 
   ret
 
-ShowPlayerAvatar:
+ShowPlayerAvatar:;TODO: this doesn't seem to quite restore the sprite state
   ld b, 72
   ld c, 76
   ld h, 2

@@ -407,7 +407,7 @@ DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
   call SetTiles
   ret
 
-MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first
+MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
   push af;draw flags
 .checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
   ld a, [button_state]
@@ -415,35 +415,44 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   jp z, .checkMoveArrowDown
   ld a, [_j]
   or a
-  jp z, .checkMoveArrowDown
+  jp z, .failMoveUp
   call gbdk_WaitVBL
   ld a, [_j]
   dec a
   ld [_j], a ;--j
   pop af;draw flags
+  push af
   call DrawListMenuArrow;move_menu_arrow(--j);
+.failMoveUp
+  pop af;draw flags
   WAITPAD_UP ;update_waitpadup();
+  ld a, -1
   ret
 .checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
   ld a, [button_state]
   and a, PADF_DOWN
-  jr z, .exit
+  jr z, .noMove
   ld a, [_c]
   dec a
   ld b, a
   ld a, [_j]
   cp b
-  jr nc, .exit
+  jr nc, .failMoveDown
   call gbdk_WaitVBL
   ld a, [_j]
   inc a
   ld [_j], a ;++j
   pop af;draw flags
+  push af
   call DrawListMenuArrow;move_menu_arrow(++j);
+.failMoveDown
+  pop af;draw flags
   WAITPAD_UP ;update_waitpadup();
+  ld a, 1
   ret
-.exit
+.noMove
   pop af
+  xor a;0
   ret
 
 ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
@@ -514,6 +523,16 @@ DrawSaveStats::;draw flags, de = xy
   call UIDrawSaveStats
 
   ld a, [temp_bank]
+  call SetBank
+  ret
+
+ShowRoledex::
+  ld a, ROLEDEX_BANK
+  call SetBank
+
+  call ShowRoledexUI
+  
+  ld a, OVERWORLD_BANK
   call SetBank
   ret
 
@@ -992,4 +1011,29 @@ SaveGame::
   ld e, 5
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
+  ret
+
+GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects str_buffer, all registers
+  ld h, 0
+  ld l, a
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, str_buffer
+  ld a, "0"
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+
+  ld hl, name_buffer
+  call str_Length
+  ld a, 3
+  sub a, e
+  ld e, a
+  ld hl, str_buffer
+  add hl, de
+  ld d, h
+  ld e, l
+  ld hl, name_buffer
+  call str_Copy
   ret

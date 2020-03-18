@@ -387,7 +387,7 @@ ShowPauseMenu:
 .roledex
   cp 1
   jr nz, .lineup
-
+  call ShowRoledex
   jp ShowPauseMenu
 .lineup
   cp 2

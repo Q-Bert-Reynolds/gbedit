@@ -114,36 +114,20 @@ DrawPageOne:
 
 .setPlayerNumber
   pop af;num
-  ld h, 0
-  ld l, a
-  ld de, name_buffer
-  call str_Number
+  call GetZeroPaddedNumber
 
-  ld hl, str_buffer
   ld a, "#"
-  ld [hli], a
-  ld a, "0"
-  ld [hli], a
-  ld [hli], a
-  ld [hli], a
-
-  ld hl, name_buffer
-  call str_Length
-  ld a, 4
-  sub a, e
-  ld e, a
+  ld de, name_buffer
+  ld [de], a
+  inc de
   ld hl, str_buffer
-  add hl, de
-  ld d, h
-  ld e, l
-  ld hl, name_buffer
   call str_Copy
 
   ld h, 4
   ld l, 1
   ld d, 2
   ld e, 7
-  ld bc, str_buffer
+  ld bc, name_buffer
   call gbdk_SetBkgTiles
 
 .drawStatNames
@@ -447,7 +431,6 @@ DrawPageTwo:
   ld a, DRAW_FLAGS_BKG
   call DrawUIBox
 
-
   pop hl;player
   push hl
   call GetPlayerMoveCount
@@ -596,10 +579,6 @@ DrawPageTwo:
 .drawNextLevel
   ld bc, name_buffer
   call gbdk_SetBkgTiles
-
-
-
-  
 
   pop hl
   ret

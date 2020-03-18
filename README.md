@@ -83,9 +83,9 @@ Overworld
 
 Rolédex
 
-- layout
-- scrolling
-- details
+- track which players you've seen/signed
+- show details screen
+- finish player descriptions (some show placeholder pokemon text)
 
 Music:
 
@@ -109,6 +109,7 @@ Player images:
 
 # Thanks
 
+- Pascal Felber, Lars Malmborg, Michael Hope, http://gbdk.sourceforge.net
 - Jeff Frohwein, http://devrs.com/gb/
 - John Metcalf, http://www.retroprogramming.com
 - http://z80-heaven.wikidot.com/

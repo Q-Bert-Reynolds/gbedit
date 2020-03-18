@@ -164,6 +164,10 @@ ShowRoledexPage:
     jr nz, .loop
   ret
 
+ShowRoledexPlayer:
+  ;show page
+  ret
+
 ShowRoledexUI::
   ld a, [rSCX]
   ld h, a
@@ -201,19 +205,54 @@ ShowRoledexUI::
     ld a, [_j]
     sub a, c;change in _j
     cp b;check if change is same as expected
-    jr nz, .movePageUpDown
-.checkMovePageLeftRight
-
-    jr .noPageChange
-.movePageUpDown
+    jr z, .checkMovePageLeft
     ld a, [_s]
     add a, b
     ld [_s], a
     call ShowRoledexPage
-.noPageChange
+    jr .waitAndLoop
+.checkMovePageLeft
+    ld a, [button_state]
+    and a, PADF_LEFT
+    jr z, .checkMovePageRight
+    ld a, [_s]
+    cp 7
+    jr c, .showFirstPage
+    sub a, 7
+    ld [_s], a
+    call ShowRoledexPage
+    WAITPAD_UP
+    jr .waitAndLoop
+.showFirstPage
+    ld a, 1
+    ld [_s], a
+    call ShowRoledexPage
+    WAITPAD_UP
+    jr .waitAndLoop
+.checkMovePageRight
+    ld a, [button_state]
+    and a, PADF_RIGHT
+    jr z, .checkAPressed
+    ld a, [_s]
+    add a, 7
+    ld [_s], a
+    call ShowRoledexPage
+    WAITPAD_UP
+    jr .waitAndLoop
+.checkAPressed
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .checkBPressed
+    call ShowRoledexPlayer
+    jr .waitAndLoop
+.checkBPressed
+    ld a, [button_state]
+    and a, PADF_B
+    jr nz, .exit
+.waitAndLoop
     call gbdk_WaitVBL
-    jr .loop
-
+    jp .loop
+.exit
   SHOW_WIN
   pop hl
   ld a, h

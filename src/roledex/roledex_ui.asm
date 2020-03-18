@@ -164,8 +164,80 @@ ShowRoledexPage:
     jr nz, .loop
   ret
 
-ShowRoledexPlayer:
-  ;show page
+ShowRoledexPlayer:;a player num
+  push af;num
+  DISPLAY_OFF
+  CLEAR_BKG_AREA 0,0,20,18," "
+  
+  pop af;num
+  push af;num
+  ld de, _UI_FONT_TILE_COUNT+64
+  call LoadPlayerBkgDataXFlipped
+
+  pop af;num
+  push af
+  call GetPlayerImgColumns
+  ld b, a
+  ld a, 7
+  sub a, b
+  ld c, a
+  ld b, a
+  and a
+  jr nz, .setRoledexImg
+  inc b
+.setRoledexImg
+  pop af;num
+  push af
+  ld de, _UI_FONT_TILE_COUNT+64
+  call SetPlayerBkgTilesFlipped
+
+.setRoledexName
+  pop af;num
+  push af
+  call GetPlayerName
+
+  ld hl, name_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld d, 9
+  ld e, 1
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+
+.setRoledexNumber
+  pop af;num
+  push af
+  call GetZeroPaddedNumber
+
+  ld a, "#"
+  ld de, name_buffer
+  ld [de], a
+  inc de
+  ld hl, str_buffer
+  call str_Copy
+
+  ld h, 4
+  ld l, 1
+  ld d, 2
+  ld e, 7
+  ld bc, name_buffer
+  call gbdk_SetBkgTiles
+
+  pop af
+  DISPLAY_ON
+  WAITPAD_UP
+
+.loop
+  call gbdk_WaitVBL
+  call UpdateInput
+  ld a, [button_state]
+  and a, PADF_START | PADF_A | PADF_B
+  jr z, .loop
+
+  WAITPAD_UP
+
   ret
 
 ShowRoledexUI::
@@ -192,6 +264,7 @@ ShowRoledexUI::
   ld de, 3
   ld a, DRAW_FLAGS_BKG
   call DrawListMenuArrow
+  WAITPAD_UP
 .loop
     call UpdateInput
     ld a, [_j]
@@ -210,7 +283,7 @@ ShowRoledexUI::
     add a, b
     ld [_s], a
     call ShowRoledexPage
-    jr .waitAndLoop
+    jp .waitAndLoop
 .checkMovePageLeft
     ld a, [button_state]
     and a, PADF_LEFT
@@ -243,7 +316,22 @@ ShowRoledexUI::
     ld a, [button_state]
     and a, PADF_A
     jr z, .checkBPressed
+
+    ld a, [_j];y
+    push af
+    ld b, a
+    ld a, [_s];page
+    add a, b
     call ShowRoledexPlayer
+    pop af
+    ld [_j], a
+    call DrawRoledexBaseUI
+    call ShowRoledexPage
+    ld a, 7
+    ld [_c], a
+    ld de, 3
+    ld a, DRAW_FLAGS_BKG
+    call DrawListMenuArrow
     jr .waitAndLoop
 .checkBPressed
     ld a, [button_state]

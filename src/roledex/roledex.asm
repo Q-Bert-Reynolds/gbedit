@@ -234,7 +234,9 @@ SwitchPlayerImageBank: ; a = number, return adjusted number in a
 .findBankLoop
   push af
   cp b
+  jr z, .skip
   jr nc, .setBank ;if num <= PLAYERS_PER_BANK * (c+1)
+.skip
   ld a, c
   cp IMG_BANK_COUNT-1
   jr z, .setBank ;if bank == bank_count-1
@@ -247,6 +249,7 @@ SwitchPlayerImageBank: ; a = number, return adjusted number in a
   ld [temp_bank], a
   ld a, c
   add a, PLAYER_IMG_BANK
+  ld [_breakpoint], a
   call SetBank
 
   pop af 

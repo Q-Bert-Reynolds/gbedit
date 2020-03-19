@@ -17,7 +17,7 @@ UILoadFontTiles::
   call mem_CopyVRAM ;doesn't loop so mem_CopyToTileData is unnecessary
   ret
 
-UIRevealText:: ;a = draw flags, hl = text, de = xy
+UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
   push af;draw flags
   push hl;text
   push de;xy

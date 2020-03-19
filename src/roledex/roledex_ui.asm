@@ -164,7 +164,11 @@ ShowRoledexPage:
     jr nz, .loop
   ret
 
-ShowRoledexPlayer:;a player num
+ShowRoledexPlayerMap:
+
+  ret
+
+ShowRoledexPlayerData:;a player num
   push af;num
   call LoadPlayerBaseData
   DISPLAY_OFF
@@ -401,6 +405,131 @@ ShowRoledexPlayer:;a player num
 
   ret
 
+NoCryingText:
+  DB "There's no crying\nin baseball.",0
+
+ShowRoledexMenu:;returns exit code in a
+  ld a, [_j];y
+  push af;_j
+  ld b, a
+  add a, a
+  add a, 3
+  ld c, a
+  ld a, [_s];page
+  add a, b
+  push af;player num
+  
+  ld a, 4
+  ld [_c], a
+  xor a
+  ld [_j], a
+.setArrowTile
+  ld hl, $0101
+  ld d, 0
+  ld e, c
+  ld a, ARROW_RIGHT_BLANK
+  ld bc, tile_buffer
+  ld [bc], a
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+  ld d, 15
+  ld e, 10
+  ld a, DRAW_FLAGS_BKG
+  call DrawListMenuArrow
+  WAITPAD_UP
+.loop
+    call UpdateInput
+    ld d, 15
+    ld e, 10
+    ld a, DRAW_FLAGS_BKG
+    call MoveListMenuArrow
+    and a
+    jr nz, .loop
+.checkA
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .checkB
+
+      ld a, [_j]
+.checkShowData
+      and a
+      jr nz, .checkShowCry
+      pop af;player num
+      push af;player num
+      call ShowRoledexPlayerData
+      pop bc;player num
+      pop af;_j
+      push af;_j
+      push bc;player num
+      ld [_j], a
+      call DrawRoledexBaseUI
+      call ShowRoledexPage
+      ld a, [_j];y
+      add a, a
+      add a, 3
+      ld c, a
+      xor a
+      ld [_j], a
+      jp .setArrowTile
+.checkShowCry
+      cp 1
+      jr nz, .checkShowMap
+      ld hl, NoCryingText
+      ld a, [_j]
+      push af
+      call RevealTextAndWait
+      pop af
+      ld [_j], a
+      HIDE_WIN
+      WAITPAD_UP
+      jp .loop
+.checkShowMap
+      cp 2
+      jr nz, .doQuit
+      pop af;player num
+      push af;player num
+      call ShowRoledexPlayerMap
+      pop bc;player num
+      pop af;_j
+      push af;_j
+      push bc;player num
+      ld [_j], a
+      call DrawRoledexBaseUI
+      call ShowRoledexPage
+      ld a, [_j];y
+      add a, a
+      add a, 3
+      ld c, a
+      ld a, 2
+      ld [_j], a
+      jp .setArrowTile
+.doQuit
+      ld b, -1;exit code
+      jr .exit
+.checkB
+    ld b, 0
+    ld a, [button_state]
+    and a, PADF_B
+    jr nz, .exit
+    call gbdk_WaitVBL
+    jp .loop
+.exit
+  pop af;player num
+  pop af;_j
+  push bc;exit code
+  ld [_j], a
+  call DrawRoledexBaseUI
+  call ShowRoledexPage
+  ld a, 7
+  ld [_c], a
+  ld de, 3
+  ld a, DRAW_FLAGS_BKG
+  call DrawListMenuArrow
+  WAITPAD_UP
+  pop af;exit code
+  ret
+
 ShowRoledexUI::
   ld a, [rSCX]
   ld h, a
@@ -477,22 +606,9 @@ ShowRoledexUI::
     ld a, [button_state]
     and a, PADF_A
     jr z, .checkBPressed
-
-    ld a, [_j];y
-    push af
-    ld b, a
-    ld a, [_s];page
-    add a, b
-    call ShowRoledexPlayer
-    pop af
-    ld [_j], a
-    call DrawRoledexBaseUI
-    call ShowRoledexPage
-    ld a, 7
-    ld [_c], a
-    ld de, 3
-    ld a, DRAW_FLAGS_BKG
-    call DrawListMenuArrow
+    call ShowRoledexMenu
+    cp -1
+    jr z, .exit
     jr .waitAndLoop
 .checkBPressed
     ld a, [button_state]

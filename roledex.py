@@ -123,9 +123,23 @@ def evolution_type_string(player):
     evLevel += "0"
   return "DB " + evType + "\nDB " + evLevel + "\n"
 
+def height_string(player):
+  h = float(player["Height"])
+  feet = "{0:01X}".format(int(h))
+  inches = "{0:01X}".format(int((h*100)%100))
+  return "DB $" + feet + inches + " ;height\n"
+
+def weight_string(player):
+  w = float(player["Weight"])
+  lbs = "{0:03X}".format(int(w))
+  frac = "{0:01X}".format(int((w*10)%10))
+  return "DW $" + frac + lbs + " ;weight\n"
+
 def generate_player_data(roledex):
   with open("./data/player_data.asm", "w+") as asm_file:
     asm_file.write("SECTION \"Player Data\", ROMX, BANK[PLAYER_DATA_BANK]\n")
+    asm_file.write(";weight format: DDDDLLLL LLLLLLLL where D is decimal and L is lbs\n")
+    asm_file.write(";height format: FFFFIIII where F is feet and I is inches\n")
 
     var_names = ""
     for player in roledex:
@@ -136,6 +150,8 @@ def generate_player_data(roledex):
       asm_file.write(player_type_string(player))
       asm_file.write(evolves_to_string(roledex, player))
       asm_file.write(evolution_type_string(player))
+      asm_file.write(height_string(player))
+      asm_file.write(weight_string(player))
       asm_file.write("DB " + str(player["HP"]) + " ;HP\n")
       asm_file.write("DB " + str(player["Bat"]) + " ;Bat\n")
       asm_file.write("DB " + str(player["Field"]) + " ;Field\n")

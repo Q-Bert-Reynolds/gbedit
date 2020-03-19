@@ -85,10 +85,12 @@ Overworld
 
 Rolédex
 
+- hold button to scroll fast
 - track which players you've seen/signed
 - show details screen
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
+- create tileset specific to dex
   
 Music:
 

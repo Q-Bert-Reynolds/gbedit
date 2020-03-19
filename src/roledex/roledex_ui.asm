@@ -166,8 +166,13 @@ ShowRoledexPage:
 
 ShowRoledexPlayer:;a player num
   push af;num
+  call LoadPlayerBaseData
   DISPLAY_OFF
-  CLEAR_BKG_AREA 0,0,20,18," "
+  
+  ld bc, 0
+  ld de, $1412
+  ld a, DRAW_FLAGS_BKG
+  call DrawUIBox
   
   pop af;num
   push af;num
@@ -181,6 +186,7 @@ ShowRoledexPlayer:;a player num
   ld a, 7
   sub a, b
   ld c, a
+  inc c
   ld b, a
   and a
   jr nz, .setRoledexImg
@@ -202,7 +208,7 @@ ShowRoledexPlayer:;a player num
   ld h, e
   ld l, 1
   ld d, 9
-  ld e, 1
+  ld e, 2
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
@@ -221,19 +227,142 @@ ShowRoledexPlayer:;a player num
   ld h, 4
   ld l, 1
   ld d, 2
-  ld e, 7
+  ld e, 8
   ld bc, name_buffer
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-  ld hl, tile_buffer
-  ld bc, 20
+.drawHeight
+  ld hl, name_buffer
+  ld a, "H"
+  ld [hli], a
+  ld a, "T"
+  ld [hl], a
+
+  ld h, 2
+  ld l, 1
+  ld d, 9
+  ld e, 6
+  ld bc, name_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+  ld hl, player_base+PLAYER_BASE_HEIGHT
+  ld a, [hl];upper nibble is feet, lower is inches
+  push af;ft,in
+  swap a
+  and a, %00001111;feet only
+  ld h, 0
+  ld l, a
+  ld de, str_buffer
+  call str_Number
+  ld a, "'"
+  ld [de], a
+  inc de
+  pop af;ft,in
+  and a, %00001111;inches only
+  ld h, 0
+  ld l, a
+  call str_Number
+  ld a, "\""
+  ld [de], a
+  inc de
+  xor a
+  ld [de], a
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld a, 18
+  sub a, e
+  ld h, e
+  ld l, 1
+  ld d, a
+  ld e, 6
+  ld bc, str_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles  
+.drawWeight
+  ld hl, name_buffer
+  ld a, "W"
+  ld [hli], a
+  ld a, "T"
+  ld [hl], a
+
+  ld h, 2
+  ld l, 1
+  ld d, 9
+  ld e, 8
+  ld bc, name_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+  ld hl, player_base+PLAYER_BASE_WEIGHT
+  ld a, [hli];lower byte is lbs
+  ld b, a
+  ld a, [hl];upper byte, upper nibble is decimal, lower is lbs
+  push af;dec,lbs
+  and a, %00001111;lbs only
+  ld h, a
+  ld l, b
+  ld de, str_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  ld a, "."
+  ld [hli], a
+  xor a
+  ld [hld], a
+  ld de, str_buffer
+  call str_Append
+
+  pop af;dec,lbs
+  swap a
+  and a, %00001111;dec only
+  ld h, 0
+  ld l, a
+  ld de, name_buffer
+  call str_Number
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, name_buffer
+  ld a, "l"
+  ld [hli], a
+  ld a, "b"
+  ld [hli], a
+  xor a
+  ld [hl], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld a, 19
+  sub a, e
+  ld h, e
+  ld l, 1
+  ld d, a
+  ld e, 8
+  ld bc, str_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+.drawDividingLine
+  ld hl, tile_buffer+1
+  ld bc, 18
   ld a, BOX_HORIZONTAL
   call mem_Set
+  ld a, BOX_JUNCTION
+  ld [hl], a
 
   ld de, $0009
   ld hl, $1401
   ld bc, tile_buffer
+  ld [bc], a
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
@@ -249,14 +378,10 @@ ShowRoledexPlayer:;a player num
   DISPLAY_ON
   WAITPAD_UP
 
-.waitForNextPage
-  call gbdk_WaitVBL
-  call UpdateInput
-  ld a, [button_state]
-  and a, PADF_START | PADF_A | PADF_B
-  jr z, .waitForNextPage
+  ld de, $1210
+  call FlashNextArrow
 
-  CLEAR_BKG_AREA 0,10,20,8," "
+  CLEAR_BKG_AREA 1,10,18,7," "
 
   pop hl
   ld bc, 3

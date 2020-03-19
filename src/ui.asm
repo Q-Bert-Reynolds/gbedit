@@ -17,58 +17,6 @@ UILoadFontTiles::
   call mem_CopyVRAM ;doesn't loop so mem_CopyToTileData is unnecessary
   ret
 
-FlashNextArrow: ;de = xy
-  push de;xy
-  ld hl, tile_buffer
-  ld a, ARROW_DOWN
-  ld [hl], a ;tile_buffer[0] = ARROW_DOWN;
-  ld b, h
-  ld c, l
-  ld a, 1
-  ld h, a ;w=1
-  ld l, a ;h=1
-  call gbdk_SetWinTiles ;set_win_tiles(x, y, 1, 1, tile_buffer);
-  WAITPAD_UP
-  ld a, 20
-  pop de;xy
-.loop1 ;for (a = 20; a > 0; --a) {
-  ld [_a], a
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
-  push de;xy
-  ld de, 10
-  call gbdk_Delay
-  pop de ;restore xy
-  ld a, [_a]
-  dec a
-  jp nz, .loop1
-  ld hl, tile_buffer
-
-  xor a
-  ld [hl], a ;tile_buffer[0] = 0;
-  ld b, h
-  ld c, l
-  ld a, 1
-  ld h, a ;w=1
-  ld l, a ;h=1
-  push de ;xy
-  call gbdk_SetWinTiles ;set_win_tiles(x, y, 1, 1, tile_buffer);
-
-  pop de ;restore xy
-  ld a, 20
-.loop2 ;for (a = 20; a > 0; --a) {
-  ld [_a], a
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, PADF_A
-  push de;xy
-  ld de, 10
-  call gbdk_Delay
-  pop de ;restore de
-  ld a, [_a]
-  dec a
-  jp nz, .loop2
-  jp FlashNextArrow
-.exitFlashNextArrow
-  ret
-
 UIRevealText:: ;a = draw flags, hl = text, de = xy
   push af;draw flags
   push hl;text

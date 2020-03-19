@@ -217,6 +217,52 @@ RevealText:: ;a = draw flags, de = xy hl = text
   call SetBank
   ret
 
+FlashNextArrow:: ;a = draw flags, de = xy
+  push de;xy
+  push af;draw flags
+  ld bc, tile_buffer
+  ld a, ARROW_DOWN
+  ld [bc], a ;tile_buffer[0] = ARROW_DOWN;
+  ld hl, $0101
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  WAITPAD_UP
+  ld l, 20
+.loop1 ;for (a = 20; a > 0; --a) {
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, (PADF_A | PADF_B)
+    ld de, 10
+    call gbdk_Delay
+    dec l
+    jp nz, .loop1
+
+  ld bc, tile_buffer
+  xor a
+  ld [bc], a
+  ld hl, $0101
+  pop af;draw flags
+  pop de ;xy
+  push de ;xy
+  push af
+  call SetTiles
+
+  ld l, 20
+.loop2
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, (PADF_A | PADF_B)
+    ld de, 10
+    call gbdk_Delay
+    dec l
+    jp nz, .loop2
+
+  pop af;draw flags
+  pop de ;xy
+  jp FlashNextArrow
+.exitFlashNextArrow
+  pop af;draw flags
+  pop de ;xy
+  ret
+
 GetUIBoxTiles: ;Entry: de = wh, Affects: hl
   ld hl, tile_buffer
   xor a

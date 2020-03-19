@@ -303,18 +303,56 @@ DrawUIBox::;a=draw flags, bc = xy, de = wh
   call SetTiles
   ret
 
-DisplayText:: ;hl = text
+DrawText:: ;a = draw flags, hl = text, de = xy, bc = max lines
+    push bc;max lines
+    push af;draw flags
+    push de;xy
+    ld de, tile_buffer
+    call str_CopyLine
+    pop de;xy
+    pop af;draw flags
+    push af;draw flags
+    push de;xy
+    push hl;next line
+    ld h, c;width
+    ld l, 1;height
+    ld bc, tile_buffer
+    call SetTiles
+    pop hl;line
+    dec hl
+    ld a, [hli]
+    and a
+    jr z, .exit
+    pop de;xy
+    inc e
+    inc e;y+=2
+    pop af;draw flags
+    pop bc;max lines
+    dec c
+    ret z
+    jr DrawText
+.exit
+  pop de;xy
+  pop af;draw flags
+  pop bc;max lines
+  ret
+
+DisplayText:: ;a = draw flags, hl = text
   push hl;text
+  push af;draw flags
 
   xor a
   ld b, a
   ld c, a
   ld d, 20
   ld e, 6
-  ld a, DRAW_FLAGS_WIN
+  pop af;draw flags
+  push af
   call DrawUIBox
 
+  pop af;draw flags
   pop hl;text
+  push af;draw flags
   ld bc, str_buffer
   ld e, 0;len
 .loop
@@ -330,17 +368,19 @@ DisplayText:: ;hl = text
     jr .loop
 
 .drawText
+  pop af;draw flags
   push hl;text left
+  push af;draw flags
   ld h, e;w
   ld l, 1;h
   ld d, 1;x
   ld e, 2;y
   ld bc, str_buffer
-  call gbdk_SetWinTiles;line 1
+  call SetTiles;line 1
   pop hl;text left
   ld a, [hli]
-  push hl
-  pop bc;text left
+  ld b, h
+  ld c, l
   and a
   jr z, .show; if there's not a second line
   call str_Length
@@ -348,9 +388,14 @@ DisplayText:: ;hl = text
   ld l, 1;h
   ld d, 1;x
   ld e, 4;y
-  call gbdk_SetWinTiles;line 2
+  pop af;draw flags
+  push af;draw flags
+  call SetTiles;line 2
 
 .show
+  pop af;draw flags
+  and a, DRAW_FLAGS_WIN
+  ret z;no reason to show win if not drawing on win
   ld a, 7
   ld [rWX], a
   ld a, 96

@@ -388,6 +388,9 @@ ShowPauseMenu:
   cp 1
   jr nz, .lineup
   call ShowRoledex
+  call LoadAvatarSprites
+  call ShowPlayerAvatar
+  call SetMapTiles
   jp ShowPauseMenu
 .lineup
   cp 2

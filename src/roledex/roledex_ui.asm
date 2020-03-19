@@ -223,18 +223,54 @@ ShowRoledexPlayer:;a player num
   ld d, 2
   ld e, 7
   ld bc, name_buffer
-  call gbdk_SetBkgTiles
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+  ld hl, tile_buffer
+  ld bc, 20
+  ld a, BOX_HORIZONTAL
+  call mem_Set
+
+  ld de, $0009
+  ld hl, $1401
+  ld bc, tile_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
 
   pop af
+  call GetPlayerDescription
+  ld hl, str_buffer
+  ld bc, 3
+  ld de, $010B
+  ld a, DRAW_FLAGS_BKG
+  call DrawText
+  push hl
+
   DISPLAY_ON
   WAITPAD_UP
 
-.loop
+.waitForNextPage
   call gbdk_WaitVBL
   call UpdateInput
   ld a, [button_state]
   and a, PADF_START | PADF_A | PADF_B
-  jr z, .loop
+  jr z, .waitForNextPage
+
+  CLEAR_BKG_AREA 0,10,20,8," "
+
+  pop hl
+  ld bc, 3
+  ld de, $010B
+  ld a, DRAW_FLAGS_BKG
+  call DrawText
+  WAITPAD_UP
+
+.waitForExit
+  call gbdk_WaitVBL
+  call UpdateInput
+  ld a, [button_state]
+  and a, PADF_START | PADF_A | PADF_B
+  jr z, .waitForExit
 
   WAITPAD_UP
 

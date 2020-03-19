@@ -74,6 +74,31 @@ str_Length::
 
 ;***************************************************************************
 ;
+; str_CopyLine - Copies line
+;
+; input:
+;   hl - string
+;   de - dest
+; output:
+;   bc - length of line
+;   hl - start of next line
+;
+;***************************************************************************
+str_CopyLine::
+  ld bc, 0
+.loop
+  ld a, [hli]
+  cp 128;"\n"
+  ret z
+  and a
+  ret z
+  ld [de], a
+  inc de
+  inc bc
+  jr .loop
+
+;***************************************************************************
+;
 ; str_Append - Appends string hl to de
 ;
 ; input:

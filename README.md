@@ -42,6 +42,7 @@ Python scripts
 - only update .asm file when PNG or TMX files change
 - handle 1bpp and rle images
 - identify animations - same size, numbered names (name0, name1, etc)
+- description generator should print warning when more than 6 lines
 
 Intro
 
@@ -53,6 +54,7 @@ Intro
 
 New Game
 
+- remove direct use of save file (so it doesn't immediately overwrite old save)
 - shrink Calvin image, transition to bedroom
 
 Battle
@@ -86,7 +88,8 @@ Rolédex
 - track which players you've seen/signed
 - show details screen
 - finish player descriptions (some show placeholder pokemon text)
-
+- fix player descriptions that are longer than 6 lines
+  
 Music:
 
 - Charge (intro anim)

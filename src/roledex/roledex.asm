@@ -17,6 +17,7 @@ INCLUDE "data/player_strings.asm"
 ; LoadPlayerBkgData - a = number, de = vram_offset
 ; GetPlayerImgColumns - a = number, returns num columns of img in a
 ; SetPlayerBkgTiles - a = number, de = vram_offset, de = xy
+; SetPlayerBkgTilesFlipped - a = number, de = vram_offset, de = xy
 
 SECTION "Roledex", ROM0
 GetMoveName:: ; a = move number, returns name in name_buffer
@@ -143,7 +144,7 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
     dec b
     jr .loop
 .copy
-  ld de, name_buffer
+  ld de, str_buffer
   call str_Copy
 
   ld a, [temp_bank]
@@ -249,7 +250,6 @@ SwitchPlayerImageBank: ; a = number, return adjusted number in a
   ld [temp_bank], a
   ld a, c
   add a, PLAYER_IMG_BANK
-  ld [_breakpoint], a
   call SetBank
 
   pop af 

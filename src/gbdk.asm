@@ -644,13 +644,13 @@ gbdk_Random::
 ;***************************************************************************
 ; gbdk_Seed - sets the random seed value to hl
 ;
-; input: a
+; input: hl
 ; registers used: a, hl
 ;***************************************************************************
 gbdk_Seed::
- ld a, [hli]
+ ld a, h
  ld [rand_lo], a
- ld a, [hl]
+ ld a, l
  ld [rand_hi], a
  ret
 

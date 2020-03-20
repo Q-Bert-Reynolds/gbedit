@@ -209,6 +209,7 @@ math_TestBit:: ;tests bit d of byte e, affects z flag, all registers
   ld hl, math_Bitmasks
   ld b, 0
   ld c, d
+  add hl, bc
   ld a, [hl]
   and a, e
   ret

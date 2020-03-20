@@ -156,28 +156,27 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
 
 CheckSeenSigned:: ;a = number, returns seen/signed in a (1=seen,2=signed)
   dec a
-  ld d, a;number-1
-  srl a ;a/2
-  srl a ;a/4
-  srl a ;a/8
-  ld b, 0
-  ld c, d;(number-1)/8
-  ld hl, players_seen
-  add hl, bc
-  ld a, d;number-1
-  xor a, %11111111;flip bits
-  and a, %00000111;;7 - (number-1)%8
+  ld h, 0
+  ld l, a
+  ld c, 8
+  call math_Divide
+  ld d, a
+  ld a, 7
+  sub a, d
   ld d, a;bit to test
+  push hl;byte
+
+  ld bc, players_seen
+  add hl, bc
   ld a, [hl]
-  ld e, a  
-  push bc
-  push de
+  ld e, a
+  push de;bit
   call math_TestBit
-  pop de
-  pop bc
+  pop de;bit
+  pop hl;byte
   ret z;player not seen
 
-  ld hl, players_sign
+  ld bc, players_sign
   add hl, bc
   ld a, [hl]
   ld e, a

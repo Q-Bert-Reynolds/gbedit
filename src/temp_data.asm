@@ -458,12 +458,13 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-
   ld hl, OpponentSquirtData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentSquirtDataEnd - OpponentSquirtData
   call mem_Copy
 
+  ld hl, 2020
+  call gbdk_Seed
   ld hl, players_seen
   ld de, players_sign
   ld c, 151/8
@@ -493,5 +494,17 @@ Seed::
   and a, $FE
   pop de;signed
   ld [de], a
+
+  ld hl, players_seen
+  ld a, %11000011
+  ld [hli], a
+  ld a, %01111111
+  ld [hl], a
+  
+  ld hl, players_sign
+  ld a, %00000011
+  ld [hli], a
+  ld a, %01111000
+  ld [hl], a
 
   ret

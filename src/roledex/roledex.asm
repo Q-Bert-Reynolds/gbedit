@@ -13,7 +13,9 @@ INCLUDE "data/player_strings.asm"
 ; GetMoveName - a = move number, returns name_buffer
 ; GetPlayerName - a = number, returns name_buffer
 ; GetPlayerDescription - a = number, returns str_buffer
+; CheckSeenSigned - a = number, returns seen/sign in a
 ; GetSeenSignedCounts - d = seen, e = signed
+; GetLastSeen - returns highest number seen in a
 ; LoadPlayerBaseData - a = number, returns player_base
 ; LoadPlayerBkgData - a = number, de = vram_offset
 ; GetPlayerImgColumns - a = number, returns num columns of img in a
@@ -212,6 +214,39 @@ GetSeenSignedCounts:: ;returns d = seen, e = signed
     dec c
     jr nz, .signedLoop
 
+  ret
+
+;FIXME
+GetLastSeen:: ;returns highest number seen in a
+  ld hl, players_seen+151/8+1
+  ld b, 8
+  ld c, 143
+.byteLoop
+    ld a, [hl]
+    and a
+    jr nz, .bitLoop
+    dec hl
+    ld a, c
+    sub a, b
+    ld c, a
+    jr nz, .byteLoop
+.bitLoop
+    ld a, [hl]
+    ld e, a
+    ld a, 8
+    sub a, b
+    ld d, a
+    push hl
+    push bc
+    call math_TestBit
+    pop bc
+    pop hl
+    jr nz, .exit
+    dec b
+    jr nz, .bitLoop
+.exit
+  ld a, b
+  add a, c
   ret
 
 LoadPlayerBaseData:: ; a = number

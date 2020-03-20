@@ -294,13 +294,45 @@ ShowRoledexPlayerData:;a player num
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-.drawHeight
+.checkCaught
+  pop af;num
+  push af
+  call CheckSeenSigned
+  push af;signed?
+
+.checkHeight
   ld hl, name_buffer
   ld a, "H"
   ld [hli], a
   ld a, "T"
   ld [hl], a
 
+  pop af;signed
+  push af
+  cp 2
+  jr z, .getHeight
+
+  ld hl, name_buffer+2
+  ld a, " "
+  ld [hli], a
+  ld [hli], a
+  ld a, "?"
+  ld [hli], a
+  ld a, "'"
+  ld [hli], a
+  ld a, "?"
+  ld [hli], a
+  ld [hli], a
+  ld a, "\""
+  ld [hli], a
+  xor a
+  ld [hl], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  jr .drawHeight
+
+.getHeight
   ld h, 2
   ld l, 1
   ld d, 9
@@ -332,6 +364,7 @@ ShowRoledexPlayerData:;a player num
   xor a
   ld [de], a
 
+.drawHeight
   ld hl, str_buffer
   call str_Length
 
@@ -343,14 +376,39 @@ ShowRoledexPlayerData:;a player num
   ld e, 6
   ld bc, str_buffer
   ld a, DRAW_FLAGS_BKG
-  call SetTiles  
-.drawWeight
+  call SetTiles
+  
+.checkWeight
   ld hl, name_buffer
   ld a, "W"
   ld [hli], a
   ld a, "T"
   ld [hl], a
 
+  pop af;signed
+  push af
+  cp 2
+  jr z, .getWeight
+
+  ld hl, name_buffer+4
+  ld a, " "
+  ld [hli], a
+  ld a, "?"
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld a, "l"
+  ld [hli], a
+  ld a, "b"
+  ld [hli], a
+  xor a
+  ld [hl], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  jr .drawWeight
+
+.getWeight
   ld h, 2
   ld l, 1
   ld d, 9
@@ -400,6 +458,7 @@ ShowRoledexPlayerData:;a player num
   ld de, str_buffer
   call str_Append
 
+.drawWeight
   ld hl, str_buffer
   call str_Length
 
@@ -428,7 +487,13 @@ ShowRoledexPlayerData:;a player num
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-  pop af
+  DISPLAY_ON
+  pop af;signed
+  pop bc;num
+  cp 2
+  jr nz, .waitForExit
+
+  ld a, b;num
   call GetPlayerDescription
   ld hl, str_buffer
   ld bc, 3
@@ -436,9 +501,6 @@ ShowRoledexPlayerData:;a player num
   ld a, DRAW_FLAGS_BKG
   call DrawText
   push hl
-
-  DISPLAY_ON
-  WAITPAD_UP
 
   ld de, $1210
   call FlashNextArrow
@@ -450,14 +512,15 @@ ShowRoledexPlayerData:;a player num
   ld de, $010B
   ld a, DRAW_FLAGS_BKG
   call DrawText
-  WAITPAD_UP
 
 .waitForExit
+  WAITPAD_UP
+.waitForExitLoop
   call gbdk_WaitVBL
   call UpdateInput
   ld a, [button_state]
   and a, PADF_START | PADF_A | PADF_B
-  jr z, .waitForExit
+  jr z, .waitForExitLoop
 
   WAITPAD_UP
 
@@ -476,6 +539,13 @@ ShowRoledexMenu:;returns exit code in a
   ld a, [_s];page
   add a, b
   push af;player num
+
+  push bc
+  call CheckSeenSigned
+  pop bc
+  ld b, 0
+  and a
+  jp z, .exit
   
   ld a, 4
   ld [_c], a

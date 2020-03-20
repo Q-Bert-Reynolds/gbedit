@@ -134,6 +134,18 @@ LoadFontTiles::
   call SetBank
   ret
 
+DrawStateMap::
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld a, UI_BANK
+  call SetBank
+
+  call UIDrawStateMap
+
+  ld a, [temp_bank]
+  call SetBank
+  ret
+
 SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
   and a, DRAW_FLAGS_WIN
   jr z, .skip
@@ -155,24 +167,34 @@ SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   ld e, a ;de = w
   ld a, l ;a = h
   call math_Multiply
-  ld a, l ;assumes result is less than 256
-  ld [_i], a ;i = w*h
+  pop bc;in_tiles
+  pop af;offset
+  push hl;count
+  push af;offset
   ld hl, tile_buffer
-  pop bc ;in_tiles
 .loop ;for (i = w*h; i > 0; --i)
     ld a, [bc]
     inc bc
     ld d, a
     pop af ;offset
-    push af ;store off
+    push af ;offset
     add a, d
     ld [hli], a; tiles[i] = in_tiles[i]+offset;
     
-    ld a, [_i]
-    dec a
-    ld [_i], a
+    pop af;offset
+    pop de;count
+    dec de
+    push de;count
+    push af;offset
+
+    ld a, d
+    and a
+    jr nz, .loop
+    ld a, e
+    and a
     jr nz, .loop
 
+  pop af ;count
   pop af ;offset
   pop hl ;xy
   pop de ;wh

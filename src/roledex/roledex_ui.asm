@@ -165,7 +165,10 @@ ShowRoledexPage:
   ret
 
 ShowRoledexPlayerMap:
-
+  call DrawStateMap
+.loop
+    call gbdk_WaitVBL
+    jr .loop
   ret
 
 ShowRoledexPlayerData:;a player num

@@ -2,6 +2,7 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
+INCLUDE "img/town_map.asm"
 
 ;UILoadFontTiles
 ;UIRevealText - a = draw flags, hl = text, de = xy
@@ -15,6 +16,22 @@ UILoadFontTiles::
   ld de, _VRAM+$1000
   ld bc, _UI_FONT_TILE_COUNT*16
   call mem_CopyVRAM ;doesn't loop so mem_CopyToTileData is unnecessary
+  ret
+
+UIDrawStateMap::
+  DISPLAY_OFF
+  ld hl, _TownMapTiles
+  ld de, $8800
+  ld bc, _TOWN_MAP_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld de, 0
+  ld h, _TOWN_MAP_COLUMNS
+  ld l, _TOWN_MAP_ROWS
+  ld bc, _TownMapTileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+  DISPLAY_ON
   ret
 
 UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l

@@ -170,4 +170,35 @@ math_Sub24:: ;ehl = ehl - bcd
   ld e, a
   ret
 
+math_CountBits:: ;a = byte, returns count in a
+  push bc
+
+  push af
+  and a, %01010101
+  ld b, a
+  pop af
+  srl a
+  and a, %01010101
+  add a, b
+
+  push af
+  and a, %00110011
+  ld b, a
+  pop af
+  srl a
+  srl a
+  and a, %00110011
+  add a, b
+
+  push af
+  and a, %00001111
+  ld b, a
+  pop af
+  swap a
+  and a, %00001111
+  add a, b
+
+  pop bc
+  ret
+
 ENDC

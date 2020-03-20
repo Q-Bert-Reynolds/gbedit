@@ -13,6 +13,7 @@ INCLUDE "data/player_strings.asm"
 ; GetMoveName - a = move number, returns name_buffer
 ; GetPlayerName - a = number, returns name_buffer
 ; GetPlayerDescription - a = number, returns str_buffer
+; GetSeenSignedCounts - d = seen, e = signed
 ; LoadPlayerBaseData - a = number, returns player_base
 ; LoadPlayerBkgData - a = number, de = vram_offset
 ; GetPlayerImgColumns - a = number, returns num columns of img in a
@@ -150,6 +151,68 @@ GetPlayerDescription:: ; a = number, returns description in str_buffer
   ld a, [temp_bank]
   call SetBank
   ret 
+
+CheckSeenSigned:: ;a = number, returns seen/signed in a (1=seen,2=signed)
+  dec a
+  ld d, a;number-1
+  srl a ;a/2
+  srl a ;a/4
+  srl a ;a/8
+  ld b, 0
+  ld c, d;(number-1)/8
+  ld hl, players_seen
+  add hl, bc
+  ld a, d;number-1
+  xor a, %11111111;flip bits
+  and a, %00000111;;7 - (number-1)%8
+  ld d, a;bit to test
+  ld a, [hl]
+  ld e, a  
+  push bc
+  push de
+  call math_TestBit
+  pop de
+  pop bc
+  ret z;player not seen
+
+  ld hl, players_sign
+  add hl, bc
+  ld a, [hl]
+  ld e, a
+  call math_TestBit
+  jr z, .notSigned
+  ld a, 2
+  ret
+.notSigned
+  ld a, 1
+  ret
+
+GetSeenSignedCounts:: ;returns d = seen, e = signed
+  ld hl, players_seen
+  ld d, 0
+  ld c, 151/8+1
+.seenLoop
+    ld a, [hli]
+    call math_CountBits
+    add a, d
+    ld d, a
+
+    dec c
+    jr nz, .seenLoop
+
+  ld hl, players_sign
+  ld e, 0
+  ld c, 151/8+1
+.signedLoop
+    ld a, [hli]
+    call math_CountBits
+    add a, e
+    ld e, a
+
+    dec c
+    jr nz, .signedLoop
+
+  ret
 
 LoadPlayerBaseData:: ; a = number
   dec a

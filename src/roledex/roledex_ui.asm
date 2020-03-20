@@ -18,18 +18,54 @@ RoledexMenuText:
 DrawRoledexBaseUI:
   CLEAR_BKG_AREA 0,0,20,18," "
 
+.drawHeading
   ld de, $0101
   ld hl, $0701
   ld bc, RoledexHeadingText
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
+.drawSeenSigned
   ld de, $1002
   ld hl, $0404
   ld bc, RoledexSeenSignText
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
+  call GetSeenSignedCounts
+  push de;seen,signed
+
+  ld h, 0
+  ld l, d
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+  
+  ld h, e
+  ld l, 1
+  ld de, $1103
+  ld bc, name_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+  pop hl;seen,signed
+  ld h, 0
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+  
+  ld h, e
+  ld l, 1
+  ld de, $1106
+  ld bc, name_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
+.drawMenu
   ld de, $100A
   ld hl, $0407
   ld bc, RoledexMenuText
@@ -92,6 +128,7 @@ DrawRoledexListEntry:;a = number, de = xy
   pop af;number
   push af;number
   push de;xy
+  push af;number
 
   dec d
   ld h, NICKNAME_LENGTH
@@ -100,22 +137,38 @@ DrawRoledexListEntry:;a = number, de = xy
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-  ;TODO: check if number is caught/seen yet
+  pop af;number
+  call CheckSeenSigned
+  cp 1
+  jr z, .setName
+  cp 2
+  jr z, .setSigned
 
+  ld a, "-"
+  ld hl, tile_buffer+1
+  ld bc, 10
+  call mem_Set
+  xor a
+  ld [hl], a
+  jr .drawTiles
+
+.setSigned
+  ld a, BASEBALL
+  ld hl, tile_buffer
+  ld [hl], a
+
+.setName
   pop de;xy
   pop af;number
   push af;number
   push de;xy
   call GetPlayerName
-
-  ld a, BASEBALL
-  ld hl, tile_buffer
-  ld [hl], a
   
   ld hl, name_buffer
   ld de, tile_buffer+1
   call str_Copy
 
+.drawTiles
   ld hl, tile_buffer
   call str_Length
   ld h, e

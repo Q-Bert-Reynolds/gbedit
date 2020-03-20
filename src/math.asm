@@ -201,4 +201,16 @@ math_CountBits:: ;a = byte, returns count in a
   pop bc
   ret
 
+math_Bitmasks::
+  DB %00000001, %00000010, %00000100, %00001000
+  DB %00010000, %00100000, %01000000, %10000000
+
+math_TestBit:: ;tests bit d of byte e, affects z flag, all registers
+  ld hl, math_Bitmasks
+  ld b, 0
+  ld c, d
+  ld a, [hl]
+  and a, e
+  ret
+
 ENDC

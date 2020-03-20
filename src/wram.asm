@@ -75,5 +75,5 @@ ball_x: DB
 ball_y: DB
 
 ;roledex
-players_seen: DS 151/8
-players_sign: DS 151/8
+players_seen: DS 151/8+1
+players_sign: DS 151/8+1

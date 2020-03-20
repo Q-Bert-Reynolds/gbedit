@@ -463,4 +463,35 @@ Seed::
   ld de, OpponentLineupPlayer1
   ld bc, OpponentSquirtDataEnd - OpponentSquirtData
   call mem_Copy
+
+  ld hl, players_seen
+  ld de, players_sign
+  ld c, 151/8
+.loop
+    push de;signed
+    push hl;seen
+    call gbdk_Random
+    ld a, e
+    pop hl;seen
+    ld [hli], a
+    and a, d
+    pop de;signed
+    ld [de], a
+    inc de
+
+    dec c
+    jr nz, .loop
+
+  push de;signed
+  push hl;seen
+  call gbdk_Random
+  ld a, e
+  and a, $FE
+  pop hl;seen
+  ld [hl], a
+  and a, d
+  and a, $FE
+  pop de;signed
+  ld [de], a
+
   ret

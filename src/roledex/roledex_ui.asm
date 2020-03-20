@@ -167,8 +167,10 @@ ShowRoledexPage:
 ShowRoledexPlayerMap:
   call DrawStateMap
 .loop
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, (PADF_A | PADF_START | PADF_B)
     call gbdk_WaitVBL
     jr .loop
+.exit
   ret
 
 ShowRoledexPlayerData:;a player num

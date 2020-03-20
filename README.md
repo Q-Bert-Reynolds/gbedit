@@ -28,6 +28,7 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 # TODO:
 General
 
+- random
 - move all strings to separate (generated) file
 - link cable support!
 - give math subroutines more appropriate names
@@ -91,6 +92,7 @@ Rolédex
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
 - create tileset specific to dex
+- show player home towns / recruitment locations
   
 Music:
 

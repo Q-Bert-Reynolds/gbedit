@@ -22,7 +22,7 @@
 ;   CGB_COMPATIBILITY
 ;
 ; Library Subroutines:
-;   gbdk_MoveSprite - Move sprite number C at XY = DE
+;   gbdk_MoveSprite - Move sprite number C to XY = DE
 ;   gbdk_SetSpriteTile - Set sprite number C to tile D
 ;   gbdk_SetSpriteProp - Set properties of sprite number C to D
 ;   gbdk_DisplayOff
@@ -32,6 +32,8 @@
 ;   gbdk_Delay
 ;   gbdk_CPUSlow
 ;   gbdk_CPUFast
+;   gbdk_Random - returns a random value to DE
+;   gbdk_Seed - seeds Random function
 ;
 
 IF !DEF(GBDK_ASM)
@@ -192,6 +194,8 @@ ENDM
 SECTION "GBDK Vars", WRAM0[$cf00]
 oam_buffer: DS 4*40
 vbl_done: DB
+rand_hi: DB
+rand_lo: DB
 
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
@@ -581,5 +585,73 @@ gbdk_CPUFast::
   and $80  ; is gbc in double speed mode?
   ret nz  ; yes, exit
   jr shift_speed
+
+
+;***************************************************************************
+;
+; gbdk_Random - generates a random number
+;
+; Random number generator using the linear congruential method
+;    X(n+1) = (a*X(n)+c) mod m
+; with a = 17, m = 16 and c = $5C93 (arbitrarily)
+; The seed value is also chosen arbitrarily as $a27e
+;
+; Ref : D. E. Knuth, "The Art of Computer Programming" , Volume 2
+;
+; Note D is the low byte, E the high byte. This is intentional because
+; the high byte can be slightly 'more random' than the low byte, and I presume
+; most will cast the return value to a UBYTE. As if someone will use this, tha!
+;
+; output: de - random number (word)
+; registers used: a, hl, de
+;***************************************************************************
+gbdk_Random::
+  ld a, [rand_lo]
+  ld l, a
+  ld e, a  ; Save rand_lo
+  ld a, [rand_hi]
+  ld d, a  ; Save rand_hi
+
+  sla l  ; * 16
+  rla
+  sla l
+  rla
+  sla l
+  rla
+  sla l
+  rla
+  ld h, a  ; Save rand_hi*16
+
+  ld a, e  ; Old rand_lo
+  add a, l  ; Add rand_lo*16
+  ld l, a  ; Save rand_lo*17
+
+  ld a, h  ; rand_hi*16
+  adc a, d  ; Add old rand_hi
+  ld h, a  ; Save rand_hi*17
+
+  ld a, l  ; rand_lo*17
+  add a, $93
+  ld [rand_lo], a
+  ld d, a  ; Return register
+  ld a, h  ; rand_hi*17
+  adc a, $5C
+  ld [rand_hi], a
+  ld e, a  ; Return register
+
+  ret
+
+;***************************************************************************
+; gbdk_Seed - sets the random seed value to hl
+;
+; input: a
+; registers used: a, hl
+;***************************************************************************
+gbdk_Seed::
+ ld a, [hli]
+ ld [rand_lo], a
+ ld a, [hl]
+ ld [rand_hi], a
+ ret
 
 ENDC ;GBDK_ASM

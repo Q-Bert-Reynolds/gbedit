@@ -73,3 +73,7 @@ swing_diff_y: DW
 swing_diff_z: DW
 ball_x: DB
 ball_y: DB
+
+;roledex
+players_seen: DS 151/8
+players_sign: DS 151/8

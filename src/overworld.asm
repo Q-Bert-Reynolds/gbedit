@@ -389,6 +389,7 @@ ShowPauseMenu:
   jr nz, .lineup
   call ShowRoledex
   call LoadAvatarSprites
+  call LoadOverworldTiles
   call ShowPlayerAvatar
   call SetMapTiles
   jp ShowPauseMenu
@@ -468,17 +469,19 @@ LoadAvatarSprites:
   call mem_CopyVRAM
   ret
 
+LoadOverworldTiles:
+  ld hl, _OverworldTiles
+  ld de, $8800
+  ld bc, _OVERWORLD_TILE_COUNT*16
+  call mem_CopyVRAM
+  ret
+
 Overworld::
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
 
   call LoadFontTiles
-
-  ld hl, _OverworldTiles
-  ld de, $8800
-  ld bc, _OVERWORLD_TILE_COUNT*16
-  call mem_CopyVRAM
-
+  call LoadOverworldTiles
   call LoadAvatarSprites
 
   ld a, PADF_DOWN

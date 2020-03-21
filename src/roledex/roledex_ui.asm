@@ -217,8 +217,34 @@ ShowRoledexPage:
     jr nz, .loop
   ret
 
-ShowRoledexPlayerMap:
+HomeTownText:
+  DB "'s FIELDS",0
+
+ShowRoledexPlayerMap:; a = player number
+  push af
   call DrawStateMap
+
+  pop af
+  call GetPlayerName
+
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+
+  ld hl, HomeTownText
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  ld de, 0
+  ld bc, str_buffer
+  ld a, DRAW_FLAGS_BKG
+  call SetTiles
+
 .loop
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, (PADF_A | PADF_START | PADF_B)
     call gbdk_WaitVBL

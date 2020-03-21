@@ -383,7 +383,7 @@ ShowPauseMenu:
   call ShowListMenu ;returns choice in a
 
   and a
-  jr z, .exit
+  jp z, .exit
 .roledex
   cp 1
   jr nz, .lineup
@@ -398,6 +398,7 @@ ShowPauseMenu:
   jr nz, .item
   call ShowLineupFromWorld
   call LoadAvatarSprites
+  call LoadOverworldTiles
   call ShowPlayerAvatar
   call SetMapTiles
   jp ShowPauseMenu
@@ -505,8 +506,11 @@ Overworld::
     call gbdk_WaitVBL
     call UpdateInput
     ld a, [button_state]
+    and a, PADF_UP | PADF_DOWN | PADF_LEFT | PADF_RIGHT
+    jr z, .checkStart
     ld [last_map_button_state], a
 .checkStart
+    ld a, [button_state]
     and a, PADF_START
     jr z, .checkA
     call ShowPauseMenu

@@ -477,6 +477,13 @@ LoadOverworldTiles:
   call mem_CopyVRAM
   ret
 
+CheckRandomAppearance:
+  call gbdk_Random
+  ld a, d
+  and a, e
+  and a, %10000000
+  ret
+
 Overworld::
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
@@ -529,5 +536,6 @@ Overworld::
 .move
     ld a, [button_state]
     call Move
-    jr .moveLoop
+    call CheckRandomAppearance
+    jr z, .moveLoop
   ret

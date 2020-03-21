@@ -319,6 +319,7 @@ Bat:; (Player *p, UBYTE move) {
   ld de, str_buffer
   call str_Replace
   ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
   call DisplayText
 
   ld a, 49<<1
@@ -344,6 +345,7 @@ Bat:; (Player *p, UBYTE move) {
   ld de, str_buffer
   call str_Replace
   ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
   call DisplayText
 
   xor a
@@ -381,6 +383,7 @@ Bat:; (Player *p, UBYTE move) {
   call SetBKGTilesWithOffset
 
   ld hl, AndThePitchText
+  ld a, DRAW_FLAGS_WIN
   call DisplayText
 
   xor a

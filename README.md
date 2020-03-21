@@ -28,7 +28,6 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 # TODO:
 General
 
-- random
 - move all strings to separate (generated) file
 - link cable support!
 - give math subroutines more appropriate names
@@ -43,14 +42,13 @@ Python scripts
 - only update .asm file when PNG or TMX files change
 - handle 1bpp and rle images
 - identify animations - same size, numbered names (name0, name1, etc)
-- description generator should print warning when more than 6 lines
+- roledex description parser should print warning when more than 6 lines
 
 Intro
 
 - sfx
 - sparks after ball hits light
 - pitch/bat anim
-- delay version slide
 - randomize players
 
 New Game
@@ -60,7 +58,7 @@ New Game
 
 Battle
 
-- doubled back & player front images should be different batting/pitching images
+- images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hit the ball
 - handle different moves
 - show X next to pitches when batting / swings when pitching 
@@ -73,22 +71,23 @@ Team Menu
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well
-- swap batting order
-- restore tiles from previous screen
+- show appropriate stat (ie. BA, ERA) below level
+- animate player when highlighted
 
 Overworld
 
+- a wild pitcher appears!
 - make legs go behind things
 - collisions
 - animated tiles
 - load black tiles outside of map bounds
 - fix move left/up bug where boundary tiles don't load sometimes
+- enter/exit buildings
+- read signs
 
 Rolédex
 
 - hold button to scroll fast
-- track which players you've seen/signed
-- show details screen
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
 - create tileset specific to dex
@@ -109,10 +108,6 @@ SFX:
 - select
 - confirm
 - cancel
-
-Player images:
-
-- batting/pitching -> front/back -> ready/action (8 each)
 
 # Thanks
 

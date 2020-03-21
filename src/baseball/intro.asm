@@ -38,7 +38,11 @@ PlayIntro:
       ld a, [hl]
       add a, _UI_FONT_TILE_COUNT;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
       ld d, a
+      ld e, c
       call gbdk_SetSpriteTile
+      ld c, e
+      ld d, 0
+      call gbdk_SetSpriteProp
       
       ld a, [_i]
       inc a

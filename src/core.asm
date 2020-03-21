@@ -418,47 +418,13 @@ DisplayText:: ;a = draw flags, hl = text
   push af
   call DrawUIBox
 
-  pop af;draw flags
-  pop hl;text
-  push af;draw flags
-  ld bc, str_buffer
-  ld e, 0;len
-.loop
-    ld a, [hl]
-    cp "\n"
-    jr z, .drawText
-    and a;end of text
-    jr z, .drawText
-    ld [bc], a;copy text to str_buffer
-    inc hl
-    inc bc
-    inc e;len
-    jr .loop
-
-.drawText
-  pop af;draw flags
-  push hl;text left
-  push af;draw flags
-  ld h, e;w
-  ld l, 1;h
-  ld d, 1;x
-  ld e, 2;y
-  ld bc, str_buffer
-  call SetTiles;line 1
-  pop hl;text left
-  ld a, [hli]
-  ld b, h
-  ld c, l
-  and a
-  jr z, .show; if there's not a second line
-  call str_Length
-  ld h, e;w
-  ld l, 1;h
-  ld d, 1;x
-  ld e, 4;y
-  pop af;draw flags
-  push af;draw flags
-  call SetTiles;line 2
+  pop af
+  pop hl
+  push af
+  ld d, 2
+  ld e, 2
+  ld bc, 2
+  call DrawText ;a = draw flags, hl = text, de = xy, bc = max lines
 
 .show
   pop af;draw flags

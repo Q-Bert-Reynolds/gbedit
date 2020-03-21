@@ -76,7 +76,7 @@ Team Menu
 
 Overworld
 
-- a wild pitcher appears!
+- random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions
 - animated tiles

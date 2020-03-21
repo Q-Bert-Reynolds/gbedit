@@ -15,6 +15,7 @@ INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
+INCLUDE "src/baseball/simulation.asm"
 
 BASEBALL_SPRITE_ID EQU 0
 AIM_CIRCLE_SPRITE_ID EQU 3
@@ -206,33 +207,21 @@ Pitch: ; (Player *p, UBYTE move) {
   ret
 
 Swing:; xy = de, z = a
+  push de;xy
+  push af;z
   ld d, -8
   ld e, -8
   call MoveAimCircle
   
   call HideStrikeZone
+
+  pop af;z
+  pop de;xy
   ;swing_diff_x = x - ball_x;
   ;swing_diff_y = y - ball_y;
   ;swing_diff_z = z - 128;
 
-  ;d = swing_diff_x > -12 && swing_diff_x < 12 && swing_diff_y > -12 && swing_diff_y < 12;
-  ;if (swing_diff_z < 20 && swing_diff_z > -20) {
-  ;    if (d) {
-  ;        if (swing_diff_z == 0 && swing_diff_x == 0 && swing_diff_y == 0/* && rand < batting avg */) {
-  ;            display_text("Critical hit!");
-  ;        }
-  ;        else {
-  ;            display_text("Solid contact");
-  ;        }
-  ;    }
-  ;    else display_text("Swing and a miss.");
-  ;}
-  ;else if (swing_diff_z >= 20) {
-  ;    display_text("Late swing.");
-  ;}
-  ;else {
-  ;    display_text("Early swing.");
-  ;}
+  call RunSimulation
   ret
 
 Aim: 

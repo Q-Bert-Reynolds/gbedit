@@ -124,14 +124,14 @@ MoveBaseball:; a = i
   ld b, a
   ld a, 126;127-(i>>1)
   sub a, b
-  ld [ball_x], a
+  ld [ball_pos_x], a
 
   pop af
   push af
   ld b, a
   ld a, 13
   add a, b;13+(i>>1)
-  ld [ball_y], a
+  ld [ball_pos_y], a
 
   pop af
   ld h, 0
@@ -145,18 +145,18 @@ MoveBaseball:; a = i
 
   ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
 
-  ld a, [ball_y]
+  ld a, [ball_pos_y]
   ld [hli], a;y
-  ld a, [ball_x]
+  ld a, [ball_pos_x]
   ld [hli], a;x
   ld a, 1
   ld [hli], a;outline tile
   xor a
   ld [hli], a;prop
 
-  ld a, [ball_y]
+  ld a, [ball_pos_y]
   ld [hli], a;y
-  ld a, [ball_x]
+  ld a, [ball_pos_x]
   ld [hli], a;x
   ld a, [_t]
   ld [hli], a;tile
@@ -217,8 +217,8 @@ Swing:; xy = de, z = a
 
   pop af;z
   pop de;xy
-  ;swing_diff_x = x - ball_x;
-  ;swing_diff_y = y - ball_y;
+  ;swing_diff_x = x - ball_pos_x;
+  ;swing_diff_y = y - ball_pos_y;
   ;swing_diff_z = z - 128;
 
   call RunSimulation
@@ -598,6 +598,9 @@ StartGame::
   ld [home_score], a
   ld a, 3
   ld [away_score], a
+
+ ;TODO: REMOVE ME
+  call RunSimulation
 
   call PlayIntro
   call SetupGameUI

@@ -156,7 +156,7 @@ def png_to_asm (path):
   rows, cols, hex_vals = gb_encode(img)
   tile_count = rows*cols
 
-  if name in ["ui_font"] or "maps" in path:
+  if name in ["ui_font", "simulation"] or "maps" in path:
     tileset = []
     for i in range(0, len(hex_vals), 16):
       tile = "".join(hex_vals[i:i+16])

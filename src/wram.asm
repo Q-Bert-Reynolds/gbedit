@@ -2,6 +2,9 @@ SECTION "Gloval Vars", WRAM0[$c000]
 ;debug
 _breakpoint: DB
 
+;timers
+vbl_timer: DB
+
 ;map
 last_map_button_state: DB
 anim_frame: DW
@@ -71,8 +74,12 @@ play_menu_selection: DB
 swing_diff_x: DW
 swing_diff_y: DW
 swing_diff_z: DW
-ball_x: DB
-ball_y: DB
+ball_pos_x: DW
+ball_pos_y: DW
+ball_pos_z: DW
+ball_vel_x: DB
+ball_vel_y: DB
+ball_vel_z: DB
 
 ;roledex
 players_seen: DS 151/8+1

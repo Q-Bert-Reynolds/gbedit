@@ -214,4 +214,26 @@ math_TestBit:: ;tests bit d of byte e, affects z flag, all registers
   and a, e
   ret
 
+math_AddSignedByteToWord:: ;a = byte, [hl] = word, result in [hl]
+  ld e, a ;put 8bit in e
+  add a, a ;bit 7 into carry
+  sbc a, a ;0 if no carry, 255 if carry
+  ld d, a
+  push hl ;address of word in hl
+  ld a, [hli]
+  ld b, a  ;first byte of word in b
+  ld a, [hld]
+  ld c, a  ;second byte of word in c
+  ld h, b 
+  ld l, c ;contents of word now in hl
+  add hl, de ;add byte (de) to word (hl)
+  ld b, h
+  ld c, l ;new word now in bc
+  pop hl ;address of word back in hl
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hl], a
+  ret
+
 ENDC

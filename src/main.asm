@@ -94,9 +94,9 @@ Main::
 ;   call NewGame
 
 .overworld; walk around, find a game, repeat
-    ld a, OVERWORLD_BANK
-    call SetBank
-    call Overworld
+    ; ld a, OVERWORLD_BANK
+    ; call SetBank
+    ; call Overworld
 
 .startGame
     ld a, PLAY_BALL_BANK

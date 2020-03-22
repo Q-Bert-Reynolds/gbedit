@@ -81,6 +81,9 @@ VBLInterrupt::
   push de
   push hl
   call _HRAM
+  ld a, [vbl_timer]
+  inc a
+  ld [vbl_timer], a
   call UpdateAudio
   ld a, 1
   ld [vbl_done], a

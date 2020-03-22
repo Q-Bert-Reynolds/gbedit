@@ -131,7 +131,7 @@ ShowTitle:
   ld hl, rBGP
   ld [hl], BG_PALETTE
   ld hl, rOBP0
-  ld [hl], SPR_PALETTE_0
+  ld [hl], SPR_PAL_BDL
   ld hl, rOBP1
   ld [hl], $E0
 

@@ -15,9 +15,11 @@ ROLEDEX_BANK        EQU 21
 MAPS_BANK           EQU 50
 
 ; GameBoy palettes
-BG_PALETTE    EQU $E4
-SPR_PALETTE_0 EQU $E4 
-SPR_PALETTE_1 EQU $90
+BG_PALETTE  EQU %11100100 ;normal
+SPR_PAL_BDL EQU %11100100 ;black, dark,  light
+SPR_PAL_DLW EQU %10010000 ;dark,  light, white
+SPR_PAL_BDW EQU %11100000 ;black, dark,  white
+SPR_PAL_BLW EQU %11010000 ;black, light, white
 
 ; sprite props
 FLIP_X_PAL  EQU (OAMF_XFLIP | OAMF_PAL1 )

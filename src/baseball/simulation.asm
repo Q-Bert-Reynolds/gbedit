@@ -70,6 +70,40 @@ REPT 5
 .skip\@
 ENDR
 
+.updateCameraY
+  ld a, [ball_pos_y]
+  cp 72
+  jr c, .moveToTop
+  cp 183
+  jr nc, .moveToBottom
+  sub a, 72
+  ld [rSCY], a
+  jr .updateCameraX
+.moveToTop
+  xor a
+  ld [rSCY], a
+  jr .updateCameraX
+.moveToBottom
+  ld a, 112
+  ld [rSCY], a
+
+.updateCameraX
+  ld a, [ball_pos_x]
+  cp 72
+  jr c, .moveToLeft
+  cp 175
+  jr nc, .moveToRight
+  sub a, 72
+  ld [rSCX], a
+  jr .drawBall
+.moveToLeft
+  xor a
+  ld [rSCX], a
+  jr .drawBall
+.moveToRight
+  ld a, 95
+  ld [rSCX], a
+
 .drawBall
   ld hl, oam_buffer
   ld a, [rSCY]
@@ -142,7 +176,7 @@ RunSimulation::
   ld [ball_vel_y+1], a
   ld [ball_vel_z+1], a
   
-  ld a, -10
+  ld a, -80
   ld [ball_vel_y], a
   ld a, 10
   ld [ball_vel_x], a

@@ -214,26 +214,49 @@ math_TestBit:: ;tests bit d of byte e, affects z flag, all registers
   and a, e
   ret
 
-math_AddSignedByteToWord:: ;a = byte, [hl] = word, result in [hl]
+math_AddSignedByteToWord:: ;a = byte, [hl] = word, result in [hl], a -> 2=carry,3=borrow
   ld e, a ;put 8bit in e
   add a, a ;bit 7 into carry
+  push af;pos/neg
   sbc a, a ;0 if no carry, 255 if carry
   ld d, a
   push hl ;address of word in hl
   ld a, [hli]
   ld b, a  ;first byte of word in b
   ld a, [hld]
-  ld c, a  ;second byte of word in c
   ld h, b 
-  ld l, c ;contents of word now in hl
+  ld l, a  ;contents of word now in hl
+  push hl;store old word
   add hl, de ;add byte (de) to word (hl)
-  ld b, h
-  ld c, l ;new word now in bc
+  ld d, h
+  ld e, l ;new word now in de
+  pop bc;restore old word
+
   pop hl ;address of word back in hl
-  ld a, b
+  ld a, d
   ld [hli], a
-  ld a, c
-  ld [hl], a
+  ld a, e
+  ld [hl], a;store de in [hl]
+
+.checkForBorrowCarry;TODO: surely this could be faster
+  pop hl;pos/neg flag
+  ld a, d
+  sub a, b;compare bc (old) to de (new)
+  jr z, .exit
+  jr c, .less
+  push hl
+  pop af;pos/neg flag
+  jr nc, .exit ;if pos and new > old, return 0
+  ld a, 3;else neg but new > old
+  ret
+.less
+  push hl
+  pop af;pos/neg flag
+  jr c, .exit ;if neg and new < old, return 0
+  ld a, 2;else pos but new < old
+  ret
+.exit
+  xor a
   ret
 
 ENDC

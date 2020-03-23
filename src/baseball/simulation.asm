@@ -27,21 +27,13 @@ ShowField:
   ret
 
 UpdateBall:
-  ld a, [vbl_timer]
-  and a, %00001111
-  cp a, %00001111
-  jr z, .updatePosition
-  
-; .updateVelocity
-;   ld a, [ball_pos_z]
-;   cp 0
-;   jr z, .updatePosition
-;   ld a, [ball_vel_z]
-;   cp 128
-;   jr nc, .updatePosition
-
   ld a, [ball_vel_z]
-  add -1
+  cp 128;always apply gravity if going up
+  jr nc, .applyGravity
+  cp 135;don't fall faster than terminal velocity
+  jr nc, .updatePosition
+.applyGravity
+  sub a, 1
   ld [ball_vel_z], a
 
 .updatePosition
@@ -57,6 +49,25 @@ REPT 5
   ld a, [ball_vel_z]
   ld hl, ball_pos_z
   call math_AddSignedByteToWord
+  cp 0
+  jr z, .skip\@
+  cp 2
+  jr nz, .negative\@
+  ld a, 255
+  ld [ball_pos_z], a
+  jr .skip\@
+.negative\@
+  xor a
+  ld [ball_pos_z], a
+  ld a, [ball_vel_z]
+  xor a, $FF
+  ld b, a
+  and a, %10000000
+  srl b
+  srl b
+  or a, b
+  ld [ball_vel_z], a
+.skip\@
 ENDR
 
 .drawBall
@@ -67,8 +78,6 @@ ENDR
   sub a, b
   ld b, a
   ld a, [ball_pos_z]
-  swap a
-  and %00001111
   ld c, a
   ld a, b
   sub a, c
@@ -109,9 +118,18 @@ RunSimulation::
   HIDE_WIN
   call ShowField
 
-  ld a, 46
+  ; ld hl, ball_pos_z
+  ; ld a, $00
+  ; ld [hli], a
+  ; ld [hld], a
+  ; ld a, -127
+  ; call math_AddSignedByteToWord
+  ; ld a, [hl]
+  ; ld [_breakpoint], a
+
+  ld a, 48
   ld [ball_pos_x], a
-  ld a, 209
+  ld a, 224
   ld [ball_pos_y], a
   ld a, 1
   ld [ball_pos_z], a

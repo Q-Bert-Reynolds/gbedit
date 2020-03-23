@@ -28,7 +28,7 @@ New Game
 - remove direct use of save file (so it doesn't immediately overwrite old save)
 - shrink Calvin image, transition to bedroom
 
-Battle
+Play Ball
 
 - images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hit the ball
@@ -37,6 +37,14 @@ Battle
 - opponent batting / user pitching
     - animation
     - move ball
+
+Simulation
+
+- put all players on the field
+- ball physics
+- running
+- catching throwing
+- implement basic rules
 
 Team Menu
 
@@ -65,18 +73,17 @@ Rolédex
 - create tileset specific to dex
 - show player home towns / recruitment locations
   
-Music:
+Audio
 
-- Charge (intro anim)
-- Billet Town
-- play ball
-
-SFX:
-
-- pitch
-- hit
-- wiff
-- catch
-- select
-- confirm
-- cancel
+- Music
+  - Charge (intro anim)
+  - Billet Town
+  - play ball
+- SFX
+  - pitch
+  - hit
+  - wiff
+  - catch
+  - select
+  - confirm
+  - cancel

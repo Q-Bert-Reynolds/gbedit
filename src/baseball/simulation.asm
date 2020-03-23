@@ -1,6 +1,11 @@
 INCLUDE "img/field.asm"
 INCLUDE "img/simulation.asm"
 
+;Sprite IDs
+;0 to 25  - head and body for 9 fielders and 4 baserunners
+;26 to 36 - dust particles for running
+;37,38,39 - bounce fx, ball, shadow
+
 ShowField:
   DISPLAY_OFF
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
@@ -52,23 +57,49 @@ REPT 5
   cp 0
   jr z, .skip\@
   cp 2
-  jr nz, .negative\@
+  jr nz, .bounce\@
   ld a, 255
   ld [ball_pos_z], a
   jr .skip\@
-.negative\@
+.bounce\@
   xor a
   ld [ball_pos_z], a
+  ld [ball_pos_z+1], a
   ld a, [ball_vel_z]
   xor a, $FF
   ld b, a
   and a, %10000000
   srl b
-  srl b
   or a, b
   ld [ball_vel_z], a
+  ld a, [ball_vel_x]
+  ld b, a
+  and a, %10000000
+  srl b
+  or a, b
+  ld [ball_vel_x], a
+  ld a, [ball_vel_y]
+  ld b, a
+  and a, %10000000
+  srl b
+  or a, b
+  ld [ball_vel_y], a
 .skip\@
 ENDR
+
+.slowXToStop
+  ld a, [ball_vel_x]
+  cp -1
+  jr nz, .slowYToStop
+  xor a
+  ld [ball_vel_x], a
+
+.slowYToStop
+  ld a, [ball_vel_y]
+  cp -1
+  jr nz, .updateCameraY
+  xor a
+  ld [ball_vel_y], a
 
 .updateCameraY
   ld a, [ball_pos_y]
@@ -89,11 +120,11 @@ ENDR
 
 .updateCameraX
   ld a, [ball_pos_x]
-  cp 72
+  cp 80
   jr c, .moveToLeft
   cp 175
   jr nc, .moveToRight
-  sub a, 72
+  sub a, 80
   ld [rSCX], a
   jr .drawBall
 .moveToLeft
@@ -101,17 +132,18 @@ ENDR
   ld [rSCX], a
   jr .drawBall
 .moveToRight
-  ld a, 95
+  ld a, 96
   ld [rSCX], a
 
 .drawBall
-  ld hl, oam_buffer
+  ld hl, oam_buffer+38*4;ball and shadow are second to last sprites
   ld a, [rSCY]
   ld b, a
   ld a, [ball_pos_y]
   sub a, b
   ld b, a
   ld a, [ball_pos_z]
+  srl a
   ld c, a
   ld a, b
   sub a, c
@@ -148,6 +180,13 @@ ENDR
 
   ret
 
+;sprites 
+UpdateBaseRunners:
+  ret 
+
+UpdateFielders:
+  ret 
+  
 RunSimulation::
   HIDE_WIN
   call ShowField
@@ -161,6 +200,7 @@ RunSimulation::
   ; ld a, [hl]
   ; ld [_breakpoint], a
 
+  ; put ball at home plate
   ld a, 48
   ld [ball_pos_x], a
   ld a, 224
@@ -176,15 +216,17 @@ RunSimulation::
   ld [ball_vel_y+1], a
   ld [ball_vel_z+1], a
   
-  ld a, -80
+  ld a, -20
   ld [ball_vel_y], a
-  ld a, 10
+  ld a, 30
   ld [ball_vel_x], a
-  ld a, 100
+  ld a, 127
   ld [ball_vel_z], a
 
 .loop
     call UpdateBall
+    call UpdateBaseRunners
+    call UpdateFielders
     call gbdk_WaitVBL
     jr .loop
   

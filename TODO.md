@@ -32,6 +32,7 @@ Play Ball
 
 - images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hit the ball
+- finish swing animation + a few frames before starting sim
 - handle different moves
 - show X next to pitches when batting / swings when pitching 
 - opponent batting / user pitching
@@ -41,10 +42,11 @@ Play Ball
 Simulation
 
 - put all players on the field
-- ball physics
+- ball should bounce off fences
 - running
 - catching throwing
 - implement basic rules
+- initial velocity should be calculated from swing_diff and batting stat
 
 Team Menu
 

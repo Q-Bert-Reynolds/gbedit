@@ -52,6 +52,16 @@ OPPONENT_PLAYER_DATA: MACRO ;only needs data for BA and ERA
 .outs_recorded DW
 ENDM
 
+SIMULATION_PLAYER_DATA: MACRO ;\1 = fielder/runner, \2 = sprite index
+Simulation\1\2:
+.player     DB ;upper nibble = team, lower nibble = lineup order
+.anim_state DB ;upper nibble = running/fielding/throwing, lower nibble = frame
+.pos_y      DW
+.pos_x      DW
+.vel_y      DB
+.vel_x      DB
+ENDM
+
 SECTION "Player RAM", WRAM0[$c500]
 ;Lineups
 UserLineup: 
@@ -94,6 +104,24 @@ OpponentLineup:
   OPPONENT_PLAYER_DATA
   PLAYER_DATA OpponentLineup, 9
   OPPONENT_PLAYER_DATA
+
+;Simulation
+Fielders:
+  SIMULATION_PLAYER_DATA Fielders, 1;pitcher
+  SIMULATION_PLAYER_DATA Fielders, 2;catcher
+  SIMULATION_PLAYER_DATA Fielders, 3;first base
+  SIMULATION_PLAYER_DATA Fielders, 4;second base
+  SIMULATION_PLAYER_DATA Fielders, 5;third base
+  SIMULATION_PLAYER_DATA Fielders, 6;shortstop
+  SIMULATION_PLAYER_DATA Fielders, 7;left field
+  SIMULATION_PLAYER_DATA Fielders, 8;center field
+  SIMULATION_PLAYER_DATA Fielders, 9;right field
+
+Runners:
+  SIMULATION_PLAYER_DATA Runners, 0;batter
+  SIMULATION_PLAYER_DATA Runners, 1;first
+  SIMULATION_PLAYER_DATA Runners, 2;second
+  SIMULATION_PLAYER_DATA Runners, 3;third
 
 SECTION "Player Utils", ROM0
 

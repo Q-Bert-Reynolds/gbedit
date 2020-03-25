@@ -102,12 +102,18 @@ ENDR
   ld [ball_vel_y], a
 
 .updateCameraY
+  ld a, [ball_pos_z]
+  srl a
+  srl a
+  srl a
+  ld b, a
   ld a, [ball_pos_y]
-  cp 72
+  sub a, b
+  cp 80
   jr c, .moveToTop
-  cp 183
+  cp 191
   jr nc, .moveToBottom
-  sub a, 72
+  sub a, 80
   ld [rSCY], a
   jr .updateCameraX
 .moveToTop
@@ -120,11 +126,11 @@ ENDR
 
 .updateCameraX
   ld a, [ball_pos_x]
-  cp 80
+  cp 84
   jr c, .moveToLeft
-  cp 175
+  cp 179
   jr nc, .moveToRight
-  sub a, 80
+  sub a, 84
   ld [rSCX], a
   jr .drawBall
 .moveToLeft
@@ -185,20 +191,128 @@ UpdateBaseRunners:
   ret 
 
 UpdateFielders:
+  call DrawFielders
   ret 
+
+InitFielders:
+  ;pitcher
+  ld a, 85
+  ld [SimulationFielders1.pos_x], a
+  ld a, 186
+  ld [SimulationFielders1.pos_y], a
+
+  ;catcher
+  ld a, 40
+  ld [SimulationFielders2.pos_x], a
+  ld a, 216
+  ld [SimulationFielders2.pos_y], a
+
+  ;first
+  ld a, 136
+  ld [SimulationFielders3.pos_x], a
+  ld a, 200
+  ld [SimulationFielders3.pos_y], a
+
+  ;second
+  ld a, 158
+  ld [SimulationFielders4.pos_x], a
+  ld a, 154
+  ld [SimulationFielders4.pos_y], a
+
+  ;third
+  ld a, 61
+  ld [SimulationFielders5.pos_x], a
+  ld a, 124
+  ld [SimulationFielders5.pos_y], a
+
+  ;short
+  ld a, 100
+  ld [SimulationFielders6.pos_x], a
+  ld a, 100
+  ld [SimulationFielders6.pos_y], a
+
+  ;left field
+  ld a, 90
+  ld [SimulationFielders7.pos_x], a
+  ld a, 36
+  ld [SimulationFielders7.pos_y], a
+
+  ;center field
+  ld a, 196
+  ld [SimulationFielders8.pos_x], a
+  ld a, 68
+  ld [SimulationFielders8.pos_y], a
+
+  ;right field
+  ld a, 220
+  ld [SimulationFielders9.pos_x], a
+  ld a, 192
+  ld [SimulationFielders9.pos_y], a
+
+  call DrawFielders
+  ret
+
+DrawFielders:
+  ld de, oam_buffer
+  ld hl, SimulationFielders1.pos_y
+
+  ld a, 9
+.loop
+    push af;players left
+
+    ld a, [rSCY]
+    ld b, a
+    ld a, [hli];y
+    sub a, b
+    ld [de], a
+    inc de
+    inc hl
+    ld a, [rSCX]
+    ld b, a
+    ld a, [hld];x
+    sub a, b
+    ld [de], a
+    inc de
+    dec hl
+    ld a, $64;body
+    ld [de], a;tile
+    inc de
+    xor a
+    ld [de], a;prop
+    inc de
+    ld a, [rSCY]
+    ld b, a
+    ld a, [hli];y
+    sub a, b
+    sub a, 8
+    ld [de], a
+    inc de
+    inc hl
+    ld a, [rSCX]
+    ld b, a
+    ld a, [hli];x
+    sub a, b
+    ld [de], a
+    inc de
+    ld bc, 5
+    add hl, bc
+    ld a, $33;head
+    ld [de], a;tile
+    inc de
+    xor a
+    ld [de], a;prop
+    inc de
+
+    pop af;players left
+    dec a
+    jr nz, .loop
+  ret
   
 RunSimulation::
   HIDE_WIN
+  HIDE_ALL_SPRITES
   call ShowField
-
-  ; ld hl, ball_pos_z
-  ; ld a, $00
-  ; ld [hli], a
-  ; ld [hld], a
-  ; ld a, -127
-  ; call math_AddSignedByteToWord
-  ; ld a, [hl]
-  ; ld [_breakpoint], a
+  call InitFielders
 
   ; put ball at home plate
   ld a, 48
@@ -216,6 +330,7 @@ RunSimulation::
   ld [ball_vel_y+1], a
   ld [ball_vel_z+1], a
   
+  ;TODO:initial velocity should be calculated from swing_diff and player batting
   ld a, -20
   ld [ball_vel_y], a
   ld a, 30
@@ -228,6 +343,19 @@ RunSimulation::
     call UpdateBaseRunners
     call UpdateFielders
     call gbdk_WaitVBL
+
+    ; ld a, [ball_vel_x]
+    ; ld b, a
+    ; ld a, [ball_vel_y]
+    ; or a, b
+    ; ld b, a
+    ; ld a, [ball_vel_z]
+    ; or a, b
+    ; ld b, a
+    ; ld a, [ball_pos_z]
+    ; or a, b
+    ; jr nz, .loop
+
     jr .loop
   
 
@@ -249,10 +377,13 @@ RunSimulation::
   ;else {
   ;    display_text("Early swing.");
   ;}
+
+  DISPLAY_OFF
   xor a
   ld [rSCX], a
   ld [rSCY], a
+  CLEAR_SCREEN " "
   SHOW_WIN
-  CLEAR_BKG_AREA 0,0,20,12," "
   call SetupGameUI
+  DISPLAY_ON
   ret

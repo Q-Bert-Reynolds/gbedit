@@ -62,8 +62,8 @@ player_base: DS 16
 move_data: DS 8
 
 ;Baseball
-balls_strikes_outs: DB; //0bxBBBSSOO
-runners_on_base: DW; //0bHHHHTTTTSSSSFFFF
+balls_strikes_outs: DB; XBBBSSOO
+runners_on_base: DW; lineup order of runners on base - HHHHTTTT SSSSFFFF
 frame: DB
 home_team: DB
 away_team: DB
@@ -71,15 +71,16 @@ home_score: DB
 away_score: DB
 move_choice: DB
 play_menu_selection: DB
-swing_diff_x: DW
-swing_diff_y: DW
-swing_diff_z: DW
+swing_diff_x: DB
+swing_diff_y: DB
+swing_diff_z: DB
 ball_pos_x: DW
 ball_pos_y: DW
 ball_pos_z: DW
 ball_vel_x: DB
 ball_vel_y: DB
 ball_vel_z: DB
+ball_state: DB; // 7 = stopped, 6 = hitGround, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
 
 ;roledex
 players_seen: DS 151/8+1

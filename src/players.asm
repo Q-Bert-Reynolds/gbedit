@@ -60,6 +60,8 @@ Simulation\1\2:
 .pos_x      DW
 .vel_y      DB
 .vel_x      DB
+.dest_x     DB
+.dest_y     DB
 ENDM
 
 SECTION "Player RAM", WRAM0[$c500]

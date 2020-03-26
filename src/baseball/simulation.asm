@@ -37,7 +37,46 @@ ShowField:
   DISPLAY_ON
   ret
 
-;TODO: this could calculated directly instead of iteratively
+CalculateLandingSpot2:
+  ld d, 0
+  ld a, [ball_vel_z]
+  sla a
+  ld e, a
+  jr nc, .skip
+  ld d, 1
+.skip;hang time = de
+
+  ld a, PHYS_POS_STEPS
+  call math_Multiply
+  ld d, h
+  ld e, l
+
+  push de;hang time * steps
+  ld a, [ball_vel_x]
+  call math_Multiply
+  ld a, [ball_pos_x]
+  ld d, a
+  ld a, [ball_pos_x+1]
+  ld e, a
+  add hl, de;landing spot x
+
+  pop de;hang time * steps
+  push hl;landing spot x
+
+  ld a, [ball_vel_y]
+  call math_Multiply
+  ld a, [ball_pos_y]
+  ld d, a
+  ld a, [ball_pos_y+1]
+  ld e, a
+  add hl, de;landing spot y
+  pop bc;landing spot x
+
+  ld d, b;x
+  ld e, h;y
+  ret
+
+;TODO: this should calculated directly instead of iteratively
 CalculateLandingSpot:; returns landing xy in de
   ld hl, ball_pos_x
   ld de, tile_buffer
@@ -121,6 +160,12 @@ UpdateBall:
     ld [ball_pos_z], a
     jr .skip
 .bounce
+    ld a, [ball_pos_x]
+    ld d, a
+    ld a, [ball_pos_y]
+    ld e, a
+    ld [_breakpoint], a
+
     xor a
     ld [ball_pos_z], a
     ld [ball_pos_z+1], a
@@ -311,6 +356,15 @@ InitFielders:
   ld [SimulationFielders9.pos_y], a
 
   call DrawFielders
+
+  call CalculateLandingSpot
+  push de
+  call CalculateLandingSpot2
+  pop bc
+  ld [_breakpoint], a
+
+.findClosest
+
   ret
 
 DrawFielders:
@@ -355,7 +409,7 @@ DrawFielders:
     sub a, b
     ld [de], a
     inc de
-    ld bc, 5
+    ld bc, SimulationFielders2.anim_state - SimulationFielders1.pos_x
     add hl, bc
     ld a, $33;head
     ld [de], a;tile
@@ -368,22 +422,18 @@ DrawFielders:
     dec a
     jr nz, .loop
   ret
-  
-RunSimulation::
-  HIDE_WIN
-  HIDE_ALL_SPRITES
-  call ShowField
-  call InitFielders
 
+InitBall:
   ; put ball at home plate
   ld a, 48
   ld [ball_pos_x], a
   ld a, 224
   ld [ball_pos_y], a
-  ld a, 1
-  ld [ball_pos_z], a
+  ; ld a, 1
+  ; ld [ball_pos_z], a
 
   xor a
+  ld [ball_pos_z], a;starting at z = 0 makes landing calc easier
   ld [ball_pos_x+1], a
   ld [ball_pos_y+1], a
   ld [ball_pos_z+1], a
@@ -392,17 +442,21 @@ RunSimulation::
   ld [ball_vel_z+1], a
   
   ;TODO:initial velocity should be calculated from swing_diff and player batting
-  ld a, -20
+  ld a, -10
   ld [ball_vel_y], a
-  ld a, 30
+  ld a, 60
   ld [ball_vel_x], a
-  ld a, 127
+  ld a, 107
   ld [ball_vel_z], a
 
-  call CalculateLandingSpot
-  ; ld [_breakpoint], a
-
-  ;$c4 $7c
+  ret
+  
+RunSimulation::
+  HIDE_WIN
+  HIDE_ALL_SPRITES
+  call ShowField
+  call InitBall
+  call InitFielders
 
 .loop
     call UpdateBall

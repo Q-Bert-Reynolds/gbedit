@@ -41,12 +41,12 @@ Play Ball
 
 Simulation
 
-- put all players on the field
 - ball should bounce off fences
 - running
 - catching throwing
 - implement basic rules
 - initial velocity should be calculated from swing_diff and batting stat
+- calculate landing spot directly instead of iteratively
 
 Team Menu
 

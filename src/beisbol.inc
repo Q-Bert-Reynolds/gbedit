@@ -28,6 +28,7 @@ INCLUDE "src/overworld.asm"
 INCLUDE "src/baseball/play_ball.asm"
 INCLUDE "src/lineup/lineup.asm"
 INCLUDE "src/roledex/roledex_ui.asm"
+INCLUDE "src/baseball/simulation.asm"
 
 INCLUDE "src/wram.asm"
 INCLUDE "src/sram.asm"

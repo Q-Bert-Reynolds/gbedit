@@ -618,6 +618,16 @@ ShowRoledex::
   call SetBank
   ret
 
+LoadSimulation::
+  ld a, SIM_BANK
+  call SetBank
+
+  call RunSimulation
+  
+  ld a, PLAY_BALL_BANK
+  call SetBank
+  ret
+
 ShowLineupFromWorld::
   ld a, LINEUP_BANK
   call SetBank

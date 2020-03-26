@@ -1,3 +1,7 @@
+INCLUDE "src/beisbol.inc"
+
+SECTION "Simulation", ROMX, BANK[SIM_BANK]
+
 INCLUDE "img/field.asm"
 INCLUDE "img/simulation.asm"
 
@@ -5,6 +9,8 @@ INCLUDE "img/simulation.asm"
 ;0 to 25  - head and body for 9 fielders and 4 baserunners
 ;26 to 36 - dust particles for running
 ;37,38,39 - bounce fx, ball, shadow
+
+PHYS_POS_STEPS EQU 5
 
 ShowField:
   DISPLAY_OFF
@@ -31,6 +37,57 @@ ShowField:
   DISPLAY_ON
   ret
 
+;TODO: this could calculated directly instead of iteratively
+CalculateLandingSpot:; returns landing xy in de
+  ld hl, ball_pos_x
+  ld de, tile_buffer
+  ld bc, ball_state - ball_pos_x
+  call mem_Copy;copy ball pos,vel to tile buffer
+
+.loopZ;until z == 0
+    ld a, [tile_buffer+8];ball_vel_z
+    cp 128;always apply gravity if going up
+    jr nc, .applyGravity
+    cp 135;don't fall faster than terminal velocity
+    jr nc, .XY
+.applyGravity
+    sub a, 1
+    ld [tile_buffer+8], a;ball_vel_z
+
+.XY
+    ld a, PHYS_POS_STEPS
+.loopXY
+      push af;steps left
+      ld a, [tile_buffer+6];ball_vel_x
+      ld hl, tile_buffer;ball_pos_x
+      call math_AddSignedByteToWord
+
+      ld a, [tile_buffer+7];ball_vel_y
+      ld hl, tile_buffer+2;ball_pos_y
+      call math_AddSignedByteToWord
+
+      ld a, [tile_buffer+8];ball_vel_z
+      ld hl, tile_buffer+4;ball_pos_z
+      call math_AddSignedByteToWord
+      cp 0
+      jr z, .skip
+      cp 2
+      jr nz, .landed
+      ld a, 255
+      ld [tile_buffer+4], a;ball_pos_z
+.skip
+      pop af;steps left
+      dec a
+      jr nz, .loopXY
+    jr .loopZ
+.landed
+  pop af;discard steps
+  ld a, [tile_buffer];ball_pos_x
+  ld d, a
+  ld a, [tile_buffer+2];ball_pos_y
+  ld e, a
+  ret
+
 UpdateBall:
   ld a, [ball_vel_z]
   cp 128;always apply gravity if going up
@@ -42,50 +99,54 @@ UpdateBall:
   ld [ball_vel_z], a
 
 .updatePosition
-REPT 5
-  ld a, [ball_vel_x]
-  ld hl, ball_pos_x
-  call math_AddSignedByteToWord
+  ld a, PHYS_POS_STEPS
+.updatePositionLoop
+    push af;steps left
+    ld a, [ball_vel_x]
+    ld hl, ball_pos_x
+    call math_AddSignedByteToWord
 
-  ld a, [ball_vel_y]
-  ld hl, ball_pos_y
-  call math_AddSignedByteToWord
+    ld a, [ball_vel_y]
+    ld hl, ball_pos_y
+    call math_AddSignedByteToWord
 
-  ld a, [ball_vel_z]
-  ld hl, ball_pos_z
-  call math_AddSignedByteToWord
-  cp 0
-  jr z, .skip\@
-  cp 2
-  jr nz, .bounce\@
-  ld a, 255
-  ld [ball_pos_z], a
-  jr .skip\@
-.bounce\@
-  xor a
-  ld [ball_pos_z], a
-  ld [ball_pos_z+1], a
-  ld a, [ball_vel_z]
-  xor a, $FF
-  ld b, a
-  and a, %10000000
-  srl b
-  or a, b
-  ld [ball_vel_z], a
-  ld a, [ball_vel_x]
-  ld b, a
-  and a, %10000000
-  srl b
-  or a, b
-  ld [ball_vel_x], a
-  ld a, [ball_vel_y]
-  ld b, a
-  and a, %10000000
-  srl b
-  or a, b
-  ld [ball_vel_y], a
-.skip\@
-ENDR
+    ld a, [ball_vel_z]
+    ld hl, ball_pos_z
+    call math_AddSignedByteToWord
+    cp 0
+    jr z, .skip
+    cp 2
+    jr nz, .bounce
+    ld a, 255
+    ld [ball_pos_z], a
+    jr .skip
+.bounce
+    xor a
+    ld [ball_pos_z], a
+    ld [ball_pos_z+1], a
+    ld a, [ball_vel_z]
+    xor a, $FF
+    ld b, a
+    and a, %10000000
+    srl b
+    or a, b
+    ld [ball_vel_z], a
+    ld a, [ball_vel_x]
+    ld b, a
+    and a, %10000000
+    srl b
+    or a, b
+    ld [ball_vel_x], a
+    ld a, [ball_vel_y]
+    ld b, a
+    and a, %10000000
+    srl b
+    or a, b
+    ld [ball_vel_y], a
+.skip
+    pop af;steps left
+    dec a
+    jr nz, .updatePositionLoop
 
 .slowXToStop
   ld a, [ball_vel_x]
@@ -204,13 +265,13 @@ InitFielders:
   ;catcher
   ld a, 40
   ld [SimulationFielders2.pos_x], a
-  ld a, 216
+  ld a, 232
   ld [SimulationFielders2.pos_y], a
 
   ;first
   ld a, 136
   ld [SimulationFielders3.pos_x], a
-  ld a, 200
+  ld a, 216
   ld [SimulationFielders3.pos_y], a
 
   ;second
@@ -222,13 +283,13 @@ InitFielders:
   ;third
   ld a, 61
   ld [SimulationFielders5.pos_x], a
-  ld a, 124
+  ld a, 136
   ld [SimulationFielders5.pos_y], a
 
   ;short
-  ld a, 100
+  ld a, 116
   ld [SimulationFielders6.pos_x], a
-  ld a, 100
+  ld a, 112
   ld [SimulationFielders6.pos_y], a
 
   ;left field
@@ -338,25 +399,30 @@ RunSimulation::
   ld a, 127
   ld [ball_vel_z], a
 
+  call CalculateLandingSpot
+  ; ld [_breakpoint], a
+
+  ;$c4 $7c
+
 .loop
     call UpdateBall
     call UpdateBaseRunners
     call UpdateFielders
     call gbdk_WaitVBL
 
-    ; ld a, [ball_vel_x]
-    ; ld b, a
-    ; ld a, [ball_vel_y]
-    ; or a, b
-    ; ld b, a
-    ; ld a, [ball_vel_z]
-    ; or a, b
-    ; ld b, a
-    ; ld a, [ball_pos_z]
-    ; or a, b
-    ; jr nz, .loop
+    ld a, [ball_vel_x]
+    ld b, a
+    ld a, [ball_vel_y]
+    or a, b
+    ld b, a
+    ld a, [ball_vel_z]
+    or a, b
+    ld b, a
+    ld a, [ball_pos_z]
+    or a, b
+    jr nz, .loop
 
-    jr .loop
+    ; jr .loop
   
 
   ;d = swing_diff_x > -12 && swing_diff_x < 12 && swing_diff_y > -12 && swing_diff_y < 12;
@@ -384,6 +450,5 @@ RunSimulation::
   ld [rSCY], a
   CLEAR_SCREEN " "
   SHOW_WIN
-  call SetupGameUI
   DISPLAY_ON
   ret

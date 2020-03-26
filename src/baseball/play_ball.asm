@@ -15,7 +15,6 @@ INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
-INCLUDE "src/baseball/simulation.asm"
 
 BASEBALL_SPRITE_ID EQU 0
 AIM_CIRCLE_SPRITE_ID EQU 3
@@ -221,7 +220,8 @@ Swing:; xy = de, z = a
   ;swing_diff_y = y - ball_pos_y;
   ;swing_diff_z = z - 128;
 
-  call RunSimulation
+  call LoadSimulation
+  call SetupGameUI
   ret
 
 Aim: 
@@ -600,7 +600,7 @@ StartGame::
   ld [away_score], a
 
  ;TODO: REMOVE ME
-  call RunSimulation
+  call LoadSimulation
 
   call PlayIntro
   call SetupGameUI

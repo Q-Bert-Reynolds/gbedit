@@ -12,6 +12,7 @@ PLAYER_DATA_BANK    EQU 9
 PLAYER_IMG_BANK     EQU 10
 OVERWORLD_BANK      EQU 20
 ROLEDEX_BANK        EQU 21
+SIM_BANK            EQU 22
 MAPS_BANK           EQU 50
 
 ; GameBoy palettes

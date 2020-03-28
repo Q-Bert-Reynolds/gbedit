@@ -442,11 +442,15 @@ InitBall:
   ld [ball_vel_z+1], a
   
   ;TODO:initial velocity should be calculated from swing_diff and player batting
-  ld a, -10
+
+  ld a, [swing_diff_x]
+  add a, -64
   ld [ball_vel_y], a
-  ld a, 60
+  ld a, [swing_diff_x]
+  add a, 64
   ld [ball_vel_x], a
-  ld a, 107
+  ld a, [swing_diff_y]
+  srl a
   ld [ball_vel_z], a
 
   ret
@@ -477,26 +481,6 @@ RunSimulation::
     jr nz, .loop
 
     ; jr .loop
-  
-
-  ;d = swing_diff_x > -12 && swing_diff_x < 12 && swing_diff_y > -12 && swing_diff_y < 12;
-  ;if (swing_diff_z < 20 && swing_diff_z > -20) {
-  ;    if (d) {
-  ;        if (swing_diff_z == 0 && swing_diff_x == 0 && swing_diff_y == 0/* && rand < batting avg */) {
-  ;            display_text("Critical hit!");
-  ;        }
-  ;        else {
-  ;            display_text("Solid contact");
-  ;        }
-  ;    }
-  ;    else display_text("Swing and a miss.");
-  ;}
-  ;else if (swing_diff_z >= 20) {
-  ;    display_text("Late swing.");
-  ;}
-  ;else {
-  ;    display_text("Early swing.");
-  ;}
 
   DISPLAY_OFF
   xor a

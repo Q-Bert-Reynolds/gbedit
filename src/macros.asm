@@ -187,3 +187,32 @@ SET_DEFAULT_PALETTE: MACRO
   ld hl, rOBP1
   ld [hl], SPR_PAL_DLW
 ENDM
+
+BETWEEN: MACRO; if \1 <= a < \2
+IF \1 > \2
+  PRINTT "ERROR: LOWER BOUND CAN'T BE HIGHER THAN UPPER BOUND."
+ELIF \1 < 0 && \2 >= 0
+  cp 128
+  jr c, .positive\@
+  cp \1
+  jr nc, .true\@
+  jr .false\@
+.positive\@
+  cp \2
+  jr c, .true\@
+  jr .false\@
+ELSE
+  cp \1
+  jr c, .false\@
+  cp \2
+  jr nc, .false\@
+  jr .true\@
+ENDC
+.false\@
+  xor a
+  jr .end\@
+.true\@
+  ld a, 1
+.end\@
+  and a
+ENDM

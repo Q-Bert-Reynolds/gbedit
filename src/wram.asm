@@ -71,13 +71,18 @@ home_score: DB
 away_score: DB
 move_choice: DB
 play_menu_selection: DB
+aim_x:
 swing_diff_x: DB
+aim_y:
 swing_diff_y: DB
 swing_diff_z: DB
-ball_pos_x: DW
+ball_pos_x: DW ;used for pitch and sim
 ball_pos_y: DW
+pitch_z:
 ball_pos_z: DW
-ball_vel_x: DB
+pitch_target_x:;pitch target offset from center of strike zone
+ball_vel_x: DB;same location used for velocity in simulation
+pitch_target_y:
 ball_vel_y: DB
 ball_vel_z: DB
 ball_state: DB; // 7 = stopped, 6 = hitGround, 5 = fair, 4 = inPlay, 3..0 = position player holding ball

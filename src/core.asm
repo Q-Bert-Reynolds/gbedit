@@ -1129,3 +1129,35 @@ GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects s
   ld hl, name_buffer
   call str_Copy
   ret
+
+SignedRandom: ;a = bitmask
+  push af
+  call gbdk_Random
+  pop af
+  push af
+  and a, d
+  ld b, a
+  ld a, d
+  and %10000000
+  jr z, .skipD
+  ld a, b
+  xor a, $FF
+  add a, 1
+  ld b, a
+.skipD
+  ld d, b
+
+  pop af
+  and a, e
+  ld b, a
+  ld a, e
+  and %10000000
+  jr z, .skipE
+  ld a, b
+  xor a, $FF
+  add a, 1
+  ld b, a
+.skipE
+  ld e, b
+
+  ret

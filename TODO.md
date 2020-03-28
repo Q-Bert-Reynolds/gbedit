@@ -18,7 +18,6 @@ Python scripts
 
 Intro
 
-- sfx
 - sparks after ball hits light
 - pitch/bat anim
 - randomize players
@@ -31,10 +30,9 @@ New Game
 Play Ball
 
 - images for batting/pitching -> front/back -> ready/action (8 each * 151)
-- hit the ball
-- finish swing animation + a few frames before starting sim
+- ball should fly off screen after contact
 - handle different moves
-- show X next to pitches when batting / swings when pitching 
+- hide / disable selection of pitches when batting / swings when pitching
 - opponent batting / user pitching
     - animation
     - move ball
@@ -46,7 +44,8 @@ Simulation
 - catching throwing
 - implement basic rules
 - initial velocity should be calculated from swing_diff and batting stat
-- calculate landing spot directly instead of iteratively
+- iterative landing spot calc slightly off, direct method often way off
+- field should probably be bigger than 32x32
 
 Team Menu
 

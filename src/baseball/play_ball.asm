@@ -20,6 +20,9 @@ BASEBALL_SPRITE_ID EQU 0
 AIM_CIRCLE_SPRITE_ID EQU 3
 STRIKEZONE_SPRITE_ID EQU 10
 
+STRIKE_ZONE_CENTER_X EQU 52
+STRIKE_ZONE_CENTER_Y EQU 87
+
 ShowAimCircle: ;hl = size
   ld c, 8
   call math_Divide ; hl (remainder a) = hl / c
@@ -118,21 +121,28 @@ HideBaseball
   ret 
 
 ;start = (126,13), end = (52,87)
-MoveBaseball:; a = i
+MoveBaseball:; a = z
   push af
   ld b, a
   ld a, 126;127-(i>>1)
   sub a, b
-  ld [ball_pos_x], a
+  ld d, a
+  ld a, [pitch_target_x]
+  add a, d
+  ld d, a
 
   pop af
   push af
   ld b, a
   ld a, 13
   add a, b;13+(i>>1)
-  ld [ball_pos_y], a
+  ld e, a
+  ld a, [pitch_target_y]
+  add a, e
+  ld e, a
+  pop af;ball z
+  push de;ball x, y
 
-  pop af
   ld h, 0
   ld l, a
   ld c, 10
@@ -144,27 +154,30 @@ MoveBaseball:; a = i
 
   ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
 
-  ld a, [ball_pos_y]
+  pop de
+  ld a, e
   ld [hli], a;y
-  ld a, [ball_pos_x]
+  ld a, d
   ld [hli], a;x
   ld a, 1
   ld [hli], a;outline tile
   xor a
   ld [hli], a;prop
 
-  ld a, [ball_pos_y]
+  ld a, e
   ld [hli], a;y
-  ld a, [ball_pos_x]
+  ld a, d
   ld [hli], a;x
   ld a, [_t]
   ld [hli], a;tile
   ld a, OAMF_PAL1
   ld [hli], a;prop
   
-  ld a, 87
+  ld a, [pitch_target_y]
+  add a, STRIKE_ZONE_CENTER_Y
   ld [hli], a;y
-  ld a, 52
+  ld a, [pitch_target_x]
+  add a, STRIKE_ZONE_CENTER_X
   ld [hli], a;x
   ld a, 4
   ld [hli], a;projection tile
@@ -205,23 +218,101 @@ Pitch: ; (Player *p, UBYTE move) {
   ;move_aim_circle(96,32);
   ret
 
-Swing:; xy = de, z = a
-  push de;xy
+EarlySwingText:
+  DB "Early swing.",0
+LateSwingText:
+  DB "Late swing.",0
+SwingAndMissText:
+  DB "Swing and a miss.",0
+CriticalHitText:
+  DB "Critical hit!",0
+SolidContactText:
+  DB "Solid contact",0
+
+Swing:; xy = de, z = a, returns contact made in a
   push af;z
+  push de;xy
   ld d, -8
   ld e, -8
   call MoveAimCircle
   
   call HideStrikeZone
 
-  pop af;z
-  pop de;xy
-  ;swing_diff_x = x - ball_pos_x;
-  ;swing_diff_y = y - ball_pos_y;
-  ;swing_diff_z = z - 128;
+  ld a, [pitch_target_x]
+  add a, STRIKE_ZONE_CENTER_X
+  ld b, a
+  ld a, [pitch_target_y]
+  add a, STRIKE_ZONE_CENTER_Y
+  ld c, a
 
-  call LoadSimulation
-  call SetupGameUI
+  pop de;xy
+  ld a, d
+  sub a, b
+  ld [swing_diff_x], a
+  ld a, e
+  sub a, c
+  ld [swing_diff_y], a
+  pop af;z
+  sub a, 64
+  ld [swing_diff_z], a
+
+  ; ld a, [swing_diff_x]
+  ; ld b, a
+  ; ld a, [swing_diff_y]
+  ; ld c, a
+  ; ld a, [swing_diff_z]
+  ; ld [_breakpoint], a
+
+  ld a, [swing_diff_z]
+  BETWEEN -20, 20
+  jr nz, .checkHit
+  ld a, [swing_diff_z]
+  cp 128
+  jr c, .late
+.early
+  ld hl, EarlySwingText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  xor a
+  ret
+.late
+  ld hl, LateSwingText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  xor a
+  ret
+.checkHit;TODO: replace 12 with swing data
+  ld a, [swing_diff_x]
+  BETWEEN -12, 12
+  jr z, .miss
+  ld a, [swing_diff_y]
+  BETWEEN -12, 12
+  jr z, .miss
+
+  ld a, [swing_diff_x]
+  ld b, a
+  ld a, [swing_diff_y]
+  or a, b
+  ld b, a
+  ld a, [swing_diff_z]
+  or a, b
+  jr z, .criticalHit
+  ld hl, SolidContactText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  ld a, 1
+  ret
+.criticalHit
+  ld hl, CriticalHitText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  ld a, 1
+  ret
+.miss
+  ld hl, SwingAndMissText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  xor a
   ret
 
 Aim: 
@@ -230,44 +321,55 @@ Aim:
   ld a, [button_state]
   and PADF_RIGHT
   jr z, .testLeft
-  ld a, [_a]
+  ld a, [aim_x]
   inc a
-  ld [_a], a
+  inc a
+  ld [aim_x], a
   jr .testDown
 .testLeft;else if (k & J_LEFT) --a;
   ld a, [button_state]
   and PADF_LEFT
   jr z, .testDown
-  ld a, [_a]
+  ld a, [aim_x]
   dec a
-  ld [_a], a
+  dec a
+  ld [aim_x], a
 .testDown;if (k & J_DOWN) ++b;
   ld a, [button_state]
   and PADF_DOWN
   jr z, .testUp
-  ld a, [_b]
+  ld a, [aim_y]
   inc a
-  ld [_b], a
+  inc a
+  ld [aim_y], a
   jr .updateAim
 .testUp;else if (k & J_UP) --b;
   ld a, [button_state]
   and PADF_UP
   jr z, .updateAim
-  ld a, [_b]
+  ld a, [aim_y]
   dec a
-  ld [_b], a
+  dec a
+  ld [aim_y], a
 .updateAim
-  ld a, [_a]
+  ld a, [aim_x]
   srl a
   ld d, a
-  ld a, [_b]
+  ld a, [aim_y]
   srl a
   ld e, a
   call MoveAimCircle;move_aim_circle(a>>1, b>>1);
   call gbdk_WaitVBL
-  ret
+  ret  
 
-Bat:; (Player *p, UBYTE move) {
+Bat:
+  ld a, %00001111
+  call SignedRandom
+  ld a, d
+  ld [pitch_target_x], a
+  ld a, e
+  ld [pitch_target_y], a
+
   ld hl, _RightyPitcherOpponentTiles
   ld de, $8800 + 64*16
   ld bc, _RIGHTY_PITCHER_OPPONENT_TILE_COUNT*16
@@ -312,9 +414,9 @@ Bat:; (Player *p, UBYTE move) {
   call DisplayText
 
   ld a, 49<<1
-  ld [_a], a;a = 49<<1;
+  ld [aim_x], a;a = 49<<1;
   ld a, 85<<1
-  ld [_b], a;b = 85<<1;
+  ld [aim_y], a;b = 85<<1;
   
   xor a
 .preSetAimLoop
@@ -377,14 +479,14 @@ Bat:; (Player *p, UBYTE move) {
 
   xor a
   ld [_c], a
-  ld [_j], a
+  ld [pitch_z], a
   ld a, 4
   ld [_s], a;speed
 .swingLoop;for (j = 0; j < 200; j+=s)
     ld a, [_s]
     add a, a;s*2
     ld b, a
-    ld a, [_j]
+    ld a, [pitch_z]
     cp b
     jr nz, .aim;if (j == s*2)
 
@@ -401,7 +503,7 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_c]
     and a
     jp nz, .checkFinishSwing
-    ld a, [_j]
+    ld a, [pitch_z]
     and a
     jp z, .checkFinishSwing ;if (c == 0 && j > 0) {
       call Aim
@@ -409,7 +511,7 @@ Bat:; (Player *p, UBYTE move) {
       ld a, [button_state]
       and PADF_A
       jp z, .moveBaseball ;if (k & J_A) {
-        ld a, [_j]
+        ld a, [pitch_z]
         ld [_c], a
 
         ld d, 0
@@ -420,14 +522,16 @@ Bat:; (Player *p, UBYTE move) {
         ld a, _UI_FONT_TILE_COUNT
         call SetBKGTilesWithOffset
 
-        ld a, [_a];x
+        ld a, [aim_x];x
         srl a
         ld d, a
-        ld a, [_b];y
+        ld a, [aim_y];y
         srl a
         ld e, a
-        ld a, [_j];z
+        ld a, [pitch_z];z
         call Swing
+        and a
+        jr nz, .hitBall
       jp .moveBaseball
 
 .checkFinishSwing
@@ -437,7 +541,7 @@ Bat:; (Player *p, UBYTE move) {
     ld a, [_c]
     add a, b
     ld b, a;c+2*s
-    ld a, [_j]
+    ld a, [pitch_z]
     cp b
     jr nz, .moveBaseball;else if (j == c+2*s)
       ld d, 0
@@ -449,19 +553,49 @@ Bat:; (Player *p, UBYTE move) {
       call SetBKGTilesWithOffset
 
 .moveBaseball
-    ld a, [_j]
+    ld a, [pitch_z]
     call MoveBaseball
     call gbdk_WaitVBL
 
 .increment
     ld a, [_s]
     ld b, a
-    ld a, [_j]
+    ld a, [pitch_z]
     add a, b;j+=s
-    ld [_j], a
+    ld [pitch_z], a
     cp 200
     jp c, .swingLoop
+  jp .finish
 
+.hitBall
+  call HideBaseball
+
+  ld d, -8
+  ld e, -8
+  call MoveAimCircle
+  
+  ld a, [swing_diff_x]
+  ld a, [swing_diff_y]
+  ld a, [swing_diff_z]
+
+  ld de, 10
+  call gbdk_Delay
+
+  ld d, 0
+  ld e, 5
+  ld h, _RIGHTY_BATTER_USER0_COLUMNS
+  ld l, _RIGHTY_BATTER_USER0_ROWS
+  ld bc, _RightyBatterUser2TileMap
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  ld de, 10
+  call gbdk_Delay
+
+  call LoadSimulation
+  call SetupGameUI
+
+.finish
   call HideBaseball
 
   ld d, -8
@@ -478,8 +612,6 @@ Bat:; (Player *p, UBYTE move) {
   
   ld de, 100
   call gbdk_Delay
-  
-  ;update_waitpad(J_A);
   ret
 
 PlayBall:; a = selected move
@@ -598,9 +730,6 @@ StartGame::
   ld [home_score], a
   ld a, 3
   ld [away_score], a
-
- ;TODO: REMOVE ME
-  call LoadSimulation
 
   call PlayIntro
   call SetupGameUI

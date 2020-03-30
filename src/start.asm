@@ -90,38 +90,30 @@ Start::
   ld de, 1000
   call gbdk_Delay
   
-  ld a, 60
-  ld [_i], a
-.exitableOneSecPauseLoop1
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [_i]
-  sub a
-  ld [_i], a
-  jr nz, .exitableOneSecPauseLoop1
+  EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
   ld a, -8
   ld [_y], a
   ld a, 156
   ld [_x], a
 .ballFallingIntoLightsLoop 
-  xor a
-  ld c, a
-  ld a, [_x]
-  ld d, a ;x
-  ld a, [_y]
-  ld e, a ;y
-  call gbdk_MoveSprite
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [_y]
-  add a, 3
-  ld [_y], a
-  ld a, [_x]
-  sub a, 2
-  ld [_x], a
-  sub a, 94
-  jr nz, .ballFallingIntoLightsLoop
+    xor a
+    ld c, a
+    ld a, [_x]
+    ld d, a ;x
+    ld a, [_y]
+    ld e, a ;y
+    call gbdk_MoveSprite
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+    call gbdk_WaitVBL
+    ld a, [_y]
+    add a, 3
+    ld [_y], a
+    ld a, [_x]
+    sub a, 2
+    ld [_x], a
+    sub a, 94
+    jr nz, .ballFallingIntoLightsLoop
 
   ld d, 10 ; x
   ld e, 8  ; y
@@ -129,44 +121,36 @@ Start::
   ld l, _INTRO_LIGHT_OUT_ROWS ; h
   ld bc, _IntroLightOutTileMap
   call gbdk_SetBkgTiles
-  
+
 ; TODO: start playing stars animation
   xor a
   ld [_x], a
   ld hl, LightsPalSeq
 .ballBouncingOffLights
-  push hl
-  xor a
-  ld c, a
-  ld a, [_x]
-  add a, 94
-  ld d, a ;x
-  ld a, [_y]
-  ld e, a ;y
-  call gbdk_MoveSprite
-  pop hl ;pop has to happen before jump or return address will be incorrect
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [hli]
-  ld [rBGP], a
-  ld a, [_y]
-  add a, 4
-  ld [_y], a
-  ld a, [_x]
-  inc a
-  ld [_x], a
-  sub a, 40
-  jr nz, .ballBouncingOffLights
+    push hl
+    xor a
+    ld c, a
+    ld a, [_x]
+    add a, 94
+    ld d, a ;x
+    ld a, [_y]
+    ld e, a ;y
+    call gbdk_MoveSprite
+    pop hl ;pop has to happen before jump or return address will be incorrect
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+    call gbdk_WaitVBL
+    ld a, [hli]
+    ld [rBGP], a
+    ld a, [_y]
+    add a, 4
+    ld [_y], a
+    ld a, [_x]
+    inc a
+    ld [_x], a
+    sub a, 40
+    jr nz, .ballBouncingOffLights
 
-  ld a, 60
-  ld [_i], a
-.exitableOneSecPauseLoop2
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [_i]
-  sub a
-  ld [_i], a
-  jr nz, .exitableOneSecPauseLoop2
+  EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
 .pitchSequence
   LOAD_SONG LoadChargeSong
@@ -179,49 +163,169 @@ Start::
   ld hl, rBGP
   ld [hl], BG_PALETTE
 
-  ld bc, _INTRO0_COLUMNS*_INTRO0_ROWS
-  ld hl, _Intro0TileMap
-  ld d, _INTRO_SPRITES_TILE_COUNT
-  ld e, OAMF_PRI
-  call SetSpriteTiles
-
   xor a
   ld [_k], a
 .slidePlayersLoop
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  ld a, [_k]
-  add a, 32
-  ld [rSCX], a
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
+    ld a, [_k]
+    add a, 32
+    ld [rSCX], a
 
-  sub a, 64
-  ld b, a
-  ld c, 80
-  ld a, _INTRO0_COLUMNS
-  ld h, a
-  ld a, _INTRO0_ROWS
-  ld l, a
-  xor a
-  call MoveSprites ;bc = xy, hl = wh, a = offset
+    sub a, 64
+    ld b, a
+    ld c, 80
+    ld a, _INTRO_WAIT0_COLUMNS
+    ld h, a
+    ld a, _INTRO_WAIT0_ROWS
+    ld l, a
+    ld de, _IntroWait0TileMap
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
-  call gbdk_WaitVBL
-  ld a, [_k] 
-  inc a
-  ld [_k], a
-  sub 128
-  jr nz, .slidePlayersLoop
+    call gbdk_WaitVBL
+    ld a, [_k] 
+    inc a
+    ld [_k], a
+    sub 128
+    jr nz, .slidePlayersLoop
 
-  ld a, 60
-  ld [_i], a
-.exitableOneSecPauseLoop3
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [_i]
-  sub a
-  ld [_i], a
-  jr nz, .exitableOneSecPauseLoop3
+  EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
 
-  ld de, 10000
-  call gbdk_Delay
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.batWaggle
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait1TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait0TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait1TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
+
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait0TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait1TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+
+    ld b, 96
+    ld c, 80
+    ld h, _INTRO_WAIT1_COLUMNS
+    ld l, _INTRO_WAIT1_ROWS
+    ld de, _IntroWait0TileMap
+
+    ld a, OAMF_PRI
+    ld [sprite_props], a
+    ld a, SPRITE_FLAGS_SKIP
+    ld [sprite_flags], a
+    xor a;skip tile 0
+    ld [sprite_skip_id], a
+    ld a, _INTRO_SPRITES_TILE_COUNT
+    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
+
+
+
+
+
+
+
+
+
+
+
+
 
 .fadeOutAndExit
   call gbdk_WaitVBL

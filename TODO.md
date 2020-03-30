@@ -1,11 +1,16 @@
 General
 
-- move all strings to separate (generated) file
+- track time played
 - link cable support!
+- move all strings to separate (generated) file
 - give math subroutines more appropriate names
-- math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
-- SetSpriteTiles and SetSpriteTilesProps can likely be merged
 - big list of "real names" to use in place of ID and OT
+
+Optimization
+
+- call address macro that pushes address on stack increments stack pointer then jumps to address
+- math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
+- SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 
 Python scripts
 
@@ -77,6 +82,7 @@ Rolédex
 Audio
 
 - Music
+  - Take Me Out to the Ball Game (title screen)
   - Charge (intro anim)
   - Billet Town
   - play ball

@@ -155,12 +155,12 @@ FADE_IN: MACRO
   call gbdk_Delay
 ENDM
 
-UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS: MACRO ;address, buttons
+UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS: MACRO ; \1=address, \2=buttons
   call UpdateInput
   JUMP_TO_IF_BUTTONS \1, \2
 ENDM
 
-JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
+JUMP_TO_IF_BUTTONS: MACRO ; \1=address, \2=buttons
   ld a, [last_button_state]
   and a
   jr nz, .skip\@
@@ -168,6 +168,22 @@ JUMP_TO_IF_BUTTONS: MACRO ; address, buttons
   and \2
   jp nz, \1
 .skip\@
+ENDM
+
+EXITABLE_DELAY: MACRO ; \1=address, \2=buttons, \3=frames
+  ld a, \3
+.loop\@
+    push af
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .jump\@, \2
+    call gbdk_WaitVBL
+    pop af
+    dec a
+    jr nz, .loop\@
+  jr .exit\@
+.jump\@
+  pop af
+  jp \1
+.exit\@
 ENDM
 
 WAITPAD_UP: MACRO

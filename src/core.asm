@@ -759,6 +759,82 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
     jr nz, .rowLoop
   ret
 
+;; sets and moves a grid of sprite tiles, skips tile ID 0
+SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
+  ld [sprite_offset], a;offset
+  xor a
+  ld [_a], a;first tile
+  ld [_j], a
+.rowLoop ;for (j = 0; j < h; j++)
+    xor a
+    ld [_i], a
+.columnLoop ;for (i = 0; i < w; i++)
+      push bc;xy
+      push hl;wh
+
+      ld a, [sprite_flags]
+      and SPRITE_FLAGS_SKIP
+      jr z, .noSkip
+      ld a, [sprite_skip_id]
+      ld h, a
+      ld a, [de]
+      cp h;skip me
+      jr z, .skip
+.noSkip
+      push de;tilemap
+      
+      ld a, [_a]
+      ld e, a
+      inc a
+      ld [_a], a
+      ld hl, oam_buffer
+      sla e ;multiply e by 4
+      sla e
+      ld d, 0
+      add hl, de
+
+      ld a, [_j]
+      add a; j*2
+      add a; j*4
+      add a; j*8
+      add a, c ;j*8+y
+      ld [hli], a;y
+
+      ld a, [_i]
+      add a ;i*2
+      add a ;i*4
+      add a ;i*8
+      add a, b ;i*8+x
+      ld [hli], a;x
+
+      ld a, [sprite_offset];offset
+      ld b, a
+      pop de;tilemap
+      ld a, [de]
+      add a, b
+      ld [hli], a;tile
+
+      ld a, [sprite_props]
+      ld [hli], a
+
+.skip
+      inc de;tile index
+      pop hl;wh
+      pop bc;xy
+
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      sub a, h
+      jr nz, .columnLoop
+
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    sub a, l
+    jr nz, .rowLoop
+  ret
+
 FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles
   push hl;wh
   xor a

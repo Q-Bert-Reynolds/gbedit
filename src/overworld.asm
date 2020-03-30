@@ -452,7 +452,7 @@ CheckActions:
 
   ret
 
-ShowPlayerAvatar:;TODO: this doesn't seem to quite restore the sprite state
+ShowPlayerAvatar:
   ld b, 72
   ld c, 76
   ld h, 2

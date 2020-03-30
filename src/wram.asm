@@ -2,8 +2,14 @@ SECTION "Gloval Vars", WRAM0[$c000]
 ;debug
 _breakpoint: DB
 
+;drawing
+sprite_props: DB
+sprite_offset: DB
+sprite_flags: DB ;0 = skip
+sprite_skip_id: DB
+
 ;timers
-vbl_timer: DB
+vbl_timer: DB ;TODO: use me
 
 ;map
 last_map_button_state: DB

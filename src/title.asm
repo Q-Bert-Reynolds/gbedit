@@ -117,14 +117,10 @@ ShowPlayer: ;de = player number
 TitleDrop:
   DB 64,61,58,55,52,49,44,41,38,35,30,25,20,15,10,5,0,6,8,10,11,10,8,6,0,3,4,5,4,3,0,-1
 
-VersionSlide:
-
-
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
 
 ShowTitle:
-  di
   DISPLAY_OFF
   call UpdateAudio
   CLEAR_SCREEN 0
@@ -144,6 +140,7 @@ ShowTitle:
   ld bc, _CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS
   ld hl, _CalvinTitleTileMap
   ld de, 0
+  xor a;skip tile 0
   call SetSpriteTiles
 
   call UpdateAudio
@@ -211,7 +208,6 @@ ShowTitle:
     jr .dropInTitleLoop
 .finishTitleDrop
 
-  di
   ld d, 20
   ld e, 8
   ld h, _VERSION_COLUMNS
@@ -219,7 +215,6 @@ ShowTitle:
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
   call SetBKGTilesWithOffset
-  ei
 
   xor a
   ld [_x], a

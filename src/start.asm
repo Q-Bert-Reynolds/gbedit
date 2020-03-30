@@ -18,6 +18,57 @@ LightsPalSeq:
   DB $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0, $E8, $E8
   DB $E8, $E8, $EC, $EC, $EC, $EC, $EC, $EC, $EC, $EC
 
+IntroBattingSpriteMaps:
+  DW _IntroWait0TileMap
+  DW _IntroWait1TileMap
+  DW _IntroReadyTileMap
+  DW _IntroSwing0TileMap
+  DW _IntroSwing1TileMap
+
+IntroBattingSpriteSeq:
+  DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;ready
+  DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;ready
+  DB 2, 4, 4, 4, 4, 4, 4, 4 ;swing
+
+IntroBattingXSeq:
+  DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
+  DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
+  DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
+  DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
+  DB  2,  2,  2,  2,  2,  2,  2,  2 ;ready
+  DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
+  DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
+  DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
+  DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
+  DB  2,  2,  2,  2,  2,  2,  2,  2 ;ready
+  DB  2,  4,  4,  4,  4,  4,  4,  4 ;swing
+
+IntroPitchingTileMaps
+  DW _IntroPitch0TileMap
+  DW _IntroPitch1TileMap
+  DW _IntroPitch2TileMap
+
+IntroPitchingBGSeq:
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 1, 1, 1, 2, 2, 2, 2 ;pitch
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 1, 1, 1, 2, 2, 2, 2 ;pitch
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;watch
+  
 Start::
 .showCopyrights
   DISPLAY_OFF
@@ -197,135 +248,78 @@ Start::
 
   EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
 
+.battingSequence
 
+  xor a
+  ld b, a
+  ld c, a
+.battingSequenceLoop
+    push bc;index
+    ld hl, IntroBattingSpriteSeq
+    add hl, bc
+    ld a, [hl]
+    add a, a
+    ld b, 0
+    ld c, a
+    ld hl, IntroBattingSpriteMaps
+    add hl, bc
+    ld a, [hli]
+    ld e, a
+    ld a, [hl]
+    ld d, a
 
+    pop bc;index
+    push bc
+    ld hl, IntroBattingXSeq
+    add hl, bc
+    ld a, [hl]
+    add a, 96
 
-
-
-
-
-
-
-
-
-
-
-
-
-.batWaggle
-    ld b, 96
+    ld b, a
     ld c, 80
     ld h, _INTRO_WAIT1_COLUMNS
     ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait1TileMap
 
     ld a, OAMF_PRI
     ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
+    ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
     ld [sprite_flags], a
     xor a;skip tile 0
     ld [sprite_skip_id], a
     ld a, _INTRO_SPRITES_TILE_COUNT
     call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+    pop bc;index
+    push bc
 
-    ld b, 96
-    ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait0TileMap
+    ld hl, IntroPitchingBGSeq
+    add hl, bc
+    ld a, [hl]
+    add a, a
+    ld b, 0
+    ld c, a
+    ld hl, IntroPitchingTileMaps
+    add hl, bc
+    ld a, [hli]
+    ld c, a
+    ld a, [hl]
+    ld b, a
 
-    ld a, OAMF_PRI
-    ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
-    ld [sprite_flags], a
-    xor a;skip tile 0
-    ld [sprite_skip_id], a
-    ld a, _INTRO_SPRITES_TILE_COUNT
-    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+    ld h, _INTRO_PITCH0_COLUMNS
+    ld l, _INTRO_PITCH0_ROWS
+    ld d, 21
+    ld e, 8
+    call gbdk_SetBkgTiles
+    
+    pop bc
+    inc bc
 
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
+    ld a, IntroBattingXSeq - IntroBattingSpriteSeq
+    cp a, c
+    jr z, .fadeOutAndExit
 
-    ld b, 96
-    ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait1TileMap
-
-    ld a, OAMF_PRI
-    ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
-    ld [sprite_flags], a
-    xor a;skip tile 0
-    ld [sprite_skip_id], a
-    ld a, _INTRO_SPRITES_TILE_COUNT
-    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
-
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
-
-    ld b, 96
-    ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait0TileMap
-
-    ld a, OAMF_PRI
-    ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
-    ld [sprite_flags], a
-    xor a;skip tile 0
-    ld [sprite_skip_id], a
-    ld a, _INTRO_SPRITES_TILE_COUNT
-    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
-
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
-
-    ld b, 96
-    ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait1TileMap
-
-    ld a, OAMF_PRI
-    ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
-    ld [sprite_flags], a
-    xor a;skip tile 0
-    ld [sprite_skip_id], a
-    ld a, _INTRO_SPRITES_TILE_COUNT
-    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
-
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A),16
-
-    ld b, 96
-    ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
-    ld de, _IntroWait0TileMap
-
-    ld a, OAMF_PRI
-    ld [sprite_props], a
-    ld a, SPRITE_FLAGS_SKIP
-    ld [sprite_flags], a
-    xor a;skip tile 0
-    ld [sprite_skip_id], a
-    ld a, _INTRO_SPRITES_TILE_COUNT
-    call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
-
-    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
-
-
-
-
-
-
-
-
-
-
-
-
+    EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 8;frames per step
+    jr .battingSequenceLoop
 
 .fadeOutAndExit
   call gbdk_WaitVBL

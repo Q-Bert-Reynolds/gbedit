@@ -94,6 +94,7 @@ VBLInterrupt::
   reti
  
 UpdateInput::
+  push bc
   push hl
 
   ;copy button_state to last_button_state
@@ -123,6 +124,7 @@ UpdateInput::
   ld [hl], a
 
   pop hl
+  pop bc
   ret
 
 LoadFontTiles::
@@ -759,7 +761,7 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
     jr nz, .rowLoop
   ret
 
-;; sets and moves a grid of sprite tiles, skips tile ID 0
+;; sets and moves a grid of sprite tiles, skips tiles according to flags
 SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
   ld [sprite_offset], a;offset
   xor a
@@ -833,6 +835,27 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
     ld [_j], a
     sub a, l
     jr nz, .rowLoop
+
+  ld a, [sprite_flags]
+  and SPRITE_FLAGS_CLEAR_END
+  ret z
+
+  ld a, [_a]
+  ld e, a
+  ld hl, oam_buffer
+  sla e ;multiply e by 4
+  sla e
+  ld d, 0
+  add hl, de
+  ld a, 40
+  sub a, e
+  sla a
+  sla a
+  ld b, 0
+  ld c, a
+  xor a
+  call mem_Set
+
   ret
 
 FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles

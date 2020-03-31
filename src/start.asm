@@ -30,11 +30,13 @@ IntroBattingSpriteSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
-  DB 2, 2, 2, 2, 2, 2, 2, 2 ;ready
+  DB 0, 0, 2, 2, 2, 2, 2, 2 ;ready
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;ready
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 2, 2, 2, 2, 2, 2 ;ready
   DB 2, 2, 2, 2, 2, 2, 2, 2 ;ready
   DB 2, 4, 4, 4, 4, 4, 4, 4 ;swing
 
@@ -43,12 +45,14 @@ IntroBattingXSeq:
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
-  DB  2,  2,  2,  2,  2,  2,  2,  2 ;ready
+  DB  0,  1,  2,  3,  4,  5,  5,  5 ;ready
+  DB  5,  5,  5,  5,  5,  5,  5,  5 ;ready
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
-  DB  2,  2,  2,  2,  2,  2,  2,  2 ;ready
+  DB  0,  1,  2,  3,  4,  5,  5,  5 ;ready
+  DB  5,  5,  5,  5,  5,  5,  5,  5 ;ready
   DB  2,  4,  4,  4,  4,  4,  4,  4 ;swing
 
 IntroPitchingTileMaps
@@ -61,14 +65,61 @@ IntroPitchingBGSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
-  DB 1, 1, 1, 1, 2, 2, 2, 2 ;pitch
+  DB 1, 1, 1, 1, 1, 1, 2, 2 ;pitch
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;pitch
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
-  DB 1, 1, 1, 1, 2, 2, 2, 2 ;pitch
+  DB 1, 1, 1, 1, 1, 1, 2, 2 ;pitch
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;pitch
   DB 2, 2, 2, 2, 2, 2, 2, 2 ;watch
-  
+
+IntroPitchingXSeq:
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 2, 3, 4, 5, 6, 7, 8 ;ready
+  DB 8, 7, 6, 5, 4, 3, 2, 1 ;pitch
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 1, 2, 3, 4, 5, 6, 7, 8 ;ready
+  DB 8, 7, 6, 5, 4, 3, 2, 1 ;pitch
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+
+BallXSeq: 
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 90, 98;release
+  DB 102,106,102,98,93,88,78,63;land
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 90, 98;release
+  DB 102,106,102,98,93,88,78,63;land
+  DB 32,28,24,20,16,12,8,4
+
+BallYSeq:
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 69,59;release
+  DB 53,48,45,48,53,59,69,89;land
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 69,59;release
+  DB 53,48,45,48,53,59,69,89;land
+  DB 64,60,56,52,48,44,40,36
+
 Start::
 .showCopyrights
   DISPLAY_OFF
@@ -88,9 +139,6 @@ Start::
 
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
-
-  ld de, 2000
-  call gbdk_Delay
 
 .showIntroSequence
   DISPLAY_OFF
@@ -204,6 +252,7 @@ Start::
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
 .pitchSequence
+  HIDE_ALL_SPRITES
   LOAD_SONG LoadChargeSong
   ld d, 0 ; x
   ld e, 0 ; y
@@ -254,6 +303,8 @@ Start::
   ld b, a
   ld c, a
 .battingSequenceLoop
+
+.getBatterSpriteTiles
     push bc;index
     ld hl, IntroBattingSpriteSeq
     add hl, bc
@@ -268,8 +319,10 @@ Start::
     ld a, [hl]
     ld d, a
 
+.moveBatterTiles
     pop bc;index
     push bc
+
     ld hl, IntroBattingXSeq
     add hl, bc
     ld a, [hl]
@@ -289,6 +342,37 @@ Start::
     ld a, _INTRO_SPRITES_TILE_COUNT
     call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
+.moveBall
+    pop bc;index
+    push bc
+
+    ld hl, BallXSeq
+    add hl, bc
+    ld a, [hl]
+    ld d, a
+    ld hl, BallYSeq
+    add hl, bc
+    ld a, [hl]
+    ld hl, oam_buffer
+    ld [hli], a;y
+    ld a, d
+    ld [hli], a;x
+    xor a
+    ld [hli], a;tile
+    ld a, OAMF_PRI
+    ld [hl], a;props
+    
+.slidePitcher
+    pop bc;index
+    push bc
+
+    ld hl, IntroPitchingXSeq
+    add hl, bc
+    ld a, [hl]
+    add a, 160
+    ld [rSCX], a
+
+.updatePitchingTiles
     pop bc;index
     push bc
 
@@ -304,7 +388,7 @@ Start::
     ld c, a
     ld a, [hl]
     ld b, a
-
+    
     ld h, _INTRO_PITCH0_COLUMNS
     ld l, _INTRO_PITCH0_ROWS
     ld d, 21
@@ -319,7 +403,7 @@ Start::
     jr z, .fadeOutAndExit
 
     EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 8;frames per step
-    jr .battingSequenceLoop
+    jp .battingSequenceLoop
 
 .fadeOutAndExit
   call gbdk_WaitVBL

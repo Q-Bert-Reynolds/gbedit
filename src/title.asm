@@ -137,14 +137,7 @@ ShowTitle:
   call mem_CopyVRAM
   call UpdateAudio
 
-  ld bc, _CALVIN_TITLE_ROWS*_CALVIN_TITLE_COLUMNS
-  ld hl, _CalvinTitleTileMap
-  ld de, 0
-  xor a;skip tile 0
-  call SetSpriteTiles
-
-  call UpdateAudio
-
+  ld de, _CalvinTitleTileMap
   ld a, 96
   ld b, a
   ld c, a
@@ -152,14 +145,18 @@ ShowTitle:
   ld h, a
   ld a, _CALVIN_TITLE_ROWS
   ld l, a
-  xor a
-  call MoveSprites ;bc = xy, hl = wh, a = offset
+  ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
+  ld [sprite_flags], a
+  xor a;skip tile 0
+  ld [sprite_skip_id], a
+  call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
+
   call UpdateAudio
 
   ld c, 5
   ld d, OAMF_PAL1
   call gbdk_SetSpriteProp
-  ld c, 10 ;would be 5 if blank sprites were skipped
+  ld c, 5
   ld d, 94
   ld e, 117
   call gbdk_MoveSprite
@@ -273,10 +270,8 @@ CyclePlayersLoop:
   ld a, [hl]
   add a, 101 ;y = 101+BallToss+_j
   ld e, a
-  ld a, 94 ;x
-  ld d, a
-  ld a, 10 ;sprite id (would be 5 if blanks were removed)
-  ld c, a
+  ld d, 94 ;x
+  ld c, 5 ;sprite id of ball
   call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
 .skipBallToss
   call gbdk_WaitVBL

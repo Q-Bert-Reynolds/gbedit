@@ -24,7 +24,7 @@ Python scripts
 Intro
 
 - sparks after ball hits light
-- pitch/bat anim
+- pitch/bat anim for home version
 - randomize players
 
 New Game

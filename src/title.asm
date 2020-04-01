@@ -149,6 +149,7 @@ ShowTitle:
   ld [sprite_flags], a
   xor a;skip tile 0
   ld [sprite_skip_id], a
+  ld [sprite_props], a
   call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
   call UpdateAudio

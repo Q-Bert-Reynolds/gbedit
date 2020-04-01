@@ -19,9 +19,10 @@ LightsPalSeq:
   DB $E8, $E8, $EC, $EC, $EC, $EC, $EC, $EC, $EC, $EC
 
 IntroBattingSpriteMaps:
-  DW _IntroWait0TileMap
-  DW _IntroWait1TileMap
-  DW _IntroReadyTileMap
+  DW _IntroStance0TileMap
+  DW _IntroStance1TileMap
+  DW _IntroWatch0TileMap
+  DW _IntroWatch1TileMap
   DW _IntroSwing0TileMap
   DW _IntroSwing1TileMap
 
@@ -31,14 +32,14 @@ IntroBattingSpriteSeq:
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 2, 2, 2, 2, 2, 2 ;ready
-  DB 0, 0, 0, 0, 0, 0, 0, 0 ;ready
+  DB 2, 2, 2, 2, 3, 3, 3, 3 ;ready
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 2, 2, 2, 2, 2, 2 ;ready
   DB 2, 2, 2, 2, 2, 2, 2, 2 ;ready
-  DB 2, 4, 4, 4, 4, 4, 4, 4 ;swing
+  DB 4, 5, 5, 5, 5, 5, 5, 5 ;swing
 
 IntroBattingXSeq:
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
@@ -46,7 +47,7 @@ IntroBattingXSeq:
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  0,  1,  2,  3,  4,  5,  5,  5 ;ready
-  DB  5,  5,  5,  5,  5,  5,  5,  5 ;ready
+  DB  5,  5,  5,  5,  3,  3,  3,  3 ;ready
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
@@ -95,14 +96,14 @@ BallXSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
-  DB 0, 0, 0, 0, 0, 0, 90, 98;release
-  DB 102,106,102,98,93,88,78,63;land
+  DB 0, 0, 0, 0, 0, 0, 106,108;release
+  DB 110,108,106,104,100,96,92,88;land
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
-  DB 0, 0, 0, 0, 0, 0, 90, 98;release
-  DB 102,106,102,98,93,88,78,63;land
+  DB 0, 0, 0, 0, 0, 0, 106,108;release
+  DB 110,108,106,104,100,96,92,88;land
   DB 32,28,24,20,16,12,8,4
 
 BallYSeq:
@@ -110,14 +111,14 @@ BallYSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
-  DB 0, 0, 0, 0, 0, 0, 69,59;release
-  DB 53,48,45,48,53,59,69,89;land
+  DB 0, 0, 0, 0, 0, 0, 70,62;release
+  DB 60,58,60,62,70,75,90,105;land
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
-  DB 0, 0, 0, 0, 0, 0, 69,59;release
-  DB 53,48,45,48,53,59,69,89;land
+  DB 0, 0, 0, 0, 0, 0, 70,62;release
+  DB 60,58,60,62,70,75,90,105;land
   DB 64,60,56,52,48,44,40,36
 
 Start::
@@ -268,17 +269,17 @@ Start::
 .slidePlayersLoop
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
     ld a, [_k]
-    add a, 32
+    add a, 33
     ld [rSCX], a
 
-    sub a, 64
+    sub a, 65
     ld b, a
     ld c, 80
-    ld a, _INTRO_WAIT0_COLUMNS
+    ld a, _INTRO_STANCE0_COLUMNS
     ld h, a
-    ld a, _INTRO_WAIT0_ROWS
+    ld a, _INTRO_STANCE0_ROWS
     ld l, a
-    ld de, _IntroWait0TileMap
+    ld de, _IntroStance0TileMap
     ld a, OAMF_PRI
     ld [sprite_props], a
     ld a, SPRITE_FLAGS_SKIP
@@ -330,8 +331,8 @@ Start::
 
     ld b, a
     ld c, 80
-    ld h, _INTRO_WAIT1_COLUMNS
-    ld l, _INTRO_WAIT1_ROWS
+    ld h, _INTRO_WATCH1_COLUMNS
+    ld l, _INTRO_WATCH1_ROWS
 
     ld a, OAMF_PRI
     ld [sprite_props], a

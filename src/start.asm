@@ -292,9 +292,6 @@ Start::
     jr nz, .ballBouncingOffLights
 
   ld a, 60
-
-  
-  ld a, 128
   ld [_c], a
 .sparksAfterHitLoop
     call UpdateIntroSparks

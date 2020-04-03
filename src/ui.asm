@@ -43,10 +43,19 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
   ld c, e
   ld d, 20
   ld e, 6
-  ld a, DRAW_FLAGS_WIN
   call DrawUIBox
   
+  pop de;xy
+  pop hl;text
+  pop af;draw flags
+  push af;draw flags
+  push hl;text
+  push de;xy
+
+  and a, DRAW_FLAGS_WIN
+  jr z, .skipWin
   SHOW_WIN
+.skipWin
 
   xor a
   ld [_i], a
@@ -81,13 +90,19 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
       sub a, 2
       jp nz, .skipFlash ;if (y == 2) {
         pop de;xy
+        pop hl;text
+        pop af;draw flags
+        push af;draw flags
+        push hl;text
         push de;xy
+        push af;draw flags
         ld a, d
         add a, 18
         ld d, a
         ld a, e
         add a, 4
         ld e, a
+        pop af;draw flags
         call FlashNextArrow ;flash_next_arrow(18,4);
 
         ld a, 1
@@ -128,6 +143,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
         push af;draw flags
         push hl;text
         push de;xy
+        push af;draw flags
         and a, DRAW_FLAGS_PAD_TOP
         rr a
         add a, e
@@ -139,7 +155,8 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
         ld h, 17 ;w
         ld l, 1 ;h
         ld bc, str_buffer
-        call gbdk_SetWinTiles ;set_win_tiles(1, 2, 17, 1, str_buff);
+        pop af
+        call SetTiles
 
         ld bc, 17
         ld hl, str_buffer
@@ -151,6 +168,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
         push af;draw flags
         push hl;text
         push de;xy
+        push af;draw flags
         and a, DRAW_FLAGS_PAD_TOP
         rr a
         add a, e
@@ -162,7 +180,8 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
         ld h, 17 ;w
         ld l, 1 ;h
         ld bc, str_buffer
-        call gbdk_SetWinTiles ;set_win_tiles(1, 4, 17, 1, "                 ");
+        pop af
+        call SetTiles
 
 .skipFlash
       xor a
@@ -195,12 +214,15 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
     add a, 1;_y*2+1
     ld e, a ;y=_y*2+1
     pop af;draw flags
+    push af;draw flags
     and a, DRAW_FLAGS_PAD_TOP
     rr a
     add a, e
     ld e, a;if pad top, y=_y*2+2
+    pop af;draw flags
     pop hl;xy
     push hl;xy
+    push af;draw flags
     ld a, d
     add a, h
     ld d, a
@@ -209,7 +231,8 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
     ld e, a
     ld h, 1 ;w
     ld l, 1 ;h
-    call gbdk_SetWinTiles;set_win_tiles(x+1,y*2+2,1,1,text+i);
+    pop af;draw flags
+    call SetTiles
 
 .delay
     ld de, 10;TODO: should use text speed
@@ -240,6 +263,7 @@ UIRevealTextAndWait::
 
   ld d, 18
   ld e, 4
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call FlashNextArrow ;flash_next_arrow(18,4);
   ret
 

@@ -23,6 +23,7 @@ Python scripts
 
 Intro
 
+- make ball movement smooth
 - sparks after ball hits light
 - pitch/bat anim for home version
 - randomize players

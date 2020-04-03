@@ -652,7 +652,7 @@ ShowLineupFromGame::
   call SetBank
   ret
 
-SetSpriteTiles:: ;bc = count, hl = map, de = offset\flags
+SetSpriteTiles:: ;bc = count, hl = map, de = offset\props
   xor a
   ld [_i], a
 .loop
@@ -662,16 +662,16 @@ SetSpriteTiles:: ;bc = count, hl = map, de = offset\flags
     ld a, [hli]
     push hl;map index
     add a, d;offset
-    push de;offset\flags
+    push de;offset\props
     ld d, a ;tile
     call gbdk_SetSpriteTile
     ld a, [_i]
     ld c, a
-    pop de;offset\flags
-    push de;offset\flags
+    pop de;offset\props
+    push de;offset\props
     ld d, e
     call gbdk_SetSpriteProp
-    pop de;offset\flags
+    pop de;offset\props
     pop hl;map index
     ld a, [_i]
     inc a
@@ -689,15 +689,16 @@ SetSpriteTilesProps:: ;bc = offset\count, hl = tilemap, de = propmap
 .loop
     push bc;offset\count
     ld a, [_i]
+    add a, b
     ld c, a
     ld a, [hli]
     push hl;tilemap index
     add a, b;offset
     push de;propmap
     ld d, a ;tile
+    push bc;offset & sprite/prop num
     call gbdk_SetSpriteTile
-    ld a, [_i]
-    ld c, a
+    pop bc;offset & sprite/prop num
     pop de;propmap
     ld a, [de]
     inc de

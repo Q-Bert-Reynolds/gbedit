@@ -33,6 +33,7 @@ IntroBattingSpriteSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 2, 2, 2, 2, 2, 2 ;ready
   DB 2, 2, 2, 2, 3, 3, 3, 3 ;ready
+  DB 3, 3, 3, 3, 3, 3, 0, 0 ;watch
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 1, 0, 0, 1, 1, 0, 0 ;waggle
@@ -48,6 +49,7 @@ IntroBattingXSeq:
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  0,  1,  2,  3,  4,  5,  5,  5 ;ready
   DB  5,  5,  5,  5,  3,  3,  3,  3 ;ready
+  DB  2,  2,  2,  2,  2,  2,  1,  1 ;watch
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
   DB  0,  0,  0,  0,  0,  0,  0,  0 ;hold
   DB  1,  1,  0,  0,  1,  1,  0,  0 ;waggle
@@ -68,6 +70,7 @@ IntroPitchingBGSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 1, 1, 1, 1, 1, 2, 2 ;pitch
   DB 2, 2, 2, 2, 2, 2, 2, 2 ;pitch
+  DB 2, 2, 2, 2, 2, 2, 2, 2 ;watch
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
@@ -87,6 +90,7 @@ IntroPitchingXSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
+  DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 1, 2, 3, 4, 5, 6, 7, 8 ;ready
   DB 8, 7, 6, 5, 4, 3, 2, 1 ;pitch
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
@@ -102,9 +106,10 @@ BallXSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 106,108;release
   DB 110,108,106,104,100,96,92,88;land
-  DB 32,28,24,20,16,12,8,4
+  DB 28,24,20,16,12,8,4,0
 
 BallYSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0
@@ -117,9 +122,45 @@ BallYSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 0, 0
+  DB 0, 0, 0, 0, 0, 0, 0, 0
   DB 0, 0, 0, 0, 0, 0, 70,62;release
   DB 60,58,60,62,70,75,90,105;land
-  DB 64,60,56,52,48,44,40,36
+  DB 56,52,48,44,40,36,32,26
+
+UpdateIntroSparks:
+  xor a
+  ld hl, tile_buffer
+  ld bc, 24
+  call mem_Set
+
+  ld hl, tile_buffer+24
+  ld a, 24
+.loop
+    push af
+    push hl
+    call gbdk_Random
+    ld a, d
+    or a, OAMF_PRI
+    pop hl
+    ld [hli], a
+    pop af
+    dec a
+    jr nz, .loop
+
+  ld hl, tile_buffer
+  ld de, tile_buffer+24
+  ld b, 1
+  ld c, 24
+  call SetSpriteTilesProps
+
+  ld b, 56;x
+  ld c, 106;y
+  ld h, 8;w
+  ld l, 3;h
+  ld a, 1
+  call MoveSprites
+
+  ret
 
 Start::
 .showCopyrights
@@ -222,7 +263,6 @@ Start::
   ld bc, _IntroLightOutTileMap
   call gbdk_SetBkgTiles
 
-; TODO: start playing stars animation
   xor a
   ld [_x], a
   ld hl, LightsPalSeq
@@ -236,6 +276,7 @@ Start::
     ld a, [_y]
     ld e, a ;y
     call gbdk_MoveSprite
+    call UpdateIntroSparks
     pop hl ;pop has to happen before jump or return address will be incorrect
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
     call gbdk_WaitVBL
@@ -250,7 +291,19 @@ Start::
     sub a, 40
     jr nz, .ballBouncingOffLights
 
-  EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
+  ld a, 60
+
+  
+  ld a, 128
+  ld [_c], a
+.sparksAfterHitLoop
+    call UpdateIntroSparks
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .pitchSequence, (PADF_START | PADF_A)
+    call gbdk_WaitVBL
+    ld a, [_c]
+    dec a
+    ld [_c], a
+    jr nz, .sparksAfterHitLoop
 
 .pitchSequence
   HIDE_ALL_SPRITES
@@ -360,7 +413,7 @@ Start::
     ld [hli], a;x
     xor a
     ld [hli], a;tile
-    ld a, OAMF_PRI
+    ld a, OAMF_PRI | OAMF_PAL1
     ld [hl], a;props
     
 .slidePitcher

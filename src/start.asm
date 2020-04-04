@@ -182,6 +182,9 @@ Start::
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
+  ld de, 2000
+  call gbdk_Delay
+
 .showIntroSequence
   DISPLAY_OFF
   ld hl, rBGP

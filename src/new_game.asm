@@ -2,6 +2,8 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "New Game", ROMX, BANK[NEW_GAME_BANK]
 
+INCLUDE "img/new_game/new_game.asm"
+INCLUDE "img/new_game/new_game_sprites/new_game_sprites.asm"
 INCLUDE "img/coaches/doc_hickory.asm"
 INCLUDE "img/coaches/calvin.asm"
 INCLUDE "img/coaches/nolan0.asm"
@@ -49,26 +51,26 @@ AWorldOfDreamsString:
 SelectNameOrTextEntry: ;assumes d > 0, bc = title
   ld a, [_d]
   dec a
-  jp nz, .nameSelected; if (d == 1) {
+  jp nz, .nameSelected
   ld a, 48
   ld [rSCX], a
   ld de, name_buffer
   ld a, 7
   ld l, a
-  call ShowTextEntry ;show_text_entry("YOUR NAME?", name_buff, 7, NEW_GAME_BANK);
+  call ShowTextEntry
   jp .moveImageBack
 
-.nameSelected ; else {
-  ld [_d], a;d -= 1;
+.nameSelected
+  ld [_d], a
   xor a
   ld [_i], a
   ld hl, str_buffer
   call str_Length ;de = length
   ld a, e ;assumes length < 256
-  ld [_l], a;l = strlen(str_buff);
+  ld [_l], a
   ld hl, str_buffer
   ld de, name_buffer
-.copyNameFromListLoop ;for (i = 0; i < l; i++) {
+.copyNameFromListLoop
     ld a, [hl]
     and a
     jr z, .nextName
@@ -83,10 +85,10 @@ SelectNameOrTextEntry: ;assumes d > 0, bc = title
     dec a
     ld [_d], a
     jr .checkLoopEnd
-.checkNameFound; else if (d == 0) {
+.checkNameFound
     ld a, [hl]
-    ld [de], a ;name_buff[j] = str_buff[i];
-    inc de ;++j;
+    ld [de], a 
+    inc de
 .checkLoopEnd
     inc hl
     ld a, [_i]
@@ -102,7 +104,7 @@ SelectNameOrTextEntry: ;assumes d > 0, bc = title
 .moveImageBack
   xor a
   ld [_i], a
-.moveImageBackLoop;for (i = 0; i <= 48; i+=2) {
+.moveImageBackLoop
     call gbdk_WaitVBL
     ld a, [_i]
     add a, 2
@@ -121,7 +123,7 @@ NewGame::
   xor a
   ld [rSCY], a
   ld a, 48
-  ld [rSCX], a ; move_bkg(48,0);
+  ld [rSCX], a
 
   call LoadFontTiles
 
@@ -129,7 +131,7 @@ NewGame::
   ld hl, _DocHickoryTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _DOC_HICKORY_TILE_COUNT*16
-  call mem_CopyVRAM;mem_CopyToTileData; set_bkg_data(_UI_FONT_TILE_COUNT, _DOC_HICKORY_TILE_COUNT, _doc_hickory_tiles);
+  call mem_CopyVRAM
   CLEAR_SCREEN " "
 
   ld d, 13
@@ -143,11 +145,9 @@ NewGame::
   DISPLAY_ON
   FADE_IN
   
-; reveal_text("Hello there!\nWelcome to the\nworld of BéiSBOL.", NEW_GAME_BANK);
   ld hl, HelloThereString
   call RevealTextAndWait
 
-; reveal_text("My name is DOC!\nPeople call me\nthe BéiSBOL PROF!", NEW_GAME_BANK);
   ld hl, MyNameIsDocString
   call RevealTextAndWait
   FADE_OUT
@@ -158,29 +158,25 @@ NewGame::
     
   ld a, 33
   ld de, _UI_FONT_TILE_COUNT
-  call LoadPlayerBkgData ; load_player_bkg_data(33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+  call LoadPlayerBkgData
 
   ld a, 33
   ld b, 13
   ld c, 4
   ld de, _UI_FONT_TILE_COUNT
-  call SetPlayerBkgTiles; set_player_bkg_tiles(13, 4, 33, _UI_FONT_TILE_COUNT, NEW_GAME_BANK);
+  call SetPlayerBkgTiles
   DISPLAY_ON
 
   FADE_IN
-; reveal_text("This world is\ninhabited by\nathletes called\nPLAYERS!", NEW_GAME_BANK);
   ld hl, ThisWorldIsString
   call RevealTextAndWait
 
-; reveal_text("For some people,\nPLAYERS are\nicons. Some sign\nthem to teams", NEW_GAME_BANK);
   ld hl, ForSomeString
   call RevealTextAndWait
 
-; reveal_text("Myself...", NEW_GAME_BANK);
   ld hl, MyselfString
   call RevealTextAndWait
 
-; reveal_text("I study BéiSBOL\nas a profession.", NEW_GAME_BANK);
   ld hl, IStudyBeisbolString
   call RevealTextAndWait
   FADE_OUT
@@ -190,7 +186,7 @@ NewGame::
   ld hl, _CalvinTiles
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16
-  call mem_CopyVRAM; set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
+  call mem_CopyVRAM
   CLEAR_SCREEN " "
 
   ld a, 13
@@ -203,46 +199,43 @@ NewGame::
   ld l, a
   ld bc, _CalvinTileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset; set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
+  call SetBKGTilesWithOffset
 
   ld a, -56
   ld [rSCX], a
   xor a
-  ld [rSCY], a; move_bkg(-56,0);
+  ld [rSCY], a
 
   DISPLAY_ON
   FADE_IN
 
   ld a, -56
-  ld [_i], a
-.slideInCalvinLoop; for (i = -56; i <= 48; i+=4) {
-  call gbdk_WaitVBL
-  ld a, [_i]
-  ld [rSCX], a
-  add a, 4
-  ld [_i], a
-  sub a, 48
-  jp nz, .slideInCalvinLoop
+.slideInCalvinLoop
+    push af
+    call gbdk_WaitVBL
+    pop af
+    ld [rSCX], a
+    add a, 4
+    cp 48
+    jp nz, .slideInCalvinLoop
 
-; reveal_text("First, what is\nyour name?", NEW_GAME_BANK);
   ld hl, WhatIsYourNameString
   call RevealTextAndWait
 
   ld a, 48
-  ld [_i], a
-.slideOverCalvinLoop; for (i = 48; i >= 0; i-=2) {
-  call gbdk_WaitVBL
-  ld a, [_i]
-  sub a, 2
-  ld [rSCX], a
-  ld [_i], a
-  jp nz, .slideOverCalvinLoop
+.slideOverCalvinLoop
+    push af
+    call gbdk_WaitVBL
+    pop af
+    sub a, 2
+    ld [rSCX], a
+    jr nz, .slideOverCalvinLoop
 
 ;ask for user's name
 IF DEF(_HOME)
-  ld hl, HomeNames; strcpy(str_buff, home_names);
+  ld hl, HomeNames
 ELSE
-  ld hl, AwayNames; strcpy(str_buff, away_names);
+  ld hl, AwayNames
 ENDC
   ld de, str_buffer
   call str_Copy
@@ -250,34 +243,32 @@ ENDC
   xor a
   ld [_d], a
 .showUserNameListLoop; while (d == 0) {
-  ld hl, UserNameTitle
-  ld de, name_buffer
-  call str_Copy
-  
-  xor a
-  ld b, a
-  ld c, a
-  ld a, 12
-  ld d, a
-  ld e, a
-  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
-  call ShowListMenu;d = show_list_menu(0,0,12,12, "NAME", str_buff, NEW_GAME_BANK);
-  ld [_d], a
-  and a
-  jp z, .showUserNameListLoop
+    ld hl, UserNameTitle
+    ld de, name_buffer
+    call str_Copy
+    
+    xor a
+    ld b, a
+    ld c, a
+    ld a, 12
+    ld d, a
+    ld e, a
+    ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
+    call ShowListMenu
+    ld [_d], a
+    and a
+    jp z, .showUserNameListLoop
 
 ;show text entry
   CLEAR_BKG_AREA 0,0,12,12," "
   ld bc, UserNameTextEntryTitle
   call SelectNameOrTextEntry
 
-; sprintf(str_buff, "Right! So your\nname is %s!", name_buff);
   ld bc, name_buffer
   ld hl, RightSoYourNameString
   ld de, str_buffer
   call str_Replace
 
-; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
   call RevealTextAndWait
 
@@ -289,7 +280,7 @@ ENDC
   ld hl, name_buffer
   ld de, user_name
   ld bc, 7
-  call mem_Copy; memcpy(user_name, name_buff, 7);
+  call mem_Copy
   DISABLE_RAM_MBC5
   ei
 
@@ -299,90 +290,82 @@ ENDC
   ld hl, _Nolan0Tiles
   ld de, $8800
   ld bc, _NOLAN0_TILE_COUNT*16
-  call mem_CopyVRAM; set_bkg_data(_UI_FONT_TILE_COUNT, _NOLAN0_TILE_COUNT, _nolan0_tiles);
+  call mem_CopyVRAM
 
-  ld a, 13
-  ld d, a
-  ld a, 4
-  ld e, a
-  ld a, _NOLAN0_COLUMNS
-  ld h, a
-  ld a, _NOLAN0_ROWS
-  ld l, a
+  ld d, 13
+  ld e, 4
+  ld h, _NOLAN0_COLUMNS
+  ld l, _NOLAN0_ROWS
   ld bc, _Nolan0TileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset; set_bkg_tiles_with_offset(13,4,_NOLAN0_COLUMNS,_NOLAN0_ROWS,_UI_FONT_TILE_COUNT,_nolan0_map);
+  call SetBKGTilesWithOffset
 
   ld a, -56
-  ld [rSCX], a; move_bkg(-56,0);
+  ld [rSCX], a
   DISPLAY_ON
   FADE_IN
 
-.slideInNolanLoop; for (i = -56; i <= 48; i+=4) {
-  call gbdk_WaitVBL
-  ld a, [_i]
-  add a, 4
-  ld [rSCX], a
-  ld [_i], a
-  sub a, 48
-  jp nz, .slideInNolanLoop
+  ld a, -56
+.slideInNolanLoop
+    push af
+    call gbdk_WaitVBL
+    pop af
+    add a, 4
+    ld [rSCX], a
+    cp 48
+    jp nz, .slideInNolanLoop
 
-; reveal_text("This is my grand-\nson. He's been\nyour rival since\nyou were a rookie", NEW_GAME_BANK);
   ld hl, MyGrandsonString
   call RevealTextAndWait
 
-; reveal_text("...Erm, what is\nhis name again?", NEW_GAME_BANK);
   ld hl, WhatIsYourRivalString
   call RevealTextAndWait
 
   ld a, 48
-  ld [_i], a
-.slideOverNolanLoop; for (i = 48; i >= 0; i-=2) {
-  call gbdk_WaitVBL
-  ld a, [_i]
-  sub a, 2
-  ld [rSCX], a
-  ld [_i], a
-  jp nz, .slideOverNolanLoop
+.slideOverNolanLoop
+    push af
+    call gbdk_WaitVBL
+    pop af
+    sub a, 2
+    ld [rSCX], a
+    jp nz, .slideOverNolanLoop
   
 ;ask for rival's name
 IF DEF(_HOME)
-  ld hl, AwayNames; strcpy(str_buff, home_names);
+  ld hl, AwayNames
 ELSE
-  ld hl, HomeNames; strcpy(str_buff, away_names);
+  ld hl, HomeNames
 ENDC
   ld de, str_buffer
   call str_Copy
 
   xor a
   ld [_d], a
-.showRivalNameListLoop; while (d == 0) {
-  ld hl, UserNameTitle
-  ld de, name_buffer
-  call str_Copy
-  
-  xor a
-  ld b, a
-  ld c, a
-  ld a, 12
-  ld d, a
-  ld e, a
-  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
-  call ShowListMenu;d = show_list_menu(0,0,12,12,"NAME",str_buff,NEW_GAME_BANK);
-  ld [_d], a
-  and a
-  jp z, .showRivalNameListLoop
+.showRivalNameListLoop
+    ld hl, UserNameTitle
+    ld de, name_buffer
+    call str_Copy
+    
+    xor a
+    ld b, a
+    ld c, a
+    ld a, 12
+    ld d, a
+    ld e, a
+    ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
+    call ShowListMenu
+    ld [_d], a
+    and a
+    jp z, .showRivalNameListLoop
 
   CLEAR_BKG_AREA 0,0,12,12," "
   ld bc, RivalNameTextEntryTitle;"RIVAL's NAME?"
   call SelectNameOrTextEntry
   
-; sprintf(str_buff, "That's right! I\nremember now! His\nname is %s!", name_buff);
   ld hl, IRememberNowString
   ld de, str_buffer
   ld bc, name_buffer
   call str_Replace
-; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
   call RevealTextAndWait
   FADE_OUT
@@ -404,21 +387,28 @@ ENDC
   ld hl, _CalvinTiles
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16
-  call mem_CopyVRAM; set_bkg_data(_UI_FONT_TILE_COUNT, _CALVIN_TILE_COUNT, _calvin_tiles);
+  call mem_CopyVRAM
+
+  ld hl, _NewGameTiles
+  ld de, $8800+_CALVIN_TILE_COUNT*16
+  ld bc, _NEW_GAME_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld hl, _NewGameSpritesTiles
+  ld de, _VRAM
+  ld bc, _NEW_GAME_TILE_COUNT*16
+  call mem_CopyVRAM
+
   CLEAR_SCREEN " "
 
-  ld a, 13
-  ld d, a
-  ld a, 4
-  ld e, a
-  ld a, _CALVIN_COLUMNS
-  ld h, a
-  ld a, _CALVIN_ROWS
-  ld l, a
+  ld d, 13
+  ld e, 4
+  ld h, _CALVIN_COLUMNS
+  ld l, _CALVIN_ROWS
   ld bc, _CalvinTileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset; set_bkg_tiles_with_offset(13,4,_CALVIN_COLUMNS,_CALVIN_ROWS,_UI_FONT_TILE_COUNT,_calvin_map);
-
+  call SetBKGTilesWithOffset
+  
   DISPLAY_ON
   FADE_IN
 
@@ -428,28 +418,81 @@ ENDC
   ld hl, user_name
   ld de, name_buffer
   ld bc, 8
-  call mem_Copy; memcpy(user_name, name_buff, 8);
+  call mem_Copy
   DISABLE_RAM_MBC5
   ei
 
-; sprintf(str_buff, "%s!", user_name);
   ld hl, ExclaimNameString
   ld de, str_buffer
   ld bc, name_buffer
   call str_Replace
 
-; reveal_text(str_buff, NEW_GAME_BANK);
   ld hl, str_buffer
   call RevealTextAndWait
 
-; reveal_text("Your very own\nBéiSBOL legend is\nabout to unfold!", NEW_GAME_BANK);
   ld hl, YourBeisbolLegendString
   call RevealTextAndWait
 
-; reveal_text("A world of dreams\nand adventures\nwith BéiSBOL\nawaits! Let's go!", NEW_GAME_BANK); //don't wait for input at the end
   ld hl, AWorldOfDreamsString
   call RevealTextAndWait
 
-  ;TODO: shrink image
-  FADE_OUT
+  ld de, 500
+  call gbdk_Delay
+
+  ld d, 13
+  ld e, 4
+  ld h, _SILHOUETTE0_COLUMNS
+  ld l, _SILHOUETTE0_ROWS
+  ld bc, _Silhouette0TileMap
+  ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  ld de, 500
+  call gbdk_Delay
+
+  ld d, 13
+  ld e, 4
+  ld h, _SILHOUETTE1_COLUMNS
+  ld l, _SILHOUETTE1_ROWS
+  ld bc, _Silhouette1TileMap
+  ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  ld de, 500
+  call gbdk_Delay
+
+  ld d, 13
+  ld e, 4
+  ld h, _SILHOUETTE2_COLUMNS
+  ld l, _SILHOUETTE2_ROWS
+  ld bc, _Silhouette2TileMap
+  ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  xor a
+  ld [sprite_props], a
+  ld [sprite_flags], a
+  ld b, 72
+  ld c, 76
+  ld h, 2
+  ld l, 2
+  ld de, _NewGameCalvinTileMap
+  call SetSpriteTilesXY
+
+  ld de, 500
+  call gbdk_Delay
+
+;fade out only BG
+  ld a, $90
+  ld [rBGP], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, $40
+  ld [rBGP], a
+  ld de, 200
+  call gbdk_Delay
+  xor a
+  ld [rBGP], a
+  ld de, 200
+  call gbdk_Delay
   ret

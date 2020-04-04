@@ -31,7 +31,8 @@ Intro
 New Game
 
 - remove direct use of save file (so it doesn't immediately overwrite old save)
-- shrink Calvin image, transition to bedroom
+- transition to overworld without turning off display
+- load bedroom map
 
 Play Ball
 

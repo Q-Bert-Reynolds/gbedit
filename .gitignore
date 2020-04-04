@@ -1,19 +1,16 @@
 # all bin files
 bin/*
 
-# C files created in /img and /data
-img/**/*.c
-img/**/*.h
+# files created in /img, /data, and /music
 img/**/*.asm
 img/**/*.tilemap
 img/**/*.propmap
 img/**/*.tiles
 maps/**/*.asm
 maps/**/*.tilemap
-data/*.c
-data/*.h
 data/*.asm
 data/*.inc
+music/*.asm
 
 # generated GameBoy files
 *.gb
@@ -78,15 +75,6 @@ __pycache__/*
 *.su
 *.idb
 *.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
 
 # Editor config folder
 *.vscode

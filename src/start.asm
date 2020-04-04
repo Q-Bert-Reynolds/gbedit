@@ -307,7 +307,7 @@ Start::
 
 .pitchSequence
   HIDE_ALL_SPRITES
-  LOAD_SONG LoadChargeSong
+  LOAD_SONG effects_test_data
   ld d, 0 ; x
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w

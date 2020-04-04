@@ -194,7 +194,7 @@ ShowTitle:
   ld [_x], a
   DISPLAY_ON
   call gbdk_WaitVBL
-  LOAD_SONG LoadTakeMeOutToTheBallGame
+  LOAD_SONG template_song_data
 
   ld hl, TitleDrop
 .dropInTitleLoop

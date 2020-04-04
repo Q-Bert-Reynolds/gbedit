@@ -1,98 +1,11 @@
 INCLUDE "src/beisbol.inc"
+INCLUDE "src/gbt_player/gbt_player.inc"
 
 IF !DEF(AUDIO_ASM)
 AUDIO_ASM SET 1
 
-
-C3      SET 44
-Db3     SET 156
-D3      SET 262
-Eb3     SET 363
-E3      SET 457
-F3      SET 547
-Gb3     SET 631
-G3      SET 710
-Ab3     SET 786
-A3      SET 854
-Bb3     SET 923
-B3      SET 986
-C4      SET 1046
-Db4     SET 1102
-D4      SET 1155
-Eb4     SET 1205
-E4      SET 1253
-F4      SET 1297
-Gb4     SET 1339
-G4      SET 1379
-Ab4     SET 1417
-A4      SET 1452
-Bb4     SET 1486
-B4      SET 1517
-C5      SET 1546
-Db5     SET 1575
-D5      SET 1602
-Eb5     SET 1627
-E5      SET 1650
-F5      SET 1673
-Gb5     SET 1694
-G5      SET 1714
-Ab5     SET 1732
-A5      SET 1750
-Bb5     SET 1767
-B5      SET 1783
-C6      SET 1798
-Db6     SET 1812
-D6      SET 1825
-Eb6     SET 1837
-E6      SET 1849
-F6      SET 1860
-Gb6     SET 1871
-G6      SET 1881
-Ab6     SET 1890
-A6      SET 1899
-Bb6     SET 1907
-B6      SET 1915
-C7      SET 1923
-Db7     SET 1930
-D7      SET 1936
-Eb7     SET 1943
-E7      SET 1949
-F7      SET 1954
-Gb7     SET 1959
-G7      SET 1964
-Ab7     SET 1969
-A7      SET 1974
-Bb7     SET 1978
-B7      SET 1982
-C8      SET 1985
-Db8     SET 1988
-D8      SET 1992
-Eb8     SET 1995
-E8      SET 1998
-F8      SET 2001
-Gb8     SET 2004
-G8      SET 2006
-Ab8     SET 2009
-A8      SET 2011
-Bb8     SET 2013
-B8      SET 2015
-HOLD    SET 0
-REST    SET 1
-
-PLAY_NOTE: MACRO ;LoopArray, Tone, Channel
-  ld d, 0
-  ld a, [music_beat_num]
-  ld e, a ;music_beat_num in de
-  
-  ld hl, \1
-  add hl, de;note index
-  add hl, de;because notes are 2 bytes
-
-  ld de, \2;tone
-
-  ld a, \3;channel
-  call PlayNote
-ENDM
+INCLUDE "src/gbt_player/gbt_player.asm"
+INCLUDE "src/gbt_player/gbt_player_bank1.asm"
 
 LOAD_SONG: MACRO ;\1 load address
   di
@@ -102,7 +15,8 @@ LOAD_SONG: MACRO ;\1 load address
   ei
 ENDM
 
-INCLUDE "music/baseball_songs.asm"
+INCLUDE "music/template_song.asm"
+INCLUDE "music/effects_test.asm"
 
 SECTION "Audio", ROM0
 PlayNote: ;a = channel, de = tone, hl = note
@@ -184,78 +98,30 @@ PlayNote: ;a = channel, de = tone, hl = note
   ld [rAUD4GO], a
   ret
 
-UpdateMusic:
+UpdateAudio::
   ld a, [loaded_bank]
   ld [vblank_bank], a
-  ld a, [current_song_bank]
-  call SetBank
-  ld hl, rCurrentSong
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld h, b
-  ld l, a
-  jp hl
-FinishMusicUpdate:: ;song must jump back here
+  
+  call gbt_update
+  
   ld a, [vblank_bank]
   call SetBank
   ret
 
-UpdateAudio::
-  ld hl, rAUDENA
-  ld a, [hl]
-  and a, AUDENA_ON
-  ret z ;no need if audio is off
+LoadSong:: ; a = bank, hl = song address
+  ld d, h
+  ld e, l ;de = pointer to song data
+  ld b, 0
+  ld c, a ;data bank
 
-  ld a, [music_timer]
-  and a
-  jr nz, .incrementTimer
-    call UpdateMusic
-    ld a, [music_beat_num]
-    inc a
-    ld [music_beat_num], a
-    ld b, a
-    ld a, [music_beats]
-    cp b
-    jr nz, .incrementTimer
-      xor a
-      ld [music_beat_num], a
-      ld a, [music_phrase_num]
-      inc a
-      ld [music_phrase_num], a
-      ld b, a
-      ld a, [music_phrases]
-      cp b
-      jr nz, .incrementTimer
-        xor a
-        ld [music_phrase_num], a
-.incrementTimer
-  ld a, [music_timer]
-  inc a
-  ld [music_timer], a
-  ld b, a
-  ld a, [music_tempo]
-  cp b
-  ret nz
-  xor a
-  ld [music_timer], a
-  ret
-
-LoadSong:: ; a = bank, hl = setup address
-  push af
   ld a, [loaded_bank]
-  ld [temp_bank], a
-  pop af
-  call SetBank
-  jp hl
-DoneLoadingSong:: ;must be called at end of load subroutine
+  ld [temp_bank], a ;store current bank
+
+  ld a, 1 ;song speed
+  call gbt_play
+
   ld a, [temp_bank]
   call SetBank
-  ld hl, rAUDENA
-  ld [hl], AUDENA_ON
-  ld a, $FF
-  ld [rAUDTERM], a
-  ld [rAUDVOL], a
   ret 
 
 ENDC ;AUDIO_ASM

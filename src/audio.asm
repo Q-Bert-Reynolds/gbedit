@@ -16,8 +16,8 @@ LOAD_SONG: MACRO ;\1 load address
 ENDM
 
 INCLUDE "music/intro_lights.asm"
+INCLUDE "music/charge.asm"
 INCLUDE "music/take_me_out_to_the_ballgame.asm"
-INCLUDE "music/effects_test.asm"
 
 SECTION "Audio", ROM0
 PlayNote: ;a = channel, de = tone, hl = note

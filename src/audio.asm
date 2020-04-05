@@ -15,7 +15,8 @@ LOAD_SONG: MACRO ;\1 load address
   ei
 ENDM
 
-INCLUDE "music/template_song.asm"
+INCLUDE "music/intro_lights.asm"
+INCLUDE "music/take_me_out_to_the_ballgame.asm"
 INCLUDE "music/effects_test.asm"
 
 SECTION "Audio", ROM0

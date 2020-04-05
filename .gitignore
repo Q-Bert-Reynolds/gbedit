@@ -11,6 +11,7 @@ maps/**/*.tilemap
 data/*.asm
 data/*.inc
 music/*.asm
+music/*.bak
 
 # generated GameBoy files
 *.gb

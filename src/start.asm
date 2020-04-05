@@ -215,7 +215,7 @@ Start::
 
   ld a, LCDCF_ON | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a
-
+  
   xor a
   ld c, a
   ld d, a ;x
@@ -235,6 +235,8 @@ Start::
   call gbdk_Delay
   
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
+
+  LOAD_SONG intro_lights_data
 
   ld a, -8
   ld [_y], a

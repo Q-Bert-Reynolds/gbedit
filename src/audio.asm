@@ -16,7 +16,7 @@ LOAD_SONG: MACRO ;\1 load address
 ENDM
 
 INCLUDE "music/intro_lights.asm"
-INCLUDE "music/charge.asm"
+INCLUDE "music/charge_fanfare.asm"
 INCLUDE "music/take_me_out_to_the_ballgame.asm"
 
 SECTION "Audio", ROM0

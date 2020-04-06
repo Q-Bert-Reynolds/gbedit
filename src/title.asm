@@ -185,16 +185,18 @@ ShowTitle:
   ld d, a
   ld e, a
   call ShowPlayer
-  call UpdateAudio
-
-  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
 
   ld a, 64
   ld [_y], a
   ld [_x], a
+  
+  LOAD_SONG take_me_out_to_the_ballgame_data
+  ld a, 1
+  call gbt_loop
+
+  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
   DISPLAY_ON
   call gbdk_WaitVBL
-  LOAD_SONG take_me_out_to_the_ballgame_data
 
   ld hl, TitleDrop
 .dropInTitleLoop

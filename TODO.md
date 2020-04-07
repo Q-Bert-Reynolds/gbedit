@@ -16,7 +16,7 @@ Python scripts
 
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
-- only update .asm file when PNG or TMX files change
+- only update .asm file when PNG, TMX, or MOD files change
 - handle 1bpp and rle images
 - identify animations - same size, numbered names (name0, name1, etc)
 - roledex description parser should print warning when more than 6 lines
@@ -24,7 +24,6 @@ Python scripts
 Intro
 
 - make ball movement smooth
-- sparks after ball hits light
 - pitch/bat anim for home version
 - randomize players
 

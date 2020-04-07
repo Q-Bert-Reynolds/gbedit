@@ -1,6 +1,6 @@
 ; banks
 TEMP_BANK           EQU 255
-SONG_BANK           EQU 1
+SONG_BANK           EQU 1;used by gbt player
 UI_BANK             EQU 2
 START_BANK          EQU 3
 TITLE_BANK          EQU 4

@@ -60,12 +60,12 @@ SlideInLCDInterrupt::
     ld [rLYC], a
     ld a, [_x]
     ld [rSCX], a
-    jp EndLCDInterrupt
+    ret
 .checkMoveCoach; else if (LY_REG == 56) move_coach();
     cp 56
-    jp nz, EndLCDInterrupt
+    ret nz
     call MoveCoach
-  jp EndLCDInterrupt
+  ret
 
 SlideOutLCDInterrupt::
   ld a, [rLY]
@@ -75,9 +75,9 @@ SlideOutLCDInterrupt::
     ld [rLYC], a
     xor a
     ld [rSCX], a
-    jp EndLCDInterrupt
+    ret
 .checkMoveCoach; else if (LY_REG == 56) move_coach();
     cp 56
-    jp nz, EndLCDInterrupt
+    ret nz
     call MoveCoach
-  jp EndLCDInterrupt
+  ret

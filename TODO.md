@@ -1,5 +1,6 @@
 General
 
+- remove direct use of save file (so it doesn't immediately overwrite old save)
 - track time played
 - link cable support!
 - move all strings to separate (generated) file
@@ -8,7 +9,6 @@ General
 
 Optimization
 
-- call address macro that pushes address on stack increments stack pointer then jumps to address
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 
@@ -29,7 +29,6 @@ Intro
 
 New Game
 
-- remove direct use of save file (so it doesn't immediately overwrite old save)
 - transition to overworld without turning off display
 - load bedroom map
 
@@ -81,10 +80,8 @@ Rolédex
 - show player home towns / recruitment locations
   
 Audio
-
+- gbt_player causes interrupts to flicker when bank switching
 - Music
-  - Take Me Out to the Ball Game (title screen)
-  - Charge (intro anim)
   - Billet Town
   - play ball
 - SFX

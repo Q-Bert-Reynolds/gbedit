@@ -1,6 +1,6 @@
 ; banks
 TEMP_BANK           EQU 255
-SONG_BANK           EQU 1;used by gbt player
+GBT_PLAYER_BANK     EQU 1
 UI_BANK             EQU 2
 START_BANK          EQU 3
 TITLE_BANK          EQU 4
@@ -13,6 +13,7 @@ PLAYER_IMG_BANK     EQU 10
 OVERWORLD_BANK      EQU 20
 ROLEDEX_BANK        EQU 21
 SIM_BANK            EQU 22
+SONG_BANK           EQU 23
 MAPS_BANK           EQU 50
 
 ; GameBoy palettes

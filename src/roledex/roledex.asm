@@ -425,9 +425,9 @@ CopyToTileDataFlipped:
 .noWrap
   di
   LCD_WAIT_VRAM
-  ld  a,[hl+]
+  ld  a, [hli]
   call ReverseByte
-  ld  [de],a
+  ld  [de], a
   ei
   inc de
 .skip

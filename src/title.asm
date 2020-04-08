@@ -19,8 +19,8 @@ PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT
 
 ShowTitleLCDInterrupt::
   ld a, [rLY]
-  and a
-  jr z, .dropInTitle
+  cp 63
+  jr c, .dropInTitle
   cp 255
   jr nz, .slideVersion
 .dropInTitle
@@ -30,7 +30,7 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   ld a, [_y]
   ld [rSCY], a
-  jp EndLCDInterrupt
+  ret
 .slideVersion
   ld a, [rLY]
   cp 63
@@ -41,7 +41,7 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  jp EndLCDInterrupt
+  ret
 .scrollPlayers
   ld a, [rLY]
   cp 72
@@ -52,16 +52,16 @@ ShowTitleLCDInterrupt::
   ld [rSCX], a
   xor a
   ld [rSCY], a
-  jp EndLCDInterrupt
+  ret
 .screenBottom
   ld a, [rLY]
   cp 135
-  jp nz, EndLCDInterrupt
+  ret nz
   xor a
   ld [rLYC], a
   ld [rSCX], a
   ld [rSCY], a
-  jp EndLCDInterrupt
+  ret
 
 CyclePlayersLCDInterrupt::
   ld a, [rLY]
@@ -73,16 +73,16 @@ CyclePlayersLCDInterrupt::
   ld [rLYC], a
   ld a, [_x]
   ld [rSCX], a
-  jp EndLCDInterrupt
+  ret
 .noScroll
   ld a, [rLY]
   cp 135
-  jp nz, EndLCDInterrupt
+  ret nz
   ld a, 72
   ld [rLYC], a
   xor a
   ld [rSCX], a
-  jp EndLCDInterrupt
+  ret
 
 ShowPlayer: ;de = player number
   DISABLE_LCD_INTERRUPT
@@ -189,12 +189,13 @@ ShowTitle:
   ld a, 64
   ld [_y], a
   ld [_x], a
-  
+
+  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
+
   LOAD_SONG take_me_out_to_the_ballgame_data
   ld a, 1
   call gbt_loop
 
-  SET_LCD_INTERRUPT ShowTitleLCDInterrupt
   DISPLAY_ON
   call gbdk_WaitVBL
 

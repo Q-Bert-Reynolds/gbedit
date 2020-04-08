@@ -67,8 +67,10 @@ LCDInterrupt::
   ld a, [hl]
   ld h, b
   ld l, a
+  ld bc, EndLCDInterrupt
+  push bc ;put return addres on stack before jumping
   jp hl
-EndLCDInterrupt::; all interrupts should jump here 
+EndLCDInterrupt::
   pop hl 
   pop de
   pop bc

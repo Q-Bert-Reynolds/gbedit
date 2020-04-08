@@ -98,6 +98,9 @@ Main::
     call SetBank
     call Overworld
 
+    ;black out tiles one by one
+    LOAD_SONG tessie_data
+
 .startGame
     ld a, PLAY_BALL_BANK
     call SetBank

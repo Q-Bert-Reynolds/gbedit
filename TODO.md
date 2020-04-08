@@ -80,7 +80,6 @@ Rolédex
 - show player home towns / recruitment locations
   
 Audio
-- gbt_player causes interrupts to flicker when bank switching
 - Music
   - Billet Town
   - play ball

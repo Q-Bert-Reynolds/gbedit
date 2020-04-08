@@ -18,6 +18,7 @@ ENDM
 INCLUDE "music/intro_lights.asm"
 INCLUDE "music/charge_fanfare.asm"
 INCLUDE "music/take_me_out_to_the_ballgame.asm"
+INCLUDE "music/tessie.asm"
 
 SECTION "Audio", ROM0
 PlayNote: ;a = channel, de = tone, hl = note

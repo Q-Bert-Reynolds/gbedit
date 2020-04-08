@@ -54,30 +54,28 @@ MoveCoach:
 
 SlideInLCDInterrupt::
   ld a, [rLY]
-  and a
-  jr nz, .checkMoveCoach; if (LY_REG == 0){
+  cp 56
+  jr nc, .checkMoveCoach; if (LY_REG == 0){
     ld a, 56
     ld [rLYC], a
     ld a, [_x]
     ld [rSCX], a
     ret
 .checkMoveCoach; else if (LY_REG == 56) move_coach();
-    cp 56
-    ret nz
-    call MoveCoach
+  ret nz
+  call MoveCoach
   ret
 
 SlideOutLCDInterrupt::
   ld a, [rLY]
-  and a
-  jr nz, .checkMoveCoach; if (LY_REG == 0){
+  cp 56
+  jr nc, .checkMoveCoach; if (LY_REG == 0){
     ld a, 56
     ld [rLYC], a
     xor a
     ld [rSCX], a
     ret
 .checkMoveCoach; else if (LY_REG == 56) move_coach();
-    cp 56
-    ret nz
-    call MoveCoach
+  ret nz
+  call MoveCoach
   ret

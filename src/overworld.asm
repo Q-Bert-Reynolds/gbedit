@@ -496,6 +496,11 @@ Overworld::
   ld a, PADF_DOWN
   ld [last_map_button_state], a
   call ShowPlayerAvatar
+
+  ;TODO: load song based on location
+  LOAD_SONG hurrah_for_our_national_game_data
+  ld a, 1
+  ld [gbt_loop_enabled], a
   
   ;TODO: load initial map position
   xor a

@@ -7,11 +7,11 @@ AUDIO_ASM SET 1
 INCLUDE "src/gbt_player/gbt_player.asm"
 INCLUDE "src/gbt_player/gbt_player_bank1.asm"
 
-LOAD_SONG: MACRO ;\1 load address
+PLAY_SONG: MACRO ;\1 load address
   di
   ld a, BANK(\1)
   ld hl, \1
-  call LoadSong
+  call PlaySong
   ei
 ENDM
 
@@ -111,7 +111,7 @@ UpdateAudio::
   call SetBank
   ret
 
-LoadSong:: ; a = bank, hl = song address
+PlaySong:: ; a = bank, hl = song address
   ld d, h
   ld e, l ;de = pointer to song data
   ld b, 0

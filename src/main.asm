@@ -99,7 +99,7 @@ Main::
     call Overworld
 
     ;black out tiles one by one
-    PLAY_SONG tessie_data
+    PLAY_SONG tessie_data, 1
 
 .startGame
     ld a, PLAY_BALL_BANK

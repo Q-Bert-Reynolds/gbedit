@@ -192,9 +192,7 @@ ShowTitle:
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
 
-  PLAY_SONG take_me_out_to_the_ballgame_data
-  ld a, 1
-  call gbt_loop
+  PLAY_SONG take_me_out_to_the_ballgame_data, 1
 
   DISPLAY_ON
   call gbdk_WaitVBL

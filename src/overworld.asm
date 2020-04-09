@@ -498,9 +498,7 @@ Overworld::
   call ShowPlayerAvatar
 
   ;TODO: load song based on location
-  PLAY_SONG hurrah_for_our_national_game_data
-  ld a, 1
-  ld [gbt_loop_enabled], a
+  PLAY_SONG hurrah_for_our_national_game_data, 1
   
   ;TODO: load initial map position
   xor a

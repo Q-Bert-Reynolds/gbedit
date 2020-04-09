@@ -7,12 +7,14 @@ AUDIO_ASM SET 1
 INCLUDE "src/gbt_player/gbt_player.asm"
 INCLUDE "src/gbt_player/gbt_player_bank1.asm"
 
-PLAY_SONG: MACRO ;\1 load address
+PLAY_SONG: MACRO ;\1 load address, \2 loop
   di
   ld a, BANK(\1)
   ld hl, \1
   call PlaySong
   ei
+  ld a, \2
+  call gbt_loop
 ENDM
 
 INCLUDE "music/intro_lights.asm"

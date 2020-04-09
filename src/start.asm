@@ -236,7 +236,7 @@ Start::
   
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
-  PLAY_SONG intro_lights_data
+  PLAY_SONG intro_lights_data, 0
 
   ld a, -8
   ld [_y], a
@@ -312,7 +312,7 @@ Start::
 
 .pitchSequence
   HIDE_ALL_SPRITES
-  PLAY_SONG charge_fanfare_data
+  PLAY_SONG charge_fanfare_data, 0
   ld d, 0 ; x
   ld e, 0 ; y
   ld h, _INTRO_PITCH_COLUMNS ; w

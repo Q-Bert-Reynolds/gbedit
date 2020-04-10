@@ -288,6 +288,7 @@ FlashNextArrow:: ;a = draw flags, de = xy
   pop de ;xy
   jp FlashNextArrow
 .exitFlashNextArrow
+  PLAY_SFX SelectSound
   pop af;draw flags
   pop de ;xy
   ret
@@ -555,8 +556,6 @@ ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buf
   ld a, [temp_bank]
   call SetBank
 
-  PLAY_SFX TestSound
-
   pop af;choice
   ret; return a=choice;
 
@@ -566,11 +565,11 @@ ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
   ld h, b
   ld l, c
   ld de, str_buffer
-  call str_Copy; strcpy(str_buffer, title);
+  call str_Copy
 
   pop hl ;str
   ld de, name_buffer
-  call str_Copy; strcpy(name_buffer, str);
+  call str_Copy
 
   ld a, [loaded_bank]
   ld [temp_bank], a
@@ -580,7 +579,7 @@ ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
   ld de, str_buffer
   ld hl, name_buffer
   pop bc ;max_len
-  call UIShowTextEntry ;ui_show_text_entry(str_buffer, name_buffer, max_len);
+  call UIShowTextEntry
 
   ld a, [temp_bank]
   call SetBank

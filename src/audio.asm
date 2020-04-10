@@ -31,20 +31,9 @@ INCLUDE "music/take_me_out_to_the_ballgame.asm"
 INCLUDE "music/hurrah_for_our_national_game.asm"
 INCLUDE "music/tessie.asm"
 
+INCLUDE "src/sfx.asm"
+
 SECTION "Audio", ROM0
-
-TestSound:
-  DB 3;steps
-
-    ;ticks, sweep, duty/len, volume
-  DB 2,    0,     $FF,     $FF
-  DW E4 ;frequency
-
-  DB 4,    0,     $FF,     $FF
-  DW C5
-
-  DB 2,    0,     $FF,     $FF
-  DW A5
 
 UpdateAudio::
   ld a, [loaded_bank]
@@ -131,7 +120,7 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld [gbt_enable_channels], a
 
   ld a, [loaded_bank]
-  ld [temp_bank], a ;store current bank
+  ld [audio_temp_bank], a
 
   ld a, [current_sfx_bank]
   call SetBank
@@ -139,7 +128,7 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld a, [hl];step count
   ld [sfx_step_count], a
 
-  ld a, [temp_bank]
+  ld a, [audio_temp_bank]
   call SetBank
 
   ld a, AUDENA_ON
@@ -157,13 +146,13 @@ PlaySong:: ; a = bank, hl = song address
   ld c, a ;data bank
 
   ld a, [loaded_bank]
-  ld [temp_bank], a ;store current bank
+  ld [audio_temp_bank], a
 
   ld a, 1 ;song speed
   call gbt_play
 
-  ld a, [temp_bank]
+  ld a, [audio_temp_bank]
   call SetBank
-  ret 
+  ret
 
 ENDC ;AUDIO_ASM

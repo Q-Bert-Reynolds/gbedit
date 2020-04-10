@@ -626,6 +626,8 @@ UIShowOptions::
   DISABLE_RAM_MBC5
   ei
 
+  PLAY_SFX SelectSound
+
   ret
 
 MoveTextEntryArrow: ; bc = from xy, de = to xy
@@ -990,6 +992,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, [_y]
       sub a, 5
       jr nz, .testEnd;       if (y == 5) {
+        PLAY_SFX SelectSound
       ld a, [_c]
       ld b, a
       ld a, 1
@@ -1018,7 +1021,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, [_l]
       and a
       jp nz, .exitTextEntryLoop ; if (l > 0) return;
-      jr .waitVBL
+      jp .waitVBL
 .testLength;else if (l < max_len) {
       ld a, [_l]
       pop hl ;str
@@ -1066,7 +1069,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld e, a
       push hl ;str
       call UpdateTextEntryDisplay;update_text_entry_display(str, max_len);
-
+      PLAY_SFX SelectSound
       WAITPAD_UP
       jr .waitVBL
 .bPressed;     else if (button_state & PADF_B && l > 0) {
@@ -1100,6 +1103,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
 .exitMoveArrowLoop
     jp .drawTextBoxLoop
 .exitTextEntryLoop
+  PLAY_SFX SelectSound
   pop af;str
   pop af;a = max_len
   ret
@@ -1313,6 +1317,9 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
+  push af
+  PLAY_SFX SelectSound
+  pop af
   pop de ;discard draw flags
   pop bc ;xy
   ret ;return a

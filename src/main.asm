@@ -77,10 +77,10 @@ Main::
   call SetBank
   call Seed
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
   
 .title ;show title drop, version slide, cycle of players, new game/continue screen
   ld a, TITLE_BANK

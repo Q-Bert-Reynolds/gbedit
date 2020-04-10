@@ -19,6 +19,7 @@ map_y: DW
 
 ;banking
 temp_bank: DB
+audio_temp_bank: DB
 vblank_bank: DB
 loaded_bank: DB
 map_bank: DB

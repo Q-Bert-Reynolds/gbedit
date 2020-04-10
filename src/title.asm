@@ -244,16 +244,7 @@ ShowTitle:
   xor a
   ld [_z], a ;current player index
 CyclePlayersLoop:
-  ld a, 255
-  ld [_i], a
-.exitableOneSecPauseLoop1
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitTitleScreen, (PADF_START | PADF_A)
-  call gbdk_WaitVBL
-  ld a, [_i]
-  dec a
-  ld [_i], a
-  jr nz, .exitableOneSecPauseLoop1
-
+  EXITABLE_DELAY .exitTitleScreen, (PADF_START | PADF_A), 255
   xor a
   ld [_j], a
 .movePlayerOffScreenLoop ;for (j = 0; j <= 128; j+=4) {

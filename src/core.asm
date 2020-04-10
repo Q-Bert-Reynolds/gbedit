@@ -555,6 +555,8 @@ ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buf
   ld a, [temp_bank]
   call SetBank
 
+  PLAY_SFX TestSound
+
   pop af;choice
   ret; return a=choice;
 

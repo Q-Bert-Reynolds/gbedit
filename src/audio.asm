@@ -14,7 +14,15 @@ PLAY_SONG: MACRO ;\1 load address, \2 loop
   call PlaySong
   ei
   ld a, \2
-  call gbt_loop
+  ld [gbt_loop_enabled], a
+ENDM
+
+PLAY_SFX: MACRO ;\1 load address
+  di
+  ld a, BANK(\1)
+  ld hl, \1
+  call PlaySFX
+  ei
 ENDM
 
 INCLUDE "music/intro_lights.asm"
@@ -24,13 +32,106 @@ INCLUDE "music/hurrah_for_our_national_game.asm"
 INCLUDE "music/tessie.asm"
 
 SECTION "Audio", ROM0
+
+TestSound:
+  DB 2;steps
+
+    ;ticks, sweep, duty/len, volume
+  DB 10,    0,     $FF,      $FF
+  DW C4 ;frequency
+
+    ;ticks, sweep, duty/len, volume
+  DB 50,    0,     $FF,      $FF
+  DW C5 ;frequency
+
 UpdateAudio::
   ld a, [loaded_bank]
   ld [vblank_bank], a
   
   call gbt_update
+  call UpdateSFX
   
   ld a, [vblank_bank]
+  call SetBank
+  ret
+
+UpdateSFX:
+  ld a, [sfx_step_count]
+  ld b, a
+  ld a, [sfx_step]
+  cp b;step count
+  ret z ;sfx done
+
+  ld a, [sfx_ticks]
+  and a
+  ret nz
+  dec a
+  ld [sfx_ticks], a
+
+  ld a, [sfx_step]
+  inc a
+  ld [sfx_step], a
+  cp b;step count
+  jr nz, .notDone
+
+    ld a, %1111
+    ld [gbt_enable_channels], a
+    ret
+
+.notDone
+  ld de, 6
+  call math_Multiply
+  ld b, 0
+  ld c, l
+  inc c;to skip steps byte at beginning
+
+  ld a, [rCurrentSFX]
+  ld h, a
+  ld a, [rCurrentSFX+1]
+  ld l, a
+  add hl, bc;current step
+
+  ld a, [current_sfx_bank]
+  call SetBank
+
+  ld a, [hli]
+  ld [sfx_ticks], a
+  ld a, [hli]
+  ld [rAUD1SWEEP], a
+  ld a, [hli]
+  ld [rAUD1LEN], a
+  ld a, [hli]
+  ld [rAUD1ENV], a
+  ld a, [hli]
+  ld [rAUD1LOW], a
+  ld a, [hli]
+  or AUDHIGH_RESTART
+  ld [rAUD1HIGH], a
+
+  ret
+
+PlaySFX:: ; a = bank, hl = sfx address
+  ld [current_sfx_bank], a
+  ld a, h
+  ld [rCurrentSFX], a
+  ld a, l
+  ld [rCurrentSFX+1], a
+  xor a
+  ld [sfx_step], a
+  ld [sfx_ticks], a
+  ld a, %1110
+  ld [gbt_enable_channels], a
+
+  ld a, [loaded_bank]
+  ld [temp_bank], a ;store current bank
+
+  ld a, [current_sfx_bank]
+  call SetBank
+
+  ld a, [hl];step count
+  ld [sfx_step_count], a
+
+  ld a, [temp_bank]
   call SetBank
   ret
 

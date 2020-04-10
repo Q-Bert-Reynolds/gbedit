@@ -41,16 +41,12 @@ _x: DW
 _y: DW
 _z: DW
 
-;Audio
-rCurrentSong: DW
-current_song_bank: DB
-song_has_intro: DB
-music_tempo: DB
-music_timer: DB
-music_beats: DB
-music_beat_num: DB
-music_phrases: DB
-music_phrase_num: DB
+;audio
+rCurrentSFX: DW
+current_sfx_bank: DB
+sfx_step: DB
+sfx_step_count: DB
+sfx_ticks: DB
 
 ;location of LCD interrupt subroutine
 rLCDInterrupt: DW

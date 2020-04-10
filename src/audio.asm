@@ -34,22 +34,24 @@ INCLUDE "music/tessie.asm"
 SECTION "Audio", ROM0
 
 TestSound:
-  DB 2;steps
+  DB 3;steps
 
     ;ticks, sweep, duty/len, volume
-  DB 10,    0,     $FF,      $FF
-  DW C4 ;frequency
+  DB 2,    0,     $FF,     $FF
+  DW E4 ;frequency
 
-    ;ticks, sweep, duty/len, volume
-  DB 50,    0,     $FF,      $FF
-  DW C5 ;frequency
+  DB 4,    0,     $FF,     $FF
+  DW C5
+
+  DB 2,    0,     $FF,     $FF
+  DW A5
 
 UpdateAudio::
   ld a, [loaded_bank]
   ld [vblank_bank], a
   
-  call gbt_update
   call UpdateSFX
+  call gbt_update
   
   ld a, [vblank_bank]
   call SetBank
@@ -59,23 +61,26 @@ UpdateSFX:
   ld a, [sfx_step_count]
   ld b, a
   ld a, [sfx_step]
-  cp b;step count
-  ret z ;sfx done
+  cp a, b
+  ret z
 
   ld a, [sfx_ticks]
-  and a
-  ret nz
   dec a
   ld [sfx_ticks], a
+  ret nz
 
   ld a, [sfx_step]
   inc a
   ld [sfx_step], a
-  cp b;step count
+  cp a, b;step count
   jr nz, .notDone
 
     ld a, %1111
     ld [gbt_enable_channels], a
+    xor a
+    ld [rNR12], a ; volume 0
+    xor a
+    ld [rNR14], a ; disable
     ret
 
 .notDone
@@ -117,7 +122,10 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld a, l
   ld [rCurrentSFX+1], a
   xor a
+  ld [sfx_step_count], a
+  ld a, -1
   ld [sfx_step], a
+  ld a, 1
   ld [sfx_ticks], a
   ld a, %1110
   ld [gbt_enable_channels], a
@@ -133,6 +141,13 @@ PlaySFX:: ; a = bank, hl = sfx address
 
   ld a, [temp_bank]
   call SetBank
+
+  ld a, AUDENA_ON
+  ld [rAUDENA], a
+  ld a,$FF
+  ld [rAUDVOL], a
+  ld [rAUDTERM], a
+  
   ret
 
 PlaySong:: ; a = bank, hl = song address

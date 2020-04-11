@@ -1,15 +1,30 @@
 
-PlayIntro:
+PlayIntro:: ;a - 0 = unsigned player, 1 = team
+  push af;player or team
+
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _CALVIN_BACK_TILE_COUNT
   ld hl, _CalvinBackTiles
   call SetBkgDataDoubled
 
+  pop af;player or team
+  push af;player or team
+  and a
+  jr nz, .loadOpposingCoach
+
+.loadUnsignedPlayer
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
+  jr .showPlayBallWindow
 
+.loadOpposingCoach
+  ld a, COACH_NOLAN1 ;TODO: load opposing team coach
+  ld de, $8800 + 64*16
+  call LoadCoachTiles
+
+.showPlayBallWindow
   call ShowPlayBallWindow
 
   xor a
@@ -64,6 +79,12 @@ PlayIntro:
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
 
+  pop af;player or team
+  push af;player or team
+  and a
+  jr nz, .showOpposingCoach
+
+.showUnsignedPlayer
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   call GetPlayerImgColumns
@@ -80,7 +101,16 @@ PlayIntro:
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   call SetPlayerBkgTiles
+  jr .setupSlideInLoop
 
+.showOpposingCoach
+  ld d, 12
+  ld e, 0
+  ld a, COACH_NOLAN1
+  ld h, _UI_FONT_TILE_COUNT+64
+  call SetCoachTiles
+
+.setupSlideInLoop
   ld a, 160
   ld [rSCX], a
   xor a
@@ -105,6 +135,11 @@ PlayIntro:
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
+  pop af;player or team
+  and a
+  jr nz, .showTeamText
+
+.showUnsignedText
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   call GetPlayerName
@@ -112,6 +147,17 @@ PlayIntro:
   ld de, str_buffer
   ld bc, name_buffer
   call str_Replace
+  jr .revealText
+
+.showTeamText
+  ld a, COACH_CALVIN;TODO: replace with actual opponent name
+  call GetCoachesName
+  ld hl, TeamChallengeText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+.revealText
   ld hl, str_buffer
   call RevealTextAndWait ;reveal_text(str_buff, PLAY_BALL_BANK);
 

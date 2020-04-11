@@ -15,6 +15,7 @@ INCLUDE "src/audio.asm"
 INCLUDE "src/roledex/roledex.asm"
 INCLUDE "src/core.asm"
 INCLUDE "src/players.asm"
+INCLUDE "src/coaches.asm"
 INCLUDE "src/map_loader.asm"
 INCLUDE "src/ui.asm"
 

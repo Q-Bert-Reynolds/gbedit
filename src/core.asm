@@ -163,16 +163,15 @@ SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
   ret
 
 SetBKGTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
+  ld [_breakpoint], a
   push de ;xy
   push hl ;wh
   push af ;offset
   push bc ;in_tiles
 
-  xor a
-  ld d, a
-  ld a, h 
-  ld e, a ;de = w
-  ld a, l ;a = h
+  ld d, 0
+  ld e, h ;de = width
+  ld a, l ;a = height
   call math_Multiply
   pop bc;in_tiles
   pop af;offset

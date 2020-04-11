@@ -75,7 +75,6 @@ FinishSFX:
   ret z
   xor a
   ld [rNR42], a ; volume 0
-  ld [_breakpoint], a
   ret
 
 UpdateSFX:

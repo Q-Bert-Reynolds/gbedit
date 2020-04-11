@@ -215,7 +215,7 @@ GetSeenSignedCounts:: ;returns d = seen, e = signed
 
   ret
 
-;FIXME
+;TODO: FIXME
 GetLastSeen:: ;returns highest number seen in a
   ld hl, players_seen+151/8+1
   ld b, 8

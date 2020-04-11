@@ -18,6 +18,9 @@ QuittingIsNotAnOptionText:
 UnsignedPlayerAppearedText:
   DB "Unsigned %s\nappeared!", 0
 
+TeamChallengeText:
+  DB "Coach %s\nwants to play.", 0
+
 BatterStepsIntoTheBoxText:
   DB "%s steps\ninto the box.", 0
 

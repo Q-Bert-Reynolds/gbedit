@@ -4,9 +4,6 @@ SECTION "New Game", ROMX, BANK[NEW_GAME_BANK]
 
 INCLUDE "img/new_game/new_game.asm"
 INCLUDE "img/new_game/new_game_sprites/new_game_sprites.asm"
-INCLUDE "img/coaches/doc_hickory.asm"
-INCLUDE "img/coaches/calvin.asm"
-INCLUDE "img/coaches/nolan0.asm"
 
 HomeNames:
   DB "NEW NAME\nRED\nCALVIN\nHOMER", 0
@@ -128,19 +125,16 @@ NewGame::
   call LoadFontTiles
 
   ; since font takes up $9000 to $9800, no need to wrap around with mem_CopyToTileData
-  ld hl, _DocHickoryTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  ld bc, _DOC_HICKORY_TILE_COUNT*16
-  call mem_CopyVRAM
+  ld a, COACH_DOC_HICKORY
+  call LoadCoachTiles
   CLEAR_SCREEN " "
 
   ld d, 13
   ld e, 4
-  ld h, _DOC_HICKORY_COLUMNS
-  ld l, _DOC_HICKORY_ROWS
-  ld bc, _DocHickoryTileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  ld h, _UI_FONT_TILE_COUNT;offset
+  ld a, COACH_DOC_HICKORY
+  call SetCoachTiles
 
   DISPLAY_ON
   FADE_IN
@@ -187,19 +181,17 @@ NewGame::
   ld de, $8800
   ld bc, _CALVIN_TILE_COUNT*16
   call mem_CopyVRAM
+
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld a, COACH_CALVIN
+  call LoadCoachTiles
   CLEAR_SCREEN " "
 
-  ld a, 13
-  ld d, a
-  ld a, 4
-  ld e, a
-  ld a, _CALVIN_COLUMNS
-  ld h, a
-  ld a, _CALVIN_ROWS
-  ld l, a
-  ld bc, _CalvinTileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  ld d, 13
+  ld e, 4
+  ld a, COACH_CALVIN
+  ld h, _UI_FONT_TILE_COUNT
+  call SetCoachTiles
 
   ld a, -56
   ld [rSCX], a
@@ -286,19 +278,16 @@ ENDC
 
 ;set image to Nolan
   DISPLAY_OFF
+    ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld a, COACH_NOLAN0
+  call LoadCoachTiles
   CLEAR_SCREEN " "
-  ld hl, _Nolan0Tiles
-  ld de, $8800
-  ld bc, _NOLAN0_TILE_COUNT*16
-  call mem_CopyVRAM
 
   ld d, 13
   ld e, 4
-  ld h, _NOLAN0_COLUMNS
-  ld l, _NOLAN0_ROWS
-  ld bc, _Nolan0TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  ld a, COACH_NOLAN0
+  ld h, _UI_FONT_TILE_COUNT
+  call SetCoachTiles
 
   ld a, -56
   ld [rSCX], a
@@ -384,10 +373,9 @@ ENDC
   DISPLAY_OFF
   CLEAR_SCREEN " "
 
-  ld hl, _CalvinTiles
-  ld de, $8800
-  ld bc, _CALVIN_TILE_COUNT*16
-  call mem_CopyVRAM
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld a, COACH_CALVIN
+  call LoadCoachTiles
 
   ld hl, _NewGameTiles
   ld de, $8800+_CALVIN_TILE_COUNT*16
@@ -399,15 +387,11 @@ ENDC
   ld bc, _NEW_GAME_TILE_COUNT*16
   call mem_CopyVRAM
 
-  CLEAR_SCREEN " "
-
   ld d, 13
   ld e, 4
-  ld h, _CALVIN_COLUMNS
-  ld l, _CALVIN_ROWS
-  ld bc, _CalvinTileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  ld a, COACH_CALVIN
+  ld h, _UI_FONT_TILE_COUNT
+  call SetCoachTiles
   
   DISPLAY_ON
   FADE_IN
@@ -461,13 +445,7 @@ ENDC
   ld de, 500
   call gbdk_Delay
 
-  ld d, 13
-  ld e, 4
-  ld h, _SILHOUETTE2_COLUMNS
-  ld l, _SILHOUETTE2_ROWS
-  ld bc, _Silhouette2TileMap
-  ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
-  call SetBKGTilesWithOffset
+  CLEAR_BKG_AREA 13, 4, 7, 7, " "
 
   xor a
   ld [sprite_props], a

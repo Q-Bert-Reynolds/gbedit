@@ -665,6 +665,8 @@ SetupGameUI:
   call DrawPlayBallUI
   HIDE_WIN
   
+  CLEAR_BKG_AREA 12, 0, 7, 7, " "
+
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   push af
@@ -731,6 +733,7 @@ StartGame::
   ld a, 3
   ld [away_score], a
 
+  ld a, 1; TODO: replace with team/random encounter
   call PlayIntro
   call SetupGameUI
 

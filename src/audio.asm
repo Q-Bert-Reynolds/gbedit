@@ -51,27 +51,31 @@ UpdateAudio::
   ret
 
 FinishSFX:
-  ld a, [sfx_disable_mask]
 .testChannel1
+  ld a, [sfx_disable_mask]
   bit 0, a
   jr z, .testChannel2
   xor a
   ld [rNR12], a ; volume 0
 .testChannel2
+  ld a, [sfx_disable_mask]
   bit 1, a
   jr z, .testChannel3
   xor a
   ld [rNR22], a ; volume 0
 .testChannel3
+  ld a, [sfx_disable_mask]
   bit 2, a
   jr z, .testChannel4
   xor a
   ld [rNR32], a ; volume 0
 .testChannel4
+  ld a, [sfx_disable_mask]
   bit 3, a
   ret z
   xor a
   ld [rNR42], a ; volume 0
+  ld [_breakpoint], a
   ret
 
 UpdateSFX:

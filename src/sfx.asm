@@ -18,28 +18,36 @@ SelectSound::
 
 TitleDropInSound::
   DB 2;steps
-  DB %1000 ;disable mask
+  DB %1010 ;disable mask
 
-  DB 2, %0111, SFX_CH_4 ;ticks, mask, channel
-  DB $00, $3A, $F8       ;sweep, duty/len, volume
-  DB $62, $80            ;frequency, control
+  DB 1, %1101, SFX_CH_2
+  DB %11110111, $FF, $FF
+  DW A3
 
-  DB 8, %0111, SFX_CH_4
-  DB $00, $3A, $A8 
-  DB $72, $80      
+  DB 80, %0101, SFX_CH_4              ;ticks, mask, channel
+  DB $00, $FF, $FF                   ;sweep, duty/len, volume
+  DB NOISE_DIV_2K | NOISE_EARTHQUAKE, $80 ;frequency, control
 
 VersionSlideInSound::
-  DB 3;steps
-  DB %0001 ;disable mask
+  DB 5;steps
+  DB %1001 ;disable mask
   
-  DB 20, %1111, SFX_CH_1
+  DB 16, %1111, SFX_CH_1
   DB 0, 0, 0
   DW 0
 
-  DB 20, %1110, SFX_CH_1
-  DB %01000111, $FF, $FF
-  DW A4
+  DB 1, %1110, SFX_CH_1
+  DB %11110111, $FF, $FF
+  DW A3
 
-  DB 4, %1110, SFX_CH_1
-  DB 0, $FF, $FF
-  DW C6
+  DB 8, %0110, SFX_CH_4
+  DB $00, $FF, $F0
+  DB NOISE_DIV_128 | NOISE_STATIC, $80
+
+  DB 8, %0110, SFX_CH_4
+  DB $00, $FF, $F8
+  DB NOISE_DIV_64 | NOISE_STATIC, $80
+
+  DB 8, %0110, SFX_CH_4
+  DB $00, $FF, $FF
+  DB NOISE_DIV_32 | NOISE_STATIC, $80

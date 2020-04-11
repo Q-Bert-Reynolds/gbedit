@@ -121,6 +121,7 @@ SFX_CH_2 EQU $15
 SFX_CH_3 EQU $1A
 SFX_CH_4 EQU $1F
 
+;notes
 C3      EQU 44
 Db3     EQU 156
 D3      EQU 262
@@ -193,3 +194,39 @@ Ab8     EQU 2009
 A8      EQU 2011
 Bb8     EQU 2013
 B8      EQU 2015
+
+;Noise Shift Clock
+NOISE_DIV_2   EQU $00
+NOISE_DIV_4   EQU $10
+NOISE_DIV_8   EQU $20
+NOISE_DIV_16  EQU $30
+NOISE_DIV_32  EQU $40
+NOISE_DIV_64  EQU $50
+NOISE_DIV_128 EQU $60
+NOISE_DIV_256 EQU $70
+NOISE_DIV_512 EQU $80
+NOISE_DIV_1K  EQU $90
+NOISE_DIV_2K  EQU $A0
+NOISE_DIV_4K  EQU $B0
+NOISE_DIV_8K  EQU $C0
+NOISE_DIV_16K EQU $D0
+
+;Periodic Noise (15 counter steps)
+NOISE_STUTTER    EQU $0 ;A square plus a pulse at random pulse widths
+NOISE_RUMBLE     EQU $1 ;The same waveform but faster
+NOISE_ENGINE     EQU $2 ;The same waveform but even faster
+NOISE_LOW_TONE   EQU $3 ;Sounds like D5
+NOISE_UNDERTONE  EQU $4 ;Sounds like E5 + 50cents
+NOISE_MIDDLETONE EQU $5 ;Sounds like B5 + 50cents
+NOISE_OVERTONE   EQU $6 ;Sounds like D6 + 50cents
+NOISE_HIGH_TONE  EQU $7 ;Sounds like D7
+
+;Pseudorandom Noise (7 counter steps)
+NOISE_EARTHQUAKE EQU $8 ;A square with a thin pulse at random pulse widths
+NOISE_SPACESHIP  EQU $9 ;The same waveform but faster
+NOISE_OCEAN      EQU $A ;The same waveform but even faster
+NOISE_SCRATCH    EQU $B ;You get the idea
+NOISE_GLITCH     EQU $C ;A fairly clean white-noise sample, unrelated to other instruments
+NOISE_VOLCANO    EQU $D ;A pulse with rapidly changing pulse width
+NOISE_SCREAM     EQU $E ;The same waveform but faster
+NOISE_STATIC     EQU $F ;The same waveform but even faster

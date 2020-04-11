@@ -81,7 +81,7 @@ Main::
   ld a, START_BANK
   call SetBank
   call Start
-  
+
 .title ;show title drop, version slide, cycle of players, new game/continue screen
   ld a, TITLE_BANK
   call SetBank

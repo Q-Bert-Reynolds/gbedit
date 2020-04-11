@@ -44,6 +44,7 @@ Play Ball
 
 Simulation
 
+- pitch, hit, wiff, catch SFX
 - ball should bounce off fences
 - running
 - catching throwing
@@ -62,6 +63,7 @@ Team Menu
 
 Overworld
 
+- data needs to be compressed to fit more
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions
@@ -78,15 +80,3 @@ Rolédex
 - fix player descriptions that are longer than 6 lines
 - create tileset specific to dex
 - show player home towns / recruitment locations
-  
-Audio
-- Music
-  - Hurrah For Our National Game (Billet Town)
-- SFX
-  - pitch
-  - hit
-  - wiff
-  - catch
-  - select
-  - confirm
-  - cancel

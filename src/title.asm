@@ -192,8 +192,6 @@ ShowTitle:
 
   SET_LCD_INTERRUPT ShowTitleLCDInterrupt
 
-  PLAY_SONG take_me_out_to_the_ballgame_data, 1
-
   DISPLAY_ON
   call gbdk_WaitVBL
 
@@ -203,6 +201,10 @@ ShowTitle:
     ld a, [hli]
     cp -1
     jr z, .finishTitleDrop
+    cp 0
+    jr nz, .skipDropSFX
+    PLAY_SFX TitleDropInSound
+.skipDropSFX
     ld [_y], a
     jr .dropInTitleLoop
 .finishTitleDrop
@@ -214,6 +216,8 @@ ShowTitle:
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
   call SetBKGTilesWithOffset
+
+  PLAY_SFX VersionSlideInSound
 
   xor a
   ld [_x], a
@@ -234,6 +238,8 @@ ShowTitle:
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
   call SetBKGTilesWithOffset
+
+  PLAY_SONG take_me_out_to_the_ballgame_data, 1
 
   ld a, 72
   ld [rLYC], a

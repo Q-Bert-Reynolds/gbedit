@@ -19,9 +19,13 @@ ENDM
 
 PLAY_SFX: MACRO ;\1 load address
   di
+  push hl
+  push af
   ld a, BANK(\1)
   ld hl, \1
   call PlaySFX
+  pop af
+  pop hl
   ei
 ENDM
 
@@ -46,6 +50,30 @@ UpdateAudio::
   call SetBank
   ret
 
+FinishSFX:
+  ld a, [sfx_disable_mask]
+.testChannel1
+  bit 0, a
+  jr z, .testChannel2
+  xor a
+  ld [rNR12], a ; volume 0
+.testChannel2
+  bit 1, a
+  jr z, .testChannel3
+  xor a
+  ld [rNR22], a ; volume 0
+.testChannel3
+  bit 2, a
+  jr z, .testChannel4
+  xor a
+  ld [rNR32], a ; volume 0
+.testChannel4
+  bit 3, a
+  ret z
+  xor a
+  ld [rNR42], a ; volume 0
+  ret
+
 UpdateSFX:
   ld a, [sfx_step_count]
   ld b, a
@@ -64,20 +92,18 @@ UpdateSFX:
   cp a, b;step count
   jr nz, .notDone
 
+    call FinishSFX
     ld a, %1111
     ld [gbt_enable_channels], a
-    xor a
-    ld [rNR12], a ; volume 0
-    xor a
-    ld [rNR14], a ; disable
     ret
 
 .notDone
-  ld de, 6
+  ld de, 8
   call math_Multiply
   ld b, 0
   ld c, l
-  inc c;to skip steps byte at beginning
+  inc c
+  inc c
 
   ld a, [rCurrentSFX]
   ld h, a
@@ -90,21 +116,37 @@ UpdateSFX:
 
   ld a, [hli]
   ld [sfx_ticks], a
+
   ld a, [hli]
-  ld [rAUD1SWEEP], a
+  ld [gbt_enable_channels], a
+
   ld a, [hli]
-  ld [rAUD1LEN], a
+  ld b, $FF
+  ld c, a
+
+REPT 4
   ld a, [hli]
-  ld [rAUD1ENV], a
-  ld a, [hli]
-  ld [rAUD1LOW], a
-  ld a, [hli]
+  ld [bc], a
+  inc bc
+ENDR
+
+  ld a, AUDENA_ON
+  ld [rAUDENA], a
+  
+  ld a, [hl]
   or AUDHIGH_RESTART
-  ld [rAUD1HIGH], a
+  ld [bc], a
 
   ret
 
 PlaySFX:: ; a = bank, hl = sfx address
+  di
+  push af
+  push hl
+  call FinishSFX
+  pop hl
+  pop af
+
   ld [current_sfx_bank], a
   ld a, h
   ld [rCurrentSFX], a
@@ -116,8 +158,6 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld [sfx_step], a
   ld a, 1
   ld [sfx_ticks], a
-  ld a, %1110
-  ld [gbt_enable_channels], a
 
   ld a, [loaded_bank]
   ld [audio_temp_bank], a
@@ -125,8 +165,10 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld a, [current_sfx_bank]
   call SetBank
 
-  ld a, [hl];step count
+  ld a, [hli];step count
   ld [sfx_step_count], a
+  ld a, [hl];channels to disable on finish
+  ld [sfx_disable_mask], a
 
   ld a, [audio_temp_bank]
   call SetBank
@@ -137,6 +179,7 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld [rAUDVOL], a
   ld [rAUDTERM], a
   
+  ei
   ret
 
 PlaySong:: ; a = bank, hl = song address

@@ -48,6 +48,7 @@ current_sfx_bank: DB
 sfx_step: DB
 sfx_step_count: DB
 sfx_ticks: DB
+sfx_disable_mask: DB
 
 ;location of LCD interrupt subroutine
 rLCDInterrupt: DW

@@ -1304,6 +1304,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     ld a, [button_state]
     and a, PADF_START | PADF_A
     jr z, .back
+    PLAY_SFX SelectSound
     ld a, [_j]
     inc a ;return j+1;
     jr .exitMenu
@@ -1317,9 +1318,6 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
-  push af
-  PLAY_SFX SelectSound
-  pop af
   pop de ;discard draw flags
   pop bc ;xy
   ret ;return a

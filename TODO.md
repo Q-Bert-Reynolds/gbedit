@@ -39,8 +39,6 @@ Play Ball
 - handle different moves
 - hide / disable selection of pitches when batting / swings when pitching
 - opponent batting / user pitching
-    - animation
-    - move ball
 
 Simulation
 

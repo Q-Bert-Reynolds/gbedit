@@ -218,17 +218,6 @@ Pitch: ; (Player *p, UBYTE move) {
   ;move_aim_circle(96,32);
   ret
 
-EarlySwingText:
-  DB "Early swing.",0
-LateSwingText:
-  DB "Late swing.",0
-SwingAndMissText:
-  DB "Swing and a miss.",0
-CriticalHitText:
-  DB "Critical hit!",0
-SolidContactText:
-  DB "Solid contact",0
-
 Swing:; xy = de, z = a, returns contact made in a
   push af;z
   push de;xy
@@ -620,10 +609,11 @@ PlayBall:; a = selected move
   ld b, a
   ld a, [home_team]
   xor b
-  jr nz, .pitch ;if (home_team == (frame % 2)) bat(p, move);
+  jr nz, .pitching ;if (home_team == (frame % 2)) bat(p, move);
+.batting
   call Bat
   jr .exit
-.pitch
+.pitching
   call Pitch;else pitch(p, move);
 .exit
   HIDE_WIN

@@ -151,10 +151,19 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 
 .showTeamText
   ld a, COACH_CALVIN;TODO: replace with actual opponent name
-  call GetCoachesName
+  call GetCoachesName;coach name in name_buffer
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy;coach name in str_buffer
   ld hl, TeamChallengeText
   ld de, str_buffer
+  call str_Append;coach name + "wants to play %s innings." in str_buffer
+  ld hl, 3
+  ld de, name_buffer
+  call str_Number;puts number of innings in name_buffer
+  ld hl, str_buffer
   ld bc, name_buffer
+  ld de, str_buffer
   call str_Replace
 
 .revealText

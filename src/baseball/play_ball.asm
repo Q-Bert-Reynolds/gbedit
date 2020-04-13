@@ -286,7 +286,7 @@ Swing:; xy = de, z = a, returns contact made in a
   ld a, [swing_diff_z]
   or a, b
   jr z, .criticalHit
-  ld hl, SolidContactText
+  ld hl, CriticalHitText
   ld a, DRAW_FLAGS_WIN
   call DisplayText
   ld a, 1

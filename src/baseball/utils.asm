@@ -185,11 +185,8 @@ GetRunnerOnThird::;TODO: puts runner on third player data or zero in hl
 ;----------------------------------------------------------------------
 GetPositionPlayerName::
   push af;position number
-  ld a, [home_team];1 = user is home team
-  ld b, a
-  ld a, [frame];1 = bottom
-  xor a, b
-  jr nz, .userPlayer;home team in the top or away team in the bottom
+  call IsUserFielding
+  jr z, .userPlayer;home team in the top or away team in the bottom
 .opposingPlayer
   pop af;position number
   call GetOpposingPlayerByPosition

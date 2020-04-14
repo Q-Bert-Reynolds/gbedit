@@ -1280,3 +1280,10 @@ SignedRandom: ;a = bitmask
 DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in a
   ;TODO
   ret
+
+IsUserFielding::;sets z flag
+  ld a, [home_team];1 = user is home team
+  ld b, a
+  ld a, [frame];1 = bottom
+  xor a, b;home != frame
+  ret

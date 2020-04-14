@@ -636,12 +636,8 @@ Bat:
   ret
 
 PlayBall:; a = selected move
-  ld a, [frame]
-  and 1
-  ld b, a
-  ld a, [home_team]
-  xor b
-  jr nz, .pitching ;if (home_team == (frame % 2)) bat(p, move);
+  call IsUserFielding
+  jr z, .pitching
 .batting
   call Bat
   jr .exit
@@ -757,6 +753,7 @@ StartGame::
   ld a, 1; TODO: replace with team/random encounter
   call PlayIntro
   call SetupGameUI
+  call AnnounceBeginningOfFrame
 
   xor a
   ld [play_menu_selection], a

@@ -212,6 +212,7 @@ MoveAimCircle: ;de = xy
   call gbdk_MoveSprite;move_sprite(6, x+8, y+8);
   ret
 
+;
 Pitch: ; (Player *p, UBYTE move) {
   ;sprintf(str_buff, "%s sets.", p->nickname);
   ;reveal_text(str_buff, PLAY_BALL_BANK);
@@ -228,6 +229,7 @@ Swing:; xy = de, z = a, returns contact made in a
   
   call HideStrikeZone
 
+  ;TODO: replace with Opponent Pitcher AI
   ld a, [pitch_target_x]
   add a, STRIKE_ZONE_CENTER_X
   ld b, a
@@ -637,7 +639,7 @@ Bat:
 
 PlayBall:; a = selected move
   call IsUserFielding
-  jr z, .pitching
+  jr nz, .pitching
 .batting
   call Bat
   jr .exit

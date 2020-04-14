@@ -1278,8 +1278,25 @@ SignedRandom: ;a = bitmask
 ;
 ;----------------------------------------------------------------------
 DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in a
-  ;TODO
+  ld a, 200
   ret
+
+;----------------------------------------------------------------------
+;
+; LocationFromDistSprayAngle - calculates landing spot from dist spray angle
+;
+;   input: 
+;     a = distance (0 to 255)
+;     b = spray angle (-127 to 127)
+;   returns:
+;     de = xy position
+;
+;----------------------------------------------------------------------
+LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
+  ld de, 
+  ret
+
+GetClosestFielderByLocation
 
 IsUserFielding::;sets z flag
   ld a, [home_team];1 = user is home team

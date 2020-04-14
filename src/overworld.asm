@@ -540,6 +540,6 @@ Overworld::
 .move
     ld a, [button_state]
     call Move
-    call CheckRandomAppearance
+    xor a; call CheckRandomAppearance
     jr z, .moveLoop
   ret

@@ -71,7 +71,7 @@ HitShallowFlyBallText::       DB "Shallow fly ",0
 HitPopFlyText::               DB "Pop fly ",0
 
 ;outfield location by angle
-OutfieldLocationTexts::       DB "in foul\nterritory left.",0
+OutfieldLocationTexts::       DB "in\nfoul territory.",0
                               DB "down\nthe 𝕃 line.",0
                               DB "to\nleft field.",0
                               DB "to\nleft center.",0
@@ -79,7 +79,7 @@ OutfieldLocationTexts::       DB "in foul\nterritory left.",0
                               DB "to\nright center.",0
                               DB "to\nright field.",0
                               DB "down\nthe ℝ line.",0
-                              DB "in foul\nterritory right.",0
+                              DB "in\nfoul territory.",0
 
 ;hit to infield - append infield location or "to the" position text
 HitLineDriveText::            DB "Line drive ",0
@@ -89,7 +89,7 @@ HitPopUpText::                DB "Popped up ",0
 HitBuntText::                 DB "Bunted ",0
 
 ;outfield location by angle
-InfieldLocationTexts::        DB "in foul\nterritory left.",0
+InfieldLocationTexts::        DB "in\nfoul territory.",0
                               DB "down\nthe 𝟛 line",0
                               DB "\nto third.",0
                               DB "\nin the 𝕊-𝟛 hole.",0
@@ -99,7 +99,7 @@ InfieldLocationTexts::        DB "in foul\nterritory left.",0
                               DB "\nin the 𝟙-𝟚 hole.",0
                               DB "\nto first.",0
                               DB "down\nthe 𝟙 line",0
-                              DB "in foul\nterritory right.",0
+                              DB "in\nfoul territory.",0
 
 ;append to bunts and popups, replace %s with position
 ToThePositionText::           DB "to the\n%s.",0 

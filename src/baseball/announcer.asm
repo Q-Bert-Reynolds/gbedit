@@ -113,7 +113,7 @@ AnnounceBeginningOfFrame::
 ;   "Ball 1."
 ;
 ;----------------------------------------------------------------------
-AnnounceNoSwing::
+AnnounceNoSwing::;de = pitch xy
 
 .strike
   ; ;strike
@@ -219,20 +219,42 @@ AnnounceSwingContact::
   ret 
 
 AnnounceHitToOutfieldText:;a = distance, b = spray angle
-  ; ;hit to outfield
-  ; HitDeepFlyBallText
-  ; HitFlyBallText
-  ; HitShallowFlyBallText
-  ; HitPopFlyText
+.deepFly
+  cp 200
+  jr c, .flyBall
+  ld hl, HitDeepFlyBallText
+  jr .copyString
+.flyBall
+  cp 140
+  jr c, .shallowFly
+  ld hl, HitFlyBallText
+  jr .copyString
+.shallowFly
+  cp 100
+  jr c, .popFly
+  ld hl, HitShallowFlyBallText
+  jr .copyString
+.popFly
+  ld hl, HitPopFlyText
+.copyString
+  ld de, str_buffer
+  call str_Copy
 
-  ; ;outfield location by angle
-  ; OutfieldLocationTexts
+  ld hl, OutfieldLocationTexts
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call RevealTextAndWait
+
+  call AnnounceFieldingText
+  ret
 
 AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle
   ; ;hit to infield - 
-  ; HitLineDriveText
-  ; HitGroundBallText
-  ; HitChopperText
+  ; 
+  ; 
+  ; 
   ; HitPopUpText
 
   ; ;outfield location by angle
@@ -240,20 +262,59 @@ AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle
 
   ; ;append to bunts and popups
   ; ToThePositionText
+.lineDrive
+  cp 200
+  jr c, .grounder
+  ld hl, HitLineDriveText
+  jr .copyString
+.grounder
+  cp 140
+  jr c, .chopper
+  ld hl, HitGroundBallText
+  jr .copyString
+.chopper
+  cp 100
+  jr c, .popUp
+  ld hl, HitChopperText
+  jr .copyString
+.popUp
+  ld hl, HitPopUpText
+.copyString
+  ld de, str_buffer
+  call str_Copy
+
+  ld hl, InfieldLocationTexts
+  ld de, str_buffer
+  call str_Append
+
+  ld hl, str_buffer
+  call RevealTextAndWait
+
+  ld a, LEFT_FIELDER
+  call AnnounceFieldingText
   ret 
 
 AnnounceBuntText:;a = launch angle, b = spray angle
   ret
 
-AnnounceFieldingText:
-  ; ;fielded
+AnnounceFieldingText:;a = position fielding the ball
+  call GetPositionPlayerName
+  
+  ; caught 
   ; CaughtByText
   ; LeapingCatchByText
   ; DivingCatchByText
-  ; FieldedByText
 
-  ld a, 9;right fielder
-  call GetPositionPlayerName
+  ;fielded
+  ld hl, FieldedByText
+
+.showFieldingText
+  ld bc, name_buffer
+  ld de, str_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  call RevealTextAndWait
 
   ; ;errors
   ; OffTheGloveOfText
@@ -286,6 +347,7 @@ AnnounceFieldingText:
   ; HitHomeRunText
   ; HitGrandSlamText
   ; CriticalHitText
+  ret
 
 AnnounceRunnersOn:
   ; RunnersOnBaseTexts

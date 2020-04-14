@@ -1,5 +1,5 @@
 
-DrawPlayerUI: ;a = team
+DrawPlayerUI:: ;a = team
   push af;team
   
   xor a
@@ -187,7 +187,7 @@ DrawPlayerUI: ;a = team
   call gbdk_SetBkgTiles;set_bkg_tiles(x+9,y+1,3,1,health_pct(p));
   ret
 
-DrawBases:
+DrawBases::
   xor a;for (i = 0; i < 5; i+=2) tiles[i] = 0;
   ld hl, tile_buffer
   ld [hl], a
@@ -237,7 +237,7 @@ DrawBases:
   call gbdk_SetBkgTiles;set_bkg_tiles(9,0,3,2,tiles);
   ret
 
-DrawCountOutsInning:
+DrawCountOutsInning::
   ld hl, tile_buffer
   ld [hl], INNING_BOTTOM
   ld a, [frame]
@@ -353,7 +353,7 @@ DrawCountOutsInning:
   call gbdk_SetBkgTiles;set_bkg_tiles(2,14,4,3,tiles);
   ret
 
-DrawTeamNames:
+DrawTeamNames::
   di
   ENABLE_RAM_MBC5
 
@@ -397,7 +397,7 @@ DrawTeamNames:
   ei
   ret
 
-DrawScore:
+DrawScore::
   xor a
   ld h, a
   ld a, [home_score]
@@ -432,7 +432,7 @@ DrawScore:
   call gbdk_SetBkgTiles ;set_bkg_tiles(9,1,l,1,name_buff);
   ret
 
-DrawPlayBallUI:
+DrawPlayBallUI::
   call DrawTeamNames
   call DrawScore
   call DrawBases
@@ -515,7 +515,7 @@ MovePlayMenuArrow:
     jr nz, .columnLoop
   ret
 
-SelectPlayMenuItem:
+SelectPlayMenuItem::
   ld a, [play_menu_selection]
   and 1
   ld [_x], a ;x = play_menu_selection % 2;
@@ -616,7 +616,7 @@ MoveMoveMenuArrow:
   call gbdk_SetBkgTiles;set_bkg_tiles(6,13,1,4,tiles);
   ret
 
-ShowMoveInfo:
+ShowMoveInfo::
   ld b, 0
   ld c, 8
   ld d, 11
@@ -682,7 +682,8 @@ ShowMoveInfo:
   call gbdk_SetBkgTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
   ret
 
-SelectMoveMenuItem: ;returns selection in a
+SelectMoveMenuItem:: ;returns selection in a
+  ld [_breakpoint], a
   ld d, 0
   ld e, 8
   ld h, 20

@@ -12,6 +12,7 @@ INCLUDE "img/coaches/calvin_back.asm"
 INCLUDE "src/baseball/scale_tile_data_2x.asm"
 INCLUDE "src/baseball/strings.asm"
 INCLUDE "src/baseball/utils.asm"
+INCLUDE "src/baseball/announcer.asm"
 INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
@@ -464,7 +465,23 @@ Bat:
 
   ld hl, AndThePitchText
   ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call DisplayText;"And the pitch."
+
+  call GetCurrentOpponentPlayer
+  ld a, 0
+  call GetPlayerMoveName
+
+  ld hl, AndThePitchText
+  ld de, str_buffer
+  call str_Copy
+
+  ld hl, ThrewAPitchText;"\nA %s."
+  ld de, str_buffer
+  call str_Append;"And the pitch.\nA %s."
+
+  ld hl, name_buffer;pitch name
+  ld de, str_buffer
+  call str_Replace;"And the pitch.\nA PITCH_NAME."
 
   xor a
   ld [_c], a
@@ -581,9 +598,24 @@ Bat:
   ld de, 10
   call gbdk_Delay
 
-  call LoadSimulation
+  ld a, 255;full power
+  ld b, -45;up the middle
+  ld c, 45;degrees up
+  push af;exit velocity
+  push bc;direction
+  ld a, 0;TODO:read animation on/off from save ram 
+  and a
+  jr z, .loadAnnouncer
+.loadSimulation
+  pop bc;direction
+  pop af;exit velocity
+  call LoadSimulation;a = exit velocity b = spray angle c = launch angle
   call SetupGameUI
-
+  jr .finish
+.loadAnnouncer
+  pop bc;direction
+  pop af;exit velocity
+  call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
 .finish
   call HideBaseball
 
@@ -703,10 +735,10 @@ StartGame::
   
   call SetPlayBallTiles
 
-  ld a, (3 << 4) | (2 << 2) | 1
+  ld a, 0;(3 << 4) | (2 << 2) | 1; 3 balls, 2 strikes, 1 out
   ld [balls_strikes_outs], a
   
-  ld bc, (9 << 8) | 5
+  ld bc, 0;(9 << 8) | 5;9th batter on third, 5th batter on first
   ld hl, runners_on_base
   ld a, b
   ld [hli], a
@@ -717,10 +749,9 @@ StartGame::
   ld [frame], a
   ld [move_choice], a
   ld [home_team], a
-  ld a, 1
-  ld [away_team], a
+  ; ld a, 1
   ld [home_score], a
-  ld a, 3
+  ; ld a, 3
   ld [away_score], a
 
   ld a, 1; TODO: replace with team/random encounter

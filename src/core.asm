@@ -622,10 +622,12 @@ ShowRoledex::
   call SetBank
   ret
 
-LoadSimulation::
+LoadSimulation::;a = ball speed b = spray angle c = launch angle
+  push af;ball speed
   ld a, SIM_BANK
   call SetBank
 
+  pop af;ball speed
   call RunSimulation
   
   ld a, PLAY_BALL_BANK
@@ -1262,4 +1264,19 @@ SignedRandom: ;a = bitmask
 .skipE
   ld e, b
 
+  ret
+
+;----------------------------------------------------------------------
+;
+; DistanceFromSpeedLaunchAngle - calculates distance speed and angle
+;
+;   input: 
+;     a = speed (0 to 255)
+;     b = launch angle (-127 to 127)
+;   returns:
+;     a = distance
+;
+;----------------------------------------------------------------------
+DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in a
+  ;TODO
   ret

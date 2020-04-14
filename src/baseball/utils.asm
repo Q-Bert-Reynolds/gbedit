@@ -20,7 +20,7 @@ Strikes:; (balls_strikes_outs & STRIKES_MASK) >> 2
   srl a
   ret
   
-Outs:; (balls_strikes_outs & OUTS_MASK
+Outs:; balls_strikes_outs & OUTS_MASK
   ld a, [balls_strikes_outs]
   and OUTS_MASK
   ret
@@ -158,10 +158,45 @@ EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
 
   ret
 
-GetCurrentUserPlayer::;puts user's current batter or pitcher in hl
+GetCurrentUserPlayer::;puts user's current batter or pitcher player data in hl
   ld hl, UserLineupPlayer1
   ret 
 
-GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher in hl
+GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher player data in hl
   ld hl, OpponentLineupPlayer1
+  ret
+
+GetRunnerOnFirst::;TODO: puts runner on first player data or zero in hl
+  ret
+
+GetRunnerOnSecond::;TODO: puts runner on third player data or zero in hl
+  ret
+
+GetRunnerOnThird::;TODO: puts runner on third player data or zero in hl
+  ret
+
+;----------------------------------------------------------------------
+;
+; GetPositionPlayerName - returns the name of position player 
+;
+;   input: a = position number (1-9)
+;   returns: name_buffer = position player's name
+;
+;----------------------------------------------------------------------
+GetPositionPlayerName::
+  push af;position number
+  ld a, [home_team];1 = user is home team
+  ld b, a
+  ld a, [frame];1 = bottom
+  xor a, b
+  jr nz, .userPlayer;home team in the top or away team in the bottom
+.opposingPlayer
+  pop af;position number
+  call GetOpposingPlayerByPosition
+  call GetPlayerName
+  ret
+.userPlayer
+  pop af;position number
+  call GetUserPlayerByPosition
+  call GetUserPlayerName
   ret

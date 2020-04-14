@@ -423,26 +423,8 @@ DrawFielders:
     jr nz, .loop
   ret
 
-InitBall:
-  ; put ball at home plate
-  ld a, 48
-  ld [ball_pos_x], a
-  ld a, 224
-  ld [ball_pos_y], a
-  ; ld a, 1
-  ; ld [ball_pos_z], a
-
-  xor a
-  ld [ball_pos_z], a;starting at z = 0 makes landing calc easier
-  ld [ball_pos_x+1], a
-  ld [ball_pos_y+1], a
-  ld [ball_pos_z+1], a
-  ld [ball_vel_x+1], a
-  ld [ball_vel_y+1], a
-  ld [ball_vel_z+1], a
-  
-  ;TODO:initial velocity should be calculated from swing_diff and player batting
-
+InitBall:;a = ball speed b = spray angle c = launch angle
+  ;TODO:initial velocity should be calculated from ball speed, spray angle, and launch angle
   ld a, [swing_diff_x]
   add a, -64
   ld [ball_vel_y], a
@@ -453,12 +435,33 @@ InitBall:
   srl a
   ld [ball_vel_z], a
 
+  ; put ball at home plate
+  ld a, 48
+  ld [ball_pos_x], a
+  ld a, 224
+  ld [ball_pos_y], a
+  ld a, 1
+  ld [ball_pos_z], a
+
+  xor a
+  ld [ball_pos_x+1], a
+  ld [ball_pos_y+1], a
+  ld [ball_pos_z+1], a
+  ld [ball_vel_x+1], a
+  ld [ball_vel_y+1], a
+  ld [ball_vel_z+1], a
+
   ret
   
-RunSimulation::
+RunSimulation::;a = ball speed b = spray angle c = launch angle
+  push af;ball speed
+  push bc;spray/launch angle
   HIDE_WIN
   HIDE_ALL_SPRITES
   call ShowField
+
+  pop bc;spray/launch angle
+  pop af;ball speed
   call InitBall
   call InitFielders
 

@@ -128,7 +128,7 @@ Runners:
 SECTION "Player Utils", ROM0
 
 NoMove: DB "--------", 0
-GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
+GetPlayerMoveName:: ;hl = player, a = move num, returns move name in name_buffer
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -151,7 +151,7 @@ GetPlayerMoveName: ;hl = player, a = move num, returns move name in name_buffer
   pop bc
   ret 
 
-GetPlayerMoveCount:;hl = player, returns move count in a
+GetPlayerMoveCount::;hl = player, returns move count in a
   push bc
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
@@ -172,7 +172,7 @@ GetPlayerMoveCount:;hl = player, returns move count in a
   pop bc
   ret
 
-GetPlayerMove: ;hl = player, a = player move num, returns move in move_data
+GetPlayerMove:: ;hl = player, a = player move num, returns move in move_data
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -195,7 +195,7 @@ GetPlayerMove: ;hl = player, a = player move num, returns move in move_data
   pop bc
   ret 
 
-GetPlayerMovePP: ;hl = player, a = player move num, returns pp in a
+GetPlayerMovePP:: ;hl = player, a = player move num, returns pp in a
   push bc
   ld bc, UserLineupPlayer1.pp - UserLineupPlayer1
   add hl, bc
@@ -206,7 +206,7 @@ GetPlayerMovePP: ;hl = player, a = player move num, returns pp in a
   pop bc
   ret
 
-GetPlayerNumber: ;hl = player, returns number in a
+GetPlayerNumber:: ;hl = player, returns number in a
   push bc
   ld bc, UserLineupPlayer1.number - UserLineupPlayer1
   add hl, bc
@@ -214,7 +214,7 @@ GetPlayerNumber: ;hl = player, returns number in a
   ld a, [hl]
   ret
   
-GetPlayerLevel: ;hl = player, returns level in a
+GetPlayerLevel:: ;hl = player, returns level in a
   push bc
   ld bc, UserLineupPlayer1.level - UserLineupPlayer1
   add hl, bc
@@ -222,7 +222,7 @@ GetPlayerLevel: ;hl = player, returns level in a
   ld a, [hl]
   ret
 
-GetPlayerPosition: ;hl = player, returns position in a
+GetPlayerPosition:: ;hl = player, returns position in a
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1
   add hl, bc
@@ -230,7 +230,7 @@ GetPlayerPosition: ;hl = player, returns position in a
   ld a, [hl]
   ret
 
-GetPlayerStatus: ;hl = player, returns status in a
+GetPlayerStatus:: ;hl = player, returns status in a
   push bc
   ld bc, UserLineupPlayer1.status - UserLineupPlayer1
   add hl, bc
@@ -238,7 +238,7 @@ GetPlayerStatus: ;hl = player, returns status in a
   ld a, [hl]
   ret
 
-GetPlayerHP: ;hl = player, returns hp in hl
+GetPlayerHP:: ;hl = player, returns hp in hl
   push bc
   ld bc, UserLineupPlayer1.hp - UserLineupPlayer1
   add hl, bc
@@ -250,7 +250,7 @@ GetPlayerHP: ;hl = player, returns hp in hl
   pop bc
   ret
 
-GetPlayerMaxHP: ;hl = player, returns max hp in hl
+GetPlayerMaxHP:: ;hl = player, returns max hp in hl
   push bc
   ld bc, UserLineupPlayer1.max_hp - UserLineupPlayer1
   add hl, bc
@@ -262,7 +262,7 @@ GetPlayerMaxHP: ;hl = player, returns max hp in hl
   pop bc
   ret
 
-GetPlayerBat: ;hl = player, returns bat in hl
+GetPlayerBat:: ;hl = player, returns bat in hl
   push bc
   ld bc, UserLineupPlayer1.bat - UserLineupPlayer1
   add hl, bc
@@ -274,7 +274,7 @@ GetPlayerBat: ;hl = player, returns bat in hl
   pop bc
   ret
 
-GetPlayerField: ;hl = player, returns field in hl
+GetPlayerField:: ;hl = player, returns field in hl
   push bc
   ld bc, UserLineupPlayer1.field - UserLineupPlayer1
   add hl, bc
@@ -286,7 +286,7 @@ GetPlayerField: ;hl = player, returns field in hl
   pop bc
   ret
 
-GetPlayerSpeed: ;hl = player, returns speed in hl
+GetPlayerSpeed:: ;hl = player, returns speed in hl
   push bc
   ld bc, UserLineupPlayer1.speed - UserLineupPlayer1
   add hl, bc
@@ -298,7 +298,7 @@ GetPlayerSpeed: ;hl = player, returns speed in hl
   pop bc
   ret
 
-GetPlayerThrow: ;hl = player, returns throw in hl
+GetPlayerThrow:: ;hl = player, returns throw in hl
   push bc
   ld bc, UserLineupPlayer1.throw - UserLineupPlayer1
   add hl, bc
@@ -310,7 +310,7 @@ GetPlayerThrow: ;hl = player, returns throw in hl
   pop bc
   ret
 
-GetUserPlayerXP: ;hl = player, returns xp in ehl
+GetUserPlayerXP:: ;hl = player, returns xp in ehl
   push bc
   ld bc, UserLineupPlayer1.xp - UserLineupPlayer1
   add hl, bc
@@ -324,7 +324,7 @@ GetUserPlayerXP: ;hl = player, returns xp in ehl
   pop bc
   ret
 
-GetUserPlayerXPToNextLevel: ;hl = player, returns xp in ehl
+GetUserPlayerXPToNextLevel:: ;hl = player, returns xp in ehl
   push hl;player
   call GetUserPlayerXP
   ld b, e
@@ -353,7 +353,7 @@ GetUserPlayerXPToNextLevel: ;hl = player, returns xp in ehl
   ret
 
 ; TODO: pay should be 24 bit number
-GetUserPlayerPay: ;hl = player, returns pay in ehl
+GetUserPlayerPay:: ;hl = player, returns pay in ehl
   push bc
   ld bc, UserLineupPlayer1.pay - UserLineupPlayer1
   add hl, bc
@@ -367,7 +367,7 @@ GetUserPlayerPay: ;hl = player, returns pay in ehl
   pop bc
   ret
 
-GetUserPlayerName:;hl = user player, returns name in name_buffer
+GetUserPlayerName::;hl = user player, returns name in name_buffer
   push bc
   push hl;user's player
   ld bc, UserLineupPlayer1.nickname - UserLineupPlayer1
@@ -387,9 +387,47 @@ GetUserPlayerName:;hl = user player, returns name in name_buffer
   pop bc
   ret
 
-GetUserPlayer:;a = lineup index, returns player in hl
+GetUserPlayer::;a = lineup index, returns player in hl
   ld bc, UserLineup
   ld de, UserLineupPlayer2 - UserLineupPlayer1
   call math_Multiply
   add hl, bc
+  ret
+
+GetOpposingPlayerByPosition::;a = position(1-9), returns player in hl
+  ld b, a;position
+  ld hl, OpponentLineupPlayer1.position
+  ld de, OpponentLineupPlayer2 - OpponentLineupPlayer1
+  ld c, 9
+.loop
+    ld a, [hl]
+    cp a, b
+    jr nz, .next
+    dec hl
+    dec hl
+    ret;opposing player in hl
+.next
+    add hl, de
+    dec c
+    jr nz, .loop
+  ld hl, OpponentLineupPlayer1;no player with that position
+  ret
+
+GetUserPlayerByPosition::;a = position(1-9), returns player in hl
+  ld b, a;position
+  ld hl, UserLineupPlayer1.position
+  ld de, UserLineupPlayer2 - UserLineupPlayer1
+  ld c, 9
+.loop
+    ld a, [hl]
+    cp a, b
+    jr nz, .next
+    dec hl
+    dec hl
+    ret;user player in hl
+.next
+    add hl, de
+    dec c
+    jr nz, .loop
+  ld hl, UserLineupPlayer1;no player with that position
   ret

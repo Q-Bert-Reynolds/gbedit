@@ -99,25 +99,19 @@ GetMove:: ; a = move number, returns move_data
   ret 
 
 GetPlayerName:: ; a = number, returns name in name_buffer
-  ld b, a;number
+  dec a
+  ld c, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
   ld hl, PlayerNames
-  cp 152
+  ld a, c
+  cp 151
   jr nc, .copy ;name outside of range, return Bubbi
-  dec b
-.loop
-    ld a, b
-    and a
-    jr z, .copy;found name
-    ld a, [hli]
-    and a
-    jr nz, .loop
-    dec b
-    jr .loop
+  ld b, 0
+  call str_FromArray
 .copy
   ld de, name_buffer
   call str_Copy
@@ -127,25 +121,19 @@ GetPlayerName:: ; a = number, returns name in name_buffer
   ret
 
 GetPlayerDescription:: ; a = number, returns description in str_buffer
-  ld b, a;number
+  dec a
+  ld c, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
   ld hl, PlayerDescriptions
+  ld a, c
   cp 152
   jr nc, .copy ;name outside of range, return Bubbi's description
-  dec b
-.loop
-    ld a, b
-    and a
-    jr z, .copy;found name
-    ld a, [hli]
-    and a
-    jr nz, .loop
-    dec b
-    jr .loop
+  ld b, 0
+  call str_FromArray
 .copy
   ld de, str_buffer
   call str_Copy

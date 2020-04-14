@@ -93,19 +93,12 @@ BankedSetCoachTiles:: ;a = coach, de=xy, h=offset
   ret
 
 BankedGetCoachsName:: ;a = coach, returns name in name_buffer
-  ld b, a;number
+  ld c, a;number
   ld hl, CoachNames
   cp COACHES_COUNT
   jr nc, .copy ;name outside of range, return Calvin
-.loop
-    ld a, b
-    and a
-    jr z, .copy;found name
-    ld a, [hli]
-    and a
-    jr nz, .loop
-    dec b
-    jr .loop
+  ld b, 0
+  call str_FromArray
 .copy
   ld de, name_buffer
   call str_Copy

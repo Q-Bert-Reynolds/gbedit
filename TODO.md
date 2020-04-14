@@ -34,20 +34,20 @@ New Game
 
 Play Ball
 
-- images for batting/pitching -> front/back -> ready/action (8 each * 151)
+- opponent batting / user pitching
 - ball should fly off screen after contact
 - handle different moves
+- pitch, hit, wiff, catch SFX
+- images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hide / disable selection of pitches when batting / swings when pitching
-- opponent batting / user pitching
 
 Simulation
 
-- pitch, hit, wiff, catch SFX
+- initial velocity should be calculated from ball speed, spray angle, and launch angle
 - ball should bounce off fences
 - running
 - catching throwing
 - implement basic rules
-- initial velocity should be calculated from swing_diff and batting stat
 - iterative landing spot calc slightly off, direct method often way off
 - field should probably be bigger than 32x32
 

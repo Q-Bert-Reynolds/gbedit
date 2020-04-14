@@ -203,7 +203,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   ld [rSCX], a
   ld [rSCY], a
 
-  ld hl, LetsGoText
+  ld hl, PlayBallText
   call RevealTextAndWait
   HIDE_WIN
   ret

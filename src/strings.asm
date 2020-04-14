@@ -74,6 +74,33 @@ str_Length::
 
 ;***************************************************************************
 ;
+; str_FromArray - gets string by index
+;
+; input:
+;   bc - index
+;   hl - string array
+; output:
+;   hl - string at index bc
+;
+;***************************************************************************
+str_FromArray::
+  inc bc
+  jr .test
+.loop; find end of string
+    ld a, [hli]
+    and a
+    jr nz, .loop
+.test; check bc == 0
+    xor a
+    dec bc
+    cp b
+    jr nz, .loop
+    cp c
+    jr nz, .loop
+  ret 
+
+;***************************************************************************
+;
 ; str_CopyLine - Copies line
 ;
 ; input:

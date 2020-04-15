@@ -229,6 +229,6 @@ ENDC
   jr .end\@
 .true\@
   ld a, 1
-.end\@
   and a
+.end\@
 ENDM

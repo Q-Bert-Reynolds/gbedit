@@ -17,13 +17,6 @@ INCLUDE "src/baseball/interrupts.asm"
 INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
 
-BASEBALL_SPRITE_ID EQU 0
-AIM_CIRCLE_SPRITE_ID EQU 3
-STRIKEZONE_SPRITE_ID EQU 10
-
-STRIKE_ZONE_CENTER_X EQU 52
-STRIKE_ZONE_CENTER_Y EQU 87
-
 ShowAimCircle: ;hl = size
   ld c, 8
   call math_Divide ; hl (remainder a) = hl / c
@@ -573,7 +566,7 @@ Bat:
     ld [pitch_z], a
     cp 200
     jp c, .swingLoop
-  jp .finish
+  jp .noSwing
 
 .hitBall
   call HideBaseball
@@ -607,19 +600,23 @@ Bat:
   push bc;direction
   ld a, 0;TODO:read animation on/off from save ram 
   and a
-  jr z, .loadAnnouncer
+  jr z, .announceContact
 .loadSimulation
   pop bc;direction
   pop af;exit velocity
   call LoadSimulation;a = exit velocity b = spray angle c = launch angle
   call SetupGameUI
   jr .finish
-.loadAnnouncer
+.announceContact
   pop bc;direction
   pop af;exit velocity
   call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
+  jr .finish
+.noSwing
+  call AnnounceNoSwing
 .finish
   call HideBaseball
+  call HideStrikeZone
 
   ld d, -8
   ld e, -8
@@ -632,6 +629,8 @@ Bat:
   ld bc, _RightyBatterUser0TileMap
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
+
+  call DrawCountOutsInning
   
   ld de, 100
   call gbdk_Delay

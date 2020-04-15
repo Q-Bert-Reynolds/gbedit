@@ -26,27 +26,20 @@ Status:
   DB "SLP", 0
 
 GetTypeString:: ;a = type, string in name_buffer
+  ld b, 0
+  ld c, a
   ld hl, Types
-  call GetStringAFromListHL
+  call str_FromArray
+  ld de, name_buffer
+  call str_Copy
   ret
 
 GetStatusString:: ;a = status, string in name_buffer
+  ld b, 0
+  ld c, a
   ld hl, Status
-  call GetStringAFromListHL
-  ret
-
-GetStringAFromListHL:: ;a = type, hl = list, returns string in name_buffer
-  ld b, a
-.loop
-    ld a, b
-    and a
-    jr z, .copy;found name
-    ld a, [hli]
-    and a
-    jr nz, .loop
-    dec b
-    jr .loop
-.copy
+  ld de, name_buffer
+  call str_FromArray
   ld de, name_buffer
   call str_Copy
   ret
@@ -1293,12 +1286,15 @@ DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in 
 ;
 ;----------------------------------------------------------------------
 LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
-  ld de, 
+  ld d, 43;x
+  ld e, 99;y
   ret
 
-GetClosestFielderByLocation
+GetClosestFielderByLocation::;de = xy, returns position number in a
+  ld a, 7
+  ret
 
-IsUserFielding::;sets z flag
+IsUserFielding::;nz = user is fielding, z = user is batting
   ld a, [home_team];1 = user is home team
   ld b, a
   ld a, [frame];1 = bottom

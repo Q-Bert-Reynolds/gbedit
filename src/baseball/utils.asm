@@ -1,28 +1,65 @@
-BALLS_MASK   EQU $70
-STRIKES_MASK EQU $0C
-OUTS_MASK    EQU $03
+BASEBALL_SPRITE_ID EQU 0
+AIM_CIRCLE_SPRITE_ID EQU 3
+STRIKEZONE_SPRITE_ID EQU 10
+
+STRIKE_ZONE_CENTER_X EQU 52
+STRIKE_ZONE_CENTER_Y EQU 87
+
+BALLS_MASK   EQU %01110000
+STRIKES_MASK EQU %00001100
+OUTS_MASK    EQU %00000011
 
 FIRST_BASE_MASK  EQU $000F
 SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
-Balls:; (balls_strikes_outs & BALLS_MASK) >> 4
+GetBalls::; returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
   ld a, [balls_strikes_outs]
   and BALLS_MASK
   swap a
   ret
 
-Strikes:; (balls_strikes_outs & STRIKES_MASK) >> 2
+SetBalls::; a = balls
+  swap a
+  and BALLS_MASK
+  ld b, a
+  ld a, [balls_strikes_outs]
+  and ~BALLS_MASK
+  or a, b
+  ld [balls_strikes_outs], a
+  ret
+
+GetStrikes::; returns (balls_strikes_outs & STRIKES_MASK) >> 2 in a
   ld a, [balls_strikes_outs]
   and STRIKES_MASK
   srl a
   srl a
   ret
-  
-Outs:; balls_strikes_outs & OUTS_MASK
+
+SetStrikes::; a = strikes
+  sla a
+  sla a
+  and STRIKES_MASK
+  ld b, a
+  ld a, [balls_strikes_outs]
+  and ~STRIKES_MASK
+  or a, b
+  ld [balls_strikes_outs], a
+  ret
+
+GetOuts::; returns balls_strikes_outs & OUTS_MASK in a
   ld a, [balls_strikes_outs]
   and OUTS_MASK
+  ret
+
+SetOuts::; a = strikes
+  and OUTS_MASK
+  ld b, a
+  ld a, [balls_strikes_outs]
+  and ~OUTS_MASK
+  or a, b
+  ld [balls_strikes_outs], a
   ret
 
 HealthPctToString: ;a = health_pct, returns str_buff
@@ -157,6 +194,16 @@ EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
   call str_Append
 
   ret
+
+GetCurrentBatter:: ;puts batter's player data in hl
+  call IsUserFielding
+  jp nz, GetCurrentOpponentPlayer
+  jp GetCurrentUserPlayer
+
+GetCurrentPitcher:: ;puts pitcher's player data in hl
+  call IsUserFielding
+  jp z, GetCurrentOpponentPlayer
+  jp GetCurrentUserPlayer
 
 GetCurrentUserPlayer::;puts user's current batter or pitcher player data in hl
   ld hl, UserLineupPlayer1

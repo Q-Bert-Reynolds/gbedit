@@ -113,16 +113,83 @@ AnnounceBeginningOfFrame::
 ;   "Ball 1."
 ;
 ;----------------------------------------------------------------------
-AnnounceNoSwing::;de = pitch xy
+AnnounceNoSwing::
+  ld a, [pitch_target_x]
+  BETWEEN (STRIKE_ZONE_CENTER_X-8), (STRIKE_ZONE_CENTER_X+8)
+  jr nz, .ball
+  ld a, [pitch_target_y]
+  BETWEEN (STRIKE_ZONE_CENTER_Y-8), (STRIKE_ZONE_CENTER_Y+8)
+  jr nz, .ball
 
 .strike
-  ; ;strike
-  ; StrikeText
-  ; StrikeOutLookingText
+  call GetStrikes
+  cp a, 2
+  jr nc, .strikeout
+  inc a
+  ld h, 0
+  ld l, a
+  call SetStrikes
+  ld de, name_buffer
+  call str_Number
+  ld hl, StrikeText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  ret
+
+.strikeout
+  call GetCurrentBatter
+  call GetPlayerName
+  ld hl, StrikeOutLookingText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  xor a
+  call SetBalls
+  xor a
+  call SetStrikes
+  call GetOuts
+  inc a
+  call SetOuts
+  ret
 
 .ball
-  ; BallText
-  ; WalkText
+  call GetBalls
+  cp a, 3
+  jr nc, .walk
+  inc a
+  ld h, 0
+  ld l, a
+  call SetBalls
+  ld de, name_buffer
+  call str_Number
+  ld hl, BallText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  ret
+
+.walk
+  call GetCurrentBatter
+  call GetPlayerName
+  ld hl, WalkText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  xor a
+  call SetBalls
+  xor a
+  call SetStrikes
+  call AnnounceAdvanceRunners
+  ret
 
 .hitByPitch
   ; ;hit by pitch
@@ -347,6 +414,9 @@ AnnounceFieldingText:;a = position fielding the ball
   ; HitHomeRunText
   ; HitGrandSlamText
   ; CriticalHitText
+  ret
+
+AnnounceAdvanceRunners:
   ret
 
 AnnounceRunnersOn:

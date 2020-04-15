@@ -284,7 +284,7 @@ DrawCountOutsInning::
 .setBallsLoop ;for (i = 0; i < 4; i++) tiles[0+i] = (i < balls()  ) ? BASEBALL : DOTTED_CIRCLE;
     ld a, DOTTED_CIRCLE
     ld [hl], a
-    call Balls
+    call GetBalls
     ld b, a
     ld a, [_i]
     cp b
@@ -304,7 +304,7 @@ DrawCountOutsInning::
 .setStrikesLoop ;for (i = 0; i < 3; i++) tiles[4+i] = (i < strikes()) ? BASEBALL : DOTTED_CIRCLE;
     ld a, DOTTED_CIRCLE
     ld [hl], a
-    call Strikes
+    call GetStrikes
     ld b, a
     ld a, [_i]
     cp b
@@ -327,7 +327,7 @@ DrawCountOutsInning::
 .setOutsLoop ;for (i = 0; i < 3; i++) tiles[8+i] = (i < outs()   ) ? BASEBALL : DOTTED_CIRCLE;
     ld a, DOTTED_CIRCLE
     ld [hl], a
-    call Outs
+    call GetOuts
     ld b, a
     ld a, [_i]
     cp b

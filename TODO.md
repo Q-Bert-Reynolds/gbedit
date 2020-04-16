@@ -34,6 +34,7 @@ New Game
 
 Play Ball
 
+- reduce pitching frames to 3, batting to 2, make trail fx a sprite
 - opponent batting / user pitching
 - ball should fly off screen after contact
 - handle different moves

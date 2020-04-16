@@ -108,6 +108,11 @@ def folder_to_asm (root, files):
           tileset.append(tile)
         tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
         
+  if len(tileset) > 256:
+    print("Error: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
+  elif len(tileset) > 64:
+    print("Warning: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
+    
   name = name.replace("home_", "").replace("away_", "")
   with open(os.path.join(root, name + ".asm"), "w+") as asm_file:
     asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")

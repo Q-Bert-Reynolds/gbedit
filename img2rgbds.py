@@ -1,6 +1,7 @@
 import os
 import math
 from PIL import Image
+from PIL import GifImagePlugin
 
 def main():
   for root, folders, files in os.walk("./img"):
@@ -8,11 +9,11 @@ def main():
     if name in ["img", "players", "coaches", "maps"]:
       for name in files:
         path = os.path.join(root, name)
-        png_to_asm(path)
+        img_to_asm(path)
     else:
       folder_to_asm(root, files)
 
-def gb_encode (img):
+def gb_encode (img, frame=0):
   rows = int(img.height / 8)
   cols = int(img.width / 8)
   hex_vals = []
@@ -77,7 +78,10 @@ def folder_to_asm (root, files):
   for file in files:
     path = os.path.join(root, file)
     base, ext = os.path.splitext(path)
-    if ext != ".png":
+    if ext == ".gif":
+      gif_to_asm(path, base, ext)
+      continue
+    elif ext != ".png":
       continue
     img = Image.open(path)
     img_name = os.path.basename(base)
@@ -107,7 +111,10 @@ def folder_to_asm (root, files):
         if tile not in tileset:
           tileset.append(tile)
         tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
-        
+  
+  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
+
+def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
   if len(tileset) > 256:
     print("Error: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
   elif len(tileset) > 64:
@@ -152,10 +159,65 @@ def folder_to_asm (root, files):
 
     asm_file.write("ENDC\n")
 
-def png_to_asm (path):
+def img_to_asm (path):
   base, ext = os.path.splitext(path)
-  if ext != ".png":
+  if ext == ".png":
+    png_to_asm(path,base,ext)
+  elif ext == ".gif":
+    gif_to_asm(path,base,ext)
+
+def gif_to_asm (path, base, ext):
+  img = Image.open(path)
+  name = os.path.basename(base)
+  if not img.is_animated:
     return
+
+  is_2x = "_2x" in name
+  tileset = []
+  tilemaps = {}
+  dimensions = {}
+  properties = {}
+
+  for frame in range(img.n_frames):
+    img_name = os.path.basename(base)+str(frame)
+    img.seek(frame)
+    rows, cols, hex_vals = gb_encode(img.convert('RGB'))
+    tilemaps[img_name] = []
+    for i in range(0, len(hex_vals), 16):
+      tile = "".join(hex_vals[i:i+16])
+      if tile not in tileset:
+        tileset.append(tile)
+      tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
+    
+    tilemaps[img_name] = []
+    for i in range(0, len(hex_vals), 16):
+      tile = "".join(hex_vals[i:i+16])
+      if tile not in tileset:
+        tileset.append(tile)
+      tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
+  
+    if is_2x:
+      tilemap_2x = []
+      for i in range(len(tilemaps[img_name])):
+        tile = int(tilemaps[img_name][i], 16)
+        tilemap_2x.append(tile*4)
+        tilemap_2x.append(tile*4+1)
+      tilemaps[img_name] = tilemap_2x
+      tilemap_2x = []
+      for i in range(rows):
+        row = tilemaps[img_name][i*cols*2:(i+1)*cols*2]
+        tilemap_2x.extend(map(lambda n : "{:02X}".format(n), row))
+        tilemap_2x.extend(map(lambda n : "{:02X}".format(n+2), row))
+      tilemaps[img_name] = tilemap_2x
+      rows*=2
+      cols*=2
+
+    dimensions[img_name] = (rows, cols)
+
+  root = os.path.split(path)[0]
+  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
+
+def png_to_asm (path, base, ext):
   img = Image.open(path)
   name = os.path.basename(base)
   rows, cols, hex_vals = gb_encode(img)

@@ -191,7 +191,7 @@ def png_to_asm (path):
         tilemap.append("{:02X}".format(len(tileset)))
         tileset.append(tile)
 
-    is_2x = "_back" in name
+    is_2x = "_2x" in name
     if is_2x:
       tilemap_2x = []
       for i in range(len(tilemap)):

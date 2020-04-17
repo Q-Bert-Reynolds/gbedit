@@ -14,13 +14,13 @@ MoveCoach:
 .rowLoop; for (j = 0; j < 3; ++j) {
     xor a
     ld [_i], a
-.columnLoop;for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i) {
+.columnLoop;for (i = 0; i < _CALVIN_BACK_2X_COLUMNS-1; ++i) {
       ld a, [_j]
-      ld de, (_CALVIN_BACK_COLUMNS-1)
-      call math_Multiply ;hl = j*(_CALVIN_BACK_COLUMNS-1)
+      ld de, (_CALVIN_BACK_2X_COLUMNS-1)
+      call math_Multiply ;hl = j*(_CALVIN_BACK_2X_COLUMNS-1)
       ld a, [_i]
       add a, l
-      ld c, a ;c = j*(_CALVIN_BACK_COLUMNS-1)+i
+      ld c, a ;c = j*(_CALVIN_BACK_2X_COLUMNS-1)+i
 
       ld a, [_i]
       add a, a;i*2
@@ -38,12 +38,12 @@ MoveCoach:
       add a, a;j*8
       add a, 56;i*8+56
       ld e, a;y = j*8+56
-      call gbdk_MoveSprite;move_sprite(j*(_CALVIN_BACK_COLUMNS-1)+i, i*8+x+16, j*8+56);
+      call gbdk_MoveSprite;move_sprite(j*(_CALVIN_BACK_2X_COLUMNS-1)+i, i*8+x+16, j*8+56);
 
       ld a, [_i]
       inc a
       ld [_i], a
-      cp (_CALVIN_BACK_COLUMNS-1)
+      cp (_CALVIN_BACK_2X_COLUMNS-1)
       jr nz, .columnLoop
     ld a, [_j]
     inc a

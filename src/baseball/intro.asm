@@ -3,8 +3,8 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   push af;player or team
 
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  ld bc, _CALVIN_BACK_TILE_COUNT
-  ld hl, _CalvinBackTiles
+  ld bc, _CALVIN_BACK_2X_TILE_COUNT
+  ld hl, _CalvinBack2xTiles
   call SetBkgDataDoubled
 
   pop af;player or team
@@ -33,25 +33,25 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 .rowLoop; for (j = 0; j < 3; ++j)
     xor a
     ld [_i], a
-.columnLoop; for (i = 0; i < _CALVIN_BACK_COLUMNS-1; ++i)
+.columnLoop; for (i = 0; i < _CALVIN_BACK_2X_COLUMNS-1; ++i)
 
-      ld de, _CALVIN_BACK_COLUMNS-1
+      ld de, _CALVIN_BACK_2X_COLUMNS-1
       ld a, [_j]
       call math_Multiply
       ld b, 0
       ld a, [_i]
       ld c, a
-      add hl, bc;j*(_CALVIN_BACK_COLUMNS-1)+i
+      add hl, bc;j*(_CALVIN_BACK_2X_COLUMNS-1)+i
       ld c, l
 
       ld d, 0
       ld a, [_j]
       ld e, a
-      add hl, de;j*_CALVIN_BACK_COLUMNS+i
-      ld de, _CalvinBackTileMap
-      add hl, de;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]
+      add hl, de;j*_CALVIN_BACK_2X_COLUMNS+i
+      ld de, _CalvinBack2xTileMap
+      add hl, de;_calvin_back_map[j*_CALVIN_BACK_2X_COLUMNS+i]
       ld a, [hl]
-      add a, _UI_FONT_TILE_COUNT;_calvin_back_map[j*_CALVIN_BACK_COLUMNS+i]+_UI_FONT_TILE_COUNT
+      add a, _UI_FONT_TILE_COUNT;_calvin_back_map[j*_CALVIN_BACK_2X_COLUMNS+i]+_UI_FONT_TILE_COUNT
       ld d, a
       ld e, c
       call gbdk_SetSpriteTile
@@ -62,7 +62,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
       ld a, [_i]
       inc a
       ld [_i], a
-      cp _CALVIN_BACK_COLUMNS-1
+      cp _CALVIN_BACK_2X_COLUMNS-1
       jr nz, .columnLoop
 
     ld a, [_j]
@@ -72,10 +72,10 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
     jr nz, .rowLoop
 
   ld d, 1
-  ld e, 16-_CALVIN_BACK_ROWS
-  ld h, _CALVIN_BACK_COLUMNS
-  ld l, _CALVIN_BACK_ROWS-4
-  ld bc, _CalvinBackTileMap + 3*_CALVIN_BACK_COLUMNS
+  ld e, 16-_CALVIN_BACK_2X_ROWS
+  ld h, _CALVIN_BACK_2X_COLUMNS
+  ld l, _CALVIN_BACK_2X_ROWS-4
+  ld bc, _CalvinBack2xTileMap + 3*_CALVIN_BACK_2X_COLUMNS
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
 
@@ -182,7 +182,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
     cp -80
     jr nz, .slideOutLoop
 
-  CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_ROWS, _CALVIN_BACK_COLUMNS, _CALVIN_BACK_ROWS-4, " "
+  CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_2X_ROWS, _CALVIN_BACK_2X_COLUMNS, _CALVIN_BACK_2X_ROWS-4, " "
   DISABLE_LCD_INTERRUPT
 
   ld hl, _RightyBatterUserTiles

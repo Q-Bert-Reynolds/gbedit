@@ -18,7 +18,7 @@ Python scripts
 - avatar directional maps should be organized into arrays
 - only update .asm file when PNG, TMX, or MOD files change
 - handle 1bpp and rle images
-- identify animations - same size, numbered names (name0, name1, etc)
+- read GIF as animaiton
 - roledex description parser should print warning when more than 6 lines
 
 Intro

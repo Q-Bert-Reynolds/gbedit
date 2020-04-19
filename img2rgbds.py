@@ -115,6 +115,8 @@ def folder_to_asm (root, files):
   image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
 
 def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
+  if len(tileset) == 0:
+    return
   if len(tileset) > 256:
     print("Error: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
   elif len(tileset) > 64:

@@ -1,7 +1,7 @@
 IF !DEF(ROLEDEX)
 ROLEDEX SET 1
 
-IMG_BANK_COUNT EQU 6
+IMG_BANK_COUNT EQU 30
 PLAYERS_PER_BANK = 151 / IMG_BANK_COUNT
 
 INCLUDE "data/move_data.asm"
@@ -11,16 +11,31 @@ INCLUDE "data/player_data.asm"
 INCLUDE "data/player_strings.asm"
 
 ; GetMoveName - a = move number, returns name_buffer
+
 ; GetPlayerName - a = number, returns name_buffer
 ; GetPlayerDescription - a = number, returns str_buffer
+
 ; CheckSeenSigned - a = number, returns seen/sign in a
 ; GetSeenSignedCounts - d = seen, e = signed
 ; GetLastSeen - returns highest number seen in a
+
 ; LoadPlayerBaseData - a = number, returns player_base
 ; LoadPlayerBkgData - a = number, de = vram_offset
+
 ; GetPlayerImgColumns - a = number, returns num columns of img in a
-; SetPlayerBkgTiles - a = number, de = vram_offset, de = xy
-; SetPlayerBkgTilesFlipped - a = number, de = vram_offset, de = xy
+; SetPlayerBkgTiles - a = number, de = vram_offset, bc = xy
+; SetPlayerBkgTilesFlipped - a = number, de = vram_offset, bc = xy
+
+; LoadUserBattingBkgTiles - a = lineup order
+; LoadOpponentBattingBkgTiles - a = lineup order
+; LoadUserPitchingBkgTiles
+; LoadOpponentPitchingBkgTiles
+
+; SetUserBattingBkgTiles -  - a = lineup order, b = frame
+; SetOpponentBattingBkgTiles -  - a = lineup order, b = frame
+; SetUserPitchingBkgTiles - b = frame
+; SetOpponentPitchingBkgTiles - b = frame
+
 
 SECTION "Roledex", ROM0
 GetMoveName:: ; a = move number, returns name in name_buffer

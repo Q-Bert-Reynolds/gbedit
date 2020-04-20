@@ -16,7 +16,7 @@ Python scripts
 
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
-- only update .asm file when PNG, TMX, or MOD files change
+- only update .asm file when PNG, GIF, TMX, or MOD files change
 - handle 1bpp and rle images
 - roledex description parser should print warning when more than 6 lines
 

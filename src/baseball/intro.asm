@@ -185,17 +185,12 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_2X_ROWS, _CALVIN_BACK_2X_COLUMNS, _CALVIN_BACK_2X_ROWS-4, " "
   DISABLE_LCD_INTERRUPT
 
-  ld hl, _RightyBatterUserTiles
-  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  ld bc, _RIGHTY_BATTER_USER_TILE_COUNT*16
-  call mem_CopyVRAM
-
-  ld de, 5
-  ld h, _RIGHTY_BATTER_USER0_COLUMNS
-  ld l, _RIGHTY_BATTER_USER0_ROWS
-  ld bc, _RightyBatterUser0TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call LoadOpposingPlayerBkgTiles
+  call LoadUserPlayerBkgTiles
+  xor a
+  call SetOpposingPlayerBkgTiles
+  xor a
+  call SetUserPlayerBkgTiles
 
   HIDE_ALL_SPRITES
   call gbdk_WaitVBL

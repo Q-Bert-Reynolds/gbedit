@@ -2,9 +2,11 @@ import os
 import glob
 import csv
 import textwrap
+import math
 
-file_count = 30
-players_per_file = int(151 / file_count)
+players_per_file = 4
+file_count = math.ceil(151 / players_per_file)
+print ("Generating " + str(file_count) + " player image banks.")
 
 def main():
   roledex = []
@@ -19,34 +21,34 @@ def main():
 
 def generate_img_bank(roledex):
   with open("./data/player_img.asm", "w+") as asm_file:
+    asm_file.write("IMG_BANK_COUNT EQU " + str(file_count) + "\n")
+    asm_file.write("PLAYERS_PER_BANK = 151 / IMG_BANK_COUNT\n\n")
     for bank in range(file_count):
       player_count = players_per_file
       if bank == file_count-1:
-        remainder = 151 - players_per_file * file_count
-        player_count += remainder
+        player_count = 151 - players_per_file * (file_count-1)
 
-      asm_file.write("SECTION \"Player Images "+str(bank)+"\", ROMX, BANK[PLAYER_IMG_BANK+"+str(bank)+"]\n")
+      asm_file.write("SECTION \"Player Images "+str(bank)+"\", ROMX, BANK[PLAYER_IMG_BANK+"+str(bank)+"]\n\n")
       
       asm_file.write("DW PlayerTiles"+str(bank)+"\n")
       asm_file.write("DW PlayerTileCounts"+str(bank)+"\n")
       asm_file.write("DW PlayerColumns"+str(bank)+"\n")
-      asm_file.write("DW PlayerTileMaps"+str(bank)+"\n\n")
-
+      asm_file.write("DW PlayerTileMaps"+str(bank)+"\n")
       asm_file.write("DW PlayerAnimTiles"+str(bank)+"\n")
       asm_file.write("DW PlayerAnimTileCounts"+str(bank)+"\n")
-      asm_file.write("DW PlayerAnimTileMaps"+str(bank)+"\n")
+      asm_file.write("DW PlayerAnimTileMaps"+str(bank)+"\n\n")
 
       anims = [
         "lefty_batter_user",
-        "lefty_batter_opponent",
-        "lefty_pitcher_user",
-        "lefty_pitcher_opponent",
         "righty_batter_user",
+        "lefty_pitcher_user_2x",
+        "righty_pitcher_user_2x",
+        "lefty_batter_opponent",
         "righty_batter_opponent",
-        "righty_pitcher_user",
+        "lefty_pitcher_opponent",
         "righty_pitcher_opponent",
       ]
-      
+
       for n in range(player_count):
         player = roledex[bank*players_per_file+n]
         name = player["#"] + player["Nickname"].replace(" ","").replace("-","")

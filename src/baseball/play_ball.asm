@@ -362,26 +362,13 @@ Bat:
   ld a, e
   ld [pitch_target_y], a
 
-  ld hl, _RightyPitcherOpponentTiles
-  ld de, $8800 + 64*16
-  ld bc, _RIGHTY_PITCHER_OPPONENT_TILE_COUNT*16
-  call mem_CopyVRAM
+  call LoadOpposingPlayerBkgTiles
+  call LoadUserPlayerBkgTiles
   
-  ld d, 0
-  ld e, 5
-  ld h, _RIGHTY_BATTER_USER0_COLUMNS
-  ld l, _RIGHTY_BATTER_USER0_ROWS
-  ld bc, _RightyBatterUser0TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
-  
-  ld d, 12
-  ld e, 0
-  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
-  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
-  ld bc, _RightyPitcherOpponent0TileMap
-  ld a, _UI_FONT_TILE_COUNT+64
-  call SetBKGTilesWithOffset
+  xor a
+  call SetOpposingPlayerBkgTiles
+  xor a
+  call SetUserPlayerBkgTiles
 
   ld hl, 7
   call ShowAimCircle
@@ -440,13 +427,8 @@ Bat:
     cp 30
     jr nz, .preWindupAimLoop
 
-  ld d, 12
-  ld e, 0
-  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
-  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
-  ld bc, _RightyPitcherOpponent1TileMap
-  ld a, _UI_FONT_TILE_COUNT+64
-  call SetBKGTilesWithOffset
+  ld a, 1
+  call SetOpposingPlayerBkgTiles
 
   xor a
 .postWindupAimLoop
@@ -457,13 +439,8 @@ Bat:
     cp 30
     jr nz, .postWindupAimLoop
 
-  ld d, 12
-  ld e, 0
-  ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
-  ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
-  ld bc, _RightyPitcherOpponent2TileMap
-  ld a, _UI_FONT_TILE_COUNT+64
-  call SetBKGTilesWithOffset
+  ld a, 2
+  call SetOpposingPlayerBkgTiles
 
   ld hl, AndThePitchText
   ld a, DRAW_FLAGS_WIN
@@ -499,13 +476,8 @@ Bat:
     jr nz, .aim;if (j == s*2)
 
 .setFinishPitchFrame
-    ld d, 12
-    ld e, 0
-    ld h, _RIGHTY_PITCHER_OPPONENT0_COLUMNS
-    ld l, _RIGHTY_PITCHER_OPPONENT0_ROWS
-    ld bc, _RightyPitcherOpponent3TileMap
-    ld a, _UI_FONT_TILE_COUNT+64
-    call SetBKGTilesWithOffset
+  ld a, 3
+  call SetOpposingPlayerBkgTiles
 
 .aim
     ld a, [_c]
@@ -522,13 +494,8 @@ Bat:
         ld a, [pitch_z]
         ld [_c], a
 
-        ld d, 0
-        ld e, 5
-        ld h, _RIGHTY_BATTER_USER0_COLUMNS
-        ld l, _RIGHTY_BATTER_USER0_ROWS
-        ld bc, _RightyBatterUser1TileMap
-        ld a, _UI_FONT_TILE_COUNT
-        call SetBKGTilesWithOffset
+  ld a, 1
+  call SetUserPlayerBkgTiles
 
         ld a, [aim_x];x
         srl a
@@ -552,13 +519,8 @@ Bat:
     ld a, [pitch_z]
     cp b
     jr nz, .moveBaseball;else if (j == c+2*s)
-      ld d, 0
-      ld e, 5
-      ld h, _RIGHTY_BATTER_USER0_COLUMNS
-      ld l, _RIGHTY_BATTER_USER0_ROWS
-      ld bc, _RightyBatterUser2TileMap
-      ld a, _UI_FONT_TILE_COUNT
-      call SetBKGTilesWithOffset
+      ld a, 2
+      call SetUserPlayerBkgTiles
 
 .moveBaseball
     ld a, [pitch_z]
@@ -589,13 +551,8 @@ Bat:
   ld de, 10
   call gbdk_Delay
 
-  ld d, 0
-  ld e, 5
-  ld h, _RIGHTY_BATTER_USER0_COLUMNS
-  ld l, _RIGHTY_BATTER_USER0_ROWS
-  ld bc, _RightyBatterUser2TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  ld a, 2
+  call SetUserPlayerBkgTiles
 
   ld de, 10
   call gbdk_Delay
@@ -629,13 +586,8 @@ Bat:
   ld e, -8
   call MoveAimCircle
   
-  ld d, 0
-  ld e, 5
-  ld h, _RIGHTY_BATTER_USER0_COLUMNS
-  ld l, _RIGHTY_BATTER_USER0_ROWS
-  ld bc, _RightyBatterUser0TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  xor a
+  call SetUserPlayerBkgTiles
 
   call DrawCountOutsInning
   
@@ -693,37 +645,13 @@ SetupGameUI:
   
   CLEAR_BKG_AREA 12, 0, 7, 7, " "
 
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
-  push af
-  ld de, _UI_FONT_TILE_COUNT+64
-  call LoadPlayerBkgData
-  pop af
-  push af
-  call GetPlayerImgColumns
-  ld c, a
+  call LoadOpposingPlayerBkgTiles
+  call LoadUserPlayerBkgTiles
 
-  ld a, 19
-  sub a, c
-  ld b, a;x
-  ld a, 7
-  sub a, c
-  ld c, a;y
-  ld de, _UI_FONT_TILE_COUNT+64
-  pop af
-  call SetPlayerBkgTiles
-
-  ld hl, _RightyBatterUserTiles
-  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  ld bc, _RIGHTY_BATTER_USER_TILE_COUNT*16
-  call mem_CopyVRAM
-
-  ld de, 5
-  ld h, _RIGHTY_BATTER_USER0_COLUMNS
-  ld l, _RIGHTY_BATTER_USER0_ROWS
-  ld bc, _RightyBatterUser0TileMap
-  ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  xor a
+  call SetOpposingPlayerBkgTiles
+  xor a
+  call SetUserPlayerBkgTiles
 
   ret
 

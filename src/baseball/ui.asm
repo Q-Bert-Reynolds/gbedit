@@ -683,7 +683,6 @@ ShowMoveInfo::
   ret
 
 SelectMoveMenuItem:: ;returns selection in a
-  ld [_breakpoint], a
   ld d, 0
   ld e, 8
   ld h, 20

@@ -12,12 +12,12 @@ INCLUDE "src/constants.asm"
 INCLUDE "src/macros.asm"
 INCLUDE "src/audio.asm"
 
+INCLUDE "src/ui.asm"
 INCLUDE "src/roledex/roledex.asm"
 INCLUDE "src/core.asm"
 INCLUDE "src/players.asm"
 INCLUDE "src/coaches.asm"
 INCLUDE "src/map_loader.asm"
-INCLUDE "src/ui.asm"
 
 ;TODO: Remove temp data
 INCLUDE "src/temp_data.asm"

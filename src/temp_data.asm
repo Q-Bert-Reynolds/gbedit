@@ -392,8 +392,8 @@ MyFrecklesData:
   DW 8                     ; .hit_batters       DW
 MyFrecklesDataEnd:
 
-OpponentSquirtData:
-  DB 007                   ; .number
+OpponentBubbiData:
+  DB 001                   ; .number
   DB 42                    ; .level
   DB 1                     ; .position
   DB TOSS_MOVE             ; .moves
@@ -410,7 +410,7 @@ OpponentSquirtData:
   DW 2000                  ; .at_bats
   DW 44                    ; .runs_allowed
   DW 300                   ; .outs_recorded
-OpponentSquirtDataEnd:
+OpponentBubbiDataEnd:
 
 Seed::
   ld hl, MyBubbiData
@@ -458,9 +458,9 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, OpponentSquirtData
+  ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer1
-  ld bc, OpponentSquirtDataEnd - OpponentSquirtData
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
 
   ld hl, 2020

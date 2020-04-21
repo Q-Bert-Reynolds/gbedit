@@ -1,8 +1,14 @@
 IF !DEF(ROLEDEX)
 ROLEDEX SET 1
 
-IMG_BANK_COUNT EQU 30
-PLAYERS_PER_BANK = 151 / IMG_BANK_COUNT
+LEFTY_BATTER_USER       EQU 0
+RIGHTY_BATTER_USER      EQU 1
+LEFTY_PITCHER_USER      EQU 2
+RIGHTY_PITCHER_USER     EQU 3
+LEFTY_BATTER_OPPONENT   EQU 4
+RIGHTY_BATTER_OPPONENT  EQU 5
+LEFTY_PITCHER_OPPONENT  EQU 6
+RIGHTY_PITCHER_OPPONENT EQU 7
 
 INCLUDE "data/move_data.asm"
 INCLUDE "data/move_strings.asm"
@@ -26,15 +32,10 @@ INCLUDE "data/player_strings.asm"
 ; SetPlayerBkgTiles - a = number, de = vram_offset, bc = xy
 ; SetPlayerBkgTilesFlipped - a = number, de = vram_offset, bc = xy
 
-; LoadUserBattingBkgTiles - a = lineup order
-; LoadOpponentBattingBkgTiles - a = lineup order
-; LoadUserPitchingBkgTiles
-; LoadOpponentPitchingBkgTiles
-
-; SetUserBattingBkgTiles -  - a = lineup order, b = frame
-; SetOpponentBattingBkgTiles -  - a = lineup order, b = frame
-; SetUserPitchingBkgTiles - b = frame
-; SetOpponentPitchingBkgTiles - b = frame
+; LoadUserPlayerBkgTiles
+; LoadOpposingPlayerBkgTiles
+; SetUserPlayerBkgTiles - a = frame
+; SetOpposingPlayerBkgTiles -  - a = frame
 
 
 SECTION "Roledex", ROM0
@@ -276,49 +277,44 @@ LoadPlayerBaseData:: ; a = number
   call SetBank
   ret
 
-PutPlayerTilesInHL: ;A000
-  push af
-  push bc
+PutPlayerTilesInHL:
   ld hl, $4000
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld h, a
-  ld l, b
-  pop bc
-  pop af
+  call PutPlayerAddressInHL
   ret
 
-PutPlayerTileCountsInHL: ;A002
-  push af
-  push bc
+PutPlayerTileCountsInHL:
   ld hl, $4002
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld h, a
-  ld l, b
-  pop bc
-  pop af
+  call PutPlayerAddressInHL
   ret
 
-PutPlayerColumnsInHL: ;A004
-  push af
-  push bc
+PutPlayerColumnsInHL:
   ld hl, $4004
-  ld a, [hli]
-  ld b, a
-  ld a, [hl]
-  ld h, a
-  ld l, b
-  pop bc
-  pop af
+  call PutPlayerAddressInHL
   ret
 
-PutPlayerTileMapsInHL: ;A006
+PutPlayerTileMapsInHL:
+  ld hl, $4006
+  call PutPlayerAddressInHL
+  ret
+
+PutPlayerAnimTilesInHL:
+  ld hl, $4008
+  call PutPlayerAddressInHL
+  ret
+
+PutPlayerAnimTileCountsInHL:
+  ld hl, $400A
+  call PutPlayerAddressInHL
+  ret
+
+PutPlayerAnimTileMapsInHL:
+  ld hl, $400C
+  call PutPlayerAddressInHL
+  ret
+
+PutPlayerAddressInHL: ;hl = address
   push af
   push bc
-  ld hl, $4006
   ld a, [hli]
   ld b, a
   ld a, [hl]
@@ -450,9 +446,8 @@ LoadPlayerBkgDataXFlipped:: ; a = number, de = vram_offset
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   dec a ;roledex entry 1 = index 0
   call SwitchPlayerImageBank
+  ld b, 0
   ld c, a
-  xor a
-  ld b, a
   call PutPlayerColumnsInHL
   add hl, bc
   ld a, [hl]
@@ -470,10 +465,7 @@ PreSetPlayerBkgTiles:
   push de ;vram off
   call SwitchPlayerImageBank
   push af ;num
-  xor a
-  ld b, a
-  pop af ;num
-  push af
+  ld b, 0
   ld c, a
   call PutPlayerTileMapsInHL
   add hl, bc
@@ -524,5 +516,181 @@ SetPlayerBkgTilesFlipped:: ; a = number, bc = xy, de = vram_offset
   ld a, [temp_bank]
   call SetBank
   ret
+
+LoadUserPlayerBkgTiles::
+  call GetCurrentUserPlayer
+  call GetPlayerNumber
+  dec a ;roledex entry 1 = index 0
+  call SwitchPlayerImageBank
+  
+  ld h, 0
+  ld l, a
+  add hl, hl;num*2
+  add hl, hl;num*4
+  add hl, hl;num*8
+  push hl;num*8
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTileCountsInHL
+  add hl, de
+  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
+  add hl, de ;*8 + anim type
+  ld a, [hl]
+  ld de, 16
+  call math_Multiply
+  ld b, h
+  ld c, l
+
+  pop hl;num*8
+  add hl, hl;num*16
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTilesInHL
+  add hl, de
+  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
+  add hl, de ;hl+(de*8animations*2bytes+animation
+  add hl, de ;hl+(de*8animations+animation)*2bytes
+  ld a, [hli]
+  ld d, a
+  ld a, [hl]
+  ld h, a
+  ld l, d ;tiles
+
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld a, [temp_bank]
+  call SetBank
+  
+  ret 
+
+LoadOpposingPlayerBkgTiles::
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
+  dec a ;roledex entry 1 = index 0
+  call SwitchPlayerImageBank
+
+  ld h, 0
+  ld l, a
+  add hl, hl;num*2
+  add hl, hl;num*4
+  add hl, hl;num*8
+  push hl;num*8
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTileCountsInHL
+  add hl, de
+  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
+  add hl, de ;*8 + anim type
+  ld a, [hl]
+  ld de, 16
+  call math_Multiply
+  ld b, h
+  ld c, l
+
+  pop hl;num*8
+  add hl, hl;num*16
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTilesInHL
+  add hl, de
+  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
+  add hl, de ;hl+(de*8animations*2bytes+animation
+  add hl, de ;hl+(de*8animations+animation)*2bytes
+  ld a, [hli]
+  ld d, a
+  ld a, [hl]
+  ld h, a
+  ld l, d ;tiles
+
+  ld de, $8800+64*16
+  call mem_CopyVRAM
+
+  ld a, [temp_bank]
+  call SetBank
+  
+  ret  
+
+SetUserPlayerBkgTiles:: ;a = frame
+  ld de, 56
+  call math_Multiply
+  push hl;frame
+  call GetCurrentUserPlayer
+  call GetPlayerNumber
+  dec a ;roledex entry 1 = index 0
+  call SwitchPlayerImageBank
+  
+  ld h, 0
+  ld l, a
+  add hl, hl;num*2
+  add hl, hl;num*4
+  add hl, hl;num*8
+  add hl, hl;num*16
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTileMapsInHL
+  add hl, de
+  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
+  add hl, de ;hl+(de*8animations*2bytes+animation
+  add hl, de ;hl+(de*8animations+animation)*2bytes
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld b, a;tiles
+  pop hl;frame
+  add hl, bc
+  ld b, h
+  ld c, l
+
+  ld hl, $0807;wh
+  ld de, $0005;xy
+  ld a, _UI_FONT_TILE_COUNT
+  call SetBKGTilesWithOffset
+
+  ld a, [temp_bank]
+  call SetBank
+  
+  ret 
+
+SetOpposingPlayerBkgTiles:: ;a = frame
+  ld de, 56
+  call math_Multiply
+  push hl;frame
+  call GetCurrentUserPlayer
+  call GetPlayerNumber
+  dec a ;roledex entry 1 = index 0
+  call SwitchPlayerImageBank
+  ld h, 0
+  ld l, a
+  add hl, hl;num*2
+  add hl, hl;num*4
+  add hl, hl;num*8
+  add hl, hl;num*16
+  ld d, h
+  ld e, l
+  call PutPlayerAnimTileMapsInHL
+  add hl, de
+  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
+  add hl, de ;hl+(de*8animations*2bytes+animation
+  add hl, de ;hl+(de*8animations+animation)*2bytes
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld b, a;tiles
+  pop hl;frame
+  add hl, bc
+  ld b, h
+  ld c, l
+
+  ld hl, $0807;wh
+  ld de, $0C00;xy
+  ld a, _UI_FONT_TILE_COUNT+64
+  call SetBKGTilesWithOffset
+
+  ld a, [temp_bank]
+  call SetBank
+  
+  ret 
+
 
 ENDC ;ROLEDEX

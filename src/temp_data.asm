@@ -458,7 +458,7 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, MyFrecklesData;OpponentBubbiData
+  ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy

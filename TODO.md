@@ -9,6 +9,7 @@ General
 
 Optimization
 
+- overworld map and player image data need to be compressed to fit more
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 
@@ -37,7 +38,6 @@ Play Ball
 - opponent batting / user pitching
 - ball should fly off screen after contact
 - handle different moves
-- pitch, hit, wiff, catch SFX
 - images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hide / disable selection of pitches when batting / swings when pitching
 
@@ -61,7 +61,6 @@ Team Menu
 
 Overworld
 
-- data needs to be compressed to fit more
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions
@@ -78,3 +77,15 @@ Rolédex
 - fix player descriptions that are longer than 6 lines
 - create tileset specific to dex
 - show player home towns / recruitment locations
+
+Audio
+
+- fix title screen SFX and music switching
+- pitch, hit, wiff, catch SFX
+
+Color
+
+- fix GBC grey palettes
+- add GBC color palettes
+- add SGB color palettes
+- add SGB border

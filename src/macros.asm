@@ -1,4 +1,4 @@
-SET_LCD_INTERRUPT: MACRO ;interrupt
+SET_LCD_INTERRUPT: MACRO ;\1 = interrupt address
   di
 
   ld b, ~IEF_LCDC

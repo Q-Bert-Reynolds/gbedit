@@ -117,6 +117,8 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   ld [rSCY], a
   ld [rVBK], a
 
+  xor a
+  ld [rLYC], a
   SET_LCD_INTERRUPT SlideInLCDInterrupt
   DISPLAY_ON
 

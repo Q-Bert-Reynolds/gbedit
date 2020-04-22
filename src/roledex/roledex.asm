@@ -313,7 +313,7 @@ SwitchPlayerImageBank: ; a = number (1-151), return adjusted number in a (0-PLAY
   dec a
   ld h, 0
   ld l, a
-  ld c, PLAYERS_PER_BANK
+  ld c, PLAYERS_PER_BANK+1
   call math_Divide
   ld [_breakpoint], a
   push af
@@ -525,7 +525,7 @@ LoadOpposingPlayerBkgTiles::
   
   ld a, [loaded_bank]
   ld [temp_bank], a
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
   ld a, [hli]
   call SetBank
 
@@ -603,7 +603,7 @@ SetOpposingPlayerBkgTiles:: ;a = frame
   
   ld a, [loaded_bank]
   ld [temp_bank], a
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
   ld a, [hli]
   call SetBank
 

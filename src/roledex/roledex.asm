@@ -297,21 +297,6 @@ PutPlayerTileMapsInHL:
   call PutPlayerAddressInHL
   ret
 
-PutPlayerAnimTilesInHL:
-  ld hl, $4008
-  call PutPlayerAddressInHL
-  ret
-
-PutPlayerAnimTileCountsInHL:
-  ld hl, $400A
-  call PutPlayerAddressInHL
-  ret
-
-PutPlayerAnimTileMapsInHL:
-  ld hl, $400C
-  call PutPlayerAddressInHL
-  ret
-
 PutPlayerAddressInHL: ;hl = address
   push af
   push bc
@@ -324,39 +309,25 @@ PutPlayerAddressInHL: ;hl = address
   pop af
   ret
 
-SwitchPlayerImageBank: ; a = number, return adjusted number in a
-  ld b, a ;num
-  ld c, 0 ;bank
-  ld a, PLAYERS_PER_BANK
-.findBankLoop
+SwitchPlayerImageBank: ; a = number (1-151), return adjusted number in a (0-PLAYERS_PER_BANK)
+  dec a
+  ld h, 0
+  ld l, a
+  ld c, PLAYERS_PER_BANK
+  call math_Divide
+  ld [_breakpoint], a
   push af
-  cp b
-  jr z, .skip
-  jr nc, .setBank ;if num <= PLAYERS_PER_BANK * (c+1)
-.skip
-  ld a, c
-  cp IMG_BANK_COUNT-1
-  jr z, .setBank ;if bank == bank_count-1
-  inc c
-  pop af
-  add a, PLAYERS_PER_BANK
-  jr .findBankLoop
-.setBank
+
   ld a, [loaded_bank]
   ld [temp_bank], a
-  ld a, c
+  ld a, l
   add a, PLAYER_IMG_BANK
   call SetBank
 
-  pop af 
-  ld c, a ;PLAYERS_PER_BANK * (bank+1)
-  ld a, b ;num
-  sub a, c
-  add a, PLAYERS_PER_BANK
+  pop af
   ret
 
-PreLoadPlayerBkgData:
-  dec a ;roledex entry 1 = index 0
+PreLoadPlayerBkgData: ;a = number, de = vram offset
   push af ;a = num
 
   ld a, 16
@@ -444,7 +415,6 @@ LoadPlayerBkgDataXFlipped:: ; a = number, de = vram_offset
   ret 
 
 GetPlayerImgColumns:: ; a = number, returns num columns of img in a
-  dec a ;roledex entry 1 = index 0
   call SwitchPlayerImageBank
   ld b, 0
   ld c, a
@@ -460,7 +430,6 @@ GetPlayerImgColumns:: ; a = number, returns num columns of img in a
   ret ;return a
   
 PreSetPlayerBkgTiles:
-  dec a ;roledex entry 1 = index 0
   push bc ;xy
   push de ;vram off
   call SwitchPlayerImageBank
@@ -520,42 +489,27 @@ SetPlayerBkgTilesFlipped:: ; a = number, bc = xy, de = vram_offset
 LoadUserPlayerBkgTiles::
   call GetCurrentUserPlayer
   call GetPlayerNumber
-  dec a ;roledex entry 1 = index 0
-  call SwitchPlayerImageBank
+  call LoadPlayerBaseData
   
-  ld h, 0
-  ld l, a
-  add hl, hl;num*2
-  add hl, hl;num*4
-  add hl, hl;num*8
-  push hl;num*8
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTileCountsInHL
-  add hl, de
-  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
-  add hl, de ;*8 + anim type
-  ld a, [hl]
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
+  ld a, [hli]
+  call SetBank
+
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  push de;tiles
+
+  ld a, [hli]
   ld de, 16
   call math_Multiply
   ld b, h
   ld c, l
 
-  pop hl;num*8
-  add hl, hl;num*16
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTilesInHL
-  add hl, de
-  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
-  add hl, de ;hl+(de*8animations*2bytes+animation
-  add hl, de ;hl+(de*8animations+animation)*2bytes
-  ld a, [hli]
-  ld d, a
-  ld a, [hl]
-  ld h, a
-  ld l, d ;tiles
-
+  pop hl;tiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   call mem_CopyVRAM
 
@@ -567,44 +521,29 @@ LoadUserPlayerBkgTiles::
 LoadOpposingPlayerBkgTiles::
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
-  dec a ;roledex entry 1 = index 0
-  call SwitchPlayerImageBank
+  call LoadPlayerBaseData
+  
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
+  ld a, [hli]
+  call SetBank
 
-  ld h, 0
-  ld l, a
-  add hl, hl;num*2
-  add hl, hl;num*4
-  add hl, hl;num*8
-  push hl;num*8
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTileCountsInHL
-  add hl, de
-  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
-  add hl, de ;*8 + anim type
-  ld a, [hl]
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  push de;tiles
+
+  ld a, [hli]
   ld de, 16
   call math_Multiply
   ld b, h
   ld c, l
 
-  pop hl;num*8
-  add hl, hl;num*16
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTilesInHL
-  add hl, de
-  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
-  add hl, de ;hl+(de*8animations*2bytes+animation
-  add hl, de ;hl+(de*8animations+animation)*2bytes
-  ld a, [hli]
-  ld d, a
-  ld a, [hl]
-  ld h, a
-  ld l, d ;tiles
-
+  pop hl;tiles
   ld de, $8800+64*16
-  call mem_CopyVRAM
+  call mem_CopyToTileData
 
   ld a, [temp_bank]
   call SetBank
@@ -614,31 +553,34 @@ LoadOpposingPlayerBkgTiles::
 SetUserPlayerBkgTiles:: ;a = frame
   ld de, 56
   call math_Multiply
-  push hl;frame
+  push hl;tile map for frame
+
   call GetCurrentUserPlayer
   call GetPlayerNumber
-  dec a ;roledex entry 1 = index 0
-  call SwitchPlayerImageBank
+  call LoadPlayerBaseData
   
-  ld h, 0
-  ld l, a
-  add hl, hl;num*2
-  add hl, hl;num*4
-  add hl, hl;num*8
-  add hl, hl;num*16
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTileMapsInHL
-  add hl, de
-  ld de, RIGHTY_BATTER_USER;TODO: check frame and handedness
-  add hl, de ;hl+(de*8animations*2bytes+animation
-  add hl, de ;hl+(de*8animations+animation)*2bytes
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
   ld a, [hli]
-  ld c, a
-  ld a, [hl]
-  ld b, a;tiles
-  pop hl;frame
-  add hl, bc
+  call SetBank
+
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  push de;tiles
+
+  ld a, [hli]
+  ld de, 16
+  call math_Multiply
+  ld b, h
+  ld c, l
+
+  pop hl;tiles
+  add hl, bc;tiles + tile_count*16
+  pop de;tile map for frame offset
+  add hl, de
   ld b, h
   ld c, l
 
@@ -649,36 +591,38 @@ SetUserPlayerBkgTiles:: ;a = frame
 
   ld a, [temp_bank]
   call SetBank
-  
-  ret 
+  ret
 
 SetOpposingPlayerBkgTiles:: ;a = frame
   ld de, 56
   call math_Multiply
   push hl;frame
-  call GetCurrentUserPlayer
+  call GetCurrentOpponentPlayer
   call GetPlayerNumber
-  dec a ;roledex entry 1 = index 0
-  call SwitchPlayerImageBank
-  ld h, 0
-  ld l, a
-  add hl, hl;num*2
-  add hl, hl;num*4
-  add hl, hl;num*8
-  add hl, hl;num*16
-  ld d, h
-  ld e, l
-  call PutPlayerAnimTileMapsInHL
-  add hl, de
-  ld de, RIGHTY_PITCHER_OPPONENT;TODO: check frame and handedness
-  add hl, de ;hl+(de*8animations*2bytes+animation
-  add hl, de ;hl+(de*8animations+animation)*2bytes
+  call LoadPlayerBaseData
+  
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
   ld a, [hli]
-  ld c, a
-  ld a, [hl]
-  ld b, a;tiles
-  pop hl;frame
-  add hl, bc
+  call SetBank
+
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  push de;tiles
+
+  ld a, [hli]
+  ld de, 16
+  call math_Multiply
+  ld b, h
+  ld c, l
+
+  pop hl;tiles
+  add hl, bc;tiles + tile_count*16
+  pop de;tile map for frame offset
+  add hl, de
   ld b, h
   ld c, l
 

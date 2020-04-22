@@ -315,7 +315,6 @@ SwitchPlayerImageBank: ; a = number (1-151), return adjusted number in a (0-PLAY
   ld l, a
   ld c, PLAYERS_PER_BANK+1
   call math_Divide
-  ld [_breakpoint], a
   push af
 
   ld a, [loaded_bank]

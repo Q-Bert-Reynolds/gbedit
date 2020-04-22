@@ -414,7 +414,7 @@ OpponentBubbiDataEnd:
 
 Seed::
   ld hl, MyBubbiData
-  ld de, UserLineupPlayer1
+  ld de, UserLineupPlayer8
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
@@ -449,7 +449,7 @@ Seed::
   call mem_Copy
 
   ld hl, MyYogiData
-  ld de, UserLineupPlayer8
+  ld de, UserLineupPlayer1
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
@@ -458,7 +458,7 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, OpponentBubbiData
+  ld hl, MyFrecklesData;OpponentBubbiData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy

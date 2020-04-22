@@ -1340,7 +1340,7 @@ gbt_ch1234_jump_position:
     ld      [gbt_current_step],a
     ld      hl,gbt_current_pattern
     inc [hl]
-    
+    ld a, [hl]
     call gbt_get_pattern_ptr ;check to see if jump puts us past end of song
     ld hl, gbt_current_step_data_ptr
     ld a, [hli]

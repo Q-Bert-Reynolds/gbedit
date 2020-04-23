@@ -1,0 +1,28 @@
+INCLUDE "src/sgb/sgbborder_map.z80"
+	DS	256			; The rows from 28 to 31 are not used
+
+	RGB 11,7,21		; PAL_SGB1
+	RGB 7,4,15
+	RGB 4,1,8
+	RGB 1,1,4
+	RGB 11,7,21
+	RGB 16,12,31
+	RGB 31,31,31
+
+	DS	$12			; Colors from 7 to 15 not used
+
+	RGB 16,12,31	; PAL_SGB2
+	RGB 7,4,15
+	RGB 4,1,8
+	RGB 1,1,4
+	RGB 16,12,31
+
+	DS	$16			; Colors from 5 to 15 not used
+
+	RGB 16,12,31	; PAL_SGB3
+	RGB 11,7,21
+	RGB 4,1,8
+	RGB 1,1,4
+	RGB 16,12,31
+
+	DS	$16			; Colors from 5 to 15 not used

@@ -1,5 +1,6 @@
 import os
 import math
+import colorsys
 from PIL import Image
 from PIL import GifImagePlugin
 
@@ -13,7 +14,13 @@ def main():
     else:
       folder_to_asm(root, files)
 
-def gb_encode (img, frame=0):
+def rgb_to_grey (px):
+  if not isinstance(px, int):
+    px = px[0]
+  px = int(math.floor(float(px) / 64.0))
+  return px
+
+def gb_encode (img):
   rows = int(img.height / 8)
   cols = int(img.width / 8)
   hex_vals = []
@@ -29,12 +36,62 @@ def gb_encode (img, frame=0):
           px = pixels[y*img.width+x]
           px = px if isinstance(px, int) else px[0]
           px = int(math.floor(float(px) / 64.0))
-          pixels[y*img.width+x] = px
           upper_binary += str(1-int(px%2))
           lower_binary += str(1-int(px/2))
         hex_vals.append("{:02X}".format(int(upper_binary, 2)))
         hex_vals.append("{:02X}".format(int(lower_binary, 2)))
   return (rows, cols, hex_vals)
+
+def sgb_encode (img):
+  rows = int(img.height / 8)
+  cols = int(img.width / 8)
+  hex_vals = []
+
+  palette = img.getpalette()
+  if palette == None:
+    print("ERROR: No palette data found in "+img.filename+".")
+    return rows, cols, hex_vals, palette
+
+  palette = [int(p/8) for p in palette]
+  rgb_iter = iter(palette)
+  palette = list(zip(rgb_iter, rgb_iter, rgb_iter))
+  palette = palette[:16]
+  for i in range(len(palette)):
+    p = palette[i]
+    print ("RGB {0}, {1}, {2}".format(p[0],p[1],p[2]))
+    palette[i] = (p[2] << 10) | (p[1] << 5) | p[0]
+
+  pixels = list(img.getdata())
+  for row in range(rows):
+    for col in range(cols):
+
+      for j in range(8):
+        upper_binary = ""
+        lower_binary = ""
+        for i in range(8):
+          x = col*8+i
+          y = row*8+j
+          px = pixels[y*img.width+x]
+          pixels[y*img.width+x] = px
+          upper_binary += str(1-int((px&3)%2))
+          lower_binary += str(1-int((px&3)/2))
+        hex_vals.append("{:02X}".format(int(upper_binary, 2)))
+        hex_vals.append("{:02X}".format(int(lower_binary, 2)))
+      
+      # last 2 bytes of palette
+      for j in range(8):
+        upper_binary = ""
+        lower_binary = ""
+        for i in range(8):
+          x = col*8+i
+          y = row*8+j
+          px = pixels[y*img.width+x]
+          upper_binary += str(1-int((px>>2)%2))
+          lower_binary += str(1-int((px>>2)/2))
+        hex_vals.append("{:02X}".format(int(upper_binary, 2)))
+        hex_vals.append("{:02X}".format(int(lower_binary, 2)))
+
+  return (rows, cols, hex_vals, palette)
 
 def flipTileX (tile):
   flipped = ""
@@ -56,18 +113,37 @@ def addTileGetFlipsIndex (tile, tileset):
 
   xFlip = flipTileX(tile)
   if xFlip in tileset:
-    return ("20", tileset.index(xFlip))
+    return ("40", tileset.index(xFlip))
 
   yFlip = flipTileY(tile)
   if yFlip in tileset:
-    return ("40", tileset.index(yFlip))
+    return ("80", tileset.index(yFlip))
 
   xyFlip = flipTileY(xFlip)
   if xyFlip in tileset:
-    return ("60", tileset.index(xyFlip))
+    return ("C0", tileset.index(xyFlip))
 
   tileset.append(tile)
   return ("00", tileset.index(tile))
+
+def addTileGetFlipsIndexSGB (tile, tileset):
+  if tile in tileset:
+    return (0x00, tileset.index(tile))
+
+  xFlip = flipTileX(tile[:32]) + flipTileX(tile[32:])
+  if xFlip in tileset:
+    return (0x20, tileset.index(xFlip))
+
+  yFlip = flipTileY(tile[:32]) + flipTileY(tile[32:])
+  if yFlip in tileset:
+    return (0x40, tileset.index(yFlip))
+
+  xyFlip = flipTileY(xFlip[:32]) + flipTileY(xFlip[32:])
+  if xyFlip in tileset:
+    return (0x60, tileset.index(xyFlip))
+
+  tileset.append(tile)
+  return (0x00, tileset.index(tile))
 
 def folder_to_asm (root, files):
   tileset = []
@@ -79,7 +155,7 @@ def folder_to_asm (root, files):
     path = os.path.join(root, file)
     base, ext = os.path.splitext(path)
     if ext == ".gif":
-      gif_to_asm(path, base, ext)
+      gif_to_asm(path, base)
       continue
     elif ext != ".png":
       continue
@@ -164,11 +240,11 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
 def img_to_asm (path):
   base, ext = os.path.splitext(path)
   if ext == ".png":
-    png_to_asm(path,base,ext)
+    png_to_asm(path,base)
   elif ext == ".gif":
-    gif_to_asm(path,base,ext)
+    gif_to_asm(path,base)
 
-def gif_to_asm (path, base, ext):
+def gif_to_asm (path, base):
   img = Image.open(path)
   name = os.path.basename(base)
   if not img.is_animated:
@@ -219,9 +295,65 @@ def gif_to_asm (path, base, ext):
   root = os.path.split(path)[0]
   image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
 
-def png_to_asm (path, base, ext):
-  img = Image.open(path)
+def png_to_asm (path, base):
   name = os.path.basename(base)
+  if "sgb_border" in name:
+    png_to_sgb(path, base, name)
+  else:
+    png_to_gb(path, base, name)
+  return
+
+# Each BG Map Entry consists of a 16bit value as such: VH01 PP00 NNNN NNNN
+#   Bit 0-9   - Character Number (use only 00h-FFh, upper 2 bits zero)
+#   Bit 10-12 - Palette Number   (use only 4-7, officially use only 4-6)
+#   Bit 13    - BG Priority      (use only 0)
+#   Bit 14    - X-Flip           (0=Normal, 1=Mirror horizontally)
+#   Bit 15    - Y-Flip           (0=Normal, 1=Mirror vertically)
+def png_to_sgb (path, base, name):
+  img = Image.open(path)
+  rows, cols, hex_vals, palette = sgb_encode(img)
+  tileset = []
+  tilemap = []
+  for i in range(0, len(hex_vals), 32):
+    tile = "".join(hex_vals[i:i+32])
+    flips, index = addTileGetFlipsIndexSGB(tile, tileset)
+    props = flips<<6 | 1<<4 | 4<<2
+    tilemap.append("{0:02X}{1:02X}".format(props, index))
+  for i in range(28):
+    print(tilemap[i*32:(i+1)*32])
+  tile_count = len(tileset)
+  print(tile_count)
+
+  with open(base + ".asm", "w+") as asm_file:
+    asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
+    asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
+    asm_file.write("_" + name.upper() + "_ROWS EQU " + str(rows) + "\n")
+    asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
+
+    asm_file.write("_"+PascalCase(name)+"Tiles: INCBIN \"")
+    asm_file.write(base + ".tiles\"\n")
+    with open(base + ".tiles", "wb") as bin_file:
+      hex_string = ""
+      for tile in tileset:
+        hex_string += tile
+      bin_file.write(bytes.fromhex(hex_string))
+
+    asm_file.write("_"+PascalCase(name)+"TileMap: INCBIN \"")
+    asm_file.write(base + ".sgbtilemap\"\n")
+    with open(base + ".sgbtilemap", "wb") as bin_file:
+      hex_string = ""
+      for i in range(0, len(tilemap), cols):
+        hex_string += "".join(tilemap[i:i+cols])
+      for pal in palette:
+        hex_string += "{:08X}".format(pal)
+        
+      bin_file.write(bytes.fromhex(hex_string))
+
+    asm_file.write("ENDC\n")
+  return
+  
+def png_to_gb (path, base, name):
+  img = Image.open(path)
   rows, cols, hex_vals = gb_encode(img)
   tile_count = rows*cols
 

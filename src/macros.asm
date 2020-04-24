@@ -27,7 +27,7 @@ SET_LCD_INTERRUPT: MACRO ;\1 = interrupt address
   ei
 ENDM
 
-DISABLE_LCD_INTERRUPT: macro
+DISABLE_LCD_INTERRUPT: MACRO
   di
     
   ld b, ~IEF_LCDC

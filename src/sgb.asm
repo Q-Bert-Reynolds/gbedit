@@ -1,131 +1,145 @@
-; Super Game Boy development (step by step)
-; Made by Imanol Barriuso (Imanolea) for Games aside
+; Super Game Boy
+; by Imanol Barriuso (Imanolea)
 ; https://imanoleasgames.blogspot.com/2016/12/games-aside-1-super-game-boy.html
 
-; Super Game boy command packets definition
+INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
 
-MLT_REQ: MACRO
-  DB ($11 << 3) + 1
-  DB \1 - 1
-  DS 14
+; Super Game boy command packets definitions
+;  Code  Name      Expl.
+;  $00   PAL01     Set SGB Palette 0,1 Data
+;  $01   PAL23     Set SGB Palette 2,3 Data
+;  $02   PAL03     Set SGB Palette 0,3 Data
+;  $03   PAL12     Set SGB Palette 1,2 Data
+;  $04   ATTR_BLK  "Block" Area Designation Mode
+;  $05   ATTR_LIN  "Line" Area Designation Mode
+;  $06   ATTR_DIV  "Divide" Area Designation Mode
+;  $07   ATTR_CHR  "1CHR" Area Designation Mode
+;  $08   SOUND     Sound On/Off
+;  $09   SOU_TRN   Transfer Sound PRG/DATA
+;  $0A   PAL_SET   Set SGB Palette Indirect
+;  $0B   PAL_TRN   Set System Color Palette Data
+;  $0C   ATRC_EN   Enable/disable Attraction Mode
+;  $0D   TEST_EN   Speed Function
+;  $0E   ICON_EN   SGB Function
+;  $0F   DATA_SND  SUPER NES WRAM Transfer 1
+;  $10   DATA_TRN  SUPER NES WRAM Transfer 2
+;  $11   MLT_REG   Controller 2 Request
+;  $12   JUMP      Set SNES Program Counter
+;  $13   CHR_TRN   Transfer Character Font Data
+;  $14   PCT_TRN   Set Screen Data Color Data
+;  $15   ATTR_TRN  Set Attribute from ATF
+;  $16   ATTR_SET  Set Data to ATF
+;  $17   MASK_EN   Game Boy Window Mask
+;  $18   OBJ_TRN   Super NES OBJ Mode
+
+MLT_REQ: MACRO ;\1 = player count
+  db ($11 << 3) + 1
+  db \1 - 1
+  ds 14
 ENDM
 
-CHR_TRN: MACRO
-  DB ($13 << 3) + 1
-  DB \1 + (\2 << 1)
-  DS 14
+CHR_TRN: MACRO ;\1 = tile table (0=$00-$7F, 1=$80-$FF), \2 = tile type (0=BG, 1=OBJ)
+  db ($13 << 3) + 1
+  db \1 + (\2 << 1)
+  ds 14
 ENDM
 
 PCT_TRN: MACRO
-  DB ($14 << 3) + 1
-  DS 15
+  db ($14 << 3) + 1
+  ds 15
 ENDM
 
-PAL_SET: MACRO
-  DB ($A << 3) + 1
-  DW \1, \2, \3, \4
-  DS 7
+PAL_SET: MACRO ;\1 = Pal0, \2 = Pal1, \3 = Pal2, \4 = Pal3
+  db ($0A << 3) + 1
+  dw \1, \2, \3, \4
+  ds 7
 ENDM
 
 PAL_TRN: MACRO
-  DB ($B<< 3) + 1
-  DS 15
+  db ($0B << 3) + 1
+  ds 15
 ENDM
 
-MASK_EN: MACRO
-  DB ($17 << 3) + 1
-  DB \1
-  DS 14
+MASK_EN: MACRO ;\1 = screen mask (0=cancel,1=freeze)
+  db ($17 << 3) + 1
+  db \1
+  ds 14
 ENDM
 
-RGB: MACRO
-  DW (\3 << 10 | \2 << 5 | \1)
+RGB: MACRO ;\1 = red, \2 = green, \3 = blue
+  dw (\3 << 10 | \2 << 5 | \1)
 ENDM
 
 SECTION "Super GameBoy", ROMX, BANK[SGB_BANK]
 
-; Super Game Boy frame tiles
-SGBBorderTiles::
-INCLUDE "src/sgb/sgb_tileset.z80"
-EndSGBBorderTiles::
-; Super Game Boy frame
-SGBBorder::
-INCLUDE "src/sgb/sgbborder.z80"
-EndSGBBorder::
+INCLUDE "img/sgb_border.inc"
 
-; We assign the first palette (0) to the four palettes that are available for the game graphics
-PalSet:: PAL_SET 0, 0, 0, 0
-
-MltReqTwoPlayers:: MLT_REQ 2
-MltReqOnePlayer:: MLT_REQ 1
-; First 128 tile block transfer
-ChrTrn1:: CHR_TRN 0, 0
-; Second 128 tile block transfer
-ChrTrn2:: CHR_TRN 1, 0
-PctTrn:: PCT_TRN
-PalTrn:: PAL_TRN
-MaskEnFreeze: MASK_EN 1
-MaskEnCancel: MASK_EN 0
+; Super Game boy command packets
+sgb_PalSet::              PAL_SET 0, 0, 0, 0 ; assign Pal0 as 4 game graphics palettes
+sgb_MltReqTwoPlayers::    MLT_REQ 2
+sgb_MltReqOnePlayer::     MLT_REQ 1
+sgb_ChrTrn1::             CHR_TRN 0, 0 ; First 128 tile block transfer
+sgb_ChrTrn2::             CHR_TRN 1, 0 ; Second 128 tile block transfer
+sgb_PctTrn::              PCT_TRN
+sgb_PalTrn::              PAL_TRN
+sgb_MaskEnFreeze::        MASK_EN 1
+sgb_MaskEnCancel::        MASK_EN 0
 
 ; Initialization packets extracted from the official documentation
-DataSnd0:: DB $79, $5D, $08, $00, $0B, $8C, $D0, $F4, $60, $00, $00, $00, $00, $00, $00, $00
-DataSnd1:: DB $79, $52, $08, $00, $0B, $A9, $E7, $9F, $01, $C0, $7E, $E8, $E8, $E8, $E8, $E0
-DataSnd2:: DB $79, $47, $08, $00, $0B, $C4, $D0, $16, $A5, $CB, $C9, $05, $D0, $10, $A2, $28
-DataSnd3:: DB $79, $3C, $08, $00, $0B, $F0, $12, $A5, $C9, $C9, $C8, $D0, $1C, $A5, $CA, $C9
-DataSnd4:: DB $79, $31, $08, $00, $0B, $0C, $A5, $CA, $C9, $7E, $D0, $06, $A5, $CB, $C9, $7E
-DataSnd5:: DB $79, $26, $08, $00, $0B, $39, $CD, $48, $0C, $D0, $34, $A5, $C9, $C9, $80, $D0
-DataSnd6:: DB $79, $1B, $08, $00, $0B, $EA, $EA, $EA, $EA, $EA, $A9, $01, $CD, $4F, $0C, $D0
-DataSnd7:: DB $79, $10, $08, $00, $0B, $4C, $20, $08, $EA, $EA, $EA, $EA, $EA, $60, $EA, $EA
+DataSnd0: DB $79, $5D, $08, $00, $0B, $8C, $D0, $F4, $60, $00, $00, $00, $00, $00, $00, $00
+DataSnd1: DB $79, $52, $08, $00, $0B, $A9, $E7, $9F, $01, $C0, $7E, $E8, $E8, $E8, $E8, $E0
+DataSnd2: DB $79, $47, $08, $00, $0B, $C4, $D0, $16, $A5, $CB, $C9, $05, $D0, $10, $A2, $28
+DataSnd3: DB $79, $3C, $08, $00, $0B, $F0, $12, $A5, $C9, $C9, $C8, $D0, $1C, $A5, $CA, $C9
+DataSnd4: DB $79, $31, $08, $00, $0B, $0C, $A5, $CA, $C9, $7E, $D0, $06, $A5, $CB, $C9, $7E
+DataSnd5: DB $79, $26, $08, $00, $0B, $39, $CD, $48, $0C, $D0, $34, $A5, $C9, $C9, $80, $D0
+DataSnd6: DB $79, $1B, $08, $00, $0B, $EA, $EA, $EA, $EA, $EA, $A9, $01, $CD, $4F, $0C, $D0
+DataSnd7: DB $79, $10, $08, $00, $0B, $4C, $20, $08, $EA, $EA, $EA, $EA, $EA, $60, $EA, $EA
 
-SGBSuperPalettes::
+DefaultSGBPalette:
   ; Default palette
-  RGB 27, 31, 31
-  RGB 22, 19, 31
-  RGB 21,  7, 15
-  RGB  1,  1,  4
+  RGB 31, 31, 31
+  RGB 23, 23, 23
+  RGB 15, 15, 15
+  RGB  0,  0,  0
 
 ; Super Game Boy initialization
-SGBInit::
-  call check_sgb
-  ret nc ; We return if the game is not running on a Super Game Boy
+sgb_Init::
+  call sgb_Check
+  ret nc                        ; We return if the game is not running on a Super Game Boy
   di
-  ld hl, MaskEnFreeze
-  call  sgbpackettransfer ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
+  ld hl, sgb_MaskEnFreeze
+  call  sgb_PacketTransfer ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
   call init_sgb_default ; 8 initialization data packet sending, according to the official documentation
-  xor a
-  ld de, ChrTrn1
-  ld hl, SGBBorderTiles
-  call copysnes ; Copies to SNES RAM the first 128 tiles of the frame (256 Game Boy tiles)
-  xor a
-  ld de, ChrTrn2
-  ld hl, SGBBorderTiles + 4096
-  call copysnes ; Copies to SNES RAM the second 128 tiles of the frame (256 Game Boy tiles)
-  xor a
-  ld de, PctTrn
-  ld hl, SGBBorder
-  call copysnes ; Copies to SNES RAM the frame map
-  xor a
-  ld de, PalTrn
-  ld hl, SGBSuperPalettes
-  call copysnes ; Copies to SNES RAM the custom game palettes
-  ; VRAM reset
-  ld hl, _VRAM
-  ld bc, $2000
-  xor a
-  call mem_Set
+
+  ld de, sgb_ChrTrn1
+  ld hl, SGB_VRAM_TILEDATA1
+  call sgb_CopySNESRAM ; Copies to SNES RAM the first 128 tiles of the frame (256 Game Boy tiles)
+
+  ld de, sgb_ChrTrn2
+  ld hl, SGB_VRAM_TILEDATA2
+  call sgb_CopySNESRAM ; Copies to SNES RAM the second 128 tiles of the frame (256 Game Boy tiles)
+
+  ld de, sgb_PctTrn
+  ld hl, SGB_VRAM_TILEMAP
+  call sgb_CopySNESRAM ; Copies to SNES RAM the frame map
+
+  ld de, sgb_PalTrn
+  ld hl, DefaultSGBPalette
+  call sgb_CopySNESRAM ; Copies to SNES RAM the custom game palettes
+
   ; Default game palette set
-  ld hl, PalSet
-  call sgbpackettransfer
-  ld hl, MaskEnCancel
-  call sgbpackettransfer ; Super Game Boy screen visualization unfreezing
+  ld hl, sgb_PalSet
+  call sgb_PacketTransfer
+  ld hl, sgb_MaskEnCancel
+  call sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
   ret
 
-; @output   Carry: Flag raised if the system in which the game is running is a Super Game Boy
-check_sgb:
+; Carry Flag raised if the system in which the game is running is a Super Game Boy
+sgb_Check::
   di
-  ld  hl, MltReqTwoPlayers ; Two player mode selection
-  call  sgbpackettransfer
+  ld  hl, sgb_MltReqTwoPlayers ; Two player mode selection
+  call  sgb_PacketTransfer
   ei
   ld a, P1F_4 | P1F_5
   ld [rP1], a ; We disable key and pad reading to read the joypad id
@@ -150,49 +164,42 @@ check_sgb:
   and a ; We lower the carry flag
   ret ; We are not in a Super Game Boy
 check_sgb_0:
-  ld  hl, MltReqOnePlayer
-  call  sgbpackettransfer ; We return to one player mode
+  ld  hl, sgb_MltReqOnePlayer
+  call  sgb_PacketTransfer ; We return to one player mode
   scf ; We raise the carry flag
   ret ; We are in a Super Game Boy
 
 ; We send the 8 default initialization data packets specified in the official documentation
 init_sgb_default:
   ld hl, DataSnd0
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd1
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd2
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd3
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd4
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd5
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd6
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ld hl, DataSnd7
-  call sgbpackettransfer
+  call sgb_PacketTransfer
   ret
 
 ; Copies data to the SNES RAM
-; @input    DE: Packet data
-; @input    HL: Graphical data address
-; @input    A: Flag that indicates if we are copying 2bpp tile data
-copysnes:
+; Input:
+;    DE: Packet data
+;    HL: Graphical data address
+sgb_CopySNESRAM::
   di
   push de
-  push af;2bpp flag
   DISPLAY_OFF ; We disble interruptions and turn off the LCD because we are going to modify the VRAM data
   ld a, %11100100
   ld [rBGP], a ; VRAM-transfer background palette value
   ld de, _VRAM + 2048
-  pop af;2bpp flag
-  and a
-  jr z, .copysnes_0
-  call parsesgbbordertiles ; Turns the 2bpp graphics into 4bpp
-  jr .copysnes_1
-.copysnes_0:
   ld bc, 4096
   call mem_Copy ; We copy to the Game Boy VRAM the 4KB data that is going to be transferred to the SNES RAM
 .copysnes_1:
@@ -214,38 +221,14 @@ copysnes:
   ld a, LCDCF_ON|LCDCF_BG8800|LCDCF_BG9800|LCDCF_BGON|LCDCF_OBJ8|LCDCF_OBJON|LCDCF_WIN9C00|LCDCF_WINON
   ld [rLCDC], a ; We turn on the LCD so the transfer can be made
   pop hl ; Packet definition
-  call sgbpackettransfer ; We send the packet that will produce the transfer
+  call sgb_PacketTransfer ; We send the packet that will produce the transfer
   xor a
   ld [rBGP], a ; We restore the background palette
   ret
 
-; Turns the 2bbp graphics pointed by HL to 4bpp and stores them in the address pointed by DE
-parsesgbbordertiles:
-  ld b, 128
-.parsesgbbordertiles_0:
-  ; We copy the data of the 1 and 2 bit planes of the tiles
-  ld c, 16
-.parsesgbbordertiles_1:
-  ld a, [hli]
-  ld [de], a
-  inc de
-  dec c
-  jr nz, .parsesgbbordertiles_1
-  ; The 3 and 4 bit planes are set to zero
-  ld c, 16
-  xor a
-.parsesgbbordertiles_2:
-  ld [de], a
-  inc de
-  dec c
-  jr nz, .parsesgbbordertiles_2
-  dec b
-  jr nz, .parsesgbbordertiles_0
-  ret
-
 ; Super Game Boy packet transfer
-; @entrada HL: Packet address
-sgbpackettransfer:
+; input: HL = Packet address
+sgb_PacketTransfer::
   ld a, [hl]
   and %00000111 ; The three lower bits indicate the number of packets to send
   ret z ; We return if there are no packets to send
@@ -289,11 +272,11 @@ sgbpackettransfer:
 sgbpackettransfer_wait:
   ld de, 7000 ; 12 cycles
 .sgbpackettransfer_wait_0:
-  nop ; 4 cycles
-  nop ; 4 cycles
-  nop ; 4 cycles
-  dec de ; 8 cycles
-  ld a, d ; 4 cycles
-  or e ; 4 cycles
-  jr nz, .sgbpackettransfer_wait_0 ; 12 cycles if jumps, 8 if not
+    nop ; 4 cycles
+    nop ; 4 cycles
+    nop ; 4 cycles
+    dec de ; 8 cycles
+    ld a, d ; 4 cycles
+    or e ; 4 cycles
+    jr nz, .sgbpackettransfer_wait_0 ; 12 cycles if jumps, 8 if not
   ret ; 16 cycles

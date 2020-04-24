@@ -46,7 +46,7 @@ Main::
   ld [rSCY], a
   ld [rWX], a
   ld [rWY], a
-
+  
   SETUP_DMA_TRANSFER
 
 .clearRAM
@@ -68,35 +68,36 @@ Main::
   ld a, LCDCF_OFF | LCDCF_WIN9C00 | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON
   ld [rLCDC], a
 
-.setupSuperGameBoy
-  ld a, SGB_BANK
-  call SetBank
-  call SGBInit
-
 .setupInterrupts
   ld a, IEF_VBLANK
   ld [rIE], a
+
+.setupSuperGameBoy
+  ld a, SGB_BANK
+  call SetBank
+  call sgb_Init
+  SET_DEFAULT_PALETTE
 
 .seed ;load temp data
   ld a, TEMP_BANK
   call SetBank
   call Seed
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
 
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;should set a to 0 if new game pressed
-;   jr nz, .overworld
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;should set a to 0 if new game pressed
+  jr nz, .overworld
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
 
 .overworld; walk around, find a game, repeat
     ; ld a, OVERWORLD_BANK

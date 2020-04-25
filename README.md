@@ -28,10 +28,46 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 # Cart:
 MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 
+# Credits
+
+- Art, Code, Audio - Nolan Baker
+- hardware.inc - Jones, Carsten Sorenson, Jeff Frohwein, Antonio Niño Díaz
+- memory1.asm - Jeff Frohwein, Carsten Sorensen
+- gbdk.asm - Pascal Felber, Lars Malmborg, Michael Hope
+- gbt_player.asm - Antonio Niño Díaz
+- sgb.asm - Imanol Barriuso, Martin Ahrnbom
+
 # Thanks
 
-- Pascal Felber, Lars Malmborg, Michael Hope, http://gbdk.sourceforge.net
-- Jeff Frohwein, http://devrs.com/gb/
-- John Metcalf, http://www.retroprogramming.com
-- http://z80-heaven.wikidot.com/
-- https://gbdev.github.io/pandocs/
+- [Nintendo](https://www.nintendo.com/), [Creatures inc.](https://www.creatures.co.jp/), and [GAME FREAK inc.](https://www.gamefreak.co.jp/) for creating [Pokémon](https://www.pokemon.com/us/pokemon-video-games/pokemon-red-version-and-pokemon-blue-version/).
+- Pascal Felber, Lars Malmborg, and Michael Hope for [GBDK](https://gbdk.sourceforge.net)
+- [Jeff Frohwein](https://devrs.com/gb/)
+- [John Metcalf](https://www.retroprogramming.com)
+- Anyon who has contributed to [Z80 Heaven](https://z80-heaven.wikidot.com/)
+- Anyone who worked on the [GameBoy Pandocs](https://gbdev.github.io/pandocs/):
+  - Pan of ATX
+  - Marat Fayzullin
+  - Felber Pascal
+  - Robson Paul
+  - Korth Martin.
+  - Antonio Niño Díaz
+  - Antonio Vivace
+  - Beannaich
+  - Elizafox
+  - endrift
+  - exezin
+  - Furrtek
+  - Gekkio
+  - ISSOtm
+  - Jeff Frohwein
+  - John Harrison
+  - kOOPa
+  - LIJI32
+  - jrra
+  - Mantidactyle
+  - mattcurrie
+  - nitro2k01
+  - Pascal Felber
+  - pinobatch
+  - T4g1
+  - TechFalcon

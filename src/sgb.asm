@@ -1,6 +1,8 @@
 ; Super Game Boy
-; by Imanol Barriuso (Imanolea)
-; https://imanoleasgames.blogspot.com/2016/12/games-aside-1-super-game-boy.html
+;
+;   based on code from Imanol Barriuso (Imanolea) - https://imanoleasgames.blogspot.com/2016/12/games-aside-1-super-game-boy.html
+;                    and Martin Ahrnbom (ahrnbom) - https://github.com/ahrnbom/gingerbread
+;
 
 INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
@@ -71,20 +73,6 @@ RGB: MACRO ;\1 = red, \2 = green, \3 = blue
   dw (\3 << 10 | \2 << 5 | \1)
 ENDM
 
-SGB_BORDER: MACRO ;\1 = tiles, \2 = tile map
-  ld de, sgb_ChrTrn1
-  ld hl, \1
-  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
-
-  ld de, sgb_ChrTrn2
-  ld hl, \1 + $1000
-  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
-
-  ld de, sgb_PctTrn
-  ld hl, \2
-  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
-ENDM
-
 SECTION "Super GameBoy", ROMX, BANK[SGB_BANK]
 
 INCLUDE "img/sgb_border.asm"
@@ -124,9 +112,19 @@ sgb_Init::
   di
   ld hl, sgb_MaskEnFreeze
   call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
-  call init_sgb_default         ; 8 initialization data packet sending, according to the official documentation
+  call sgb_SendInitPackets         ; 8 initialization data packet sending, according to the official documentation
 
-  SGB_BORDER SgbBorderTiles, SgbBorderTileMap
+  ld de, sgb_ChrTrn1
+  ld hl, SgbBorderTiles
+  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+
+  ld de, sgb_ChrTrn2
+  ld hl, SgbBorderTiles + $1000
+  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+
+  ld de, sgb_PctTrn
+  ld hl, SgbBorderTileMap
+  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
 
   ld de, sgb_PalTrn
   ld hl, DefaultSGBPalette
@@ -175,7 +173,7 @@ check_sgb_0:
   ret                           ; We are in a Super Game Boy
 
 ; We send the 8 default initialization data packets specified in the official documentation
-init_sgb_default:
+sgb_SendInitPackets:
   ld hl, DataSnd0
   call sgb_PacketTransfer
   ld hl, DataSnd1
@@ -207,22 +205,23 @@ sgb_CopySNESRAM::
   ld de, _VRAM + 2048
   ld bc, 4096
   call mem_Copy               ; We copy to the Game Boy VRAM the 4KB data that is going to be transferred to the SNES RAM
-.copysnes_1:
+
 ; We copy to the visible _SCRN0 background the 4KB data that is going to be transferred to the SNES RAM by VRAM-transfer
   ld hl, _SCRN0
   ld de, 12                   ; Background additional width
   ld a, $80                   ; VRAM address of the first tile
   ld c, 13                    ; Rows of data to be copied
-.copysnes_2:
-  ld b, 20                    ; Visible background width
-.copysnes_3:
-  ld [hli], a                 ; Tile set
-  inc a
-  dec b
-  jr nz, .copysnes_3
-  add hl, de                  ; Next visible background tile row
-  dec c
-  jr nz, .copysnes_2
+.rowLoop:
+    ld b, 20                  ; Visible background width
+.columnLoop:
+      ld [hli], a             ; Tile set
+      inc a
+      dec b
+      jr nz, .columnLoop
+    add hl, de                ; Next visible background tile row
+    dec c
+    jr nz, .rowLoop
+
   ld a, LCDCF_ON|LCDCF_BG8800|LCDCF_BG9800|LCDCF_BGON|LCDCF_OBJ8|LCDCF_OBJON|LCDCF_WIN9C00|LCDCF_WINON
   ld [rLCDC], a               ; We turn on the LCD so the transfer can be made
   pop hl                      ; Packet definition
@@ -235,51 +234,51 @@ sgb_CopySNESRAM::
 ; input: HL = Packet address
 sgb_PacketTransfer::
   ld a, [hl]
-  and %00000111 ; The three lower bits indicate the number of packets to send
-  ret z ; We return if there are no packets to send
-  ld b, a ; We store the number of packets to send
-.sgbpackettransfer_0:
-  push bc
-  xor a
-  ld [rP1], a ; Initial pulse (Start write). P14 = LOW and P15 = LOW
-  ld a, P1F_4 | P1F_5
-  ld [rP1], a ; P14 = HIGH and P15 = HIGH between pulses
-  ld b, 16 ; Number of bytes per packet
-.sgbpackettransfer_1:
-  ld e, 8 ; Bits per byte
-  ld a, [hli]
-  ld d, a ; Next byte of the packet
-.sgbpackettransfer_2:
-  bit 0, d
-  ld a, P1F_4 ; P14 = HIGH and P15 = LOW (Write 1)
-  jr nz, .sgbpackettransfer_3
-  ld a, P1F_5 ; P14 = LOW and P15 = HIGH (Write 0)
-.sgbpackettransfer_3:
-  ld [rP1], a ; We send one bit
-  ld a, P1F_4 | P1F_5
-  ld [rP1], a ; P14 = HIGH and P15 = HIGH between pulses
-  rr d ; We rotate the register so that the next bit goes to position 0
-  dec e
-  jr nz, .sgbpackettransfer_2; We jump while there are bits left to be sent
-  dec b
-  jr nz, .sgbpackettransfer_1; We jump while there are bytes left to be sent
-  ld a, P1F_5
-  ld [rP1], a ; Bit 129, stop bit (Write 0)
-  ld a, P1F_4 | P1F_5
-  ld [rP1], a ; P14 = HIGH and P15 = HIGH between pulses
+  and %00000111               ; The three lower bits indicate the number of packets to send
+  ret z                       ; We return if there are no packets to send
+  ld b, a                     ; We store the number of packets to send
+.sendPacketsLoop:
+    push bc
+    xor a
+    ld [rP1], a               ; Initial pulse (Start write). P14 = LOW and P15 = LOW
+    ld a, P1F_4 | P1F_5
+    ld [rP1], a               ; P14 = HIGH and P15 = HIGH between pulses
+    ld b, 16                  ; Number of bytes per packet
+.sendBytesLoop:
+      ld e, 8                 ; Bits per byte
+      ld a, [hli]
+      ld d, a                 ; Next byte of the packet
+.sendBitsLoop:
+        bit 0, d
+        ld a, P1F_4           ; P14 = HIGH and P15 = LOW (Write 1)
+        jr nz, .skip
+        ld a, P1F_5           ; P14 = LOW and P15 = HIGH (Write 0)
+.skip:
+        ld [rP1], a           ; We send one bit
+        ld a, P1F_4 | P1F_5
+        ld [rP1], a           ; P14 = HIGH and P15 = HIGH between pulses
+        rr d                  ; We rotate the register so that the next bit goes to position 0
+        dec e
+        jr nz, .sendBitsLoop  ; We jump while there are bits left to be sent
+      dec b
+      jr nz, .sendBytesLoop   ; We jump while there are bytes left to be sent
+    ld a, P1F_5
+    ld [rP1], a               ; Bit 129, stop bit (Write 0)
+    ld a, P1F_4 | P1F_5
+    ld [rP1], a               ; P14 = HIGH and P15 = HIGH between pulses
 
 ; 280048 clock cycles are consumed (66.768646240234375 milliseconds) at 4.194304 mhz | 24 cycles
-  ld de, 7000 ; 12 cycles
+    ld de, 7000               ; 12 cycles
 .wait24Cycles:
-    nop ; 4 cycles
-    nop ; 4 cycles
-    nop ; 4 cycles
-    dec de ; 8 cycles
-    ld a, d ; 4 cycles
-    or e ; 4 cycles
-    jr nz, .wait24Cycles ; 12 cycles if jumps, 8 if not
+      nop                     ; 4 cycles
+      nop                     ; 4 cycles
+      nop                     ; 4 cycles
+      dec de                  ; 8 cycles
+      ld a, d                 ; 4 cycles
+      or e                    ; 4 cycles
+      jr nz, .wait24Cycles    ; 12 cycles if jumps, 8 if not
 
-  pop bc
-  dec b
-  ret z
-  jr .sgbpackettransfer_0 ; We jump while there are packets left to be sent
+    pop bc
+    dec b
+    ret z
+    jr .sendPacketsLoop       ; We jump while there are packets left to be sent

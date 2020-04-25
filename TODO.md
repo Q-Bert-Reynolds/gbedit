@@ -88,4 +88,3 @@ Color
 - fix GBC grey palettes
 - add GBC color palettes
 - add SGB color palettes
-- add SGB border

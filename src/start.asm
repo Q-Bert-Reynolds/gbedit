@@ -186,6 +186,12 @@ Start::
   call gbdk_Delay
 
 .showIntroSequence
+
+  ld a, BANK(SgbBorderTiles)
+  ld hl, SgbBorderTiles
+  ld de, SgbBorderTileMap
+  call sgb_SetBorder
+
   DISPLAY_OFF
   ld hl, rBGP
   ld [hl], $E0

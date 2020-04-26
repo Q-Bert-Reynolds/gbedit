@@ -15,6 +15,7 @@ Optimization
 
 Python scripts
 
+- SGB borders should (optionally?) use PNG palettes directly
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
 - only update .asm file when PNG, GIF, TMX, or MOD files change
@@ -82,9 +83,19 @@ Audio
 
 - fix title screen SFX and music switching
 - pitch, hit, wiff, catch SFX
+- utilize SGB sound capabilities
 
-Color
+GameBoy Color
 
-- fix GBC grey palettes
-- add GBC color palettes
-- add SGB color palettes
+- generate palette maps from images
+- use same palettes as SGB
+
+Super GameBoy
+
+- use second controller 
+- use color palette data
+- use additional sprites
+- borders for each city when walking
+- borders for different fields
+- crowd SFX
+- extra music voices

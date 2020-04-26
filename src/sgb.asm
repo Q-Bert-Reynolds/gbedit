@@ -67,26 +67,12 @@ MASK_EN: MACRO ;\1 = screen mask (0=cancel,1=freeze)
   db ($17 << 3) + 1
   db \1
   ds 14
-ENDM
+ENDM 
 
-RGB: MACRO ;\1 = red, \2 = green, \3 = blue
-  dw (\3 << 10 | \2 << 5 | \1)
-ENDM
+SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
-SECTION "Super GameBoy", ROMX, BANK[SGB_BANK]
-
+INCLUDE "src/palettes.asm"
 INCLUDE "img/sgb_border.asm"
-
-; Super Game boy command packets
-sgb_PalSet::              PAL_SET 0, 0, 0, 0 ; assign Pal0 as 4 game graphics palettes
-sgb_MltReqTwoPlayers::    MLT_REQ 2
-sgb_MltReqOnePlayer::     MLT_REQ 1
-sgb_ChrTrn1::             CHR_TRN 0, 0 ; First 128 tile block transfer
-sgb_ChrTrn2::             CHR_TRN 1, 0 ; Second 128 tile block transfer
-sgb_PctTrn::              PCT_TRN
-sgb_PalTrn::              PAL_TRN
-sgb_MaskEnFreeze::        MASK_EN 1
-sgb_MaskEnCancel::        MASK_EN 0
 
 ; Initialization packets extracted from the official documentation
 DataSnd0: DB $79, $5D, $08, $00, $0B, $8C, $D0, $F4, $60, $00, $00, $00, $00, $00, $00, $00
@@ -98,44 +84,36 @@ DataSnd5: DB $79, $26, $08, $00, $0B, $39, $CD, $48, $0C, $D0, $34, $A5, $C9, $C
 DataSnd6: DB $79, $1B, $08, $00, $0B, $EA, $EA, $EA, $EA, $EA, $A9, $01, $CD, $4F, $0C, $D0
 DataSnd7: DB $79, $10, $08, $00, $0B, $4C, $20, $08, $EA, $EA, $EA, $EA, $EA, $60, $EA, $EA
 
-DefaultSGBPalette:
-  ; Default palette
-  RGB 31, 31, 31
-  RGB 23, 23, 23
-  RGB 15, 15, 15
-  RGB  0,  0,  0
+; Super Game boy command packets
+sgb_PalSetDefault::    PAL_SET PALETTE_GREY, PALETTE_GREY, PALETTE_GREY, PALETTE_GREY
+sgb_MltReqTwoPlayers:: MLT_REQ 2
+sgb_MltReqOnePlayer::  MLT_REQ 1
 
 ; Super Game Boy initialization
 sgb_Init::
   call sgb_Check
   ret nc                        ; We return if the game is not running on a Super Game Boy
+  
+  ld a, [sys_info]
+  or a, SUPER_GAME_BOY
+  ld [sys_info], a
+
+  call sgb_SendInitPackets      ; 8 initialization data packet sending, according to the official documentation
+
   di
   ld hl, sgb_MaskEnFreeze
-  call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
-  call sgb_SendInitPackets         ; 8 initialization data packet sending, according to the official documentation
-
-  ld de, sgb_ChrTrn1
-  ld hl, SgbBorderTiles
-  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
-
-  ld de, sgb_ChrTrn2
-  ld hl, SgbBorderTiles + $1000
-  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
-
-  ld de, sgb_PctTrn
-  ld hl, SgbBorderTileMap
-  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+  call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
 
   ld de, sgb_PalTrn
-  ld hl, DefaultSGBPalette
+  ld hl, DefaultPalettes
   call sgb_CopySNESRAM          ; Copies custom game palettes to SNES RAM
 
-  ; Default game palette set
-  ld hl, sgb_PalSet
-  call sgb_PacketTransfer
+  ld hl, sgb_PalSetDefault               
+  call sgb_PacketTransfer       ;Default game palette set
+
   ld hl, sgb_MaskEnCancel
   call sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
-  ret
+  reti
 
 ; Carry Flag raised if the system in which the game is running is a Super Game Boy
 sgb_Check::
@@ -192,11 +170,60 @@ sgb_SendInitPackets:
   call sgb_PacketTransfer
   ret
 
+SECTION "Super GameBoy Main", ROM0
+
+; Super Game boy command packets
+sgb_ChrTrn1::      CHR_TRN 0, 0 ; First 128 tile block transfer
+sgb_ChrTrn2::      CHR_TRN 1, 0 ; Second 128 tile block transfer
+sgb_PctTrn::       PCT_TRN
+sgb_PalTrn::       PAL_TRN
+sgb_MaskEnFreeze:: MASK_EN 1
+sgb_MaskEnCancel:: MASK_EN 0
+
+sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
+  push af;bank
+  ld a, [sys_info]
+  and a, SUPER_GAME_BOY
+  ret z
+
+  ld a, [loaded_bank]
+  ld [temp_bank], a
+  pop af;bank
+  push de;tile map
+  push hl;tiles
+  call SetBank
+
+  di
+  ld hl, sgb_MaskEnFreeze
+  call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
+
+  pop hl;tiles
+  push hl;tiles
+  ld de, sgb_ChrTrn1
+  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+
+  ld de, sgb_ChrTrn2
+  pop hl;tiles
+  ld bc, $1000
+  add hl, bc
+  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+
+  ld de, sgb_PctTrn
+  pop hl;tile map
+  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+
+  ld hl, sgb_MaskEnCancel
+  call sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
+
+  ld a, [temp_bank]
+  call SetBank
+  reti
+
 ; Copies data to the SNES RAM
 ; Input:
 ;    DE: Packet data
 ;    HL: Graphical data address
-sgb_CopySNESRAM::
+sgb_CopySNESRAM:
   di
   push de
   DISPLAY_OFF                 ; We disble interruptions and turn off the LCD because we are going to modify the VRAM data
@@ -222,17 +249,22 @@ sgb_CopySNESRAM::
     dec c
     jr nz, .rowLoop
 
-  ld a, LCDCF_ON|LCDCF_BG8800|LCDCF_BG9800|LCDCF_BGON|LCDCF_OBJ8|LCDCF_OBJON|LCDCF_WIN9C00|LCDCF_WINON
-  ld [rLCDC], a               ; We turn on the LCD so the transfer can be made
+  DISPLAY_ON
   pop hl                      ; Packet definition
   call sgb_PacketTransfer     ; We send the packet that will produce the transfer
+
+  ld hl, _VRAM
+  ld bc, $2000
+  xor a
+  call	mem_SetVRAM
+
   xor a
   ld [rBGP], a                ; We restore the background palette
   ret
 
 ; Super Game Boy packet transfer
 ; input: HL = Packet address
-sgb_PacketTransfer::
+sgb_PacketTransfer:
   ld a, [hl]
   and %00000111               ; The three lower bits indicate the number of packets to send
   ret z                       ; We return if there are no packets to send

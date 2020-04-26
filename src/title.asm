@@ -399,11 +399,17 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret
 
+SGBTitlePalette:: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY, PALETTE_GREY, PALETTE_GREY
+
 Title:: ; puts (c-d-1) in a
   xor a
   ld [rSCX], a
 
   DISABLE_LCD_INTERRUPT
+
+  ld hl, SGBTitlePalette               
+  call sgb_PacketTransfer
+
   xor a
   ld [_d], a
 .showTitleAndNewGameMenuLoop ; while (d == 0 || d == c)

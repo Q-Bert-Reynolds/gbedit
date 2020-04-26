@@ -6,21 +6,21 @@ Entry:
   jp Main
   NINTENDO_LOGO
 IF DEF(_HOME)
-  DB "BEISBOL HOME",0,0,0  ;Cart name - 15bytes
+  DB "BEISBOL HOME",0,0,0    ;Cart name - 15bytes
 ELSE
-  DB "BEISBOL AWAY",0,0,0  ;Cart name - 15bytes
+  DB "BEISBOL AWAY",0,0,0    ;Cart name - 15bytes
 ENDC
-  DB 0                     ;$143
-  DB 0,0                   ;$144 - Licensee code (not important)
-  DB 0                     ;$146 - SGB Support indicator
-  DB CART_ROM_MBC5_RAM_BAT ;$147 - Cart type
-  DB CART_ROM_2M           ;$148 - ROM Size
-  DB CART_RAM_256K         ;$149 - RAM Size
-  DB 1                     ;$14a - Destination code
-  DB $33                   ;$14b - Old licensee code
-  DB 0                     ;$14c - Mask ROM version
-  DB 0                     ;$14d - Complement check (important)
-  DW 0                     ;$14e - Checksum (not important)
+  DB CART_COMPATIBLE_DMG_GBC ;$143
+  DB 0,0                     ;$144 - Licensee code (not important)
+  DB CART_COMPATIBLE_SGB     ;$146 - SGB Support indicator
+  DB CART_ROM_MBC5_RAM_BAT   ;$147 - Cart type
+  DB CART_ROM_2M             ;$148 - ROM Size
+  DB CART_RAM_256K           ;$149 - RAM Size
+  DB 1                       ;$14a - Destination code
+  DB $33                     ;$14b - Old licensee code
+  DB 0                       ;$14c - Mask ROM version
+  DB 0                       ;$14d - Complement check (important)
+  DW 0                       ;$14e - Checksum (not important)
 
 SECTION "VBlank", ROM0[$0040]
   jp VBLInterrupt

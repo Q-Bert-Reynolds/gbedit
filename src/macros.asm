@@ -204,6 +204,10 @@ SET_DEFAULT_PALETTE: MACRO
   ld [hl], SPR_PAL_DLW
 ENDM
 
+RGB: MACRO ;\1 = red, \2 = green, \3 = blue
+  dw (\3 << 10 | \2 << 5 | \1)
+ENDM 
+
 BETWEEN: MACRO; if \1 <= a < \2
 IF \1 > \2
   PRINTT "ERROR: LOWER BOUND CAN'T BE HIGHER THAN UPPER BOUND."

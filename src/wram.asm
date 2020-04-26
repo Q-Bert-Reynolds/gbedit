@@ -2,6 +2,9 @@ SECTION "Gloval Vars", WRAM0[$c000]
 ;debug
 _breakpoint:: DB
 
+;system info
+sys_info:: DB
+
 ;drawing
 sprite_props:: DB
 sprite_offset:: DB

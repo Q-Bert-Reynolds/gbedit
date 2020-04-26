@@ -348,9 +348,9 @@ MyYogiData:
   DW 8                     ; .hit_batters       DW
 MyYogiDataEnd:
 
-MyFrecklesData:
-  DB 5                     ; .number
-  DB 18                    ; .level
+MyBigRedData:
+  DB 6                     ; .number
+  DB 38                    ; .level
   DB 1                     ; .position
   DB HIGH_HEAT_MOVE        ; .moves
   DB SWING_MOVE
@@ -364,7 +364,8 @@ MyFrecklesData:
   DW 111                   ; .field
   DW 99                    ; .speed
   DW 130                   ; .throw
-  DS NICKNAME_LENGTH       ; .nickname
+  DB "RUBY",0              ; .nickname
+  DS(NICKNAME_LENGTH-5)  
   DB $00,$01,$FF           ; .xp
   DB $0F,$0F,$FF           ; .pay
   DW 42                    ; .strikeouts        DW ;both looking and swinging
@@ -390,7 +391,7 @@ MyFrecklesData:
   DW 100                   ; .strikeouts_thrown DW
   DW 12                    ; .wild_pitches      DW
   DW 8                     ; .hit_batters       DW
-MyFrecklesDataEnd:
+MyBigRedDataEnd:
 
 OpponentBubbiData:
   DB 001                   ; .number
@@ -453,12 +454,12 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, MyFrecklesData
+  ld hl, MyBigRedData
   ld de, UserLineupPlayer9
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, OpponentBubbiData
+  ld hl, MyBigRedData;OpponentBubbiData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy

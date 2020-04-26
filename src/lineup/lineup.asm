@@ -687,7 +687,7 @@ ShowLineup::; a = playing_game?
 
   DISPLAY_OFF
   ld hl, rOBP1
-  ld [hl], SPR_PAL_DLW
+  ld [hl], DMG_PAL_DLWW
   
   xor a
   ld hl, bkg_buffer

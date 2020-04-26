@@ -71,7 +71,7 @@ ENDM
 
 SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
-INCLUDE "src/palettes.asm"
+INCLUDE "src/colors.asm"
 INCLUDE "img/sgb_border.asm"
 
 ; Initialization packets extracted from the official documentation
@@ -95,7 +95,7 @@ sgb_Init::
   ret nc                        ; We return if the game is not running on a Super Game Boy
   
   ld a, [sys_info]
-  or a, SUPER_GAME_BOY
+  or a, SYS_INFO_SGB
   ld [sys_info], a
 
   call sgb_SendInitPackets      ; 8 initialization data packet sending, according to the official documentation
@@ -103,6 +103,19 @@ sgb_Init::
   di
   ld hl, sgb_MaskEnFreeze
   call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
+
+  ld de, sgb_ChrTrn1
+  ld hl, SgbBorderTiles
+  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+
+  ld de, sgb_ChrTrn2
+  ld hl, SgbBorderTiles+$1000
+  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+
+  ld de, sgb_PctTrn
+  ld hl, SgbBorderTileMap
+  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+
 
   ld de, sgb_PalTrn
   ld hl, DefaultPalettes
@@ -183,7 +196,7 @@ sgb_MaskEnCancel:: MASK_EN 0
 sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   push af;bank
   ld a, [sys_info]
-  and a, SUPER_GAME_BOY
+  and a, SYS_INFO_SGB
   ret z
 
   ld a, [loaded_bank]

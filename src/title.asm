@@ -125,7 +125,7 @@ ShowTitle:
   call UpdateAudio
   CLEAR_SCREEN 0
   ld hl, rBGP
-  ld [hl], BG_PALETTE
+  ld [hl], DMG_PAL_BDLW
   ld hl, rOBP0
   ld [hl], SPR_PAL_BDL
   ld hl, rOBP1

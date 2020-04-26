@@ -326,7 +326,7 @@ Start::
   ld bc, _IntroPitchTileMap
   call gbdk_SetBkgTiles 
   ld hl, rBGP
-  ld [hl], BG_PALETTE
+  ld [hl], DMG_PAL_BDLW
 
   xor a
   ld [_k], a

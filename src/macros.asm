@@ -148,7 +148,7 @@ FADE_IN: MACRO
   ld [rOBP0], a
   ld de, 200
   call gbdk_Delay
-  ld a, BG_PALETTE
+  ld a, DMG_PAL_BDLW
   ld [rBGP], a
   ld [rOBP0], a
   ld de, 200
@@ -197,11 +197,11 @@ ENDM
 
 SET_DEFAULT_PALETTE: MACRO
   ld hl, rBGP
-  ld [hl], BG_PALETTE
+  ld [hl], DMG_PAL_BDLW
   ld hl, rOBP0
-  ld [hl], SPR_PAL_BDL
+  ld [hl], DMG_PAL_BDLW
   ld hl, rOBP1
-  ld [hl], SPR_PAL_DLW
+  ld [hl], DMG_PAL_DLWW
 ENDM
 
 RGB: MACRO ;\1 = red, \2 = green, \3 = blue

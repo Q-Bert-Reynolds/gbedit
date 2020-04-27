@@ -186,10 +186,7 @@ Start::
   call gbdk_Delay
 
 .showIntroSequence
-  ld a, BANK(SgbBorderTiles)
-  ld hl, SgbBorderTiles
-  ld de, SgbBorderTileMap
-  call sgb_SetBorder
+  ;TODO: set intro SGB border here
 
   DISPLAY_OFF
 

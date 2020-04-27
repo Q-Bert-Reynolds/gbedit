@@ -198,6 +198,7 @@ def convert(im_path, outpath):
                 
         return p01, p23 
         
+    name = name.replace("home_", "").replace("away_", "")
     s = PascalCase(name)+"Tiles:\n"
 
     for i_tile in range(256):

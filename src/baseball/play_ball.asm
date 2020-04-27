@@ -1,5 +1,9 @@
 INCLUDE "src/beisbol.inc"
 
+SECTION "Play Ball SGB", ROMX, BANK[SGB_BANK+1]
+
+INCLUDE "img/play/play_ball_sgb_border.asm"
+
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
 INCLUDE "src/baseball/scale_tile_data_2x.asm"
@@ -642,6 +646,11 @@ SetupGameUI:
   ret
 
 StartGame::
+  ld a, BANK(PlayBallSgbBorderTiles)
+  ld hl, PlayBallSgbBorderTiles
+  ld de, PlayBallSgbBorderTileMap
+  call sgb_SetBorder
+
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
 
@@ -710,4 +719,5 @@ StartGame::
     HIDE_WIN
     jp .playBallLoop
 .exitPlayBallLoop
+  call sgb_SetDefaultBorder
   ret

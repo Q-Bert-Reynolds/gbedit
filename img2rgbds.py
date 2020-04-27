@@ -90,6 +90,9 @@ def folder_to_asm (root, files):
       continue
     elif ext != ".png":
       continue
+    elif "sgb_border" in base:
+      png_to_sgb(path, base, name)
+      continue
     img = Image.open(path)
     img_name = os.path.basename(base)
     rows, cols, hex_vals = gb_encode(img)

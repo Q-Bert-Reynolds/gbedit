@@ -104,17 +104,17 @@ sgb_Init::
   ld hl, sgb_MaskEnFreeze
   call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
 
-  ld de, sgb_ChrTrn1
-  ld hl, SgbBorderTiles
-  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+  ; ld de, sgb_ChrTrn1
+  ; ld hl, SgbBorderTiles
+  ; call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
 
-  ld de, sgb_ChrTrn2
-  ld hl, SgbBorderTiles+$1000
-  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+  ; ld de, sgb_ChrTrn2
+  ; ld hl, SgbBorderTiles+$1000
+  ; call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
 
-  ld de, sgb_PctTrn
-  ld hl, SgbBorderTileMap
-  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+  ; ld de, sgb_PctTrn
+  ; ld hl, SgbBorderTileMap
+  ; call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
 
   ld de, sgb_PalTrn
   ld hl, DefaultPalettes
@@ -204,6 +204,8 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   push de;tile map
   push hl;tiles
   call SetBank
+
+  DISPLAY_OFF
 
   di
   ld hl, sgb_MaskEnFreeze

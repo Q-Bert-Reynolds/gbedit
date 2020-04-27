@@ -35,7 +35,6 @@ SECTION "p1thru4", ROM0[$0060]
 
 SECTION "Main", ROM0[$0150]
 Main::
-  ld [_breakpoint], a
 .gbcCheck ;must happen first
   cp a, $11;is this a GBC
   ld a, 0;don't xor here
@@ -62,8 +61,6 @@ Main::
   ld [rWY], a
   
   SETUP_DMA_TRANSFER
-
-  ld [_breakpoint], a
 
 .clearRAM
   ld hl, sys_info+1;don't clear breakpoint or sys_info

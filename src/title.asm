@@ -122,8 +122,11 @@ BallToss:
 
 ShowTitle:
   DISPLAY_OFF
-  call UpdateAudio
+
   CLEAR_SCREEN 0
+
+  PLAY_SONG take_me_out_to_the_ballgame_data, 1
+  
   ld hl, rBGP
   ld [hl], DMG_PAL_BDLW
   ld hl, rOBP0
@@ -239,7 +242,7 @@ ShowTitle:
   ld bc, _VersionTileMap
   call SetBKGTilesWithOffset
 
-  PLAY_SONG take_me_out_to_the_ballgame_data, 1
+  ; PLAY_SONG take_me_out_to_the_ballgame_data, 1
 
   ld a, 72
   ld [rLYC], a

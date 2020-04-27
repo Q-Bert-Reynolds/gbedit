@@ -1301,6 +1301,7 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   ret
 
 SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
+  ld [_breakpoint], a
 .checkCGB
   ld a, [sys_info]
   and a, SYS_INFO_GBC

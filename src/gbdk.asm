@@ -34,7 +34,6 @@
 ;   gbdk_CPUFast
 ;   gbdk_Random - returns a random value to DE
 ;   gbdk_Seed - seeds Random function
-;   gbdk_SGBCheck - Checks if running on Super GameBoy
 ;
 
 IF !DEF(GBDK_ASM)

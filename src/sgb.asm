@@ -71,7 +71,7 @@ ENDM
 
 SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
-INCLUDE "src/colors.asm"
+INCLUDE "src/color.asm"
 INCLUDE "img/sgb_border.asm"
 
 ; Initialization packets extracted from the official documentation
@@ -116,7 +116,6 @@ sgb_Init::
   ld hl, SgbBorderTileMap
   call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
 
-
   ld de, sgb_PalTrn
   ld hl, DefaultPalettes
   call sgb_CopySNESRAM          ; Copies custom game palettes to SNES RAM
@@ -129,7 +128,7 @@ sgb_Init::
   reti
 
 ; Carry Flag raised if the system in which the game is running is a Super Game Boy
-sgb_Check::
+sgb_Check:
   di
   ld  hl, sgb_MltReqTwoPlayers  ; Two player mode selection
   call  sgb_PacketTransfer
@@ -194,14 +193,14 @@ sgb_MaskEnFreeze:: MASK_EN 1
 sgb_MaskEnCancel:: MASK_EN 0
 
 sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
-  push af;bank
+  ld b, a;bank
   ld a, [sys_info]
   and a, SYS_INFO_SGB
   ret z
 
   ld a, [loaded_bank]
   ld [temp_bank], a
-  pop af;bank
+  ld a, b;bank
   push de;tile map
   push hl;tiles
   call SetBank

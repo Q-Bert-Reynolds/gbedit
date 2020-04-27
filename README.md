@@ -45,11 +45,11 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 - [John Metcalf](https://www.retroprogramming.com)
 - Anyon who has contributed to [Z80 Heaven](https://z80-heaven.wikidot.com/)
 - Anyone who worked on the [GameBoy Pandocs](https://gbdev.github.io/pandocs/):
-  - Pan of ATX
+  - Pan of Anthrox
   - Marat Fayzullin
-  - Felber Pascal
-  - Robson Paul
-  - Korth Martin.
+  - Pascal Felber
+  - Paul Robson
+  - Martin Korth
   - Antonio Niño Díaz
   - Antonio Vivace
   - Beannaich
@@ -67,7 +67,15 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
   - Mantidactyle
   - mattcurrie
   - nitro2k01
-  - Pascal Felber
   - pinobatch
   - T4g1
   - TechFalcon
+- Anyone who worked on the [GameBoy CPU Manual](http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf)
+  - Pan of Anthrox
+  - GABY
+  - Marat Fayzullin
+  - Pascal Felber
+  - Paul Robson
+  - Martin Korth
+  - kOOPa
+  - Bowser

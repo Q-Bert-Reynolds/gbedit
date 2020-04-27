@@ -35,6 +35,20 @@ SECTION "p1thru4", ROM0[$0060]
 
 SECTION "Main", ROM0[$0150]
 Main::
+  ld [_breakpoint], a
+.gbcCheck ;must happen first
+  cp a, $11;is this a GBC
+  ld a, 0;don't xor here
+  jr nz, .setSysInfo
+  bit 0, b;is it also a GBA
+  jr z, .gbc
+.gba
+  or a, SYS_INFO_GBA
+.gbc
+  or a, SYS_INFO_GBC
+.setSysInfo
+  ld [sys_info], a
+
 .setup
   di
   ld sp, $ffff
@@ -49,9 +63,12 @@ Main::
   
   SETUP_DMA_TRANSFER
 
+  ld [_breakpoint], a
+
 .clearRAM
-  ld hl, _RAM+1;TODO: remove +1, currently skips clearing breakpoint
-  ld bc, $2000
+  ld hl, sys_info+1;don't clear breakpoint or sys_info
+  ld bc, $2000-(1+sys_info-_RAM)
+  xor a
   call mem_Set
 
 .setupAudio

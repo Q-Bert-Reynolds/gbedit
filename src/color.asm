@@ -1,43 +1,60 @@
-DefaultPalettes::
+;DMG
+DMG_PAL_BDLW EQU %11100100 ;normal
+DMG_PAL_DLWW EQU %10010000 ;dark,  light, white, white/transparent
+DMG_PAL_BDWW EQU %11100000 ;black, dark,  white, white/transparent
+DMG_PAL_BLWW EQU %11010000 ;black, light, white, white/transparent
 
+;CGB/SGB
+COLOR_WHITE       : MACRO RGB 31, 31, 31 ENDM
+COLOR_DARK_GREY   : MACRO RGB 23, 23, 23 ENDM
+COLOR_LIGHT_GREY  : MACRO RGB 15, 15, 15 ENDM
+COLOR_BLACK       : MACRO RGB  0,  0,  0 ENDM
+COLOR_TAN         : MACRO RGB 24, 20, 15 ENDM
+COLOR_BROWN       : MACRO RGB 13, 10,  5 ENDM
+COLOR_DARK_BROWN  : MACRO RGB  3,  2,  0 ENDM
+COLOR_YELLOW      : MACRO RGB 30, 22, 28 ENDM
+COLOR_BLUE        : MACRO RGB 13,  4,  9 ENDM
+COLOR_DARK_BLUE   : MACRO RGB  3,  1,  7 ENDM
+
+DefaultPalettes::
 PALETTE_GREY EQU 0
 PaletteGrey::
-  RGB 31, 31, 31
-  RGB 23, 23, 23
-  RGB 15, 15, 15
-  RGB  0,  0,  0
+  COLOR_WHITE
+  COLOR_DARK_GREY
+  COLOR_LIGHT_GREY
+  COLOR_BLACK
 
 PALETTE_SEPIA EQU 1
 PaletteSepia::
-  RGB 31, 31, 31
-  RGB 24, 20, 15
-  RGB 13, 10,  5
-  RGB  3,  2,  0
+  COLOR_WHITE
+  COLOR_TAN
+  COLOR_BROWN
+  COLOR_DARK_BROWN
 
 PALETTE_INTRO EQU 2
 PaletteIntro::
-  RGB 31, 31, 31
+  COLOR_WHITE
   RGB 30, 22, 28
   RGB 13,  4,  9
   RGB  3,  1,  7
 
 PALETTE_TITLE_SCREEN EQU 3
 PaletteTitleScreen::
-  RGB 31, 31, 31
-  RGB 31, 30, 18
-  RGB  5,  9, 17
-  RGB  1,  3,  7
+  COLOR_WHITE
+  COLOR_YELLOW    
+  COLOR_BLUE      
+  COLOR_DARK_BLUE 
 
 PALETTE_HOME_AWAY EQU 4
 PaletteHomeAway::
 IF DEF(_HOME)
-  RGB 31, 31, 31
+  COLOR_WHITE
+  RGB  5, 10, 16
   RGB  1,  3,  7
   RGB 31, 19, 29
-  RGB  5, 10, 16
 ELSE;AWAY
-  RGB 31, 31, 31
+  COLOR_WHITE
+  RGB  5, 10, 16
   RGB  1,  3,  7
   RGB 19, 29, 31
-  RGB  5, 10, 16
 ENDC

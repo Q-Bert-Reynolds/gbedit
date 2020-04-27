@@ -127,7 +127,7 @@ ShowTitle:
   ld hl, rBGP
   ld [hl], DMG_PAL_BDLW
   ld hl, rOBP0
-  ld [hl], SPR_PAL_BDL
+  ld [hl], DMG_PAL_BDLW
   ld hl, rOBP1
   ld [hl], $E0
 
@@ -408,7 +408,7 @@ Title:: ; puts (c-d-1) in a
   DISABLE_LCD_INTERRUPT
 
   ld hl, SGBTitlePalette               
-  call sgb_PacketTransfer
+  call SetPalettes
 
   xor a
   ld [_d], a

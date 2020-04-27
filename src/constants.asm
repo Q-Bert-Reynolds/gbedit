@@ -1,6 +1,8 @@
 ; sys_info masks
+SYS_INFO_DMG EQU %00000000
 SYS_INFO_SGB EQU %00000001
 SYS_INFO_GBC EQU %00000010
+SYS_INFO_GBA EQU %00000100
 
 ; banks
 TEMP_BANK           EQU 255
@@ -22,12 +24,6 @@ SONG_BANK           EQU 15
 OVERWORLD_BANK      EQU 20
 MAPS_BANK           EQU 50
 PLAYER_IMG_BANK     EQU 80
-
-; GameBoy palettes
-DMG_PAL_BDLW EQU %11100100 ;normal
-DMG_PAL_DLWW EQU %10010000 ;dark,  light, white, transparent
-DMG_PAL_BDWW EQU %11100000 ;black, dark,  white, transparent
-DMG_PAL_BLWW EQU %11010000 ;black, light, white, transparent
 
 ; sprite props
 FLIP_X_PAL  EQU (OAMF_XFLIP | OAMF_PAL1 )

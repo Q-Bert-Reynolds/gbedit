@@ -1299,3 +1299,23 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   ld a, [frame];1 = bottom
   xor a, b;home != frame
   ret
+
+SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
+.checkCGB
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .checkSGB
+.setPaletteCGB
+  push hl;palettes
+
+  ;rBCPS
+  ;rOCPS
+  ;TODO: GBC palettes
+
+  pop hl;palettes
+.checkSGB
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  ret z
+.setPaletteSGB
+  jp sgb_PacketTransfer

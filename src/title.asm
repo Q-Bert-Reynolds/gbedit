@@ -402,7 +402,13 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret
 
-SGBTitlePalette:: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY, PALETTE_GREY, PALETTE_GREY
+SGBTitlePalSet:: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY, PALETTE_GREY, PALETTE_GREY
+SGBTitleAttrBlk::
+  ATTR_BLK 1;3
+  ATTR_BLK_PACKET %111, 0,0,1, 0,0, 20,7 ;title & home/away
+  ; ATTR_BLK_PACKET %111, 2,2,0, 00,12, 19,17 ;player
+  ; ATTR_BLK_PACKET %111, 2,2,0, 00,12, 19,17 ;Calvin
+  
 
 Title:: ; puts (c-d-1) in a
   xor a
@@ -410,8 +416,11 @@ Title:: ; puts (c-d-1) in a
 
   DISABLE_LCD_INTERRUPT
 
-  ld hl, SGBTitlePalette               
+  ld hl, SGBTitlePalSet               
   call SetPalettes
+
+  ld hl, SGBTitleAttrBlk
+  call sgb_PacketTransfer
 
   xor a
   ld [_d], a

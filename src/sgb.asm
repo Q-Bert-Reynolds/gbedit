@@ -35,6 +35,17 @@ INCLUDE "src/memory1.asm"
 ;  $17   MASK_EN   Game Boy Window Mask
 ;  $18   OBJ_TRN   Super NES OBJ Mode
 
+ATTR_BLK: MACRO ;\1 = num packets
+	db ($4 << 3) + ((\1 * 6)/16) + 1
+	db \1
+ENDM
+
+ATTR_BLK_PACKET: MACRO ;\1 = control code, \2\3\4 = palettes, \5\6 = xy, \7\8 = wh
+	db \1 ;bit 2 = outside block, bit 1 = on border, bit 0 = inisde block
+	db \2 + (\3 << 2) + (\4 << 4)
+	db \5, \6, \5+\7, \6+\8
+ENDM
+
 MLT_REQ: MACRO ;\1 = player count
   db ($11 << 3) + 1
   db \1 - 1
@@ -97,75 +108,75 @@ sgb_MltReqOnePlayer::  MLT_REQ 1
 ; Super Game Boy initialization
 sgb_Init::
   call sgb_Check
-  ret nc                        ; We return if the game is not running on a Super Game Boy
+  ret nc                         ; We return if the game is not running on a Super Game Boy
   
   ld a, [sys_info]
   or a, SYS_INFO_SGB
   ld [sys_info], a
 
-  call sgb_SendInitPackets      ; 8 initialization data packet sending, according to the official documentation
+  call sgb_SendInitPackets       ; 8 initialization data packet sending, according to the official documentation
 
   di
   ld hl, sgb_MaskEnFreeze
-  call  sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
+  call  sgb_PacketTransfer       ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
 
   ld de, sgb_ChrTrn1
   ld hl, VersionSgbBorderTiles
-  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+  call sgb_VRAMTransfer          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
 
   ld de, sgb_ChrTrn2
   ld hl, VersionSgbBorderTiles+$1000
-  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+  call sgb_VRAMTransfer          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
 
   ld de, sgb_PctTrn
   ld hl, VersionSgbBorderTileMap
-  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+  call sgb_VRAMTransfer          ; Copies frame map to SNES RAM 
 
   ld de, sgb_PalTrn
   ld hl, DefaultPalettes
-  call sgb_CopySNESRAM          ; Copies custom game palettes to SNES RAM
+  call sgb_VRAMTransfer          ; Copies custom game palettes to SNES RAM
 
   ld hl, sgb_PalSetDefault               
-  call sgb_PacketTransfer       ;Default game palette set
+  call sgb_PacketTransfer        ;Default game palette set
 
   ld hl, sgb_MaskEnCancel
-  call sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
+  call sgb_PacketTransfer        ; Super Game Boy screen visualization unfreezing
   reti
 
 ; Carry Flag raised if the system in which the game is running is a Super Game Boy
 sgb_Check:
   di
-  ld  hl, sgb_MltReqTwoPlayers  ; Two player mode selection
+  ld  hl, sgb_MltReqTwoPlayers   ; Two player mode selection
   call  sgb_PacketTransfer
   ei
   ld a, P1F_4 | P1F_5
-  ld [rP1], a                   ; We disable key and pad reading to read the joypad id
+  ld [rP1], a                    ; We disable key and pad reading to read the joypad id
   ld a, [rP1]
   ld a, [rP1]
   ld a, [rP1]
-  ld a, [rP1]                   ; Many readings to avoid the "bouncing" of values
-  ld b, a                       ; We store the id of the first joypad
+  ld a, [rP1]                    ; Many readings to avoid the "bouncing" of values
+  ld b, a                        ; We store the id of the first joypad
   
   ; Joypad reading simulation
   ld a, P1F_5
-  ld [rP1], a                   ; Pad reading activated
+  ld [rP1], a                    ; Pad reading activated
   ld a, P1F_4
-  ld [rP1], a                   ; Key reading activated
+  ld [rP1], a                    ; Key reading activated
   ld a, P1F_4 | P1F_5
-  ld [rP1], a                   ; We disable key and pad reading to read the next joypad id
+  ld [rP1], a                    ; We disable key and pad reading to read the next joypad id
   ld a, [rP1]
   ld a, [rP1]
   ld a, [rP1]
   ld a, [rP1]
-  cp b                          ; If the id is the same then there has not been reply to the two-
-  jr nz, check_sgb_0            ; player mode request, and therefore we are not in a Super Game Boy
-  and a                         ; We lower the carry flag
-  ret                           ; We are not in a Super Game Boy
+  cp b                           ; If the id is the same then there has not been reply to the two-
+  jr nz, check_sgb_0             ; player mode request, and therefore we are not in a Super Game Boy
+  and a                          ; We lower the carry flag
+  ret                            ; We are not in a Super Game Boy
 check_sgb_0:
   ld  hl, sgb_MltReqOnePlayer
-  call  sgb_PacketTransfer      ; We return to one player mode
-  scf                           ; We raise the carry flag
-  ret                           ; We are in a Super Game Boy
+  call  sgb_PacketTransfer       ; We return to one player mode
+  scf                            ; We raise the carry flag
+  ret                            ; We are in a Super Game Boy
 
 ; We send the 8 default initialization data packets specified in the official documentation
 sgb_SendInitPackets:
@@ -190,12 +201,12 @@ sgb_SendInitPackets:
 SECTION "Super GameBoy Main", ROM0
 
 ; Super Game boy command packets
-sgb_ChrTrn1::      CHR_TRN 0, 0 ; First 128 tile block transfer
-sgb_ChrTrn2::      CHR_TRN 1, 0 ; Second 128 tile block transfer
-sgb_PctTrn::       PCT_TRN
-sgb_PalTrn::       PAL_TRN
-sgb_MaskEnFreeze:: MASK_EN 1
-sgb_MaskEnCancel:: MASK_EN 0
+sgb_ChrTrn1:      CHR_TRN 0, 0 ; First 128 tile block transfer
+sgb_ChrTrn2:      CHR_TRN 1, 0 ; Second 128 tile block transfer
+sgb_PctTrn:       PCT_TRN
+sgb_PalTrn:       PAL_TRN
+sgb_MaskEnFreeze: MASK_EN 1
+sgb_MaskEnCancel: MASK_EN 0
 
 sgb_SetDefaultBorder::
   ld a, SGB_BANK
@@ -223,17 +234,17 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   pop hl;tiles
   push hl;tiles
   ld de, sgb_ChrTrn1
-  call sgb_CopySNESRAM          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
+  call sgb_VRAMTransfer          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
 
   ld de, sgb_ChrTrn2
   pop hl;tiles
   ld bc, $1000
   add hl, bc
-  call sgb_CopySNESRAM          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
+  call sgb_VRAMTransfer          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
 
   ld de, sgb_PctTrn
   pop hl;tile map
-  call sgb_CopySNESRAM          ; Copies frame map to SNES RAM 
+  call sgb_VRAMTransfer          ; Copies frame map to SNES RAM 
 
   ld hl, sgb_MaskEnCancel
   call sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
@@ -242,13 +253,12 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   call SetBank
   reti
 
-; Copies data to the SNES RAM
-; Input:
-;    DE: Packet data
-;    HL: Graphical data address
-sgb_CopySNESRAM:
+; Copies data from GB VRAM to SNES RAM
+; input: DE = Packet data
+;        HL = Graphical data address
+sgb_VRAMTransfer::
   di
-  push de
+  push de                     ; packet data
   DISPLAY_OFF                 ; We disble interruptions and turn off the LCD because we are going to modify the VRAM data
   ld a, %11100100
   ld [rBGP], a                ; VRAM-transfer background palette value
@@ -256,7 +266,7 @@ sgb_CopySNESRAM:
   ld bc, 4096
   call mem_Copy               ; We copy to the Game Boy VRAM the 4KB data that is going to be transferred to the SNES RAM
 
-; We copy to the visible _SCRN0 background the 4KB data that is going to be transferred to the SNES RAM by VRAM-transfer
+  ; We copy to the visible _SCRN0 background the 4KB data that is going to be transferred to the SNES RAM by VRAM-transfer
   ld hl, _SCRN0
   ld de, 12                   ; Background additional width
   ld a, $80                   ; VRAM address of the first tile
@@ -272,8 +282,10 @@ sgb_CopySNESRAM:
     dec c
     jr nz, .rowLoop
 
-  DISPLAY_ON
-  pop hl                      ; Packet definition
+  ld a, LCDCF_ON | LCDCF_BGON
+  ld [rLCDC], a
+
+  pop hl                      ; Packet data
   call sgb_PacketTransfer     ; We send the packet that will produce the transfer
 
   ld hl, _VRAM
@@ -287,7 +299,7 @@ sgb_CopySNESRAM:
 
 ; Super Game Boy packet transfer
 ; input: HL = Packet address
-sgb_PacketTransfer:
+sgb_PacketTransfer::
   ld a, [hl]
   and %00000111               ; The three lower bits indicate the number of packets to send
   ret z                       ; We return if there are no packets to send
@@ -322,7 +334,7 @@ sgb_PacketTransfer:
     ld a, P1F_4 | P1F_5
     ld [rP1], a               ; P14 = HIGH and P15 = HIGH between pulses
 
-; 280048 clock cycles are consumed (66.768646240234375 milliseconds) at 4.194304 mhz | 24 cycles
+    ; 280048 clock cycles are consumed (66.768646240234375 milliseconds) at 4.194304 mhz | 24 cycles
     ld de, 7000               ; 12 cycles
 .wait24Cycles:
       nop                     ; 4 cycles

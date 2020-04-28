@@ -238,7 +238,7 @@ def png_to_asm (path, base):
   return
 
 def png_to_sgb (path, base, name):
-  print (path, base, name)
+  print (path)
   sgb_convert(path, base + ".asm")
   return
   

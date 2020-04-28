@@ -106,8 +106,20 @@ ShowPlayer: ;de = player number
   sub a, d
   ld c, a;y
   pop af ;player num
+  push af ;player num
   ld de, PLAYER_INDEX
   call SetPlayerBkgTiles; set_player_bkg_tiles(20+a, 10+a, intro_player_nums[p], PLAYER_INDEX, TITLE_BANK);
+
+  pop af;player num
+  call LoadPlayerBaseData
+  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  ld bc, PaletteHomeAwayCalvin
+  ld a, [sgb_Pal23]
+  call sgb_SetPal
 
   ld a, 72
   ld [rLYC], a
@@ -120,10 +132,24 @@ TitleDrop:
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
 
+SGBTitlePalSet: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY_VERSION, PALETTE_HOME_AWAY_CALVIN, PALETTE_GREY
+SGBTitleAttrBlk:
+  ATTR_BLK 5
+  ATTR_BLK_PACKET %111, 0,0,1, 0,0, 20,7 ;title & home/away
+  ATTR_BLK_PACKET %001, 3,0,0, 0,10, 20,8 ;player
+  ATTR_BLK_PACKET %001, 2,0,0, 13,10, 2,3 ;Calvin's head
+  ATTR_BLK_PACKET %001, 2,0,0, 11,12, 4,1 ;Calvin's body
+  ATTR_BLK_PACKET %001, 1,0,0, 13,14, 1,2 ;Calvin's pants
+  
 ShowTitle:
   DISPLAY_OFF
-
   CLEAR_SCREEN 0
+
+.setSGBColors
+  ld hl, SGBTitlePalSet               
+  call sgb_PacketTransfer
+  ld hl, SGBTitleAttrBlk
+  call sgb_PacketTransfer
 
   PLAY_SONG take_me_out_to_the_ballgame_data, 1
   
@@ -312,6 +338,11 @@ CyclePlayersLoop:
 .exitTitleScreen
   ret
 
+SGBStartMenuPalSet: PAL_SET PALETTE_UI, PALETTE_UI, PALETTE_GREY, PALETTE_GREY
+SGBStartMenuAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;title & home/away
+
 NewGameOptionMenuText:
   db "NEW GAME\nOPTION", 0
 NewGameContinueOptionMenuText:
@@ -319,6 +350,13 @@ NewGameContinueOptionMenuText:
 ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
+
+.setSGBColors
+  ld hl, SGBStartMenuPalSet               
+  call sgb_PacketTransfer
+  ld hl, SGBStartMenuAttrBlk
+  call sgb_PacketTransfer
+
   call UpdateAudio
   CLEAR_SCREEN 0
   call LoadFontTiles
@@ -402,25 +440,11 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret
 
-SGBTitlePalSet:: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY, PALETTE_GREY, PALETTE_GREY
-SGBTitleAttrBlk::
-  ATTR_BLK 1;3
-  ATTR_BLK_PACKET %111, 0,0,1, 0,0, 20,7 ;title & home/away
-  ; ATTR_BLK_PACKET %111, 2,2,0, 00,12, 19,17 ;player
-  ; ATTR_BLK_PACKET %111, 2,2,0, 00,12, 19,17 ;Calvin
-  
-
 Title:: ; puts (c-d-1) in a
   xor a
   ld [rSCX], a
 
   DISABLE_LCD_INTERRUPT
-
-  ld hl, SGBTitlePalSet               
-  call SetPalettes
-
-  ld hl, SGBTitleAttrBlk
-  call sgb_PacketTransfer
 
   xor a
   ld [_d], a

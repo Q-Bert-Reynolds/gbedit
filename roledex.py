@@ -78,7 +78,7 @@ def generate_img_bank(roledex):
       asm_file.write("\n")
 
     bank = 0
-    bytes_per_anim = 64*16 + 56*4 #max 16 tiles, max 4 8x7 frames, TODO: this should be calculated instead 
+    bytes_per_anim = 65*16 + 56*4 #max 16 tiles, max 4 8x7 frames, TODO: this should be calculated instead 
     bytes_so_far = 0
     index = 0
     while index < 151:
@@ -198,7 +198,8 @@ def generate_player_data(roledex):
       asm_file.write("DB " + str(player["BodyID"]) + " ;Lineup Body\n")
       asm_file.write("DB " + str(player["HeadID"]) + " ;Lineup Head\n")
       asm_file.write("DB " + str(player["HatID"]) + " ;Lineup Hat\n")
-      asm_file.write("DB " + str(player["GBPal"]) + " ;Palette\n")
+      asm_file.write("DB " + str(player["GBPal"]) + " ;Lineup Palette\n")
+      asm_file.write("DW " + str(player["SGBPal"]) + " ;Color Palette\n")
       for anim in anims:
         count = anim.upper() + "_TILE_COUNT"
         label = PascalCase(anim) + "Tiles"

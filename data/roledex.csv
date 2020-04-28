@@ -1,152 +1,152 @@
-#,Nickname,Illustration,Sprite,Back,Description,Height,Weight,Type1,Type2,HP,Bat,Field,Speed,Throw,EVTo,EVType,BodyID,HeadID,HatID,GBPal
-001,Bubbi,,,,A strange kid. Won't wear hats. Plants and throws hard. PLAYER is a growing talent.,4.00,42,Grass,Poison,45,49,49,45,65,002,16,0,0,0,1
-002,Ivy,,,,"When their hair is tied back, they appear to lose the ability to stand up right",5.00,110,Grass,Poison,60,62,63,60,80,003,32,1,0,4,1
-003,Venus,,,,Seems to bloom when it's sunny outside. Stays on the move in the infield.,6.00,160,Grass,Poison,80,82,83,80,100,,,2,0,4,1
-004,Ginger,,,,"Easily sunburns. When it rains, steam is said to raise from their head.",5.00,80,Fire,,39,52,43,65,50,005,16,1,2,2,0
-005,Freckles,,,,"When they swing a hot bat, they elevate the ball to unbearably high levels.",6.00,130,Fire,,58,64,58,80,65,006,36,2,2,2,0
-006,Big Red,,,,Throws fire that is hot enough to break ankles. Known for their high heat.,7.00,210,Fire,Flying,78,84,78,100,85,,,7,2,2,0
-007,Squirt,,,,"In extra innings, they swell up and harden into a wall. Powerfully sprays singles.",4.00,40,Water,,44,48,65,43,50,008,16,0,1,3,0
-008,Pudge,,,,"Often hides signals and picks off unwary prey. For blocking fast, they move their heals to maintain balance.",5.00,165,Water,,59,63,80,58,65,009,36,3,1,3,0
-009,Yogi,,,,A brutal PLAYER. Good under pressure. A cannon behind the plate. The core of a good infield.,6.00,260,Water,,79,83,100,78,85,,,7,3,3,0
-010,Sweet Pea,,,,Their short feet are tipped with cleats. Steals second and third effortlessly.,3.00,28,Bug,,45,30,35,45,20,011,7,0,1,3,0
-011,Meta,,,,This PLAYER is vulnerable to pitches. Their open stance exposes their weak and tender body.,4.06,70,Bug,,50,20,55,30,25,012,10,1,1,3,0
-012,Butterfly,,,,"At the plate, they flip their incredible hair, sending highly toxic dust into the air.",5.00,145,Bug,Flying,60,45,50,70,80,,,1,5,5,0
-013,Weeds,,,,"Often found in parks, chewing leaves. They have a sharp venomous slider.",3.06,35,Bug,Poison,40,35,30,50,20,014,7,0,1,3,0
-014,Koo-Koo,,,,"Almost incapable of swinging, this PLAYER can only crowd the plate, dig in, and brace for impact.",4.09,81,Bug,Poison,45,25,50,35,25,015,10,1,4,3,0
-015,Beedie,,,,Flies at high speed and attacks the ball with a large venomous swing. Massive forearms and hands.,5.05,170,Bug,Poison,65,80,40,75,45,,,2,4,3,0
-016,Pidge,,,,A common sight in parks and batting cages. They run low to the ground and kick up blinding sand.,5.03,140,Normal,Flying,40,45,40,56,35,017,18,3,4,3,0
-017,Gio,,,,"Very protective of their corner of the field, this PLAYER will fiercely charge any ball.",6.00,211,Normal,Flying,63,60,55,71,50,018,36,4,1,3,0
-018,OT,,,,"When pitching, they spin off the mound at high speed to pick off unwary runners such as FISH.",6.05,273,Normal,Flying,83,80,75,91,70,,,7,3,3,0
-019,Rat Tail,,,,"Bite their lip when they bat. Small and very quick, it is a common sight in many places",4.00,61,Normal,,30,56,35,72,25,020,20,0,6,3,0
-020,Cait,,,,A gym rat with a power mullet. They apparently slow down after a hair cut.,5.09,220,Normal,,55,81,60,97,50,,,4,6,1,0
-021,Stoop,,,,Eats grounders in grassy areas. They have to move their short legs at high speed to steal bases.,5.00,110,Normal,Flying,40,60,30,70,31,022,20,1,6,2,0
-022,Crow,,,,"With their huge and magnificent swings, they hit fly balls that seem to disappear.",5.00,170,Normal,Flying,65,90,65,100,61,,,2,3,2,0
-023,Snake,,,,"Runs silently and stealthily. Runs on pitchers, such as PIDGE and STOOP, any time they're on base.",5.00,90,Poison,,35,60,44,55,40,024,22,1,0,2,0
-024,Cobra,,,,It is rumored that the scarry looking tattoos on their faces show their neighborhood affiliation,5.00,234,Poison,,60,85,69,80,65,,,7,3,2,0
-025,Chu,,,,"When several of these PLAYERS play inflied, their electricity turns lightning fast double plays.",5.00,46,Electric,,35,55,30,90,50,026,Thunder,0,3,2,0
-026,Rai,,,,Their long stride covers a lot of ground to protect from high fly balls.,5.00,184,Electric,,60,90,55,100,90,,,4,3,2,0
-027,Shrew,,,,Digs deep in the box. It only swings at the right pitch.,5.00,50,Ground,,50,75,85,40,30,028,22,0,0,2,0
-028,Sandy,,,,Sits back on spinning balls. Attacks when threatened inside. They can roll a bunt up the line.,5.00,120,Ground,,75,100,110,65,55,,,4,0,2,0
-029,Chica,,,,"Although small, their venomous bunts render this PLAYER dangerous. This girl has speed.",5.00,100,Poison,,55,47,52,41,40,030,16,0,0,2,0
-030,Muchacha,,,,Quick around the horn. A physical PLAYER. Good speed. Controlled bunt.,5.00,100,Poison,,70,62,67,56,55,031,Moon,4,0,2,0
-031,Reina,,,,Hard hitter. Strong arm. She uses her hefty bulk to muscle out home runs.,5.00,100,Poison,Ground,90,82,87,76,75,,,7,0,2,0
-032,Chico,,,,"Stiffens up when they strike out batters. The larger its hands, the more powerful its venomous slurve.",5.00,100,Poison,,46,57,40,50,40,033,16,0,0,2,0
-033,Muchacho,,,,An aggressive PLAYER that is quick to attack strikes. On the mound they sling venom ,5.00,100,Poison,,61,72,57,65,55,034,Moon,3,0,2,0
-034,Ray,,,,"It uses its powerful arms on the mound to heave fastballs, spin curves, and break the break the batter's ankles.",5.00,100,Poison,Ground,81,92,77,85,75,,,7,0,2,0
-035,Fairy,,,,Their magical and cute appeal has many fans. They're rare and found only in certain areas,5.00,100,Normal,,70,45,48,35,60,036,Moon,3,0,2,0
-036,Fable,,,,A timid fairy PLAYER that is rarely seen. They will run and hide the moment it senses people ,5.00,100,Normal,,95,70,73,60,85,,,4,0,2,0
-037,Vulfpek,,,,"Rookie year, they have just one ponytail. Their hair splits at the tip as they grow older",5.00,100,Fire,,38,41,40,65,65,038,Fire,0,0,2,0
-038,Foxy,,,,Very smart and very vengeful. Swinging one of their many bats could result in a 1000-year curse,5.00,100,Fire,,73,76,75,100,100,,,3,0,2,0
-039,Puff,,,,"When their huge eyes light up, they sings a mysteriously soothing melody that lulls runners to sleep",5.00,100,Normal,,115,45,20,20,25,040,Moon,0,0,2,0
-040,Tuff,,,,"Their body is soft and rubbery. When batting, they puff up their chest in an attempt to look bigger.",5.00,100,Normal,,140,70,45,45,50,,,3,4,2,0
-041,Bats,,,,A blind PLAYER. Uses echo location to find the ball.,5.00,100,Poison,Flying,40,45,35,55,40,042,22,1,5,2,1
-042,Gold Bats,,,,"Once it strikes out a batter, it will not stop draining energy from the other team, even late in the game.",5.00,100,Poison,Flying,75,80,70,90,75,,,3,5,2,1
-043,Oddie,,,,"During the day, they practice fielding ground balls. At night, they run bases.",5.00,100,Grass,Poison,45,50,55,30,75,044,21,0,0,2,1
-044,Gloomy,,,,The wet stuff on their mouth isn't drool. It is lipgloss that is used to attract opposing players.,5.00,100,Grass,Poison,60,65,70,40,85,045,Leaf,1,0,2,1
-045,Vile,,,,"The larger their hair, the more toxic hair product it contains. Their big head is heavy and hard to hold up",5.00,100,Grass,Poison,75,80,85,50,100,,,1,0,2,1
-046,Paris,,,,Drinks ginger tea. The headphones over their hats keep them zoned into the game.,5.00,100,Bug,Grass,35,70,55,25,55,047,24,1,3,2,0
-047,Pariah,,,,A host of mental problems brought on by parasites and psychadellic mushrooms. Prefers to play in a dress.,5.00,100,Bug,Grass,60,95,80,30,80,,,8,4,2,1
-048,Natty,,,,Lives in the shadow of their MOTHER. Attracted by the bright lights of game night.,5.00,100,Bug,Poison,60,55,50,45,40,049,31,0,5,2,1
-049,Mother,,,,The dusty substances covering their uniform indicates which types of poison they throw.,5.00,100,Bug,Poison,70,65,60,90,90,,,2,5,2,1
-050,Diggs,,,,Could field a ground ball a yard under the dirt.,5.00,100,Ground,,10,55,25,95,45,051,26,0,0,2,1
-051,Doug,,,,The hard chopping motion in their swing can trigger earthquakes 60 miles from the ball's impact point,5.00,100,Ground,,35,80,50,120,70,,,3,0,2,1
-052,Meow,,,,Adores spherical objects. Wanders the streets on a nightly basis to look for foul balls.,5.00,100,Normal,,40,45,35,90,40,053,28,0,0,2,0
-053,Purr,,,,"Although their game has many admirers, they're tough to keep on a team because of their fickle meanness.",5.00,100,Normal,,65,70,60,115,65,,,1,3,2,0
-054,Duck,,,,"While lulling the batter with a vacant look, this wily PLAYER will use psychokinetic powers",5.00,100,Water,,50,52,48,55,50,055,33,3,3,2,1
-055,Gold Duck,,,,"Often seen swim- ming elegantly by lake shores. It is often mistaken for the Japanese monster, Kappa",5.00,100,Water,,80,82,78,85,80,,,2,3,2,1
-056,Man,,,,Extremely quick to anger. It could be docile one moment then thrashing away the next instant,5.00,100,Fighting,,40,80,35,70,35,057,28,2,0,2,0
-057,Primo,,,,Always furious and tenacious to boot. It will not abandon chasing its quarry until it is caught,5.00,100,Fighting,,65,105,60,95,60,,,3,3,2,0
-058,Lithium,,,,Very protective of their strikezone. They will pitch up and in to repel batters from their plate.,5.00,100,Fire,,55,70,45,60,50,059,Fire,1,0,2,1
-059,Arcane,,,,A PLAYER admired for their beautiful swing. Runs agilely as if on wings,5.00,100,Fire,,90,110,80,95,80,,,2,3,2,1
-060,Polly,,,,Their newly grown legs prevent them from running. They appear to prefer swinging for the fences than trying for a base hit.,5.00,100,Water,,40,50,40,90,40,061,25,0,0,2,0
-061,Swirl,,,,"Capable of batting left or hight handed. When out of the box, it sweats to keep its body cool",5.00,100,Water,,65,65,65,90,50,062,Water,3,3,2,0
-062,Wrath,,,,An adept swimmer at both the front crawl and breast stroke. Easily overtakes the best human swimmers,5.00,100,Water,Fighting,90,85,95,70,70,,,7,3,2,0
-063,Bruh,,,,"Using their ability to read minds, they can predict what the pitcher will throw.",5.00,100,Psychic,,25,20,15,90,105,064,16,0,0,2,1
-064,Dab,,,,It emits special alpha waves from its body that induce headaches just by being close by,5.00,100,Psychic,,40,35,30,105,120,065,Trade,1,4,2,1
-065,Kazaa,,,,Their brains can outperform any advanced analytics software. Their #BOL knowledge is the highest in the LEAGUE.,5.00,100,Psychic,,55,50,45,120,135,,,2,3,2,1
-066,Chip,,,,Loves to build its muscles. It trains in all styles of martial arts to become even stronger,5.00,100,Fighting,,70,80,50,35,35,067,28,2,0,2,1
-067,Choke,,,,"Its muscular body is so powerful, it must wear a power save belt to be able to regulate its motions",5.00,100,Fighting,,80,100,70,45,50,068,Trade,3,0,2,1
-068,Champ,,,,"Using its heavy muscles, it throws powerful punches that can send the victim clear over the horizon",5.00,100,Fighting,,90,130,80,55,65,,,4,0,2,1
-069,Sprout,,,,A carnivorous POKéMON that traps and eats bugs. It uses its root feet to soak up needed moisture ,5.00,100,Grass,Poison,50,75,35,40,70,070,21,0,0,2,1
-070,Weepy,,,,It spits out POISONPOWDER to immobilize the enemy and then finishes it with a spray of ACID,5.00,100,Grass,Poison,65,90,50,55,85,071,Leaf,1,5,2,1
-071,Vic,,,,"Said to live in huge colonies deep in jungles, although no one has ever returned from there",5.00,100,Grass,Poison,80,105,65,70,100,,,2,4,2,1
-072,Fonz,,,,Drifts in shallow seas. Anglers who hook them by accident are often punished by its stinging acid,5.00,100,Water,Poison,40,40,35,70,100,073,30,1,0,2,1
-073,Cruel,,,,"The tentacles are normally kept short. On hunts, they are extended to ensnare and immobilize prey",5.00,100,Water,Poison,80,70,65,100,120,,,2,4,2,1
-074,Dude,,,,"Found in fields and mountains. Mistaking them for boulders, people often step or trip on them",5.00,100,Rock,Ground,40,80,100,20,30,075,25,3,0,2,1
-075,Gravel,,,,Rolls down slopes to move. It rolls over any obstacle without slowing or changing its direction,5.00,100,Rock,Ground,55,95,115,35,45,076,Trade,4,3,2,1
-076,Golem,,,,Its boulder-like body is extremely hard. It can easily withstand dynamite blasts without damage,5.00,100,Rock,Ground,80,110,130,45,55,,,5,3,2,1
-077,Pinto,,,,Its hooves are 10 times harder than diamonds. It can trample anything completely flat in little time,5.00,100,Fire,,50,85,55,90,65,078,40,1,0,2,0
-078,Mustang,,,,"Very competitive, this POKéMON will chase anything that moves fast in the hopes of racing it",5.00,100,Fire,,65,100,70,105,80,,,2,0,2,0
-079,Slowpoke,,,,Incredibly slow and dopey. It takes 5 seconds for it to feel pain when under attack,5.00,100,Water,Psychic,90,65,65,15,40,080,37,3,3,2,0
-080,Laggard,,,,The SHELLDER that is latched onto SLOWPOKE's tail is said to feed on the host's left over scraps,5.00,100,Water,Psychic,95,75,110,30,80,,,5,3,2,0
-081,Magnet,,,,Uses anti-gravity to stay suspended. Appears without warning and uses THUNDER WAVE and similar moves,5.00,100,Electric,,25,35,70,45,95,082,30,0,0,2,0
-082,Ton,,,,Formed by several MAGNETs practicing together. They frequently appear in the outfield spottings flares,5.00,100,Electric,,50,60,95,70,120,,,5,5,2,0
-083,Dubious,,,,The sprig of green onions it holds is its weapon. It is used much like a metal sword,5.00,100,Normal,Flying,52,65,55,60,58,,,0,0,2,0
-084,Duce,,,,A bird that makes up for its poor flying with its fast foot speed. Leaves giant footprints,5.00,100,Normal,Flying,35,85,45,75,35,085,31,1,0,2,0
-085,Trey,,,,"Uses its three brains to execute complex plans. While two heads sleep, one head stays awake",5.00,100,Normal,Flying,60,110,70,100,60,,,2,0,2,0
-086,Seal,,,,The protruding horn on its head is very hard. It is used for bashing through thick ice,5.00,100,Water,,65,45,55,45,70,087,34,3,0,2,0
-087,Sealion,,,,Stores thermal energy in its body. Swims at a steady 8 knots even in intensely cold waters,5.00,100,Water,Ice,90,70,80,70,95,,,4,0,2,0
-088,Greaser,,,,Lives in slums and abandoned houses. Survives by selling the toxic sludge dumped by factories on the black market.,5.00,100,Poison,,80,80,50,25,40,089,38,3,0,2,0
-089,Yuck,,,,"Thickly covered with a filthy, vile sludge. It is so toxic, even its footprints contain poison",5.00,100,Poison,,105,105,75,50,65,,,5,3,2,0
-090,Cup,,,,Its hard shell repels any kind of attack. It is vulnerable only when its shell is open,5.00,100,Water,,30,65,100,40,45,091,Water,0,0,2,1
-091,Dish,,,,"When attacked, it launches its horns in quick volleys. Its innards have never been seen",5.00,100,Water,Ice,50,95,180,70,85,,,3,0,2,1
-092,Gas,,,,"Almost invisible, this gaseous PLAYER cloaks the target and puts it to sleep without notice",5.00,100,Ghost,Poison,30,35,30,80,100,093,25,0,0,2,0
-093,Morty,,,,"Because of its ability to slip through block walls, it is said to be from an- other dimension",5.00,100,Ghost,Poison,45,50,45,95,115,094,Trade,1,0,2,0
-094,Macobb,,,,"Under a full moon, this PLAYER likes to mimic the shadows of people and laugh at their fright",5.00,100,Ghost,Poison,60,65,60,110,130,,,3,0,2,0
-095,Onyx,,,,"As it grows, the stone portions of its body harden to become similar to a diamond, but colored black",5.00,100,Rock,Ground,35,45,160,70,30,,,7,3,2,1
-096,Zee,,,,Puts enemies to sleep then eats their dreams. Occasionally gets sick from eating bad dreams,5.00,100,Psychic,,60,48,45,42,90,097,26,3,0,2,0
-097,Medium,,,,"When it locks eyes with an enemy, it will use a mix of PSI moves such as HYPNOSIS and CONFUSION",5.00,100,Psychic,,85,73,70,67,115,,,4,3,2,0
-098,Dick,,,,"Its pincers are not only powerful weapons, they are used for balance when walking sideways",5.00,100,Water,,30,105,25,50,90,099,28,3,0,2,1
-099,Rex,,,,"The large pitcher throws 100 mph and has crushing power. However, its huge size makes it unable to field",5.00,100,Water,,55,130,50,75,115,,,5,0,2,1
-100,Speedball,,,,"Usually found in power plants. Easily mistaken for a # BALL, they have zapped many people",5.00,100,Electric,,40,30,50,100,55,101,30,4,0,2,0
-101,Tucker,,,,It stores electric energy under very high pressure. It often explodes with little or no provocation,5.00,100,Electric,,60,50,70,140,80,,,5,0,2,0
-102,Ed,,,,"Often mistaken for a group of people. A disturbed, one-armed man with lots of tattoos of himself.",5.00,100,Grass,Psychic,60,40,80,40,60,103,Leaf,4,3,2,0
-103,Edd,,,,"His other arm miraculously grew back. Legend has it, the arm he lost grew a human, too.",5.00,100,Grass,Psychic,95,95,85,55,125,,,7,3,2,0
-104,Bones,,,,"Because it never removes its giant hat, no one has ever seen this PLAYER's real face",5.00,100,Ground,,50,50,95,35,40,105,28,0,0,2,0
-105,Marrow,,,,Thier bat is the key to their success. They often throw their bat skillfully like a boomerang make contact with the ball.,5.00,100,Ground,,60,80,110,45,50,,,2,0,2,0
-106,Bruce,,,,"When in a hurry, its legs lengthen progressively. It runs smoothly with extra long, loping strides",5.00,100,Fighting,,50,120,53,87,35,,,2,0,2,0
-107,Jackie,,,,"While apparently doing nothing, it fires punches in lightning fast volleys that are impossible to see",5.00,100,Fighting,,50,105,79,76,35,,,8,0,2,0
-108,Tongue,,,,Its tongue can be extended like a chameleon's. It leaves a tingling sensation when it licks enemies,5.00,100,Normal,,90,55,75,30,60,,,3,0,2,0
-109,Ash,,,,"Because they inhale several kinds of toxic gases, they're prone to explosive diarrhea.",5.00,100,Poison,,40,65,95,35,60,110,35,3,3,2,0
-110,Smokey,,,,"Where two kinds of poison gases meet, 2 KOFFINGs can fuse into a WEEZING over many years",5.00,100,Poison,,65,90,120,60,85,,,4,3,2,0
-111,Rhino,,,,Its massive bones are 1000 times harder than human bones. It can easily knock a trailer flying,5.00,100,Ground,Rock,80,85,95,25,30,112,42,3,0,2,0
-112,Don,,,,"Protected by an armor-like hide, it is capable of living in molten lava of 3,600 degrees",5.00,100,Ground,Rock,105,130,120,40,45,,,4,3,2,0
-113,Chance,,,,Genuinely cool. The kind of PLAYER everyone wants on their TEAM. Can't hit or field the ball.,5.00,100,Normal,,250,5,5,50,105,,,5,0,2,0
-114,Frizz,,,,Their whole body stinks of sea salt and weed. Their beards shake as they walk.,5.00,100,Grass,,65,55,115,60,100,,,1,3,2,1
-115,Gengis,,,,Wears a protective pouch around her perpetually pregnant belly.,5.00,100,Normal,,105,95,80,90,40,,,3,0,2,0
-116,Brain,,,,Known to down flying bugs with precision blasts of ink from the surface of the water,5.00,100,Water,,30,40,70,60,70,117,32,0,0,2,0
-117,Einstein,,,,Capable of throwing backwards by rapidly swinging their wing-like arms and stout legs,5.00,100,Water,,55,65,95,85,95,,,1,0,2,0
-118,Goldie,,,,"Their golden locks billow like an elegant ballroom dress, giving them the nickname of the Queen of Diamonds",5.00,100,Water,,45,67,60,63,50,119,33,8,0,2,0
-119,Seeker,,,,"In the post-season, they can be seen swimming powerfully up rivers and creeks to train",5.00,100,Water,,80,92,65,68,80,,,8,5,2,0
-120,Starchild,,,,An enigmatic PLAYER that can effortlessly generate a cheering crowd even when losing,5.00,100,Water,,30,45,55,85,70,121,Water,0,0,2,0
-121,Starman,,,,A core figure on any roster with a glow like the seven colors of the rainbow. Some fans value their personality above their skill,5.00,100,Water,Psychic,60,75,85,115,100,,,3,3,2,0
-122,Mime,,,,Able to mirror every movement on the field. Knows where the ball is going before the pitcher.,5.00,100,Psychic,,40,45,65,90,100,,,1,0,2,0
-123,Scissors,,,,"With ninja-like agility and speed, they look like they're playing more than one position.",5.00,100,Bug,Flying,70,110,80,105,55,,,7,0,2,0
-124,Jinx,,,,The seductive wiggle in their hips as they pitch can cause batters to forget to swing.,5.00,100,Ice,Psychic,65,50,35,95,95,,,3,0,2,1
-125,Buzz,,,,"Normally found near power plants, the static discharge of their swing can cause major blackouts in cities",5.00,100,Electric,,65,83,57,105,85,,,3,0,2,0
-126,Magma,,,,Their heater always burns with an orange glow that enables it to hide perfectly among the lights of a scoreboard.,5.00,100,Fire,,65,95,57,93,85,,,3,0,2,0
-127,Pinch,,,,"When they fail to crush the ball, they break their bat over their head.",5.00,100,Bug,,65,125,100,85,55,,,3,0,2,0
-128,Bull,,,,"When hit by a pitch, they charge the mound and whip the pitcher with their long arms.",5.00,100,Normal,,75,100,95,110,70,,,3,3,2,0
-129,Fish,,,,"Their parents played ball well, but these PLAYERs clearly didn't get the BéiSBOL gene.",5.00,100,Water,,20,10,55,80,20,130,20,1,0,2,0
-130,Gar,,,,"Rarely seen in the wild. Huge, vicious, and capable of knocking the cover off a ball.",5.00,100,Water,Flying,95,125,79,81,100,,,7,3,2,0
-131,Bus,,,,A PLAYER that has been over- scouted almost to extinction. It can carry a team.,5.00,100,Water,Ice,130,85,80,60,95,,,3,0,2,0
-132,Yeah-Yeah,,,,Capable of copying an opponents's style to instantly transform themselves into a duplicate of the opponent.,5.00,100,Normal,,48,48,48,48,48,,,0,0,2,0
-133,Evie,,,,Their future is wide open. They can grow up to be anything they want to be.,5.00,100,Normal,,55,55,50,55,65,134 135 136,Water Thunder Fire,1,0,2,0
-134,Vapor,,,,Lives at the beach. They go on long swims in the deep ocean and are often mistaken for mermaids,5.00,100,Water,,130,65,60,65,110,,,2,0,2,0
-135,Jolt,,,,They accumulate negative ions in their hair. It gives a little extra zip to their throws.,5.00,100,Electric,,65,65,60,130,110,,,2,0,2,0
-136,Falre,,,,"In the moments before each pitch, they get an adrenaline rush.",5.00,100,Fire,,65,130,60,65,110,,,3,0,2,0
-137,Polygon,,,,A PLAYER who spends a lot of time programming code. They often run the team website.,5.00,100,Normal,,65,60,70,40,75,,,1,5,2,0
-138,Spiral,,,,"Although long retired, in rare cases, these early pioneers of batting helmets will play ball.",5.00,100,Rock,Water,35,40,100,35,90,139,40,0,3,2,0
-139,Spire,,,,A deadball era PLAYER that retired when the heavy equipment made it impossible to catch a wild pitch ,5.00,100,Rock,Water,70,60,125,55,115,,,3,3,2,0
-140,Horshoe,,,,A PLAYER that was resurrected from a grave in what was once Elysian Fields.,5.00,100,Rock,Water,30,80,90,55,45,141,40,0,0,2,0
-141,Topper,,,,Their sleek shape is perfect for pitching. They strike out batters with a sharp curve and a fluid windup.,5.00,100,Rock,Water,60,115,105,80,70,,,2,3,2,0
-142,Arrowhead,,,,A relic of early BéiSBOL when pitchers would throw at your temple if you crowded the plate.,6.00,100,Rock,Flying,80,105,65,130,60,,,7,3,2,0
-143,Bear,,,,"Lazy bums just eat and sleep. As their rotund bulk builds, they become steadily more slothful",6.03,421,Normal,,160,110,65,30,65,,,5,6,7,0
-144,Art,,,,A legendary PLAYER. They're said to appear to doomed batters who are in a  slump,6.03,221,Ice,Flying,90,85,100,85,125,,,7,5,7,0
-145,Zaph,,,,A legendary PLAYER. They're said to appear from the mist while dropping enormous lightning bolts to center,6.04,235,Electric,Flying,90,90,85,100,125,,,7,4,2,0
-146,Elton,,,,Known as legendary fireballers. Every pitch creates a dazzling flash of flames,6.10,210,Fire,Flying,90,100,90,90,125,,,7,0,2,0
-147,Drats,,,,Long considered a mythical PLAYER until recently when a small barnstorming team was found playing in a remote field.,5.04,90,Dragon,,41,64,45,50,50,148,30,0,0,2,1
-148,Aire,,,,A mystical PLAYER that exudes a gentle aura. Good weather seems to follow them everywhere.,6.01,170,Dragon,,61,84,65,70,70,149,55,1,0,2,1
-149,Dragon,,,,An extremely rarely seen island PLAYER. Their BéiSBOL knowledge is said to belong in a higher league.,7.01,280,Dragon,Flying,91,134,95,80,100,,,7,0,2,1
-150,Mike,,,,MIKE was created by a scientist after years of horrific gene splicing and DNA engineering experiments,6.09,230,Psychic,,106,110,90,130,154,,,7,0,2,0
-151,Mick,,,,Some claim they're still barnstorming the countryside. Only a few left can say they saw them in LEAGUE play.,5.08,150,Psychic,,100,100,100,100,100,,,0,3,2,0
+#,Nickname,Illustration,Sprite,Back,Description,Height,Weight,Type1,Type2,HP,Bat,Field,Speed,Throw,EVTo,EVType,BodyID,HeadID,HatID,GBPal,SGBPal
+001,Bubbi,,,,A strange kid. Won't wear hats. Plants and throws hard. PLAYER is a growing talent.,4.00,42,Grass,Poison,45,49,49,45,65,002,16,0,0,0,1,PaletteBubbi
+002,Ivy,,,,"When their hair is tied back, they appear to lose the ability to stand up right",5.00,110,Grass,Poison,60,62,63,60,80,003,32,1,0,4,1,PaletteBubbi
+003,Venus,,,,Seems to bloom when it's sunny outside. Stays on the move in the infield.,6.00,160,Grass,Poison,80,82,83,80,100,,,2,0,4,1,PaletteBubbi
+004,Ginger,,,,"Easily sunburns. When it rains, steam is said to raise from their head.",5.00,80,Fire,,39,52,43,65,50,005,16,1,2,2,0,PaletteUI
+005,Freckles,,,,"When they swing a hot bat, they elevate the ball to unbearably high levels.",6.00,130,Fire,,58,64,58,80,65,006,36,2,2,2,0,PaletteUI
+006,Big Red,,,,Throws fire that is hot enough to break ankles. Known for their high heat.,7.00,210,Fire,Flying,78,84,78,100,85,,,7,2,2,0,PaletteUI
+007,Squirt,,,,"In extra innings, they swell up and harden into a wall. Powerfully sprays singles.",4.00,40,Water,,44,48,65,43,50,008,16,0,1,3,0,PaletteTitleScreen
+008,Pudge,,,,"Often hides signals and picks off unwary prey. For blocking fast, they move their heals to maintain balance.",5.00,165,Water,,59,63,80,58,65,009,36,3,1,3,0,PaletteTitleScreen
+009,Yogi,,,,A brutal PLAYER. Good under pressure. A cannon behind the plate. The core of a good infield.,6.00,260,Water,,79,83,100,78,85,,,7,3,3,0,PaletteTitleScreen
+010,Sweet Pea,,,,Their short feet are tipped with cleats. Steals second and third effortlessly.,3.00,28,Bug,,45,30,35,45,20,011,7,0,1,3,0,PaletteSepia
+011,Meta,,,,This PLAYER is vulnerable to pitches. Their open stance exposes their weak and tender body.,4.06,70,Bug,,50,20,55,30,25,012,10,1,1,3,0,PaletteSepia
+012,Butterfly,,,,"At the plate, they flip their incredible hair, sending highly toxic dust into the air.",5.00,145,Bug,Flying,60,45,50,70,80,,,1,5,5,0,PaletteSepia
+013,Weeds,,,,"Often found in parks, chewing leaves. They have a sharp venomous slider.",3.06,35,Bug,Poison,40,35,30,50,20,014,7,0,1,3,0,PaletteSepia
+014,Koo-Koo,,,,"Almost incapable of swinging, this PLAYER can only crowd the plate, dig in, and brace for impact.",4.09,81,Bug,Poison,45,25,50,35,25,015,10,1,4,3,0,PaletteSepia
+015,Beedie,,,,Flies at high speed and attacks the ball with a large venomous swing. Massive forearms and hands.,5.05,170,Bug,Poison,65,80,40,75,45,,,2,4,3,0,PaletteSepia
+016,Pidge,,,,A common sight in parks and batting cages. They run low to the ground and kick up blinding sand.,5.03,140,Normal,Flying,40,45,40,56,35,017,18,3,4,3,0,PaletteSepia
+017,Gio,,,,"Very protective of their corner of the field, this PLAYER will fiercely charge any ball.",6.00,211,Normal,Flying,63,60,55,71,50,018,36,4,1,3,0,PaletteSepia
+018,OT,,,,"When pitching, they spin off the mound at high speed to pick off unwary runners such as FISH.",6.05,273,Normal,Flying,83,80,75,91,70,,,7,3,3,0,PaletteSepia
+019,Rat Tail,,,,"Bite their lip when they bat. Small and very quick, it is a common sight in many places",4.00,61,Normal,,30,56,35,72,25,020,20,0,6,3,0,PaletteSepia
+020,Cait,,,,A gym rat with a power mullet. They apparently slow down after a hair cut.,5.09,220,Normal,,55,81,60,97,50,,,4,6,1,0,PaletteSepia
+021,Stoop,,,,Eats grounders in grassy areas. They have to move their short legs at high speed to steal bases.,5.00,110,Normal,Flying,40,60,30,70,31,022,20,1,6,2,0,PaletteSepia
+022,Crow,,,,"With their huge and magnificent swings, they hit fly balls that seem to disappear.",5.00,170,Normal,Flying,65,90,65,100,61,,,2,3,2,0,PaletteSepia
+023,Snake,,,,"Runs silently and stealthily. Runs on pitchers, such as PIDGE and STOOP, any time they're on base.",5.00,90,Poison,,35,60,44,55,40,024,22,1,0,2,0,PaletteSepia
+024,Cobra,,,,It is rumored that the scarry looking tattoos on their faces show their neighborhood affiliation,5.00,234,Poison,,60,85,69,80,65,,,7,3,2,0,PaletteSepia
+025,Chu,,,,"When several of these PLAYERS play inflied, their electricity turns lightning fast double plays.",5.00,46,Electric,,35,55,30,90,50,026,Thunder,0,3,2,0,PaletteSepia
+026,Rai,,,,Their long stride covers a lot of ground to protect from high fly balls.,5.00,184,Electric,,60,90,55,100,90,,,4,3,2,0,PaletteSepia
+027,Shrew,,,,Digs deep in the box. It only swings at the right pitch.,5.00,50,Ground,,50,75,85,40,30,028,22,0,0,2,0,PaletteSepia
+028,Sandy,,,,Sits back on spinning balls. Attacks when threatened inside. They can roll a bunt up the line.,5.00,120,Ground,,75,100,110,65,55,,,4,0,2,0,PaletteSepia
+029,Chica,,,,"Although small, their venomous bunts render this PLAYER dangerous. This girl has speed.",5.00,100,Poison,,55,47,52,41,40,030,16,0,0,2,0,PaletteSepia
+030,Muchacha,,,,Quick around the horn. A physical PLAYER. Good speed. Controlled bunt.,5.00,100,Poison,,70,62,67,56,55,031,Moon,4,0,2,0,PaletteSepia
+031,Reina,,,,Hard hitter. Strong arm. She uses her hefty bulk to muscle out home runs.,5.00,100,Poison,Ground,90,82,87,76,75,,,7,0,2,0,PaletteSepia
+032,Chico,,,,"Stiffens up when they strike out batters. The larger its hands, the more powerful its venomous slurve.",5.00,100,Poison,,46,57,40,50,40,033,16,0,0,2,0,PaletteSepia
+033,Muchacho,,,,An aggressive PLAYER that is quick to attack strikes. On the mound they sling venom ,5.00,100,Poison,,61,72,57,65,55,034,Moon,3,0,2,0,PaletteSepia
+034,Ray,,,,"It uses its powerful arms on the mound to heave fastballs, spin curves, and break the break the batter's ankles.",5.00,100,Poison,Ground,81,92,77,85,75,,,7,0,2,0,PaletteSepia
+035,Fairy,,,,Their magical and cute appeal has many fans. They're rare and found only in certain areas,5.00,100,Normal,,70,45,48,35,60,036,Moon,3,0,2,0,PaletteSepia
+036,Fable,,,,A timid fairy PLAYER that is rarely seen. They will run and hide the moment it senses people ,5.00,100,Normal,,95,70,73,60,85,,,4,0,2,0,PaletteSepia
+037,Vulfpek,,,,"Rookie year, they have just one ponytail. Their hair splits at the tip as they grow older",5.00,100,Fire,,38,41,40,65,65,038,Fire,0,0,2,0,PaletteSepia
+038,Foxy,,,,Very smart and very vengeful. Swinging one of their many bats could result in a 1000-year curse,5.00,100,Fire,,73,76,75,100,100,,,3,0,2,0,PaletteSepia
+039,Puff,,,,"When their huge eyes light up, they sings a mysteriously soothing melody that lulls runners to sleep",5.00,100,Normal,,115,45,20,20,25,040,Moon,0,0,2,0,PaletteSepia
+040,Tuff,,,,"Their body is soft and rubbery. When batting, they puff up their chest in an attempt to look bigger.",5.00,100,Normal,,140,70,45,45,50,,,3,4,2,0,PaletteSepia
+041,Bats,,,,A blind PLAYER. Uses echo location to find the ball.,5.00,100,Poison,Flying,40,45,35,55,40,042,22,1,5,2,1,PaletteSepia
+042,Gold Bats,,,,"Once it strikes out a batter, it will not stop draining energy from the other team, even late in the game.",5.00,100,Poison,Flying,75,80,70,90,75,,,3,5,2,1,PaletteSepia
+043,Oddie,,,,"During the day, they practice fielding ground balls. At night, they run bases.",5.00,100,Grass,Poison,45,50,55,30,75,044,21,0,0,2,1,PaletteSepia
+044,Gloomy,,,,The wet stuff on their mouth isn't drool. It is lipgloss that is used to attract opposing players.,5.00,100,Grass,Poison,60,65,70,40,85,045,Leaf,1,0,2,1,PaletteSepia
+045,Vile,,,,"The larger their hair, the more toxic hair product it contains. Their big head is heavy and hard to hold up",5.00,100,Grass,Poison,75,80,85,50,100,,,1,0,2,1,PaletteSepia
+046,Paris,,,,Drinks ginger tea. The headphones over their hats keep them zoned into the game.,5.00,100,Bug,Grass,35,70,55,25,55,047,24,1,3,2,0,PaletteSepia
+047,Pariah,,,,A host of mental problems brought on by parasites and psychadellic mushrooms. Prefers to play in a dress.,5.00,100,Bug,Grass,60,95,80,30,80,,,8,4,2,1,PaletteSepia
+048,Natty,,,,Lives in the shadow of their MOTHER. Attracted by the bright lights of game night.,5.00,100,Bug,Poison,60,55,50,45,40,049,31,0,5,2,1,PaletteSepia
+049,Mother,,,,The dusty substances covering their uniform indicates which types of poison they throw.,5.00,100,Bug,Poison,70,65,60,90,90,,,2,5,2,1,PaletteSepia
+050,Diggs,,,,Could field a ground ball a yard under the dirt.,5.00,100,Ground,,10,55,25,95,45,051,26,0,0,2,1,PaletteSepia
+051,Doug,,,,The hard chopping motion in their swing can trigger earthquakes 60 miles from the ball's impact point,5.00,100,Ground,,35,80,50,120,70,,,3,0,2,1,PaletteSepia
+052,Meow,,,,Adores spherical objects. Wanders the streets on a nightly basis to look for foul balls.,5.00,100,Normal,,40,45,35,90,40,053,28,0,0,2,0,PaletteSepia
+053,Purr,,,,"Although their game has many admirers, they're tough to keep on a team because of their fickle meanness.",5.00,100,Normal,,65,70,60,115,65,,,1,3,2,0,PaletteSepia
+054,Duck,,,,"While lulling the batter with a vacant look, this wily PLAYER will use psychokinetic powers",5.00,100,Water,,50,52,48,55,50,055,33,3,3,2,1,PaletteSepia
+055,Gold Duck,,,,"Often seen swim- ming elegantly by lake shores. It is often mistaken for the Japanese monster, Kappa",5.00,100,Water,,80,82,78,85,80,,,2,3,2,1,PaletteSepia
+056,Man,,,,Extremely quick to anger. It could be docile one moment then thrashing away the next instant,5.00,100,Fighting,,40,80,35,70,35,057,28,2,0,2,0,PaletteSepia
+057,Primo,,,,Always furious and tenacious to boot. It will not abandon chasing its quarry until it is caught,5.00,100,Fighting,,65,105,60,95,60,,,3,3,2,0,PaletteSepia
+058,Lithium,,,,Very protective of their strikezone. They will pitch up and in to repel batters from their plate.,5.00,100,Fire,,55,70,45,60,50,059,Fire,1,0,2,1,PaletteSepia
+059,Arcane,,,,A PLAYER admired for their beautiful swing. Runs agilely as if on wings,5.00,100,Fire,,90,110,80,95,80,,,2,3,2,1,PaletteSepia
+060,Polly,,,,Their newly grown legs prevent them from running. They appear to prefer swinging for the fences than trying for a base hit.,5.00,100,Water,,40,50,40,90,40,061,25,0,0,2,0,PaletteSepia
+061,Swirl,,,,"Capable of batting left or hight handed. When out of the box, it sweats to keep its body cool",5.00,100,Water,,65,65,65,90,50,062,Water,3,3,2,0,PaletteSepia
+062,Wrath,,,,An adept swimmer at both the front crawl and breast stroke. Easily overtakes the best human swimmers,5.00,100,Water,Fighting,90,85,95,70,70,,,7,3,2,0,PaletteSepia
+063,Bruh,,,,"Using their ability to read minds, they can predict what the pitcher will throw.",5.00,100,Psychic,,25,20,15,90,105,064,16,0,0,2,1,PaletteSepia
+064,Dab,,,,It emits special alpha waves from its body that induce headaches just by being close by,5.00,100,Psychic,,40,35,30,105,120,065,Trade,1,4,2,1,PaletteSepia
+065,Kazaa,,,,Their brains can outperform any advanced analytics software. Their #BOL knowledge is the highest in the LEAGUE.,5.00,100,Psychic,,55,50,45,120,135,,,2,3,2,1,PaletteSepia
+066,Chip,,,,Loves to build its muscles. It trains in all styles of martial arts to become even stronger,5.00,100,Fighting,,70,80,50,35,35,067,28,2,0,2,1,PaletteSepia
+067,Choke,,,,"Its muscular body is so powerful, it must wear a power save belt to be able to regulate its motions",5.00,100,Fighting,,80,100,70,45,50,068,Trade,3,0,2,1,PaletteSepia
+068,Champ,,,,"Using its heavy muscles, it throws powerful punches that can send the victim clear over the horizon",5.00,100,Fighting,,90,130,80,55,65,,,4,0,2,1,PaletteSepia
+069,Sprout,,,,A carnivorous POKéMON that traps and eats bugs. It uses its root feet to soak up needed moisture ,5.00,100,Grass,Poison,50,75,35,40,70,070,21,0,0,2,1,PaletteSepia
+070,Weepy,,,,It spits out POISONPOWDER to immobilize the enemy and then finishes it with a spray of ACID,5.00,100,Grass,Poison,65,90,50,55,85,071,Leaf,1,5,2,1,PaletteSepia
+071,Vic,,,,"Said to live in huge colonies deep in jungles, although no one has ever returned from there",5.00,100,Grass,Poison,80,105,65,70,100,,,2,4,2,1,PaletteSepia
+072,Fonz,,,,Drifts in shallow seas. Anglers who hook them by accident are often punished by its stinging acid,5.00,100,Water,Poison,40,40,35,70,100,073,30,1,0,2,1,PaletteSepia
+073,Cruel,,,,"The tentacles are normally kept short. On hunts, they are extended to ensnare and immobilize prey",5.00,100,Water,Poison,80,70,65,100,120,,,2,4,2,1,PaletteSepia
+074,Dude,,,,"Found in fields and mountains. Mistaking them for boulders, people often step or trip on them",5.00,100,Rock,Ground,40,80,100,20,30,075,25,3,0,2,1,PaletteSepia
+075,Gravel,,,,Rolls down slopes to move. It rolls over any obstacle without slowing or changing its direction,5.00,100,Rock,Ground,55,95,115,35,45,076,Trade,4,3,2,1,PaletteSepia
+076,Golem,,,,Its boulder-like body is extremely hard. It can easily withstand dynamite blasts without damage,5.00,100,Rock,Ground,80,110,130,45,55,,,5,3,2,1,PaletteSepia
+077,Pinto,,,,Its hooves are 10 times harder than diamonds. It can trample anything completely flat in little time,5.00,100,Fire,,50,85,55,90,65,078,40,1,0,2,0,PaletteSepia
+078,Mustang,,,,"Very competitive, this POKéMON will chase anything that moves fast in the hopes of racing it",5.00,100,Fire,,65,100,70,105,80,,,2,0,2,0,PaletteSepia
+079,Slowpoke,,,,Incredibly slow and dopey. It takes 5 seconds for it to feel pain when under attack,5.00,100,Water,Psychic,90,65,65,15,40,080,37,3,3,2,0,PaletteSepia
+080,Laggard,,,,The SHELLDER that is latched onto SLOWPOKE's tail is said to feed on the host's left over scraps,5.00,100,Water,Psychic,95,75,110,30,80,,,5,3,2,0,PaletteSepia
+081,Magnet,,,,Uses anti-gravity to stay suspended. Appears without warning and uses THUNDER WAVE and similar moves,5.00,100,Electric,,25,35,70,45,95,082,30,0,0,2,0,PaletteSepia
+082,Ton,,,,Formed by several MAGNETs practicing together. They frequently appear in the outfield spottings flares,5.00,100,Electric,,50,60,95,70,120,,,5,5,2,0,PaletteSepia
+083,Dubious,,,,The sprig of green onions it holds is its weapon. It is used much like a metal sword,5.00,100,Normal,Flying,52,65,55,60,58,,,0,0,2,0,PaletteSepia
+084,Duce,,,,A bird that makes up for its poor flying with its fast foot speed. Leaves giant footprints,5.00,100,Normal,Flying,35,85,45,75,35,085,31,1,0,2,0,PaletteSepia
+085,Trey,,,,"Uses its three brains to execute complex plans. While two heads sleep, one head stays awake",5.00,100,Normal,Flying,60,110,70,100,60,,,2,0,2,0,PaletteSepia
+086,Seal,,,,The protruding horn on its head is very hard. It is used for bashing through thick ice,5.00,100,Water,,65,45,55,45,70,087,34,3,0,2,0,PaletteSepia
+087,Sealion,,,,Stores thermal energy in its body. Swims at a steady 8 knots even in intensely cold waters,5.00,100,Water,Ice,90,70,80,70,95,,,4,0,2,0,PaletteSepia
+088,Greaser,,,,Lives in slums and abandoned houses. Survives by selling the toxic sludge dumped by factories on the black market.,5.00,100,Poison,,80,80,50,25,40,089,38,3,0,2,0,PaletteSepia
+089,Yuck,,,,"Thickly covered with a filthy, vile sludge. It is so toxic, even its footprints contain poison",5.00,100,Poison,,105,105,75,50,65,,,5,3,2,0,PaletteSepia
+090,Cup,,,,Its hard shell repels any kind of attack. It is vulnerable only when its shell is open,5.00,100,Water,,30,65,100,40,45,091,Water,0,0,2,1,PaletteSepia
+091,Dish,,,,"When attacked, it launches its horns in quick volleys. Its innards have never been seen",5.00,100,Water,Ice,50,95,180,70,85,,,3,0,2,1,PaletteSepia
+092,Gas,,,,"Almost invisible, this gaseous PLAYER cloaks the target and puts it to sleep without notice",5.00,100,Ghost,Poison,30,35,30,80,100,093,25,0,0,2,0,PaletteSepia
+093,Morty,,,,"Because of its ability to slip through block walls, it is said to be from an- other dimension",5.00,100,Ghost,Poison,45,50,45,95,115,094,Trade,1,0,2,0,PaletteSepia
+094,Macobb,,,,"Under a full moon, this PLAYER likes to mimic the shadows of people and laugh at their fright",5.00,100,Ghost,Poison,60,65,60,110,130,,,3,0,2,0,PaletteSepia
+095,Onyx,,,,"As it grows, the stone portions of its body harden to become similar to a diamond, but colored black",5.00,100,Rock,Ground,35,45,160,70,30,,,7,3,2,1,PaletteSepia
+096,Zee,,,,Puts enemies to sleep then eats their dreams. Occasionally gets sick from eating bad dreams,5.00,100,Psychic,,60,48,45,42,90,097,26,3,0,2,0,PaletteSepia
+097,Medium,,,,"When it locks eyes with an enemy, it will use a mix of PSI moves such as HYPNOSIS and CONFUSION",5.00,100,Psychic,,85,73,70,67,115,,,4,3,2,0,PaletteSepia
+098,Dick,,,,"Its pincers are not only powerful weapons, they are used for balance when walking sideways",5.00,100,Water,,30,105,25,50,90,099,28,3,0,2,1,PaletteSepia
+099,Rex,,,,"The large pitcher throws 100 mph and has crushing power. However, its huge size makes it unable to field",5.00,100,Water,,55,130,50,75,115,,,5,0,2,1,PaletteSepia
+100,Speedball,,,,"Usually found in power plants. Easily mistaken for a # BALL, they have zapped many people",5.00,100,Electric,,40,30,50,100,55,101,30,4,0,2,0,PaletteSepia
+101,Tucker,,,,It stores electric energy under very high pressure. It often explodes with little or no provocation,5.00,100,Electric,,60,50,70,140,80,,,5,0,2,0,PaletteSepia
+102,Ed,,,,"Often mistaken for a group of people. A disturbed, one-armed man with lots of tattoos of himself.",5.00,100,Grass,Psychic,60,40,80,40,60,103,Leaf,4,3,2,0,PaletteSepia
+103,Edd,,,,"His other arm miraculously grew back. Legend has it, the arm he lost grew a human, too.",5.00,100,Grass,Psychic,95,95,85,55,125,,,7,3,2,0,PaletteSepia
+104,Bones,,,,"Because it never removes its giant hat, no one has ever seen this PLAYER's real face",5.00,100,Ground,,50,50,95,35,40,105,28,0,0,2,0,PaletteSepia
+105,Marrow,,,,Thier bat is the key to their success. They often throw their bat skillfully like a boomerang make contact with the ball.,5.00,100,Ground,,60,80,110,45,50,,,2,0,2,0,PaletteSepia
+106,Bruce,,,,"When in a hurry, its legs lengthen progressively. It runs smoothly with extra long, loping strides",5.00,100,Fighting,,50,120,53,87,35,,,2,0,2,0,PaletteSepia
+107,Jackie,,,,"While apparently doing nothing, it fires punches in lightning fast volleys that are impossible to see",5.00,100,Fighting,,50,105,79,76,35,,,8,0,2,0,PaletteSepia
+108,Tongue,,,,Its tongue can be extended like a chameleon's. It leaves a tingling sensation when it licks enemies,5.00,100,Normal,,90,55,75,30,60,,,3,0,2,0,PaletteSepia
+109,Ash,,,,"Because they inhale several kinds of toxic gases, they're prone to explosive diarrhea.",5.00,100,Poison,,40,65,95,35,60,110,35,3,3,2,0,PaletteSepia
+110,Smokey,,,,"Where two kinds of poison gases meet, 2 KOFFINGs can fuse into a WEEZING over many years",5.00,100,Poison,,65,90,120,60,85,,,4,3,2,0,PaletteSepia
+111,Rhino,,,,Its massive bones are 1000 times harder than human bones. It can easily knock a trailer flying,5.00,100,Ground,Rock,80,85,95,25,30,112,42,3,0,2,0,PaletteSepia
+112,Don,,,,"Protected by an armor-like hide, it is capable of living in molten lava of 3,600 degrees",5.00,100,Ground,Rock,105,130,120,40,45,,,4,3,2,0,PaletteSepia
+113,Chance,,,,Genuinely cool. The kind of PLAYER everyone wants on their TEAM. Can't hit or field the ball.,5.00,100,Normal,,250,5,5,50,105,,,5,0,2,0,PaletteSepia
+114,Frizz,,,,Their whole body stinks of sea salt and weed. Their beards shake as they walk.,5.00,100,Grass,,65,55,115,60,100,,,1,3,2,1,PaletteSepia
+115,Gengis,,,,Wears a protective pouch around her perpetually pregnant belly.,5.00,100,Normal,,105,95,80,90,40,,,3,0,2,0,PaletteSepia
+116,Brain,,,,Known to down flying bugs with precision blasts of ink from the surface of the water,5.00,100,Water,,30,40,70,60,70,117,32,0,0,2,0,PaletteSepia
+117,Einstein,,,,Capable of throwing backwards by rapidly swinging their wing-like arms and stout legs,5.00,100,Water,,55,65,95,85,95,,,1,0,2,0,PaletteSepia
+118,Goldie,,,,"Their golden locks billow like an elegant ballroom dress, giving them the nickname of the Queen of Diamonds",5.00,100,Water,,45,67,60,63,50,119,33,8,0,2,0,PaletteSepia
+119,Seeker,,,,"In the post-season, they can be seen swimming powerfully up rivers and creeks to train",5.00,100,Water,,80,92,65,68,80,,,8,5,2,0,PaletteSepia
+120,Starchild,,,,An enigmatic PLAYER that can effortlessly generate a cheering crowd even when losing,5.00,100,Water,,30,45,55,85,70,121,Water,0,0,2,0,PaletteSepia
+121,Starman,,,,A core figure on any roster with a glow like the seven colors of the rainbow. Some fans value their personality above their skill,5.00,100,Water,Psychic,60,75,85,115,100,,,3,3,2,0,PaletteSepia
+122,Mime,,,,Able to mirror every movement on the field. Knows where the ball is going before the pitcher.,5.00,100,Psychic,,40,45,65,90,100,,,1,0,2,0,PaletteSepia
+123,Scissors,,,,"With ninja-like agility and speed, they look like they're playing more than one position.",5.00,100,Bug,Flying,70,110,80,105,55,,,7,0,2,0,PaletteSepia
+124,Jinx,,,,The seductive wiggle in their hips as they pitch can cause batters to forget to swing.,5.00,100,Ice,Psychic,65,50,35,95,95,,,3,0,2,1,PaletteSepia
+125,Buzz,,,,"Normally found near power plants, the static discharge of their swing can cause major blackouts in cities",5.00,100,Electric,,65,83,57,105,85,,,3,0,2,0,PaletteSepia
+126,Magma,,,,Their heater always burns with an orange glow that enables it to hide perfectly among the lights of a scoreboard.,5.00,100,Fire,,65,95,57,93,85,,,3,0,2,0,PaletteSepia
+127,Pinch,,,,"When they fail to crush the ball, they break their bat over their head.",5.00,100,Bug,,65,125,100,85,55,,,3,0,2,0,PaletteSepia
+128,Bull,,,,"When hit by a pitch, they charge the mound and whip the pitcher with their long arms.",5.00,100,Normal,,75,100,95,110,70,,,3,3,2,0,PaletteSepia
+129,Fish,,,,"Their parents played ball well, but these PLAYERs clearly didn't get the BéiSBOL gene.",5.00,100,Water,,20,10,55,80,20,130,20,1,0,2,0,PaletteSepia
+130,Gar,,,,"Rarely seen in the wild. Huge, vicious, and capable of knocking the cover off a ball.",5.00,100,Water,Flying,95,125,79,81,100,,,7,3,2,0,PaletteSepia
+131,Bus,,,,A PLAYER that has been over- scouted almost to extinction. It can carry a team.,5.00,100,Water,Ice,130,85,80,60,95,,,3,0,2,0,PaletteSepia
+132,Yeah-Yeah,,,,Capable of copying an opponents's style to instantly transform themselves into a duplicate of the opponent.,5.00,100,Normal,,48,48,48,48,48,,,0,0,2,0,PaletteSepia
+133,Evie,,,,Their future is wide open. They can grow up to be anything they want to be.,5.00,100,Normal,,55,55,50,55,65,134 135 136,Water Thunder Fire,1,0,2,0,PaletteSepia
+134,Vapor,,,,Lives at the beach. They go on long swims in the deep ocean and are often mistaken for mermaids,5.00,100,Water,,130,65,60,65,110,,,2,0,2,0,PaletteSepia
+135,Jolt,,,,They accumulate negative ions in their hair. It gives a little extra zip to their throws.,5.00,100,Electric,,65,65,60,130,110,,,2,0,2,0,PaletteSepia
+136,Falre,,,,"In the moments before each pitch, they get an adrenaline rush.",5.00,100,Fire,,65,130,60,65,110,,,3,0,2,0,PaletteSepia
+137,Polygon,,,,A PLAYER who spends a lot of time writing code. They often run the team website and keep stats.,5.00,100,Normal,,65,60,70,40,75,,,1,5,2,0,PaletteSepia
+138,Spiral,,,,"Although long retired, in rare cases, these early pioneers of batting helmets will play ball.",5.00,100,Rock,Water,35,40,100,35,90,139,40,0,3,2,0,PaletteSepia
+139,Spire,,,,A deadball era PLAYER that retired when the heavy equipment made it impossible to catch a wild pitch ,5.00,100,Rock,Water,70,60,125,55,115,,,3,3,2,0,PaletteSepia
+140,Horshoe,,,,A PLAYER that was resurrected from a grave in what was once Elysian Fields.,5.00,100,Rock,Water,30,80,90,55,45,141,40,0,0,2,0,PaletteSepia
+141,Topper,,,,Their sleek shape is perfect for pitching. They strike out batters with a sharp curve and a fluid windup.,5.00,100,Rock,Water,60,115,105,80,70,,,2,3,2,0,PaletteSepia
+142,Arrowhead,,,,A relic of early BéiSBOL when pitchers would throw at your temple if you crowded the plate.,6.00,100,Rock,Flying,80,105,65,130,60,,,7,3,2,0,PaletteSepia
+143,Bear,,,,"Lazy bums just eat and sleep. As their rotund bulk builds, they become steadily more slothful",6.03,421,Normal,,160,110,65,30,65,,,5,6,7,0,PaletteSepia
+144,Art,,,,A legendary PLAYER. They're said to appear to doomed batters who are in a  slump,6.03,221,Ice,Flying,90,85,100,85,125,,,7,5,7,0,PaletteSepia
+145,Zaph,,,,A legendary PLAYER. They're said to appear from the mist while dropping enormous lightning bolts to center,6.04,235,Electric,Flying,90,90,85,100,125,,,7,4,2,0,PaletteSepia
+146,Elton,,,,Known as legendary fireballers. Every pitch creates a dazzling flash of flames,6.10,210,Fire,Flying,90,100,90,90,125,,,7,0,2,0,PaletteSepia
+147,Drats,,,,Long considered a mythical PLAYER until recently when a small barnstorming team was found playing in a remote field.,5.04,90,Dragon,,41,64,45,50,50,148,30,0,0,2,1,PaletteSepia
+148,Aire,,,,A mystical PLAYER that exudes a gentle aura. Good weather seems to follow them everywhere.,6.01,170,Dragon,,61,84,65,70,70,149,55,1,0,2,1,PaletteSepia
+149,Dragon,,,,An extremely rarely seen island PLAYER. Their BéiSBOL knowledge is said to belong in a higher league.,7.01,280,Dragon,Flying,91,134,95,80,100,,,7,0,2,1,PaletteSepia
+150,Mike,,,,MIKE was created by a scientist after years of horrific gene splicing and DNA engineering experiments,6.09,230,Psychic,,106,110,90,130,154,,,7,0,2,0,PaletteSepia
+151,Mick,,,,Some claim they're still barnstorming the countryside. Only a few left can say they saw them in LEAGUE play.,5.08,150,Psychic,,100,100,100,100,100,,,0,3,2,0,PaletteSepia

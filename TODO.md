@@ -99,3 +99,4 @@ Super GameBoy
 - borders for different fields
 - crowd SFX
 - extra music voices
+- fix LCD interrupt flickering when sending packets

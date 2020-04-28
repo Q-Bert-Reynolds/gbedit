@@ -1,4 +1,47 @@
 SECTION "Core", ROM0
+
+; GetTypeString                   a = type, string in name_buffer
+; GetStatusString                 a = status, string in name_buffer
+; SetBank                         a = BANK ;TODO: handle more than 255 banks
+; UpdateInput
+; LoadFontTiles
+; DrawStateMap
+; SetTiles                        a = draw flags, hl=wh, de=xy, bc=firstTile
+; SetBKGTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
+; RevealTextAndWait               hl = text
+; RevealText                      a = draw flags, de = xy hl = text
+; FlashNextArrow                  a = draw flags, de = xy
+; DrawUIBox                       a=draw flags, bc = xy, de = wh
+; DrawText                        a = draw flags, hl = text, de = xy, bc = max lines
+; DisplayText                     a = draw flags, hl = text
+; DrawListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count
+; MoveListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
+; ShowListMenu                    a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+; ShowTextEntry                   bc = title, de = str, l = max_len -> puts text in name_buffer
+; ShowOptions
+; DrawSaveStats                   draw flags, de = xy
+; ShowRoledex
+; LoadSimulation                  a = ball speed b = spray angle c = launch angle
+; ShowLineupFromWorld
+; ShowLineupFromGame
+; SetSpriteTiles                  bc = count, hl = map, de = offset\props
+; SetSpriteTilesProps             bc = offset\count, hl = tilemap, de = propmap
+; MoveSprites                     bc = xy in screen space, hl = wh in tiles, a = first sprite index
+; SetSpriteTilesXY                bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
+; SetHPBarTiles                   de = player, hl = address
+; SetLevelTiles                   de = player, hl = address
+; SetMovePPTiles                  a = move, de = player, hl = tile address
+; ScrollXYToTileXY                returns xy in de
+; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
+; CopyBkgToWin
+; SaveGame
+; GetZeroPaddedNumber             a = number, returns padded number in str_buffer, affects str_buffer, all registers
+; DistanceFromSpeedLaunchAngle    a = speed, b = launch angle, returns distance in a
+; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
+; GetClosestFielderByLocation     de = xy, returns position number in a
+; IsUserFielding                  nz = user is fielding, z = user is batting
+; SetPalettes                     hl = palettes in PAL_SET (SGB) fromat
+
 Types:
   DB "", 0
   DB "Normal", 0
@@ -1299,24 +1342,3 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   ld a, [frame];1 = bottom
   xor a, b;home != frame
   ret
-
-SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
-  ld [_breakpoint], a
-.checkCGB
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jr z, .checkSGB
-.setPaletteCGB
-  push hl;palettes
-
-  ;rBCPS
-  ;rOCPS
-  ;TODO: GBC palettes
-
-  pop hl;palettes
-.checkSGB
-  ld a, [sys_info]
-  and a, SYS_INFO_SGB
-  ret z
-.setPaletteSGB
-  jp sgb_PacketTransfer

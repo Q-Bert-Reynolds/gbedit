@@ -10,6 +10,8 @@ INCLUDE "src/math.asm"
 INCLUDE "src/charmap.asm"
 INCLUDE "src/constants.asm"
 INCLUDE "src/macros.asm"
+
+INCLUDE "src/color.asm"
 INCLUDE "src/sgb.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"

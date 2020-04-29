@@ -1342,3 +1342,54 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   ld a, [frame];1 = bottom
   xor a, b;home != frame
   ret
+
+SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
+.checkCGB
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .checkSGB
+.setPaletteCGB
+  push hl;palettes
+  inc hl;first palette index
+  ld a, %10000000
+  ld [rBCPS], a
+  ld [rOCPS], a
+
+  ld a, 4
+.loopPalettes
+    push af;loop
+    ld a, [hli]
+    ld c, a
+    ld a, [hli]
+    ld b, a
+    push hl;next palette label
+    ld h, b
+    ld l, c;index
+    add hl, hl;hl*2
+    add hl, hl;hl*4
+    add hl, hl;hl*8
+    ld bc, DefaultPalettes
+    add hl, bc
+
+    ld a, 8
+.loopColors
+      push af
+      ld a, [hli]
+      ldh [rBCPD], a
+      ldh [rOCPD], a
+      pop af
+      dec a
+      jr nz, .loopColors
+
+    pop hl;palette label
+    pop af
+    dec a
+    jr nz, .loopPalettes
+
+  pop hl;palettes
+.checkSGB
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  ret z
+.setPaletteSGB
+  jp sgb_PacketTransfer

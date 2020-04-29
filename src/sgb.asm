@@ -86,8 +86,6 @@ ENDM
 
 SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
-INCLUDE "src/color.asm"
-
 IF DEF(_HOME)
 INCLUDE "img/home_version/home_version_sgb_border.asm"
 ELSE
@@ -259,7 +257,7 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   call SetBank
   reti
 
-sgb_SetPal:: ;a = packet header, bc = color 1, de = color 2
+sgb_SetPal:: ;a = packet header, bc = colorA, de = colorB
   ld hl, tile_buffer
   ld [hli], a
 
@@ -272,14 +270,14 @@ sgb_SetPal:: ;a = packet header, bc = color 1, de = color 2
   ld a, SGB_BANK
   call SetBank
 
-  push de;color2
-  push bc;color1
-  pop hl;color1
+  push de;colorB
+  push bc;colorA
+  pop hl;colorA
   ld de, tile_buffer+1
   ld bc, 8
   call mem_Copy
 
-  pop hl;color2
+  pop hl;colorB
   inc hl
   inc hl
   ld de, tile_buffer+9

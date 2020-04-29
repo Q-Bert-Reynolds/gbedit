@@ -147,7 +147,7 @@ ShowTitle:
 
 .setSGBColors
   ld hl, SGBTitlePalSet               
-  call sgb_PacketTransfer
+  call SetPalettes
   ld hl, SGBTitleAttrBlk
   call sgb_PacketTransfer
 
@@ -353,7 +353,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
 
 .setSGBColors
   ld hl, SGBStartMenuPalSet               
-  call sgb_PacketTransfer
+  call SetPalettes
   ld hl, SGBStartMenuAttrBlk
   call sgb_PacketTransfer
 

@@ -152,35 +152,42 @@ ShowTitle:
   ld hl, SGBTitleAttrBlk
   call sgb_PacketTransfer
 .setGBCColors;--------------------------------------------------------    GBC
+  
   xor a;title 
   ld hl, tile_buffer
   ld bc, 20*8
   call mem_Set
+
   ld h, 20
   ld l, 8
   ld de, 0
   ld bc, tile_buffer
   call SetBkgPaletteMap
+
   ld a, 1;home/away
   ld hl, tile_buffer
-  ld bc, 20
+  ld bc, 32
   call mem_Set
-  ld h, 20
+
+  ld h, 32
   ld l, 1
   ld d, 0
   ld e, 8
   ld bc, tile_buffer
   call SetBkgPaletteMap
-  ld h, 20;credits
+
+  ld h, 32;credits
   ld l, 1
   ld d, 0
   ld e, 17
   ld bc, tile_buffer
   call SetBkgPaletteMap
+
   ld a, 3;player
   ld hl, tile_buffer
   ld bc, 7*7
   call mem_Set
+
   ld h, 7
   ld l, 7
   ld d, 20

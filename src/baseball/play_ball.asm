@@ -637,7 +637,7 @@ SGBPlayBallAttrBlk:
   
 SetSGBMainColors:
   ld hl, SGBPlayBallPalSet               
-  call sgb_PacketTransfer
+  call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
   call sgb_PacketTransfer
   
@@ -662,7 +662,7 @@ SetSGBMainColors:
 
   pop bc;user palette
   ld a, [sgb_Pal23]
-  call sgb_SetPal
+  call SetPalettesDirect
   ret
 
 SetupGameUI:

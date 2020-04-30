@@ -119,7 +119,7 @@ ShowPlayer: ;de = player number
   ld d, a
   ld bc, PaletteHomeAwayCalvin
   ld a, [sgb_Pal23]
-  call sgb_SetPal
+  call SetPalettesDirect
 
   ld a, 72
   ld [rLYC], a
@@ -132,7 +132,7 @@ TitleDrop:
 BallToss:
   DB 16,15,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,8,8,7,7,7,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,10,11,11,12,12,13,13,14,14,15,15
 
-SGBTitlePalSet: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY_VERSION, PALETTE_HOME_AWAY_CALVIN, PALETTE_GREY
+TitlePalSet: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY_VERSION, PALETTE_HOME_AWAY_CALVIN, PALETTE_GREY
 SGBTitleAttrBlk:
   ATTR_BLK 5
   ATTR_BLK_PACKET %111, 0,0,1, 0,0, 20,7 ;title & home/away
@@ -145,11 +145,48 @@ ShowTitle:
   DISPLAY_OFF
   CLEAR_SCREEN 0
 
+.setPalettes
+  ld hl, TitlePalSet               
+  call SetPalettesIndirect
 .setSGBColors
-  ld hl, SGBTitlePalSet               
-  call SetPalettes
   ld hl, SGBTitleAttrBlk
   call sgb_PacketTransfer
+.setGBCColors;--------------------------------------------------------    GBC
+  xor a;title 
+  ld hl, tile_buffer
+  ld bc, 20*8
+  call mem_Set
+  ld h, 20
+  ld l, 8
+  ld de, 0
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+  ld a, 1;home/away
+  ld hl, tile_buffer
+  ld bc, 20
+  call mem_Set
+  ld h, 20
+  ld l, 1
+  ld d, 0
+  ld e, 8
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+  ld h, 20;credits
+  ld l, 1
+  ld d, 0
+  ld e, 17
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+  ld a, 3;player
+  ld hl, tile_buffer
+  ld bc, 7*7
+  call mem_Set
+  ld h, 7
+  ld l, 7
+  ld d, 20
+  ld e, 10
+  ld bc, tile_buffer
+  call SetBkgPaletteMap;----------------------------------------------------------- END GBC
 
   PLAY_SONG take_me_out_to_the_ballgame_data, 1
   
@@ -176,9 +213,10 @@ ShowTitle:
   ld l, a
   ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
   ld [sprite_flags], a
+  ld a, 2;GBC palette
+  ld [sprite_props], a
   xor a;skip tile 0
   ld [sprite_skip_id], a
-  ld [sprite_props], a
   call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
   call UpdateAudio
@@ -338,7 +376,7 @@ CyclePlayersLoop:
 .exitTitleScreen
   ret
 
-SGBStartMenuPalSet: PAL_SET PALETTE_UI, PALETTE_UI, PALETTE_GREY, PALETTE_GREY
+StartMenuPalSet: PAL_SET PALETTE_UI, PALETTE_UI, PALETTE_GREY, PALETTE_GREY
 SGBStartMenuAttrBlk:
   ATTR_BLK 1
   ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;title & home/away
@@ -351,11 +389,22 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
 
+.setPalettes
+  ld hl, StartMenuPalSet               
+  call SetPalettesIndirect
 .setSGBColors
-  ld hl, SGBStartMenuPalSet               
-  call SetPalettes
   ld hl, SGBStartMenuAttrBlk
   call sgb_PacketTransfer
+.setGBCColors
+  xor a
+  ld hl, tile_buffer
+  ld bc, 20*18
+  call mem_Set
+  ld h, 20
+  ld l, 18
+  ld de, 0
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
 
   call UpdateAudio
   CLEAR_SCREEN 0

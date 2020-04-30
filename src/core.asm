@@ -40,7 +40,8 @@ SECTION "Core", ROM0
 ; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
 ; GetClosestFielderByLocation     de = xy, returns position number in a
 ; IsUserFielding                  nz = user is fielding, z = user is batting
-; SetPalettes                     hl = palettes in PAL_SET (SGB) fromat
+; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
+; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
 
 Types:
   DB "", 0
@@ -1343,7 +1344,15 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   xor a, b;home != frame
   ret
 
-SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
+;----------------------------------------------------------------------
+;
+; SetPalettesIndirect - sets first 4 palettes by index
+;
+;   input: 
+;     hl = palettes in PAL_SET (SGB) fromat
+;
+;----------------------------------------------------------------------
+SetPalettesIndirect::;hl = palettes in PAL_SET (SGB) fromat
 .checkCGB
   ld a, [sys_info]
   and a, SYS_INFO_GBC
@@ -1355,14 +1364,17 @@ SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
   ld [rBCPS], a
   ld [rOCPS], a
 
-  ld a, 4
+  xor a
 .loopPalettes
-    push af;loop
+    push af;pal id
     ld a, [hli]
     ld c, a
     ld a, [hli]
     ld b, a
+    pop af;pal id
+    push af;pal id
     push hl;next palette label
+    push af;pal id
     ld h, b
     ld l, c;index
     add hl, hl;hl*2
@@ -1371,19 +1383,13 @@ SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
     ld bc, DefaultPalettes
     add hl, bc
 
-    ld a, 8
-.loopColors
-      push af
-      ld a, [hli]
-      ldh [rBCPD], a
-      ldh [rOCPD], a
-      pop af
-      dec a
-      jr nz, .loopColors
+    pop af;pal id
+    call GBCSetPalette
 
     pop hl;palette label
     pop af
-    dec a
+    inc a
+    cp 4
     jr nz, .loopPalettes
 
   pop hl;palettes
@@ -1391,5 +1397,86 @@ SetPalettes::;hl = palettes in PAL_SET (SGB) fromat
   ld a, [sys_info]
   and a, SYS_INFO_SGB
   ret z
-.setPaletteSGB
-  jp sgb_PacketTransfer
+.setPalettesSGB
+  jp _sgb_PacketTransfer;no need to check sys info again
+
+;----------------------------------------------------------------------
+;
+; SetPalettesDirect - sets 2 palettes
+;
+;   input: 
+;     a = SGB packet header
+;     bc = colorA
+;     de = colorB
+;
+;----------------------------------------------------------------------
+SetPalettesDirect::;a = SGB packet header, bc = paletteA, de = paletteB
+  ld h, a;header
+.checkCGB
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .checkSGB
+.setPaletteCGB
+  ld h, b
+  ld l, c
+  ld a, 2
+  call GBCSetPalette
+  ld h, d
+  ld l, e
+  ld a, 3
+  call GBCSetPalette
+.checkSGB
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  ret z
+.setPalettesSGB
+  ld a, h;header
+  jp sgb_SetPal
+
+GBCSetPalette::;a = palette id, hl = colors
+  sla a
+  sla a
+  sla a
+  or a, %10000000
+  ld [rBCPS], a
+  ld [rOCPS], a
+  ld a, 8;4 colors, 2 bytes each
+.loopColors
+    push af
+.wait
+      ldh a,[rSTAT]
+      and STATF_BUSY
+      jr nz, .wait
+    ld a, [hli]
+    ldh [rBCPD], a
+    ldh [rOCPD], a
+    pop af
+    dec a
+    jr nz, .loopColors
+  ret
+
+SetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  ret z
+  call gbdk_CPUFast
+  ld a, 1
+  ld [rVBK], a
+  call gbdk_SetBkgTiles
+  xor a
+  ld [rVBK], a
+  call gbdk_CPUSlow
+  ret
+
+SetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  ret z
+  call gbdk_CPUFast
+  ld a, 1
+  ld [rVBK], a
+  call gbdk_SetBkgTiles
+  xor a
+  ld [rVBK], a
+  call gbdk_CPUSlow
+  ret

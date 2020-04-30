@@ -40,7 +40,7 @@ SGB_PACKET: MACRO ;\1 = code, \2 = num packets
 ENDM
 
 ATTR_BLK: MACRO ;\1 = num packets
-	db ($4 << 3) + ((\1 * 6)/16) + 1
+  SGB_PACKET $4, ((\1 * 6)/16) + 1
 	db \1
 ENDM
 

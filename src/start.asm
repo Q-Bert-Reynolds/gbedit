@@ -12,6 +12,15 @@ ELSE
   INCLUDE "img/away_version/version_sprites/version_sprites.asm"
 ENDC
 
+StartPalSet: PAL_SET PALETTE_START_LIGHTS, PALETTE_START_BATTLE, PALETTE_GREY, PALETTE_GREY
+SGBStartLightsAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18
+
+SGBStartBattleAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %001, 1,1,1, 0,4, 20,9
+
 LightsPalSeq:
   DB $E0, $E0, $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0
   DB $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0, $E0, $E0
@@ -190,6 +199,11 @@ Start::
 
   DISPLAY_OFF
 
+  ld hl, StartPalSet
+  call SetPalettesIndirect
+  ld hl, SGBStartLightsAttrBlk
+  call sgb_PacketTransfer
+
   ld hl, rBGP
   ld [hl], $E0
 
@@ -314,6 +328,9 @@ Start::
   EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
 
 .pitchSequence
+  ld hl, SGBStartBattleAttrBlk
+  call sgb_PacketTransfer
+
   HIDE_ALL_SPRITES
   PLAY_SONG charge_fanfare_data, 0
   ld d, 0 ; x

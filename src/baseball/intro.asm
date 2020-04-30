@@ -1,6 +1,13 @@
+SGBPlayBallIntroAttrBlk:
+  ATTR_BLK 2
+  ATTR_BLK_PACKET %001, 0,0,0, 0,11, 20,7 ;bottom UI
+  ATTR_BLK_PACKET %001, 1,1,1, 0,0, 20,11 ;upper Dark
 
 PlayIntro:: ;a - 0 = unsigned player, 1 = team
   push af;player or team
+
+  ld hl, SGBPlayBallIntroAttrBlk
+  call sgb_PacketTransfer
 
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _CALVIN_BACK_2X_TILE_COUNT
@@ -137,6 +144,9 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
+  ld hl, SGBPlayBallAttrBlk
+  call sgb_PacketTransfer
+
   pop af;player or team
   and a
   jr nz, .showTeamText
@@ -144,6 +154,19 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 .showUnsignedText
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
+  push af;num
+
+  call LoadPlayerBaseData
+  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a
+  ld bc, PaletteHomeAwayCalvin
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+
+  pop af;num
   call GetPlayerName
   ld hl, UnsignedPlayerAppearedText
   ld de, str_buffer
@@ -152,6 +175,11 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   jr .revealText
 
 .showTeamText
+  ld bc, PaletteHomeAwayCalvin
+  ld de, PaletteHomeAwayNolan
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+
   ld a, COACH_CALVIN;TODO: replace with actual opponent name
   call GetCoachesName;coach name in name_buffer
   ld hl, name_buffer
@@ -186,6 +214,8 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 
   CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_2X_ROWS, _CALVIN_BACK_2X_COLUMNS, _CALVIN_BACK_2X_ROWS-4, " "
   DISABLE_LCD_INTERRUPT
+
+  call SetPlayerColors
 
   call LoadOpposingPlayerBkgTiles
   call LoadUserPlayerBkgTiles

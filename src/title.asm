@@ -144,15 +144,20 @@ SGBTitleAttrBlk:
 ShowTitle:
   DISPLAY_OFF
   CLEAR_SCREEN 0
-
-.setPalettes
+.setDMGPalettes
+  ld hl, rBGP
+  ld [hl], DMG_PAL_BDLW
+  ld hl, rOBP0
+  ld [hl], DMG_PAL_BDLW
+  ld hl, rOBP1
+  ld [hl], $E0
+.setColorPalettes
   ld hl, TitlePalSet               
   call SetPalettesIndirect
 .setSGBColors
   ld hl, SGBTitleAttrBlk
   call sgb_PacketTransfer
-.setGBCColors;--------------------------------------------------------    GBC
-  
+.setGBCColors
   xor a;title 
   ld hl, tile_buffer
   ld bc, 20*8
@@ -193,31 +198,24 @@ ShowTitle:
   ld d, 20
   ld e, 10
   ld bc, tile_buffer
-  call SetBkgPaletteMap;----------------------------------------------------------- END GBC
+  call SetBkgPaletteMap
 
+.playMusic
   PLAY_SONG take_me_out_to_the_ballgame_data, 1
-  
-  ld hl, rBGP
-  ld [hl], DMG_PAL_BDLW
-  ld hl, rOBP0
-  ld [hl], DMG_PAL_BDLW
-  ld hl, rOBP1
-  ld [hl], $E0
 
+.drawCalvin
   ld hl, _TitleSpritesTiles
   ld de, _VRAM
   ld bc, _TITLE_SPRITES_TILE_COUNT*16
   call mem_CopyVRAM
   call UpdateAudio
 
+  ;set upper body tiles and palette
   ld de, _CalvinTitleTileMap
-  ld a, 96
-  ld b, a
-  ld c, a
-  ld a, _CALVIN_TITLE_COLUMNS
-  ld h, a
-  ld a, _CALVIN_TITLE_ROWS
-  ld l, a
+  ld b, 96
+  ld c, 96
+  ld h, _CALVIN_TITLE_COLUMNS
+  ld l, 4;_CALVIN_TITLE_ROWS
   ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
   ld [sprite_flags], a
   ld a, 2;GBC palette
@@ -226,16 +224,38 @@ ShowTitle:
   ld [sprite_skip_id], a
   call SetSpriteTilesXY ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = offset
 
+  ;set lower body tiles and palette
+  ld de, _CalvinTitleTileMap+4*_CALVIN_TITLE_COLUMNS
+  ld b, 96
+  ld c, 96+8*4
+  ld h, _CALVIN_TITLE_COLUMNS
+  ld l, _CALVIN_TITLE_ROWS-4
+  ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
+  ld [sprite_flags], a
+  ld a, 1;GBC palette
+  ld [sprite_props], a
+  ld a, 16
+  ld [sprite_first_tile], a
+  xor a;skip tile 0
+  ld [sprite_skip_id], a
+  call SetSpriteTilesXY
+
   call UpdateAudio
 
+.moveBaseball
+  ld hl, PaletteBaseball
+  ld a, 4
+  call GBCSetPalette
+
   ld c, 5
-  ld d, OAMF_PAL1
+  ld d, OAMF_PAL1 | 4
   call gbdk_SetSpriteProp
   ld c, 5
   ld d, 94
   ld e, 117
   call gbdk_MoveSprite
 
+.drawTitle
   ld hl, _TitleTiles
   ld de, _VRAM+$1000
   ld bc, _TITLE_TILE_COUNT*16
@@ -255,6 +275,7 @@ ShowTitle:
   ld bc, _BeisbolLogoTileMap
   call gbdk_SetBkgTiles
 
+.loadFirstPlayer
   xor a
   ld d, a
   ld e, a
@@ -341,11 +362,11 @@ CyclePlayersLoop:
   ld c, a
   add hl, bc
   ld a, [hl]
-  add a, 101 ;y = 101+BallToss+_j
+  add a, 103
   ld e, a
   ld d, 94 ;x
   ld c, 5 ;sprite id of ball
-  call gbdk_MoveSprite ;if (z == 0) move_sprite(5, 94, 101 + ball_toss[j]);
+  call gbdk_MoveSprite
 .skipBallToss
   call gbdk_WaitVBL
   ld a, [_j]
@@ -386,7 +407,7 @@ CyclePlayersLoop:
 StartMenuPalSet: PAL_SET PALETTE_UI, PALETTE_UI, PALETTE_GREY, PALETTE_GREY
 SGBStartMenuAttrBlk:
   ATTR_BLK 1
-  ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;title & home/away
+  ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;UI
 
 NewGameOptionMenuText:
   db "NEW GAME\nOPTION", 0

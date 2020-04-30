@@ -628,14 +628,16 @@ ShowPlayBallWindow:
   SHOW_WIN
   ret 
 
-SGBPlayBallPalSet: PAL_SET PALETTE_UI, PALETTE_GREY, PALETTE_GREY, PALETTE_GREY
+SGBPlayBallPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
 SGBPlayBallAttrBlk:
   ATTR_BLK 3
-  ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;main UI
+  ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
   ATTR_BLK_PACKET %001, 2,2,2, 0,4,   8,7 ;user player
   ATTR_BLK_PACKET %001, 3,3,3, 12,0,  8,7 ;opposing player
   
-SetSGBMainColors:
+SetPlayerColors:
+  ld hl, sgb_MaskEnFreeze
+  call  sgb_PacketTransfer
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
@@ -663,6 +665,9 @@ SetSGBMainColors:
   pop bc;user palette
   ld a, [sgb_Pal23]
   call SetPalettesDirect
+
+  ld hl, sgb_MaskEnCancel
+  call  sgb_PacketTransfer
   ret
 
 SetupGameUI:
@@ -672,7 +677,7 @@ SetupGameUI:
   
   CLEAR_BKG_AREA 12, 0, 7, 7, " "
 
-  call SetSGBMainColors
+  call SetPlayerColors
 
 .setPlayerTiles
   call LoadOpposingPlayerBkgTiles
@@ -690,6 +695,9 @@ StartGame::
   ld hl, PlayBallSgbBorderTiles
   ld de, PlayBallSgbBorderTileMap
   call sgb_SetBorder
+
+  ld hl, SGBPlayBallPalSet               
+  call SetPalettesIndirect
 
   DISPLAY_OFF
   SET_DEFAULT_PALETTE

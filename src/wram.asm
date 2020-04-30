@@ -10,6 +10,7 @@ sprite_props:: DB
 sprite_offset:: DB
 sprite_flags:: DB ;0 = skip
 sprite_skip_id:: DB
+sprite_first_tile:: DB
 
 ;timers
 vbl_timer:: DB ;TODO:: use me

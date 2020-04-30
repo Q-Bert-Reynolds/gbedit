@@ -97,10 +97,10 @@ Main::
   call SetBank
   call Seed
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
 
 .title ;show title drop, version slide, cycle of players, new game/continue screen
   ld a, TITLE_BANK
@@ -114,9 +114,9 @@ Main::
   call NewGame
 
 .overworld; walk around, find a game, repeat
-    ; ld a, OVERWORLD_BANK
-    ; call SetBank
-    ; call Overworld
+    ld a, OVERWORLD_BANK
+    call SetBank
+    call Overworld
 
     ;black out tiles one by one
     PLAY_SONG tessie_data, 1

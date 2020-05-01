@@ -224,6 +224,7 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   and a, SYS_INFO_SGB
   ret z
 
+  di
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, b;bank
@@ -231,7 +232,6 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   push hl;tiles
   call SetBank
 
-  di
   ld hl, sgb_MaskEnFreeze
   call  _sgb_PacketTransfer      ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers
 
@@ -265,11 +265,6 @@ sgb_SetPal:: ;a = packet header, bc = colorA, de = colorB
   and a, SYS_INFO_SGB
   ret z
 
-  ld a, [loaded_bank]
-  ld [temp_bank], a
-  ld a, SGB_BANK
-  call SetBank
-
   push de;colorB
   push bc;colorA
   pop hl;colorA
@@ -290,8 +285,6 @@ sgb_SetPal:: ;a = packet header, bc = colorA, de = colorB
   ld hl, tile_buffer
   call _sgb_PacketTransfer
 
-  ld a, [temp_bank]
-  call SetBank
   ret
 
 ; Copies data from GB VRAM to SNES RAM
@@ -304,6 +297,13 @@ sgb_VRAMTransfer::
 _sgb_VRAMTransfer:
   ld a, [rLCDC]
   push af;save LCD state
+  ld a, [rSCX]
+  push af;save scroll X
+  ld a, [rSCY]
+  push af;save scroll Y
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
   di
   push de                     ; packet data
   DISPLAY_OFF                 ; We disble interruptions and turn off the LCD because we are going to modify the VRAM data
@@ -311,7 +311,7 @@ _sgb_VRAMTransfer:
   ld [rBGP], a                ; VRAM-transfer background palette value
   ld de, _VRAM + 2048
   ld bc, 4096
-  call mem_Copy               ; We copy to the Game Boy VRAM the 4KB data that is going to be transferred to the SNES RAM
+  call mem_CopyVRAM           ; We copy to the Game Boy VRAM the 4KB data that is going to be transferred to the SNES RAM
 
   ; We copy to the visible _SCRN0 background the 4KB data that is going to be transferred to the SNES RAM by VRAM-transfer
   ld hl, _SCRN0
@@ -321,6 +321,9 @@ _sgb_VRAMTransfer:
 .rowLoop:
     ld b, 20                  ; Visible background width
 .columnLoop:
+      push af
+      LCD_WAIT_VRAM
+      pop af
       ld [hli], a             ; Tile set
       inc a
       dec b
@@ -335,13 +338,12 @@ _sgb_VRAMTransfer:
   pop hl                      ; Packet data
   call sgb_PacketTransfer     ; We send the packet that will produce the transfer
 
-  ld hl, _VRAM
-  ld bc, $2000
-  xor a
-  call	mem_SetVRAM
-
   xor a
   ld [rBGP], a                ; We restore the background palette
+  pop af                      ;restore LCD state
+  ld [rSCX], a  
+  pop af                      ;restore LCD state
+  ld [rSCY], a  
   pop af                      ;restore LCD state
   ld [rLCDC], a
   ret
@@ -400,5 +402,5 @@ _sgb_PacketTransfer:
 
     pop bc
     dec b
-    ret z
-    jr .sendPacketsLoop       ; We jump while there are packets left to be sent
+    jr nz, .sendPacketsLoop       ; We jump while there are packets left to be sent
+  ret

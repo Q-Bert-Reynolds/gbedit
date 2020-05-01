@@ -636,8 +636,6 @@ SGBPlayBallAttrBlk:
   ATTR_BLK_PACKET %001, 3,3,3, 12,0,  8,7 ;opposing player
   
 SetPlayerColors:
-  ld hl, sgb_MaskEnFreeze
-  call  sgb_PacketTransfer
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
@@ -666,8 +664,6 @@ SetPlayerColors:
   ld a, [sgb_Pal23]
   call SetPalettesDirect
 
-  ld hl, sgb_MaskEnCancel
-  call  sgb_PacketTransfer
   ret
 
 SetupGameUI:

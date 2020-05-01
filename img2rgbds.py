@@ -63,15 +63,15 @@ def addTileGetFlipsIndex (tile, tileset):
 
   xFlip = flipTileX(tile)
   if xFlip in tileset:
-    return ("40", tileset.index(xFlip))
+    return ("20", tileset.index(xFlip))
 
   yFlip = flipTileY(tile)
   if yFlip in tileset:
-    return ("80", tileset.index(yFlip))
+    return ("40", tileset.index(yFlip))
 
   xyFlip = flipTileY(xFlip)
   if xyFlip in tileset:
-    return ("C0", tileset.index(xyFlip))
+    return ("60", tileset.index(xyFlip))
 
   tileset.append(tile)
   return ("00", tileset.index(tile))

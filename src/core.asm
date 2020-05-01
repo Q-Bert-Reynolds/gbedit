@@ -805,8 +805,12 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
 ;; sets and moves a grid of sprite tiles, skips tiles according to flags, resets sprite_first_tile to 0
 SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
   ld [sprite_offset], a;offset
+  push bc
+  ld b, a
   ld a, [sprite_first_tile]
+  add a, b
   ld [_a], a;first tile
+  pop bc
   xor a
   ld [_j], a;row
 .rowLoop ;for (j = 0; j < h; j++)

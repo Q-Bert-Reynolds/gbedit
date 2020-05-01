@@ -1467,24 +1467,20 @@ SetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   ret z
-  call gbdk_CPUFast
   ld a, 1
   ld [rVBK], a
   call gbdk_SetBkgTiles
   xor a
   ld [rVBK], a
-  call gbdk_CPUSlow
   ret
 
 SetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   ret z
-  call gbdk_CPUFast
   ld a, 1
   ld [rVBK], a
   call gbdk_SetBkgTiles
   xor a
   ld [rVBK], a
-  call gbdk_CPUSlow
   ret

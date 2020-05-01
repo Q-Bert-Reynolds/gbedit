@@ -1,3 +1,10 @@
+Current
+
+- semi-random contact results (announcer mode)
+- advancing bases / scoring
+- change batters after end of plate appearance
+- change sides after three outs (opponent batting / user pitching)
+
 General
 
 - remove direct use of save file (so it doesn't immediately overwrite old save)
@@ -36,11 +43,10 @@ New Game
 Play Ball
 
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
-- opponent batting / user pitching
 - ball should fly off screen after contact
 - handle different moves
-- images for batting/pitching -> front/back -> ready/action (8 each * 151)
 - hide / disable selection of pitches when batting / swings when pitching
+- more pitching/batting animations
 
 Simulation
 

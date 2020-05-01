@@ -48,6 +48,12 @@ Main::
 .setSysInfo
   ld [sys_info], a
 
+.setupGameBoyColor
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .setup
+  call gbdk_CPUFast; GBC always in fast mode
+
 .setup
   di
   ld sp, $ffff

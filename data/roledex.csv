@@ -5,9 +5,9 @@
 004,Ginger,,,,"Easily sunburns. When it rains, steam is said to raise from their head.",5.00,80,Fire,,39,52,43,65,50,005,16,1,2,2,0,PaletteUI
 005,Freckles,,,,"When they swing a hot bat, they elevate the ball to unbearably high levels.",6.00,130,Fire,,58,64,58,80,65,006,36,2,2,2,0,PaletteUI
 006,Big Red,,,,Throws fire that is hot enough to break ankles. Known for their high heat.,7.00,210,Fire,Flying,78,84,78,100,85,,,7,2,2,0,PaletteUI
-007,Squirt,,,,"In extra innings, they swell up and harden into a wall. Powerfully sprays singles.",4.00,40,Water,,44,48,65,43,50,008,16,0,1,3,0,PaletteTitleScreen
-008,Pudge,,,,"Often hides signals and picks off unwary prey. For blocking fast, they move their heals to maintain balance.",5.00,165,Water,,59,63,80,58,65,009,36,3,1,3,0,PaletteTitleScreen
-009,Yogi,,,,A brutal PLAYER. Good under pressure. A cannon behind the plate. The core of a good infield.,6.00,260,Water,,79,83,100,78,85,,,7,3,3,0,PaletteTitleScreen
+007,Squirt,,,,"In extra innings, they swell up and harden into a wall. Powerfully sprays singles.",4.00,40,Water,,44,48,65,43,50,008,16,0,1,3,0,PaletteSquirt
+008,Pudge,,,,"Often hides signals and picks off unwary prey. For blocking fast, they move their heals to maintain balance.",5.00,165,Water,,59,63,80,58,65,009,36,3,1,3,0,PaletteSquirt
+009,Yogi,,,,A brutal PLAYER. Good under pressure. A cannon behind the plate. The core of a good infield.,6.00,260,Water,,79,83,100,78,85,,,7,3,3,0,PaletteSquirt
 010,Sweet Pea,,,,Their short feet are tipped with cleats. Steals second and third effortlessly.,3.00,28,Bug,,45,30,35,45,20,011,7,0,1,3,0,PaletteSepia
 011,Meta,,,,This PLAYER is vulnerable to pitches. Their open stance exposes their weak and tender body.,4.06,70,Bug,,50,20,55,30,25,012,10,1,1,3,0,PaletteSepia
 012,Butterfly,,,,"At the plate, they flip their incredible hair, sending highly toxic dust into the air.",5.00,145,Bug,Flying,60,45,50,70,80,,,1,5,5,0,PaletteSepia

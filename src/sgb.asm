@@ -316,18 +316,22 @@ sgb_VRAMTransfer::
   and a, SYS_INFO_SGB
   ret z
 _sgb_VRAMTransfer:
+  ; store screen state
   ld a, [rLCDC]
-  push af;save LCD state
+  push af
   ld a, [rSCX]
-  push af;save scroll X
+  push af
   ld a, [rSCY]
-  push af;save scroll Y
-  xor a
-  ld [rSCX], a
-  ld [rSCY], a
+  push af
+  ld a, [rBGP]
+  push af
+
   di
   push de                     ; packet data
   DISPLAY_OFF                 ; We disble interruptions and turn off the LCD because we are going to modify the VRAM data
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
   ld a, %11100100
   ld [rBGP], a                ; VRAM-transfer background palette value
   ld de, _VRAM + 2048
@@ -359,13 +363,14 @@ _sgb_VRAMTransfer:
   pop hl                      ; Packet data
   call sgb_PacketTransfer     ; We send the packet that will produce the transfer
 
-  xor a
-  ld [rBGP], a                ; We restore the background palette
-  pop af                      ;restore LCD state
-  ld [rSCX], a  
-  pop af                      ;restore LCD state
-  ld [rSCY], a  
-  pop af                      ;restore LCD state
+  ;restore screen state
+  pop af
+  ld [rBGP], a
+  pop af
+  ld [rSCX], a
+  pop af
+  ld [rSCY], a
+  pop af
   ld [rLCDC], a
   ret
 

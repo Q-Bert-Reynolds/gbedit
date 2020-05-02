@@ -687,6 +687,9 @@ SetupGameUI:
   ret
 
 StartGame::
+  DISPLAY_OFF
+  SET_DEFAULT_PALETTE
+
   ld a, BANK(PlayBallSgbBorderTiles)
   ld hl, PlayBallSgbBorderTiles
   ld de, PlayBallSgbBorderTileMap
@@ -694,9 +697,6 @@ StartGame::
 
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
-
-  DISPLAY_OFF
-  SET_DEFAULT_PALETTE
 
   xor a
   ld [rSCX], a

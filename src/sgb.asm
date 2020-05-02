@@ -7,6 +7,27 @@
 INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
 
+; Bank SGB_BANK Subroutines:
+;   sgb_Init
+;     Checks to see if game is running on SGB, and updates sys_info.
+;     Sends initialization packet to SNES. Sets default palette and border.
+
+; Bank 0 Subroutines:
+;   sgb_SetDefaultBorder
+;     Sets the default Super Game Boy border.
+;   sgb_SetBorder
+;     Sets the Super Game Boy border.
+;     Input: a = bank, hl = tiles, de = tile map
+;   sgb_SetPal
+;     Sets 2 SNES palettes. Packet can only be codes 0-3.
+;     Input: a = packet header, bc = paletteA, de = paletteB
+;   sgb_VRAMTransfer
+;     Copies data to GB VRAM then to SNES.
+;     Input: de = packet, hl = graphical data
+;   sgb_PacketTransfer
+;     Transfers data to SNES.
+;     Input: hl = packet address
+
 ; Super Game boy command packets definitions
 ;  Code  Name      Expl.
 ;  $00   PAL01     Set SGB Palette 0,1 Data
@@ -103,9 +124,9 @@ DataSnd6: DB $79, $1B, $08, $00, $0B, $EA, $EA, $EA, $EA, $EA, $A9, $01, $CD, $4
 DataSnd7: DB $79, $10, $08, $00, $0B, $4C, $20, $08, $EA, $EA, $EA, $EA, $EA, $60, $EA, $EA
 
 ; Super Game boy command packets
-sgb_PalSetDefault::    PAL_SET PALETTE_GREY, PALETTE_GREY, PALETTE_GREY, PALETTE_GREY
-sgb_MltReqTwoPlayers:: MLT_REQ 2
-sgb_MltReqOnePlayer::  MLT_REQ 1
+sgb_PalSetDefault:    PAL_SET PALETTE_GREY, PALETTE_GREY, PALETTE_GREY, PALETTE_GREY
+sgb_MltReqTwoPlayers: MLT_REQ 2
+sgb_MltReqOnePlayer:  MLT_REQ 1
 
 ; Super Game Boy initialization
 sgb_Init::
@@ -257,7 +278,7 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   call SetBank
   reti
 
-sgb_SetPal:: ;a = packet header, bc = colorA, de = colorB
+sgb_SetPal:: ;a = packet header, bc = paletteA, de = paletteB
   ld hl, tile_buffer
   ld [hli], a
 
@@ -265,14 +286,14 @@ sgb_SetPal:: ;a = packet header, bc = colorA, de = colorB
   and a, SYS_INFO_SGB
   ret z
 
-  push de;colorB
-  push bc;colorA
-  pop hl;colorA
+  push de;paletteB
+  push bc;paletteA
+  pop hl;paletteA
   ld de, tile_buffer+1
   ld bc, 8
   call mem_Copy
 
-  pop hl;colorB
+  pop hl;paletteB
   inc hl
   inc hl
   ld de, tile_buffer+9

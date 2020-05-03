@@ -127,6 +127,29 @@ Runners:
 
 SECTION "Player Utils", ROM0
 
+;GetPlayerMoveName            - hl = player, a = move num, returns move name in name_buffer
+;GetPlayerMoveCount           - hl = player, returns move count in a
+;GetPlayerMove                - hl = player, a = player move num, returns move in move_data
+;GetPlayerMovePP              - hl = player, a = player move num, returns pp in a
+;GetPlayerNumber              - hl = player, returns number in a
+;GetPlayerLevel               - hl = player, returns level in a
+;GetPlayerPosition            - hl = player, returns position in a
+;GetPlayerStatus              - hl = player, returns status in a
+;GetPlayerHP                  - hl = player, returns hp in hl
+;GetPlayerMaxHP               - hl = player, returns max hp in hl
+;GetPlayerBat                 - hl = player, returns bat in hl
+;GetPlayerField               - hl = player, returns field in hl
+;GetPlayerSpeed               - hl = player, returns speed in hl
+;GetPlayerThrow               - hl = player, returns throw in hl
+;GetUserPlayerXP              - hl = player, returns xp in ehl
+;GetUserPlayerXPToNextLevel   - hl = player, returns xp in ehl
+;GetUserPlayerPay             - hl = player, returns pay in ehl
+;GetUserPlayerName            - hl = user player, returns name in name_buffer
+;GetOpposingPlayer            - a = lineup index, returns player in hl
+;GetUserPlayer                - a = lineup index, returns player in hl
+;GetOpposingPlayerByPosition  - a = position(1-9), returns player in hl
+;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
+
 NoMove: DB "--------", 0
 GetPlayerMoveName:: ;hl = player, a = move num, returns move name in name_buffer
   push bc
@@ -385,6 +408,13 @@ GetUserPlayerName::;hl = user player, returns name in name_buffer
   call GetPlayerNumber
   call GetPlayerName
   pop bc
+  ret
+
+GetOpposingPlayer::;a = lineup index, returns player in hl
+  ld bc, OpponentLineup
+  ld de, OpponentLineupPlayer2 - OpponentLineupPlayer1
+  call math_Multiply
+  add hl, bc
   ret
 
 GetUserPlayer::;a = lineup index, returns player in hl

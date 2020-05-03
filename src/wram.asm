@@ -73,6 +73,7 @@ move_data:: DS 8
 balls_strikes_outs:: DB; XBBBSSOO
 runners_on_base:: DW; lineup order of runners on base - HHHHTTTT SSSSFFFF
 frame:: DB
+current_batter:: DB;upper nibble is opponent, lower nibble is user
 home_team:: DB
 home_score:: DB
 away_score:: DB

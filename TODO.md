@@ -94,7 +94,6 @@ Audio
 GameBoy Color
 
 - generate palette maps from images
-- use same palettes as SGB
 
 Super GameBoy
 

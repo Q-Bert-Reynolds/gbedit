@@ -453,7 +453,7 @@ Bat:
   call str_Replace;"And the pitch.\nA PITCH_NAME."
 
   xor a
-  ld [_c], a
+  ld [_c], a; c = swing frame
   ld [pitch_z], a
   ld a, 4
   ld [_s], a;speed
@@ -484,8 +484,8 @@ Bat:
         ld a, [pitch_z]
         ld [_c], a
 
-  ld a, 1
-  call SetUserPlayerBkgTiles
+        ld a, 1
+        call SetUserPlayerBkgTiles
 
         ld a, [aim_x];x
         srl a
@@ -525,6 +525,9 @@ Bat:
     ld [pitch_z], a
     cp 200
     jp c, .swingLoop
+  ld a, [_c]
+  and a
+  jr nz, .swingAndMiss
   jp .noSwing
 
 .hitBall
@@ -568,6 +571,9 @@ Bat:
   jr .finish
 .noSwing
   call AnnounceNoSwing
+  jr .finish
+.swingAndMiss
+  call AnnounceSwingMiss
 .finish
   call HideBaseball
   call HideStrikeZone
@@ -635,7 +641,7 @@ SGBPlayBallAttrBlk:
   ATTR_BLK_PACKET %001, 2,2,2, 0,4,   8,7 ;user player
   ATTR_BLK_PACKET %001, 3,3,3, 12,0,  8,7 ;opposing player
   
-SetPlayerColors:
+SetPlayerColors:;since SGB requires 2 palettes to change at the same time, always set both players
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
@@ -672,18 +678,6 @@ SetupGameUI:
   HIDE_WIN
   
   CLEAR_BKG_AREA 12, 0, 7, 7, " "
-
-  call SetPlayerColors
-
-.setPlayerTiles
-  call LoadOpposingPlayerBkgTiles
-  call LoadUserPlayerBkgTiles
-
-  xor a
-  call SetOpposingPlayerBkgTiles
-  xor a
-  call SetUserPlayerBkgTiles
-
   ret
 
 StartGame::
@@ -720,10 +714,9 @@ StartGame::
   ld [frame], a
   ld [move_choice], a
   ld [home_team], a
-  ; ld a, 1
   ld [home_score], a
-  ; ld a, 3
   ld [away_score], a
+  ld [current_batter], a
 
   ld a, 1; TODO: replace with team/random encounter
   call PlayIntro

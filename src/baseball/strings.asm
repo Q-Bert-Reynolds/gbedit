@@ -124,10 +124,10 @@ PlacesTheTagText::            DB "%s\nplaces the tag."
 ;dead ball
 DeadBallText::                DB "Dead ball!",0
 
-
 ;strike
 StrikeText::                  DB "Strike %s!",0
-StrikeOutLookingText::        DB "%s\nstrikes out looking!",0
+StrikeOutLookingText::        DB "%s strikes\nout looking!",0
+StrikeOutSwingingText::       DB "%s strikes\nout swinging!",0
 
 ;no swing
 BallText::                    DB "Ball %s.",0

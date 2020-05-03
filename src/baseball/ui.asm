@@ -1,5 +1,5 @@
 
-DrawPlayerUI:: ;a = team
+DrawPlayerUI:: ;a = team (0 = user, 1 = opponent)
   push af;team
   
   xor a
@@ -101,7 +101,8 @@ DrawPlayerUI:: ;a = team
   and a
   jr z, .isPitcher ;if (b) {
     ld hl, tile_buffer+1
-    ld a, "1";TODO: should be batting order
+    call CurrentOrderInLineup
+    add a, "1"
     ld [hl], a ;tiles[1] = NUMBERS + p->batting_order;
     ld hl, tile_buffer+15
     ld a, BATTING_AVG
@@ -436,11 +437,6 @@ DrawPlayBallUI::
   call DrawTeamNames
   call DrawScore
   call DrawBases
-
-  xor a
-  call DrawPlayerUI ;0
-  ld a, 1
-  call DrawPlayerUI ;1
 
   ld b, 0
   ld c, 12

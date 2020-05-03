@@ -215,15 +215,6 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   CLEAR_BKG_AREA 1, 16-_CALVIN_BACK_2X_ROWS, _CALVIN_BACK_2X_COLUMNS, _CALVIN_BACK_2X_ROWS-4, " "
   DISABLE_LCD_INTERRUPT
 
-  call SetPlayerColors
-
-  call LoadOpposingPlayerBkgTiles
-  call LoadUserPlayerBkgTiles
-  xor a
-  call SetOpposingPlayerBkgTiles
-  xor a
-  call SetUserPlayerBkgTiles
-
   HIDE_ALL_SPRITES
   call gbdk_WaitVBL
   xor a

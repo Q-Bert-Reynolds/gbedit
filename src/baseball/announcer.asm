@@ -102,9 +102,31 @@
 ; 
 ;----------------------------------------------------------------------
 AnnounceBeginningOfFrame::
-  call GetCurrentOpponentPlayer
-  ; StepsOnTheMoundText
-  ; WalksToThePlateText
+  call AnnouncePitcher
+  call AnnounceBatter
+  HIDE_WIN
+  ret
+
+AnnouncePitcher::
+  call ShowPitcher
+  call GetCurrentPitcherName
+  ld bc, name_buffer
+  ld hl, TakesTheMoundText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  ret
+
+AnnounceBatter::
+  call ShowBatter
+  call GetCurrentBatterName
+  ld bc, name_buffer
+  ld hl, WalksToThePlateText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
   ret
 
 ;----------------------------------------------------------------------
@@ -140,8 +162,7 @@ AnnounceNoSwing::
   ret
 
 .strikeout
-  call GetCurrentBatter
-  call GetPlayerName
+  call GetCurrentBatterName
   ld hl, StrikeOutLookingText
   ld de, str_buffer
   ld bc, name_buffer
@@ -155,6 +176,7 @@ AnnounceNoSwing::
   call GetOuts
   inc a
   call SetOuts
+  call NextBatter
   ret
 
 .ball
@@ -176,8 +198,7 @@ AnnounceNoSwing::
   ret
 
 .walk
-  call GetCurrentBatter
-  call GetPlayerName
+  call GetCurrentBatterName
   ld hl, WalkText
   ld de, str_buffer
   ld bc, name_buffer
@@ -189,12 +210,14 @@ AnnounceNoSwing::
   xor a
   call SetStrikes
   call AnnounceAdvanceRunners
+  call NextBatter
   ret
 
 .hitByPitch
   ; ;hit by pitch
   ; HitByPitchText
   ; BenchesClear
+  call NextBatter
 
 .updateBaseRunners
   ; update runners on base
@@ -237,8 +260,39 @@ AnnounceSwingMiss::;de = pitch xy
   ret
 
 .showStrike
+  call GetStrikes
+  cp a, 2
+  jr nc, .strikeout
+  inc a
+  ld h, 0
+  ld l, a
+  call SetStrikes
+  ld de, name_buffer
+  call str_Number
   ld hl, StrikeText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
   call RevealTextAndWait
+  ret
+
+.strikeout
+  call GetCurrentBatterName
+  ld hl, StrikeOutSwingingText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  xor a
+  call SetBalls
+  xor a
+  call SetStrikes
+  call GetOuts
+  inc a
+  call SetOuts
+  call NextBatter
   ret
 
 

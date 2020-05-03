@@ -192,26 +192,151 @@ EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
   ld de, str_buffer
   ld hl, name_buffer
   call str_Append
+  ret
 
+CurrentOrderInLineup::
+  call IsUserFielding
+  ld a, [current_batter]
+  jr nz, .opponentBatting
+  and a, %00001111
+  ret
+.opponentBatting
+  ld a, [current_batter]
+  swap a
+  and a, %00001111
+  ret
+
+;Show Player utils
+NextBatter::
+  call IsUserFielding
+  jr nz, .nextOpponentBatter
+.nextUserBatter
+  ld a, [current_batter]
+  and %00001111
+  inc a
+  cp 9
+  jr c, .notTopOfUserLineup
+  ld a, 0
+.notTopOfUserLineup
+  ld b, a
+  ld a, [current_batter]
+  and a, %11110000
+  or a, b
+  ld [current_batter], a
+  jp AnnounceBatter
+
+.nextOpponentBatter
+  ld a, [current_batter]
+  swap a
+  and %00001111
+  inc a
+  cp 9
+  jr c, .notTopOfOpponentLineup
+  ld a, 0
+.notTopOfOpponentLineup
+  ld b, a
+  swap b
+  ld a, [current_batter]
+  and a, %00001111
+  or a, b
+  ld [current_batter], a
+  jp AnnounceBatter
+
+ShowBatter::
+  call IsUserFielding
+  jp z, ShowUserPlayer
+  jp ShowOpposingPlayer
+
+ShowPitcher::
+  call IsUserFielding
+  jp z, ShowOpposingPlayer
+  jp ShowUserPlayer
+
+ShowUserPlayer::
+  xor a
+  call DrawPlayerUI
+  call SetPlayerColors
+  call LoadUserPlayerBkgTiles
+  xor a
+  call SetUserPlayerBkgTiles
+  ret
+
+ShowOpposingPlayer::
+  ld a, 1
+  call DrawPlayerUI
+  call SetPlayerColors
+  call LoadOpposingPlayerBkgTiles
+  xor a
+  call SetOpposingPlayerBkgTiles
+  ret
+
+; Get Player Data
+GetUserPitcher::
+  ld a, 1
+  call GetUserPlayerByPosition
+  ret
+
+GetUserBatter::
+  ld a, [current_batter]
+  and a, %00001111
+  call GetUserPlayer
+  ret
+  
+GetOpponentPitcher::
+  ld a, 1
+  call GetOpposingPlayerByPosition
+  ret
+
+GetOpponentBatter::
+  ld a, [current_batter]
+  swap a
+  and a, %00001111
+  call GetOpposingPlayer
   ret
 
 GetCurrentBatter:: ;puts batter's player data in hl
   call IsUserFielding
-  jp nz, GetCurrentOpponentPlayer
-  jp GetCurrentUserPlayer
+  jp nz, GetOpponentBatter
+  jp GetUserBatter
+
+GetCurrentBatterName:: ;puts batter's name in name_buffer
+  call IsUserFielding
+  jr nz, .getOpponentBatter
+  call GetUserBatter
+  call GetUserPlayerName
+  ret
+.getOpponentBatter
+  call GetOpponentBatter
+  call GetPlayerNumber
+  call GetPlayerName
+  ret
 
 GetCurrentPitcher:: ;puts pitcher's player data in hl
   call IsUserFielding
-  jp z, GetCurrentOpponentPlayer
-  jp GetCurrentUserPlayer
+  jp z, GetOpponentPitcher
+  jp GetUserPitcher
+
+GetCurrentPitcherName:: ;pust pitcher's name in name_buffer
+  call IsUserFielding
+  jr z, .getOpponentPitcher
+  call GetUserPitcher
+  call GetUserPlayerName
+  ret
+.getOpponentPitcher
+  call GetOpponentPitcher
+  call GetPlayerNumber
+  call GetPlayerName
+  ret
 
 GetCurrentUserPlayer::;puts user's current batter or pitcher player data in hl
-  ld hl, UserLineupPlayer1
-  ret 
+  call IsUserFielding
+  jp z, GetUserBatter
+  jp GetUserPitcher
 
 GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher player data in hl
-  ld hl, OpponentLineupPlayer1
-  ret
+  call IsUserFielding
+  jp z, GetOpponentPitcher
+  jp GetOpponentBatter
 
 GetRunnerOnFirst::;TODO: puts runner on first player data or zero in hl
   ret

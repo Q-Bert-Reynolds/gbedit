@@ -492,17 +492,27 @@ LoadUserPlayerBkgTiles::
   
   ld a, [loaded_bank]
   ld [temp_bank], a
+  call IsUserFielding
+  push af;user fielding
+  jr nz, .userIsPitching
+.userIsBatting
   ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
+  jr .setBank
+.userIsPitching
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_USER
+.setBank
   ld a, [hli]
   call SetBank
 
   ld a, [hli]
   ld e, a
   ld a, [hli]
-  ld d, a
+  ld d, a;tiles
+  pop af;user fielding
+  jr nz, .doubleTiles
+  
   push de;tiles
-
-  ld a, [hli]
+  ld a, [hli];tile count
   ld de, 16
   call math_Multiply
   ld b, h
@@ -510,8 +520,20 @@ LoadUserPlayerBkgTiles::
 
   pop hl;tiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  call mem_CopyVRAM
 
+  call mem_CopyVRAM
+  jr .restoreBank
+
+.doubleTiles 
+  ld a, [hli];tile count
+  ld b, 0
+  ld c, a
+  ld h, d
+  ld l, e
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  call SetBkgDataDoubled
+
+.restoreBank
   ld a, [temp_bank]
   call SetBank
   
@@ -524,7 +546,14 @@ LoadOpposingPlayerBkgTiles::
   
   ld a, [loaded_bank]
   ld [temp_bank], a
+  call IsUserFielding
+  jr nz, .opponentIsBatting
+.opponentIsPitching
   ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
+  jr .setBank
+.opponentIsBatting
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+.setBank
   ld a, [hli]
   call SetBank
 
@@ -560,7 +589,14 @@ SetUserPlayerBkgTiles:: ;a = frame
   
   ld a, [loaded_bank]
   ld [temp_bank], a
+  call IsUserFielding
+  jr nz, .userIsPitching
+.userIsBatting
   ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
+  jr .setBank
+.userIsPitching
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_USER
+.setBank
   ld a, [hli]
   call SetBank
 
@@ -602,7 +638,14 @@ SetOpposingPlayerBkgTiles:: ;a = frame
   
   ld a, [loaded_bank]
   ld [temp_bank], a
+  call IsUserFielding
+  jr nz, .opponentIsBatting
+.opponentIsPitching
   ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
+  jr .setBank
+.opponentIsBatting
+  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+.setBank
   ld a, [hli]
   call SetBank
 

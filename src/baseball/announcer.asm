@@ -169,14 +169,9 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-  xor a
-  call SetBalls
-  xor a
-  call SetStrikes
-  call GetOuts
-  inc a
-  call SetOuts
-  call NextBatter
+  call IncrementOuts
+  cp 3
+  jp nz, AnnounceBatter
   ret
 
 .ball
@@ -211,6 +206,7 @@ AnnounceNoSwing::
   call SetStrikes
   call AnnounceAdvanceRunners
   call NextBatter
+  call AnnounceBatter
   ret
 
 .hitByPitch
@@ -218,6 +214,7 @@ AnnounceNoSwing::
   ; HitByPitchText
   ; BenchesClear
   call NextBatter
+  call AnnounceBatter
 
 .updateBaseRunners
   ; update runners on base
@@ -285,14 +282,9 @@ AnnounceSwingMiss::;de = pitch xy
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-  xor a
-  call SetBalls
-  xor a
-  call SetStrikes
-  call GetOuts
-  inc a
-  call SetOuts
-  call NextBatter
+  call IncrementOuts
+  cp 3
+  jp nz, AnnounceBatter
   ret
 
 

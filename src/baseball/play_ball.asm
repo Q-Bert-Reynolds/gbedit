@@ -6,7 +6,6 @@ INCLUDE "img/play/play_ball_sgb_border.asm"
 
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
-INCLUDE "src/baseball/scale_tile_data_2x.asm"
 INCLUDE "src/baseball/strings.asm"
 INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/announcer.asm"
@@ -710,10 +709,12 @@ StartGame::
   ld a, c
   ld [hl], a
 
+  ld a, 1
+  ld [home_team], a
+
   xor a
   ld [frame], a
   ld [move_choice], a
-  ld [home_team], a
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a

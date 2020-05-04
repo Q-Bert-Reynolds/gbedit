@@ -1,3 +1,5 @@
+SECTION "Scale Tile Data 2X", ROM0
+
 SCALE_2X_CALC_A: MACRO
   ld a, [_b]
   swap a
@@ -51,7 +53,7 @@ SCALE_2X_SET_TILE: MACRO ;\1 = offset, a = data from calc
 ENDM
 
 ;TODO: this can probably be cleaned up a bit
-SetBkgDataDoubled: ;de = vram location, bc = nb_tiles, hl = data
+SetBkgDataDoubled:: ;de = vram location, bc = nb_tiles, hl = data
   push de ;vram location
   push bc ;nb_tiles
   push hl ;data

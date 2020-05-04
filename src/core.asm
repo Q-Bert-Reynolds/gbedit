@@ -1346,10 +1346,12 @@ GetClosestFielderByLocation::;de = xy, returns position number in a
   ret
 
 IsUserFielding::;nz = user is fielding, z = user is batting
+  push bc
   ld a, [home_team];1 = user is home team
   ld b, a
   ld a, [frame];1 = bottom
   xor a, b;home != frame
+  pop bc
   ret
 
 ;----------------------------------------------------------------------

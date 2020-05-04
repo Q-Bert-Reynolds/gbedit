@@ -109,7 +109,7 @@ PaletteBaseball::
 PALETTE_DARK EQU 9
 PaletteDark::
   COLOR_WHITE
-  COLOR_DARK_GREY    
+  COLOR_BLACK    
   COLOR_BLACK     
   COLOR_BLACK 
 

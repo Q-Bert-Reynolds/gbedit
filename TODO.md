@@ -2,8 +2,7 @@ Current
 
 - semi-random contact results (announcer mode)
 - advancing bases / scoring
-- change batters after end of plate appearance
-- change sides after three outs (opponent batting / user pitching)
+- opponent batting / user pitching
 
 General
 

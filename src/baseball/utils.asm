@@ -53,13 +53,29 @@ GetOuts::; returns balls_strikes_outs & OUTS_MASK in a
   and OUTS_MASK
   ret
 
-SetOuts::; a = strikes
+SetOuts::; a = outs
   and OUTS_MASK
   ld b, a
   ld a, [balls_strikes_outs]
   and ~OUTS_MASK
   or a, b
   ld [balls_strikes_outs], a
+  ret
+
+IncrementOuts::;returns outs in a
+  call NextBatter
+  ld a, [balls_strikes_outs]
+  and OUTS_MASK
+  inc a
+  cp 3
+  jp z, .threeOuts
+  ld [balls_strikes_outs], a
+  ret
+.threeOuts
+  xor a
+  ld [balls_strikes_outs], a
+  call NextFrame
+  ld a, 3
   ret
 
 HealthPctToString: ;a = health_pct, returns str_buff
@@ -207,6 +223,13 @@ CurrentOrderInLineup::
   ret
 
 ;Show Player utils
+NextFrame::
+  ld a, [frame]
+  inc a
+  ld [frame], a
+  call AnnounceBeginningOfFrame
+  ret
+
 NextBatter::
   call IsUserFielding
   jr nz, .nextOpponentBatter
@@ -223,8 +246,7 @@ NextBatter::
   and a, %11110000
   or a, b
   ld [current_batter], a
-  jp AnnounceBatter
-
+  ret
 .nextOpponentBatter
   ld a, [current_batter]
   swap a
@@ -240,7 +262,7 @@ NextBatter::
   and a, %00001111
   or a, b
   ld [current_batter], a
-  jp AnnounceBatter
+  ret
 
 ShowBatter::
   call IsUserFielding

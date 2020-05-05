@@ -709,15 +709,14 @@ StartGame::
   ld a, c
   ld [hl], a
 
-  ld a, 1
-  ld [home_team], a
-
   xor a
   ld [frame], a
   ld [move_choice], a
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
+  ; ld a, 1
+  ld [home_team], a
 
   ld a, 1; TODO: replace with team/random encounter
   call PlayIntro

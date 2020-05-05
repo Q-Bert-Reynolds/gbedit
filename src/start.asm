@@ -7,19 +7,26 @@ INCLUDE "img/title/intro/intro.asm"
 INCLUDE "img/title/intro/intro_sprites/intro_sprites.asm"
 
 IF DEF(_HOME)
-  INCLUDE "img/home_version/version_sprites/version_sprites.asm"
+StartPalSet: PAL_SET PALETTE_START_LIGHTS, PALETTE_MACOBB, PALETTE_MUCHACHO, PALETTE_GREY
+INCLUDE "img/home_version/version_sprites/version_sprites.asm"
 ELSE
-  INCLUDE "img/away_version/version_sprites/version_sprites.asm"
+StartPalSet: PAL_SET PALETTE_START_LIGHTS, PALETTE_MACOBB, PALETTE_PUFF, PALETTE_GREY
+INCLUDE "img/away_version/version_sprites/version_sprites.asm"
 ENDC
 
-StartPalSet: PAL_SET PALETTE_START_LIGHTS, PALETTE_START_BATTLE, PALETTE_GREY, PALETTE_GREY
 SGBStartLightsAttrBlk:
   ATTR_BLK 1
   ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18
 
-SGBStartBattleAttrBlk:
+SGBStartBattleSlideAttrBlk:
   ATTR_BLK 1
-  ATTR_BLK_PACKET %001, 1,1,1, 0,4, 20,9
+  ATTR_BLK_PACKET %111, 3,3,3, 0,0, 20,18
+
+SGBStartBattleAnimAttrBlk:
+  ATTR_BLK 3
+  ATTR_BLK_PACKET %111, 3,3,1, 0,4, 20,8
+  ATTR_BLK_PACKET %001, 1,1,1, 0,7, 12,6
+  ATTR_BLK_PACKET %001, 2,2,2, 11,7, 6,6
 
 LightsPalSeq:
   DB $E0, $E0, $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0
@@ -93,14 +100,14 @@ IntroPitchingXSeq:
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
-  DB 1, 2, 3, 4, 5, 6, 7, 8 ;ready
+  DB 4, 5, 6, 7, 8, 9,10,11 ;ready
   DB 8, 7, 6, 5, 4, 3, 2, 1 ;pitch
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
-  DB 1, 2, 3, 4, 5, 6, 7, 8 ;ready
+  DB 4, 5, 6, 7, 8, 9,10,11 ;ready
   DB 8, 7, 6, 5, 4, 3, 2, 1 ;pitch
   DB 0, 0, 0, 0, 0, 0, 0, 0 ;hold
 
@@ -191,7 +198,7 @@ Start::
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
-  ld de, 2000
+  ld de, 10;2000
   call gbdk_Delay
 
 .showIntroSequence
@@ -248,8 +255,8 @@ Start::
   call gbdk_SetSpriteProp
 
 .lightsSequence
-  ld de, 1000
-  call gbdk_Delay
+  ; ld de, 1000
+  ; call gbdk_Delay
   
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
@@ -328,7 +335,7 @@ Start::
   EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
 
 .pitchSequence
-  ld hl, SGBStartBattleAttrBlk
+  ld hl, SGBStartBattleSlideAttrBlk
   call sgb_PacketTransfer
 
   HIDE_ALL_SPRITES
@@ -347,6 +354,7 @@ Start::
 .slidePlayersLoop
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .fadeOutAndExit, (PADF_START | PADF_A)
     ld a, [_k]
+    ld b, a
     add a, 33
     ld [rSCX], a
 
@@ -374,6 +382,8 @@ Start::
     sub 128
     jr nz, .slidePlayersLoop
 
+  ld hl, SGBStartBattleAnimAttrBlk
+  call sgb_PacketTransfer
   EXITABLE_DELAY .fadeOutAndExit, (PADF_START | PADF_A), 60
 
 .battingSequence

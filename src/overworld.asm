@@ -482,7 +482,7 @@ CheckRandomAppearance:
   ld a, d
   xor a, e
   and a, e
-  and a, %10000000
+  and a, %1000000
   ret
 
 Overworld::

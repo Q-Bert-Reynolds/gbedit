@@ -19,8 +19,11 @@ INCLUDE "src/memory1.asm"
 ;     Sets the Super Game Boy border.
 ;     Input: a = bank, hl = tiles, de = tile map
 ;   sgb_SetPal
-;     Sets 2 SNES palettes. Packet can only be codes 0-3.
+;     Directly sets 2 SNES palettes. Packet can only be codes 0-3.
 ;     Input: a = packet header, bc = paletteA, de = paletteB
+;   sgb_SetBlock
+;     Indirectly sets inside of screen block to paletteA, outside to paletteB.
+;     Input: a = index of paletteA, b = index of paletteB, de = xy, hl = wh
 ;   sgb_VRAMTransfer
 ;     Copies data to GB VRAM then to SNES.
 ;     Input: de = packet, hl = graphical data
@@ -67,7 +70,7 @@ ENDM
 
 ATTR_BLK_PACKET: MACRO ;\1 = control code, \2\3\4 = palettes, \5\6 = xy, \7\8 = wh
 	db \1 ;bit 2 = outside block, bit 1 = on border, bit 0 = inisde block
-	db \2 + (\3 << 2) + (\4 << 4)
+	db \4 + (\3 << 2) + (\2 << 4);\2 = outside, \3 = border, \4 = inside
 	db \5, \6, \5+\7, \6+\8
 ENDM
 
@@ -308,6 +311,56 @@ sgb_SetPal:: ;a = packet header, bc = paletteA, de = paletteB
 
   ret
 
+; Indirectly sets inside of screen block to paletteA, outside to paletteB.
+; Input: a = index of paletteA, b = index of paletteB, de = xy, hl = wh
+sgb_SetBlock::
+  push hl;wh
+  push de;xy
+  push af;paletteA index
+  push bc;paletteB index
+
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  ret z
+
+  ld hl, tile_buffer
+  ld a, ($4 << 3) + 1;ATTR_BLK
+  ld [hli], a
+  ld a, 1;num blocks
+  ld [hli], a
+  ld a, %001;control code
+  ld [hli], a
+  pop bc;palB index
+  swap b
+  ld a, %11110000
+  and a, b
+  ld b, a;outside = palB << 4
+  pop af;palA index
+  ld c, a
+  sla c
+  sla c;palA<<2
+  add a, c;palA + palA<<2
+  add a, b;palA + palA<<2 + palB<<4
+  ld [hli], a
+  pop de;xy
+  pop bc;wh
+  ld a, d
+  ld [hli], a;x
+  add a, b;x+w
+  ld d, a;x+w
+  ld a, e
+  ld [hli], a;y
+  add a, c;y+h
+  ld e, a;y+h
+  ld a, d;x+w
+  ld [hli], a
+  ld a, e;y+h
+  ld [hl], a
+  
+  ld hl, tile_buffer
+  jp _sgb_PacketTransfer
+
+
 ; Copies data from GB VRAM to SNES RAM
 ; input: DE = Packet data
 ;        HL = Graphical data address
@@ -361,7 +414,7 @@ _sgb_VRAMTransfer:
   ld [rLCDC], a
 
   pop hl                      ; Packet data
-  call sgb_PacketTransfer     ; We send the packet that will produce the transfer
+  call _sgb_PacketTransfer     ; We send the packet that will produce the transfer
 
   ;restore screen state
   pop af

@@ -135,11 +135,11 @@ BallToss:
 TitlePalSet: PAL_SET PALETTE_TITLE_SCREEN, PALETTE_HOME_AWAY_VERSION, PALETTE_HOME_AWAY_CALVIN, PALETTE_GREY
 SGBTitleAttrBlk:
   ATTR_BLK 5
-  ATTR_BLK_PACKET %111, 0,0,1, 0,0, 20,7 ;title & home/away
-  ATTR_BLK_PACKET %001, 3,0,0, 0,10, 20,8 ;player
-  ATTR_BLK_PACKET %001, 2,0,0, 13,10, 2,3 ;Calvin's head
-  ATTR_BLK_PACKET %001, 2,0,0, 11,12, 4,1 ;Calvin's body
-  ATTR_BLK_PACKET %001, 1,0,0, 13,14, 1,2 ;Calvin's pants
+  ATTR_BLK_PACKET %111, 1,0,0, 0,0, 20,7 ;title & home/away
+  ATTR_BLK_PACKET %001, 0,0,3, 0,10, 20,8 ;player
+  ATTR_BLK_PACKET %001, 0,0,2, 13,10, 2,3 ;Calvin's head
+  ATTR_BLK_PACKET %001, 0,0,2, 11,12, 4,1 ;Calvin's body
+  ATTR_BLK_PACKET %001, 0,0,1, 13,14, 1,2 ;Calvin's pants
   
 ShowTitle:
   DISPLAY_OFF

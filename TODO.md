@@ -1,8 +1,11 @@
 Current
 
-- semi-random contact results (announcer mode)
+- mock intro colors
+- fix user pitching tile scaling
+- user pitching mechanics
+- random opponent batting
 - advancing bases / scoring
-- opponent batting / user pitching
+- semi-random contact results (announcer mode)
 
 General
 

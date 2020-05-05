@@ -20,13 +20,17 @@ SGBStartLightsAttrBlk:
 
 SGBStartBattleSlideAttrBlk:
   ATTR_BLK 1
-  ATTR_BLK_PACKET %111, 3,3,3, 0,0, 20,18
+  ATTR_BLK_PACKET %111, 3,2,2, 0,4, 20,10
 
 SGBStartBattleAnimAttrBlk:
   ATTR_BLK 3
-  ATTR_BLK_PACKET %111, 3,3,1, 0,4, 20,8
-  ATTR_BLK_PACKET %001, 1,1,1, 0,7, 12,6
-  ATTR_BLK_PACKET %001, 2,2,2, 11,7, 6,6
+  ATTR_BLK_PACKET %111, 3,1,1, 0,4, 20,10
+  ATTR_BLK_PACKET %001, 1,1,1, 0,7, 12,7
+  ATTR_BLK_PACKET %001, 2,2,2, 11,7, 8,7
+
+SGBFadeOutAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %100, 3,3,3, 0,3, 21,12
 
 LightsPalSeq:
   DB $E0, $E0, $E0, $E0, $E8, $E8, $E8, $E8, $E0, $E0
@@ -337,6 +341,7 @@ Start::
 .pitchSequence
   ld hl, SGBStartBattleSlideAttrBlk
   call sgb_PacketTransfer
+  ld [_breakpoint], a
 
   HIDE_ALL_SPRITES
   PLAY_SONG charge_fanfare_data, 0
@@ -345,7 +350,19 @@ Start::
   ld h, _INTRO_PITCH_COLUMNS ; w
   ld l, _INTRO_PITCH_ROWS ; h
   ld bc, _IntroPitchTileMap
-  call gbdk_SetBkgTiles 
+  call gbdk_SetBkgTiles
+
+  ld hl, tile_buffer
+  ld bc, 32*10
+  ld a, 1
+  call mem_Set
+  ld d, 0;x
+  ld e, 4;y
+  ld h, 32;w
+  ld l, 10;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
   ld hl, rBGP
   ld [hl], DMG_PAL_BDLW
 
@@ -358,6 +375,26 @@ Start::
     add a, 33
     ld [rSCX], a
 
+    push af
+.setPalette
+    ld b, a
+    and a, %00000111
+    jr nz, .skipPalette
+    ld a, 168
+    sub a, b
+    srl a
+    srl a
+    srl a
+    ld d, a
+    ld e, 7
+    ld h, _INTRO_PITCH0_COLUMNS-1
+    ld l, _INTRO_PITCH0_ROWS+1
+    ld b, 1
+    ld c, 2
+    call sgb_SetBlock
+.skipPalette
+    pop af
+    
     sub a, 65
     ld b, a
     ld c, 80
@@ -366,7 +403,7 @@ Start::
     ld a, _INTRO_STANCE0_ROWS
     ld l, a
     ld de, _IntroStance0TileMap
-    ld a, OAMF_PRI
+    ld a, OAMF_PRI | 2;palette
     ld [sprite_props], a
     ld a, SPRITE_FLAGS_SKIP
     ld [sprite_flags], a
@@ -422,7 +459,7 @@ Start::
     ld h, _INTRO_WATCH1_COLUMNS
     ld l, _INTRO_WATCH1_ROWS
 
-    ld a, OAMF_PRI
+    ld a, OAMF_PRI | 2;palette
     ld [sprite_props], a
     ld a, SPRITE_FLAGS_SKIP | SPRITE_FLAGS_CLEAR_END
     ld [sprite_flags], a
@@ -495,6 +532,7 @@ Start::
     jp .battingSequenceLoop
 
 .fadeOutAndExit
-  call gbdk_WaitVBL
+  ld hl, SGBFadeOutAttrBlk
+  call sgb_PacketTransfer
   FADE_OUT
   ret

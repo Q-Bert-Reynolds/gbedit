@@ -1,7 +1,7 @@
 SGBPlayBallIntroAttrBlk:
   ATTR_BLK 2
-  ATTR_BLK_PACKET %001, 0,0,0, 0,11, 20,7 ;bottom UI
-  ATTR_BLK_PACKET %001, 1,1,1, 0,0, 20,11 ;upper Dark
+  ATTR_BLK_PACKET %001, 0,0,0, 0,12, 20,6 ;bottom UI
+  ATTR_BLK_PACKET %001, 1,1,1, 0,0, 20,12 ;upper Dark
 
 PlayIntro:: ;a - 0 = unsigned player, 1 = team
   push af;player or team

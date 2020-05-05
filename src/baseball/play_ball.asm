@@ -637,7 +637,7 @@ SGBPlayBallPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
 SGBPlayBallAttrBlk:
   ATTR_BLK 3
   ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
-  ATTR_BLK_PACKET %001, 2,2,2, 0,4,   8,7 ;user player
+  ATTR_BLK_PACKET %001, 2,2,2, 0,5,   8,7 ;user player
   ATTR_BLK_PACKET %001, 3,3,3, 12,0,  8,7 ;opposing player
   
 SetPlayerColors:;since SGB requires 2 palettes to change at the same time, always set both players
@@ -645,6 +645,42 @@ SetPlayerColors:;since SGB requires 2 palettes to change at the same time, alway
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
   call sgb_PacketTransfer
+
+  ;GBC UI color
+  ld hl, tile_buffer
+  ld bc, 20*18
+  ld a, 0
+  call mem_Set
+  ld d, 0;x
+  ld e, 0;y
+  ld h, 20;w
+  ld l, 18;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
+  ;GBC user player color
+  ld hl, tile_buffer
+  ld bc, 8*7
+  ld a, 2
+  call mem_Set
+  ld d, 0;x
+  ld e, 5;y
+  ld h, 8;w
+  ld l, 7;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
+  ;GBC opposing player color
+  ld hl, tile_buffer
+  ld bc, 8*7
+  ld a, 3
+  call mem_Set
+  ld d, 12;x
+  ld e, 0;y
+  ld h, 8;w
+  ld l, 7;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
   
   call GetCurrentUserPlayer
   call GetPlayerNumber

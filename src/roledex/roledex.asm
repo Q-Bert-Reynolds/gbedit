@@ -526,8 +526,12 @@ LoadUserPlayerBkgTiles::
 
 .doubleTiles 
   ld a, [hli];tile count
+  ld [_breakpoint], a
   ld b, 0
   ld c, a
+
+  ld bc, 30
+
   ld h, d
   ld l, e
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16

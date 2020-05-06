@@ -751,7 +751,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ; ld a, 1
+  ld a, 1
   ld [home_team], a
 
   ld a, 1; TODO: replace with team/random encounter

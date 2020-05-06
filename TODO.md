@@ -1,7 +1,6 @@
 Current
 
-- mock intro colors
-- fix user pitching tile scaling
+- fix user pitching tile scaling - more than 30 tiles crashes
 - user pitching mechanics
 - random opponent batting
 - advancing bases / scoring

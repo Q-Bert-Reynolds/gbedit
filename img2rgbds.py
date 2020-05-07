@@ -129,6 +129,8 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
     return
   if len(tileset) > 256:
     print("Error: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
+  elif "_2x" in name and len(tileset) > 16:
+    print("Warning: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
   elif len(tileset) > 64:
     print("Warning: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
     

@@ -201,12 +201,30 @@ MoveAimCircle: ;de = xy
   call gbdk_MoveSprite;move_sprite(6, x+8, y+8);
   ret
 
-;
-Pitch: ; (Player *p, UBYTE move) {
-  ;sprintf(str_buff, "%s sets.", p->nickname);
-  ;reveal_text(str_buff, PLAY_BALL_BANK);
-  ;show_aim_circle(3);
-  ;move_aim_circle(96,32);
+Pitch:
+  call GetCurrentUserPlayer
+  call GetUserPlayerName
+  ld bc, name_buffer
+  ld hl, PitcherSetsText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+
+  ld d, 146
+  ld e, 42
+  call ShowStrikeZone
+
+  ld hl, 4
+  call ShowAimCircle
+
+  ld d, 146
+  ld e, 42
+  call MoveAimCircle
+
+  ld de, 1000
+  call gbdk_Delay
   ret
 
 Swing:; xy = de, z = a, returns contact made in a
@@ -597,7 +615,7 @@ PlayBall:; a = selected move
   call Bat
   jr .exit
 .pitching
-  call Pitch;else pitch(p, move);
+  call Pitch
 .exit
   HIDE_WIN
   ret
@@ -754,8 +772,8 @@ StartGame::
   ld a, 1
   ld [home_team], a
 
-  ld a, 1; TODO: replace with team/random encounter
-  call PlayIntro
+  ; ld a, 1; TODO: replace with team/random encounter
+  ; call PlayIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame
 

@@ -459,7 +459,7 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
-  ld hl, MyBigRedData;OpponentBubbiData
+  ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy

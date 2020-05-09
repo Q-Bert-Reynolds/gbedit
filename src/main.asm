@@ -91,6 +91,7 @@ Main::
 .setupInterrupts
   ld a, IEF_VBLANK
   ld [rIE], a
+  ei
 
 .setupSuperGameBoy
   ld a, SGB_BANK

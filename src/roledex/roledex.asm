@@ -493,13 +493,12 @@ LoadUserPlayerBkgTiles::
   ld a, [loaded_bank]
   ld [temp_bank], a
   call IsUserFielding
-  push af;user fielding
   jr nz, .userIsPitching
 .userIsBatting
   ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
   jr .setBank
 .userIsPitching
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_USER
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_USER
 .setBank
   ld a, [hli]
   call SetBank
@@ -508,8 +507,6 @@ LoadUserPlayerBkgTiles::
   ld e, a
   ld a, [hli]
   ld d, a;tiles
-  pop af;user fielding
-  jr nz, .doubleTiles
   
   push de;tiles
   ld a, [hli];tile count
@@ -522,19 +519,7 @@ LoadUserPlayerBkgTiles::
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
 
   call mem_CopyVRAM
-  jr .restoreBank
-
-.doubleTiles 
-  ld a, [hli];tile count
-  ld b, 0
-  ld c, a
-
-  ld h, d
-  ld l, e
-  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
-  call SetBkgDataDoubled
-
-.restoreBank
+  
   ld a, [temp_bank]
   call SetBank
   
@@ -553,7 +538,7 @@ LoadOpposingPlayerBkgTiles::
   ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
   jr .setBank
 .opponentIsBatting
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
 .setBank
   ld a, [hli]
   call SetBank
@@ -645,7 +630,7 @@ SetOpposingPlayerBkgTiles:: ;a = frame
   ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
   jr .setBank
 .opponentIsBatting
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
 .setBank
   ld a, [hli]
   call SetBank

@@ -11,8 +11,8 @@ print ("Generating " + str(file_count) + " player image banks.")
 anims = [
   "lefty_batter_user",
   "righty_batter_user",
-  "lefty_pitcher_user_2x",
-  "righty_pitcher_user_2x",
+  "lefty_pitcher_user",
+  "righty_pitcher_user",
   "lefty_batter_opponent",
   "righty_batter_opponent",
   "lefty_pitcher_opponent",

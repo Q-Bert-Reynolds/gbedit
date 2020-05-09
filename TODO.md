@@ -1,6 +1,6 @@
 Current
 
-- fix user pitching tile scaling - more than 30 tiles crashes
+- restore player images after returning from lineup
 - user pitching mechanics
 - random opponent batting
 - advancing bases / scoring

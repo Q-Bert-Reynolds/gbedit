@@ -202,7 +202,7 @@ Start::
   ld a, LCDCF_ON | LCDCF_BG8800 | LCDCF_OBJ8 | LCDCF_OBJOFF | LCDCF_BGON
   ld [rLCDC], a
 
-  ld de, 10;2000
+  ld de, 2000
   call gbdk_Delay
 
 .showIntroSequence
@@ -259,8 +259,8 @@ Start::
   call gbdk_SetSpriteProp
 
 .lightsSequence
-  ; ld de, 1000
-  ; call gbdk_Delay
+  ld de, 1000
+  call gbdk_Delay
   
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 

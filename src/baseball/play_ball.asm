@@ -108,10 +108,64 @@ HideBaseball
   ld bc, 3*4
   xor a
   call mem_Set
-  ret 
+  ret
+
+MoveBaseball: ;c = z where 0 <= z <= 100, de = start xy, hl = end xy, returns ball pos in de
+  push bc;z
+  push de;start xy
+  push hl;end xy
+  ld a, d;start x
+  ld b, h;end x
+  call math_Lerp;x
+
+  pop hl;end xy
+  pop de;start xy
+  pop bc;z
+  push af;x
+  ld a, e;start y
+  ld b, l;end y
+  call math_Lerp;y
+  
+  ld e, a;y
+  pop af;x
+  ld d, a;x
+  push de;ball x, y
+
+  ;TODO: baseball animation should be based on move
+  ld h, 0
+  ld l, a
+  ld c, 10
+  call math_Divide;i/10
+  ld a, l
+  and a, %00000011;(i/10)%4
+  add a, 6;6+(i/10)%4
+  ld [_t], a;t = 6+(i/10)%4
+  pop de;ball xy
+
+  ; ball outline
+  ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
+  ld a, e
+  ld [hli], a;y
+  ld a, d
+  ld [hli], a;x
+  ld a, 1
+  ld [hli], a;outline tile
+  xor a
+  ld [hli], a;prop
+
+  ; ball animation
+  ld a, e
+  ld [hli], a;y
+  ld a, d
+  ld [hli], a;x
+  ld a, [_t]
+  ld [hli], a;tile
+  ld a, OAMF_PAL1
+  ld [hli], a;prop
+  ret
 
 ;start = (126,13), end = (52,87)
-MoveBaseball:; a = z
+OLD_MoveBaseball:; a = z
   push af
   ld b, a
   ld a, 126;127-(i>>1)
@@ -202,6 +256,9 @@ MoveAimCircle: ;de = xy
   ret
 
 Pitch:
+  ld a, 0
+  call SetUserPlayerBkgTiles
+
   call GetCurrentUserPlayer
   call GetUserPlayerName
   ld bc, name_buffer
@@ -223,8 +280,109 @@ Pitch:
   ld e, 42
   call MoveAimCircle
 
-  ld de, 1000
-  call gbdk_Delay
+  call GetCurrentBatterName
+  ld bc, name_buffer
+  ld hl, BatterStepsIntoTheBoxText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+
+  ld a, 146
+  ld [aim_x], a
+  ld a, 42
+  ld [aim_y], a
+  
+  xor a
+.preSetAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 10
+    jr nz, .preSetAimLoop
+
+  call GetCurrentPitcherName
+
+  ld bc, name_buffer
+  ld hl, PitcherSetsText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+
+  xor a
+.preWindupAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 30
+    jr nz, .preWindupAimLoop
+
+  ld a, 1
+  call SetUserPlayerBkgTiles
+
+  xor a
+.postWindupAimLoop
+    ld [_i], a
+    call Aim
+    ld a, [_i]
+    inc a
+    cp 20
+    jr nz, .postWindupAimLoop
+
+  ld a, 2
+  call SetUserPlayerBkgTiles
+
+  ld hl, AndThePitchText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText;"And the pitch."
+
+  xor a
+  ld [pitch_z], a
+  ld [pitch_z+1], a
+  ld [_i], a;step
+.pitchLoop
+    ld d, 25;TODO: differentiate between lefties and righties
+    ld e, 41
+    ld a, [aim_x]
+    ld h, a
+    ld a, [aim_y]
+    ld l, a
+    ld a, [pitch_z]
+    ld c, a
+    call MoveBaseball
+
+    call gbdk_WaitVBL
+
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp a, 8
+    jr nz, .skip
+    ld a, 3
+    call SetUserPlayerBkgTiles   
+.skip
+
+    ld a, [pitch_z]
+    ld h, a
+    ld a, [pitch_z+1]
+    ld l, a
+
+    ld de, 1000;TODO: replace with pitch speed
+    add hl, de
+    ld a, l
+    ld [pitch_z+1], a
+    ld a, h
+    ld [pitch_z], a
+
+    cp a, 120
+    jr c, .pitchLoop
+
+  
   ret
 
 Swing:; xy = de, z = a, returns contact made in a
@@ -352,12 +510,11 @@ Aim:
   ld [aim_y], a
 .updateAim
   ld a, [aim_x]
-  srl a
   ld d, a
   ld a, [aim_y]
-  srl a
   ld e, a
   call MoveAimCircle;move_aim_circle(a>>1, b>>1);
+  call gbdk_WaitVBL
   call gbdk_WaitVBL
   ret  
 
@@ -388,9 +545,7 @@ Bat:
   ld e, 85
   call ShowStrikeZone
   
-  call GetCurrentUserPlayer
-  call GetUserPlayerName
-
+  call GetCurrentBatterName
   ld bc, name_buffer
   ld hl, BatterStepsIntoTheBoxText
   ld de, str_buffer
@@ -399,10 +554,10 @@ Bat:
   ld a, DRAW_FLAGS_WIN
   call DisplayText
 
-  ld a, 49<<1
-  ld [aim_x], a;a = 49<<1;
-  ld a, 85<<1
-  ld [aim_y], a;b = 85<<1;
+  ld a, 49
+  ld [aim_x], a
+  ld a, 85
+  ld [aim_y], a
   
   xor a
 .preSetAimLoop
@@ -410,12 +565,10 @@ Bat:
     call Aim
     ld a, [_i]
     inc a
-    cp 60
+    cp 10
     jr nz, .preSetAimLoop
 
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
-  call GetPlayerName
+  call GetCurrentPitcherName
 
   ld bc, name_buffer
   ld hl, PitcherSetsText
@@ -443,7 +596,7 @@ Bat:
     call Aim
     ld a, [_i]
     inc a
-    cp 30
+    cp 20
     jr nz, .postWindupAimLoop
 
   ld a, 2
@@ -505,10 +658,8 @@ Bat:
         call SetUserPlayerBkgTiles
 
         ld a, [aim_x];x
-        srl a
         ld d, a
         ld a, [aim_y];y
-        srl a
         ld e, a
         ld a, [pitch_z];z
         call Swing
@@ -531,7 +682,7 @@ Bat:
 
 .moveBaseball
     ld a, [pitch_z]
-    call MoveBaseball
+    call OLD_MoveBaseball
     call gbdk_WaitVBL
 
 .increment

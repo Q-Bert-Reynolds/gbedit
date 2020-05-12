@@ -1,7 +1,6 @@
 Current
 
 - restore player images after returning from lineup
-- user pitching mechanics
 - random opponent batting
 - advancing bases / scoring
 - semi-random contact results (announcer mode)
@@ -48,6 +47,7 @@ Play Ball
 - handle different moves
 - hide / disable selection of pitches when batting / swings when pitching
 - more pitching/batting animations
+- Pitch & Bat subroutines share a ton of code, should call shared subroutine instead
 
 Simulation
 

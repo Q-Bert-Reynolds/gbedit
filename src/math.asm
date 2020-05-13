@@ -321,6 +321,43 @@ math_Normalize:: ;de = xy, returns |xy| in de
   ret
 
 math_Lerp:: ;a = (a*(100-c)+b*c)/100 where 0 <= c <= 100
+  ld d, a
+  ld a, c
+  cp a, 101
+  ld c, a
+  ld a, d
+  jr c, _Lerp
+
+  ld d, a
+  ld a, c
+  sub a, 100
+  ld c, a
+  ld a, d
+  push bc
+  ld d, a
+  ld a, b
+  sub a, d
+  jr nc, .skip
+
+  cpl;TODO: this seems unnecessary 
+  ld b, a
+  xor a
+  call _Lerp
+  pop bc
+  ld c, a
+  ld a, b
+  sub a, c
+  ret
+
+.skip
+  ld b, a
+  xor a
+  call _Lerp
+  pop bc
+  add a, b
+  ret
+
+_Lerp:
   push bc
   ld d, 0
   ld e, a

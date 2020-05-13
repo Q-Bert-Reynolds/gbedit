@@ -355,6 +355,7 @@ Pitch:
     ld a, [pitch_z]
     ld c, a
     call MoveBaseball
+    push de;ball pos
 
     call gbdk_WaitVBL
 
@@ -372,17 +373,19 @@ Pitch:
     ld a, [pitch_z+1]
     ld l, a
 
-    ld de, 1000;TODO: replace with pitch speed
+    ld de, 500;TODO: replace with pitch speed
     add hl, de
-    ld a, l
-    ld [pitch_z+1], a
     ld a, h
     ld [pitch_z], a
+    ld a, l
+    ld [pitch_z+1], a
 
-    cp a, 120
+    pop de;ball pos
+    ld a, d
+    cp a, 168
     jr c, .pitchLoop
 
-  
+  call AnnounceNoSwing
   ret
 
 Swing:; xy = de, z = a, returns contact made in a

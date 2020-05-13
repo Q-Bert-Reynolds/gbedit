@@ -1,7 +1,5 @@
 Current
 
-- remove OLD_MoveBaseball function
-- restore player images after returning from lineup
 - random opponent batting
 - advancing bases / scoring
 - semi-random contact results (announcer mode)

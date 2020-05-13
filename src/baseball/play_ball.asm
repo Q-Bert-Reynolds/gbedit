@@ -110,7 +110,8 @@ HideBaseball
   call mem_Set
   ret
 
-MoveBaseball: ;c = z where 0 <= z <= 100, de = start xy, hl = end xy, returns ball pos in de
+MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl = end xy, returns ball pos in de
+  push af;show projection
   push bc;z
   push de;start xy
   push hl;end xy
@@ -162,61 +163,11 @@ MoveBaseball: ;c = z where 0 <= z <= 100, de = start xy, hl = end xy, returns ba
   ld [hli], a;tile
   ld a, OAMF_PAL1
   ld [hli], a;prop
-  ret
-
-;start = (126,13), end = (52,87)
-OLD_MoveBaseball:; a = z
-  push af
-  ld b, a
-  ld a, 126;127-(i>>1)
-  sub a, b
-  ld d, a
-  ld a, [pitch_target_x]
-  add a, d
-  ld d, a
-
-  pop af
-  push af
-  ld b, a
-  ld a, 13
-  add a, b;13+(i>>1)
-  ld e, a
-  ld a, [pitch_target_y]
-  add a, e
-  ld e, a
-  pop af;ball z
-  push de;ball x, y
-
-  ld h, 0
-  ld l, a
-  ld c, 10
-  call math_Divide;i/10
-  ld a, l
-  and a, %00000011;(i/10)%4
-  add a, 6;6+(i/10)%4
-  ld [_t], a;t = 6+(i/10)%4
-
-  ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
-
-  pop de
-  ld a, e
-  ld [hli], a;y
-  ld a, d
-  ld [hli], a;x
-  ld a, 1
-  ld [hli], a;outline tile
-  xor a
-  ld [hli], a;prop
-
-  ld a, e
-  ld [hli], a;y
-  ld a, d
-  ld [hli], a;x
-  ld a, [_t]
-  ld [hli], a;tile
-  ld a, OAMF_PAL1
-  ld [hli], a;prop
   
+  pop af
+  and a
+  ret z
+  ;projection
   ld a, [pitch_target_y]
   add a, STRIKE_ZONE_CENTER_Y
   ld [hli], a;y
@@ -354,6 +305,7 @@ Pitch:
     ld l, a
     ld a, [pitch_z]
     ld c, a
+    xor a
     call MoveBaseball
     push de;ball pos
 
@@ -373,7 +325,7 @@ Pitch:
     ld a, [pitch_z+1]
     ld l, a
 
-    ld de, 500;TODO: replace with pitch speed
+    ld de, 1000;TODO: replace with pitch speed
     add hl, de
     ld a, h
     ld [pitch_z], a
@@ -413,7 +365,7 @@ Swing:; xy = de, z = a, returns contact made in a
   sub a, c
   ld [swing_diff_y], a
   pop af;z
-  sub a, 64
+  sub a, 100
   ld [swing_diff_z], a
 
   ; ld a, [swing_diff_x]
@@ -684,17 +636,36 @@ Bat:
       call SetUserPlayerBkgTiles
 
 .moveBaseball
+    ld d, 126;TODO: differentiate between lefties and righties
+    ld e, 13
+    ld a, [pitch_target_x]
+    add a, STRIKE_ZONE_CENTER_X
+    ld h, a
+    ld a, [pitch_target_y]
+    add a, STRIKE_ZONE_CENTER_Y
+    ld l, a
     ld a, [pitch_z]
-    call OLD_MoveBaseball
+    ld c, a
+    ld a, 1
+    call MoveBaseball
+    push de;ball pos
     call gbdk_WaitVBL
 
 .increment
-    ld a, [_s]
-    ld b, a
     ld a, [pitch_z]
-    add a, b;j+=s
+    ld h, a
+    ld a, [pitch_z+1]
+    ld l, a
+
+    ld de, 1000;TODO: replace with pitch speed
+    add hl, de
+    ld a, h
     ld [pitch_z], a
-    cp 200
+    ld a, l
+    ld [pitch_z+1], a
+    pop de;ball pos
+    ld a, d
+    cp a, 168
     jp c, .swingLoop
   ld a, [_c]
   and a
@@ -951,6 +922,8 @@ StartGame::
     jr nz, .itemMenuItemSelected
     call ShowLineupFromGame
     call SetupGameUI
+    call ShowPitcher
+    call ShowBatter
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

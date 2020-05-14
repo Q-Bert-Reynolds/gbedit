@@ -292,6 +292,14 @@ Pitch:
   ld a, DRAW_FLAGS_WIN
   call DisplayText;"And the pitch."
 
+  ld a, [aim_x]
+  sub a, 146
+  ld [pitch_target_x], a
+
+  ld a, [aim_y]
+  sub a, 42
+  ld [pitch_target_y], a
+
   xor a
   ld [pitch_z], a
   ld [pitch_z+1], a
@@ -314,7 +322,7 @@ Pitch:
     ld a, [_i]
     inc a
     ld [_i], a
-    cp a, 8
+    cp a, 4
     jr nz, .skip
     ld a, 3
     call SetUserPlayerBkgTiles   
@@ -338,6 +346,8 @@ Pitch:
     jr c, .pitchLoop
 
   call AnnounceNoSwing
+  call DrawCountOutsInning
+  call DrawBases
   ret
 
 Swing:; xy = de, z = a, returns contact made in a
@@ -580,14 +590,12 @@ Bat:
   xor a
   ld [_c], a; c = swing frame
   ld [pitch_z], a
-  ld a, 4
-  ld [_s], a;speed
-.swingLoop;for (j = 0; j < 200; j+=s)
-    ld a, [_s]
-    add a, a;s*2
-    ld b, a
-    ld a, [pitch_z]
-    cp b
+  ld [_i], a
+.swingLoop
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp a, 4
     jr nz, .aim;if (j == s*2)
 
 .setFinishPitchFrame
@@ -600,12 +608,12 @@ Bat:
     jp nz, .checkFinishSwing
     ld a, [pitch_z]
     and a
-    jp z, .checkFinishSwing ;if (c == 0 && j > 0) {
+    jp z, .checkFinishSwing
       call Aim
 
       ld a, [button_state]
       and PADF_A
-      jp z, .moveBaseball ;if (k & J_A) {
+      jp z, .moveBaseball
         ld a, [pitch_z]
         ld [_c], a
 
@@ -623,13 +631,10 @@ Bat:
       jp .moveBaseball
 
 .checkFinishSwing
-    ld a, [_s]
-    add a, a
-    ld b, a;s*2
     ld a, [_c]
-    add a, b
-    ld b, a;c+2*s
-    ld a, [pitch_z]
+    add a, 4
+    ld b, a
+    ld a, [_i]
     cp b
     jr nz, .moveBaseball;else if (j == c+2*s)
       ld a, 2
@@ -657,7 +662,7 @@ Bat:
     ld a, [pitch_z+1]
     ld l, a
 
-    ld de, 1000;TODO: replace with pitch speed
+    ld de, 1500;TODO: replace with pitch speed
     add hl, de
     ld a, h
     ld [pitch_z], a
@@ -728,6 +733,7 @@ Bat:
   call SetUserPlayerBkgTiles
 
   call DrawCountOutsInning
+  call DrawBases
   
   ld de, 100
   call gbdk_Delay
@@ -894,7 +900,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ld a, 1
+  ; ld a, 1
   ld [home_team], a
 
   ; ld a, 1; TODO: replace with team/random encounter

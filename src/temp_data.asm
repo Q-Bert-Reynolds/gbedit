@@ -413,7 +413,28 @@ OpponentBubbiData:
   DW 300                   ; .outs_recorded
 OpponentBubbiDataEnd:
 
+OpponentBearData:
+  DB 143                   ; .number
+  DB 42                    ; .level
+  DB 1                     ; .position
+  DB TOSS_MOVE             ; .moves
+  DB SWING_MOVE, 0, 0
+  DB 20, 40, 0, 0          ; .pp
+  DB NONE                  ; .status
+  DW 32                    ; .hp
+  DW 45                    ; .max_hp 
+  DW 49                    ; .bat
+  DW 49                    ; .field
+  DW 45                    ; .speed
+  DW 65                    ; .throw
+  DW 100                   ; .hits
+  DW 2000                  ; .at_bats
+  DW 44                    ; .runs_allowed
+  DW 300                   ; .outs_recorded
+OpponentBearDataEnd:
+
 Seed::
+.userLineup
   ld hl, MyYogiData
   ld de, UserLineupPlayer1
   ld bc, MyBubbiDataEnd - MyBubbiData
@@ -459,8 +480,49 @@ Seed::
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
 
+.opposingLineup
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer1
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBearData
+  ld de, OpponentLineupPlayer2
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBubbiData
+  ld de, OpponentLineupPlayer3
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBearData
+  ld de, OpponentLineupPlayer4
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBubbiData
+  ld de, OpponentLineupPlayer5
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBearData
+  ld de, OpponentLineupPlayer6
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBubbiData
+  ld de, OpponentLineupPlayer7
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBearData
+  ld de, OpponentLineupPlayer8
+  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  call mem_Copy
+
+  ld hl, OpponentBubbiData
+  ld de, OpponentLineupPlayer9
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
 

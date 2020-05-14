@@ -297,7 +297,7 @@ DrawCountOutsInning::
     inc a
     inc hl
     ld [_i], a
-    cp 4
+    cp 3
     jr nz, .setBallsLoop
 
   xor a
@@ -317,7 +317,7 @@ DrawCountOutsInning::
     inc a
     inc hl
     ld [_i], a
-    cp 3
+    cp 2
     jr nz, .setStrikesLoop
   
   xor a
@@ -340,7 +340,7 @@ DrawCountOutsInning::
     inc a
     inc hl
     ld [_i], a
-    cp 3
+    cp 2
     jr nz, .setOutsLoop
 
   xor a
@@ -348,7 +348,7 @@ DrawCountOutsInning::
 
   ld d, 2;x
   ld e, 14;y
-  ld h, 4;w
+  ld h, 3;w
   ld l, 3;h
   ld bc, tile_buffer
   call gbdk_SetBkgTiles;set_bkg_tiles(2,14,4,3,tiles);

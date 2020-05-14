@@ -137,11 +137,11 @@ AnnounceBatter::
 ;----------------------------------------------------------------------
 AnnounceNoSwing::
   ld a, [pitch_target_x]
-  BETWEEN (STRIKE_ZONE_CENTER_X-8), (STRIKE_ZONE_CENTER_X+8)
-  jr nz, .ball
+  BETWEEN -12, 12
+  jr z, .ball
   ld a, [pitch_target_y]
-  BETWEEN (STRIKE_ZONE_CENTER_Y-8), (STRIKE_ZONE_CENTER_Y+8)
-  jr nz, .ball
+  BETWEEN -16, 16
+  jr z, .ball
 
 .strike
   call GetStrikes
@@ -193,6 +193,7 @@ AnnounceNoSwing::
   ret
 
 .walk
+  call PutBatterOnFirst
   call GetCurrentBatterName
   ld hl, WalkText
   ld de, str_buffer
@@ -204,13 +205,11 @@ AnnounceNoSwing::
   call SetBalls
   xor a
   call SetStrikes
-  call AnnounceAdvanceRunners
   call NextBatter
   call AnnounceBatter
   ret
 
 .hitByPitch
-  ; ;hit by pitch
   ; HitByPitchText
   ; BenchesClear
   call NextBatter

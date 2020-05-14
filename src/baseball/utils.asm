@@ -74,8 +74,44 @@ IncrementOuts::;returns outs in a
 .threeOuts
   xor a
   ld [balls_strikes_outs], a
+  ld [runners_on_base], a
+  ld [runners_on_base+1], a
   call NextFrame
   ld a, 3
+  ret
+
+CheckStrike::;de = ball xy, returns strike (1) or ball (0) in a
+
+  ret
+
+PutBatterOnFirst::;upper nibble of runners_on_base stores scoring runner (if any)
+  ld a, [runners_on_base+1]
+  and a, FIRST_BASE_MASK
+  jr z, .putBatterOnFirst
+.putRunnerOnSecond
+  ld a, [runners_on_base+1]
+  swap a
+  ld b, a;second base runner in lower nibble
+  and a, SECOND_BASE_MASK
+  ld [runners_on_base+1], a;first base runner moved to second
+  ld a, b;second base runner in lower nibble
+  and %00001111;second base runner
+  jr z, .putBatterOnFirst
+.putRunnerOnThird
+  ld b, a;second base runner
+  ld a, [runners_on_base]
+  swap a;third base runner (if any) scores
+  or a, b;second base runner moved to third
+  ld [runners_on_base], a;store scoring runner (if any) and new runner on third
+.putBatterOnFirst
+  ld a, [runners_on_base+1]
+  and a, SECOND_BASE_MASK
+  push af;second base runner
+  call CurrentOrderInLineup
+  inc a;current batter is 0 to 8, needs to be 1 to 9
+  pop bc;b=second base runner
+  or a, b
+  ld [runners_on_base+1], a
   ret
 
 HealthPctToString: ;a = health_pct, returns str_buff
@@ -210,7 +246,7 @@ EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
   call str_Append
   ret
 
-CurrentOrderInLineup::
+CurrentOrderInLineup::;returns order in a
   call IsUserFielding
   ld a, [current_batter]
   jr nz, .opponentBatting

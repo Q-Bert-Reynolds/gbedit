@@ -9,6 +9,18 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   ld hl, SGBPlayBallIntroAttrBlk
   call sgb_PacketTransfer
 
+  ld a, 1
+  ld hl, tile_buffer
+  ld bc, 240
+  call mem_Set
+
+  ld d, 0
+  ld e, 0
+  ld h, 20
+  ld l, 12
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _CALVIN_BACK_2X_TILE_COUNT
   ld hl, _CalvinBack2xTiles
@@ -63,7 +75,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
       ld e, c
       call gbdk_SetSpriteTile
       ld c, e
-      ld d, 0
+      ld d, 1;palette
       call gbdk_SetSpriteProp
       
       ld a, [_i]
@@ -94,6 +106,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 .showUnsignedPlayer
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
+  push af;player num
   call GetPlayerImgColumns
   ld c, a
 
@@ -105,8 +118,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   ld c, a;y
   ld de, _UI_FONT_TILE_COUNT+64
   
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
+  pop af;player num
   call SetPlayerBkgTiles
   jr .setupSlideInLoop
 
@@ -146,6 +158,41 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
 
   ld hl, SGBPlayBallAttrBlk
   call sgb_PacketTransfer
+
+  ld a, 3
+  ld hl, tile_buffer
+  ld bc, 56
+  call mem_Set
+
+  ld d, 12
+  ld e, 0
+  ld h, 8
+  ld l, 7
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
+  ld a, 2
+  ld hl, tile_buffer
+  ld bc, 56
+  call mem_Set
+
+  ld d, 0
+  ld e, 5
+  ld h, 8
+  ld l, 7
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
+  ld c, 21
+.setCalvinSpriteColorsLoop
+    dec c
+    ld d, 2
+    push bc
+    call gbdk_SetSpriteProp
+    pop bc
+    xor a
+    cp c
+    jr nz, .setCalvinSpriteColorsLoop
 
   pop af;player or team
   and a

@@ -789,7 +789,7 @@ SGBPlayBallAttrBlk:
   ATTR_BLK_PACKET %001, 2,2,2, 0,5,   8,7 ;user player
   ATTR_BLK_PACKET %001, 3,3,3, 12,0,  8,7 ;opposing player
   
-SetPlayerColors:;since SGB requires 2 palettes to change at the same time, always set both players
+SetPlayerColors::;since SGB requires 2 palettes to change at the same time, always set both players
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
@@ -903,8 +903,8 @@ StartGame::
   ; ld a, 1
   ld [home_team], a
 
-  ; ld a, 1; TODO: replace with team/random encounter
-  ; call PlayIntro
+  ld a, 1; TODO: replace with team/random encounter
+  call PlayIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame
 

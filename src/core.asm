@@ -1363,6 +1363,7 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   ld a, [home_team];1 = user is home team
   ld b, a
   ld a, [frame];1 = bottom
+  and a, %00000001
   xor a, b;home != frame
   pop bc
   ret

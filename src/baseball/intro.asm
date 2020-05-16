@@ -1,13 +1,41 @@
+SECTION "Play Ball Intro", ROMX, BANK[PLAY_BALL_INTRO_BANK]
+
+INCLUDE "src/baseball/scale_tile_data_2x.asm"
+INCLUDE "img/coaches/calvin_back_2x.asm"
+INCLUDE "src/baseball/interrupts.asm"
+
+;strings
+UnsignedPlayerAppearedText::  DB "Unsigned %s\nappeared!",0
+TeamChallengeText::           DB " wants to \nplay %s innings.",0
+PlayBallText::                DB "Play ball!",0
+
+ShowPlayBallWindow:
+  ld bc, 0
+  ld d, 20
+  ld e, 6
+  ld a, DRAW_FLAGS_WIN
+  call DrawUIBox
+
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a
+  SHOW_WIN
+  ret 
+
 SGBPlayBallIntroAttrBlk:
   ATTR_BLK 2
   ATTR_BLK_PACKET %001, 0,0,0, 0,12, 20,6 ;bottom UI
   ATTR_BLK_PACKET %001, 1,1,1, 0,0, 20,12 ;upper Dark
 
-PlayIntro:: ;a - 0 = unsigned player, 1 = team
+PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   push af;player or team
 
   ld hl, SGBPlayBallIntroAttrBlk
   call sgb_PacketTransfer
+
+  call LoadFontTiles
+  call ShowPlayBallWindow
 
   ld a, 1
   ld hl, tile_buffer
@@ -32,20 +60,17 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   jr nz, .loadOpposingCoach
 
 .loadUnsignedPlayer
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
+  ld a, [_a];player num
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
-  jr .showPlayBallWindow
+  jr .showCalvinHatSprites
 
 .loadOpposingCoach
   ld a, COACH_NOLAN1 ;TODO: load opposing team coach
   ld de, $8800 + 64*16
   call LoadCoachTiles
 
-.showPlayBallWindow
-  call ShowPlayBallWindow
-
+.showCalvinHatSprites
   xor a
   ld [_j], a
   ld bc, 0
@@ -104,8 +129,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   jr nz, .showOpposingCoach
 
 .showUnsignedPlayer
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
+  ld a, [_a];player num
   push af;player num
   call GetPlayerImgColumns
   ld c, a
@@ -199,8 +223,7 @@ PlayIntro:: ;a - 0 = unsigned player, 1 = team
   jr nz, .showTeamText
 
 .showUnsignedText
-  call GetCurrentOpponentPlayer
-  call GetPlayerNumber
+  ld a, [_a];player num
   push af;num
 
   call LoadPlayerBaseData

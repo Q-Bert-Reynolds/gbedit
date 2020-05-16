@@ -1,6 +1,5 @@
 Current
 
-- determine ball/strike
 - random opponent batting
 - advancing bases / scoring
 - semi-random contact results (announcer mode)
@@ -42,6 +41,7 @@ New Game
 
 Play Ball
 
+- hide strikezone after pitcher sets
 - players should disappear immediately after plate appearance or end of inning
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
 - ball should fly off screen after contact

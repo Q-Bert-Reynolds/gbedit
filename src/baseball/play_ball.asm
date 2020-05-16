@@ -1,4 +1,5 @@
 INCLUDE "src/beisbol.inc"
+INCLUDE "src/baseball/intro.asm"
 
 SECTION "Play Ball SGB", ROMX, BANK[SGB_BANK+1]
 
@@ -9,8 +10,6 @@ SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 INCLUDE "src/baseball/strings.asm"
 INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/announcer.asm"
-INCLUDE "src/baseball/interrupts.asm"
-INCLUDE "src/baseball/intro.asm"
 INCLUDE "src/baseball/ui.asm"
 
 ShowAimCircle: ;hl = size
@@ -146,8 +145,10 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   ; ball outline
   ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
   ld a, e
+  add a, 4
   ld [hli], a;y
   ld a, d
+  add a, 4
   ld [hli], a;x
   ld a, 1
   ld [hli], a;outline tile
@@ -156,8 +157,10 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
 
   ; ball animation
   ld a, e
+  add a, 4
   ld [hli], a;y
   ld a, d
+  add a, 4
   ld [hli], a;x
   ld a, [_t]
   ld [hli], a;tile
@@ -170,9 +173,11 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   ;projection
   ld a, [pitch_target_y]
   add a, STRIKE_ZONE_CENTER_Y
+  add a, 4
   ld [hli], a;y
   ld a, [pitch_target_x]
   add a, STRIKE_ZONE_CENTER_X
+  add a, 4
   ld [hli], a;x
   ld a, 4
   ld [hli], a;projection tile
@@ -768,20 +773,6 @@ SetPlayBallTiles:
   call mem_CopyVRAM
   ret 
 
-ShowPlayBallWindow:
-  ld bc, 0
-  ld d, 20
-  ld e, 6
-  ld a, DRAW_FLAGS_WIN
-  call DrawUIBox
-
-  ld a, 7
-  ld [rWX], a
-  ld a, 96
-  ld [rWY], a
-  SHOW_WIN
-  ret 
-
 SGBPlayBallPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
 SGBPlayBallAttrBlk:
   ATTR_BLK 3
@@ -900,11 +891,14 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ; ld a, 1
+  ld a, 1
   ld [home_team], a
 
+  call GetCurrentOpponentPlayer
+  call GetPlayerNumber
+  ld [_a], a
   ld a, 1; TODO: replace with team/random encounter
-  call PlayIntro
+  call ShowPlayBallIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame
 

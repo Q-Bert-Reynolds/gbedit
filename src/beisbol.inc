@@ -16,7 +16,6 @@ INCLUDE "src/sgb.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
 
-INCLUDE "src/baseball/scale_tile_data_2x.asm"
 INCLUDE "src/baseball/images.asm"
 INCLUDE "src/roledex/roledex.asm"
 INCLUDE "src/core.asm"

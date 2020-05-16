@@ -28,11 +28,6 @@ BaseTexts::                   DB "first",0
                               DB "third",0
                               DB "home plate",0
 
-;intro
-UnsignedPlayerAppearedText::  DB "Unsigned %s\nappeared!",0
-TeamChallengeText::           DB " wants to \nplay %s innings.",0
-PlayBallText::                DB "Play ball!",0
-
 ;beginning of frame
 TakesTheMoundText::           DB "%s\ntakes the mound.",0;also used for relievers
 WalksToThePlateText::         DB "%s walks\nup to the plate.",0

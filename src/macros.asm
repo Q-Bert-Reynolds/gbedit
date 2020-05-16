@@ -1,3 +1,8 @@
+NICKNAME: MACRO ;\1 = nickname
+  DB \1
+  DS NICKNAME_LENGTH - STRLEN(\1)
+ENDM
+
 SET_LCD_INTERRUPT: MACRO ;\1 = interrupt address
   di
 

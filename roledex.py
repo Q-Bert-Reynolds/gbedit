@@ -135,30 +135,30 @@ def evolves_to_string(roledex, player):
     s += "0"
   return "DB " + s + "\n"
 
-evolution_types = ["None", "Level", "Trade", "Fire", "Water", "Thunder", "Leaf", "Moon"]
+evolution_types = ["None", "Age", "Trade", "Fire", "Water", "Thunder", "Leaf", "Moon"]
 def evolution_type_string(player):
   evType = ""
-  evLevel = ""
-  lv = 0
+  evAge = ""
+  age = 0
   try:
-    lv = int(player["EVType"])
+    age = int(player["EVType"])
   except:
     pass
   
-  if lv > 0:
-    evType += "1 ;evolves at Level:"
-    evLevel += player["EVType"]
+  if age > 0:
+    evType += "1 ;evolves at Age:"
+    evAge += player["EVType"]
   elif player["EVType"] in evolution_types:
     evType += str(evolution_types.index(player["EVType"])) +  " ;"
     if player["EVType"] == "Trade":
       evType += "evolves when Traded"
     else:
       evType += "evolves when given " + player["EVType"] + " Ball"
-    evLevel += "0"
+    evAge += "0"
   else:
     evType += "0"
-    evLevel += "0"
-  return "DB " + evType + "\nDB " + evLevel + "\n"
+    evAge += "0"
+  return "DB " + evType + "\nDB " + evAge + "\n"
 
 def height_string(player):
   h = float(player["Height"])

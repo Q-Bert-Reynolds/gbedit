@@ -213,11 +213,11 @@ DrawPageOne:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
-.drawLevel
+.drawAge
   pop de;player
   push de
   ld hl, tile_buffer
-  call SetLevelTiles;de = player, hl = address
+  call SetAgeTiles;de = player, hl = address
   ld h, 3
   ld l, 1
   ld d, 15
@@ -416,8 +416,8 @@ StatScreenExperienceText:
  DB "          "
  DB "EXPERIENCE"
  DB "          "
- DB "NEXT LEVEL"
- DB "      ℔ℒ  ";to lv
+ DB "NEXT AGE  "
+ DB "      ℔ᚠ  ";to yr
 
 DrawPageTwo:
   ;img and name already drawn
@@ -528,17 +528,17 @@ DrawPageTwo:
   ld bc, str_buffer
   call gbdk_SetBkgTiles
 
-.checkNextLevel
+.checkNextAge
   pop hl;player
   push hl
-  call GetPlayerLevel
+  call GetPlayerAge
   cp 100
-  jr z, .atMaxLevel
+  jr z, .atMaxAge
   inc a  
   pop hl;player
   push hl
   push af
-  call GetUserPlayerXPToNextLevel
+  call GetUserPlayerXPToNextAge
   ld bc, str_buffer
   call str_Number24
   
@@ -555,7 +555,7 @@ DrawPageTwo:
   call gbdk_SetBkgTiles
 
   pop af
-.atMaxLevel
+.atMaxAge
   ld h, 0
   ld l, a
   ld de, name_buffer
@@ -570,13 +570,13 @@ DrawPageTwo:
   ld l, 1
   ld d, 17
   ld e, 6
-  jr .drawNextLevel
+  jr .drawNextAge
 .is100
   ld h, 3
   ld l, 1
   ld d, 16
   ld e, 6
-.drawNextLevel
+.drawNextAge
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 

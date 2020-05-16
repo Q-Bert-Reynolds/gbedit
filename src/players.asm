@@ -1,10 +1,11 @@
 PLAYER_DATA: MACRO;\1 = team, \2 = order
 \1Player\2:
 .number   DB
-.level    DB
+.age      DB
 .position DB
 .moves    DS MAX_MOVES
 .pp       DS MAX_MOVES
+.hand     DB
 .status   DB
 .hp       DW
 .max_hp   DW 
@@ -132,8 +133,9 @@ SECTION "Player Utils", ROM0
 ;GetPlayerMove                - hl = player, a = player move num, returns move in move_data
 ;GetPlayerMovePP              - hl = player, a = player move num, returns pp in a
 ;GetPlayerNumber              - hl = player, returns number in a
-;GetPlayerLevel               - hl = player, returns level in a
+;GetPlayerAge                 - hl = player, returns age in a
 ;GetPlayerPosition            - hl = player, returns position in a
+;GetPlayerHandedness          - hl = player, returns handedness in a
 ;GetPlayerStatus              - hl = player, returns status in a
 ;GetPlayerHP                  - hl = player, returns hp in hl
 ;GetPlayerMaxHP               - hl = player, returns max hp in hl
@@ -142,7 +144,7 @@ SECTION "Player Utils", ROM0
 ;GetPlayerSpeed               - hl = player, returns speed in hl
 ;GetPlayerThrow               - hl = player, returns throw in hl
 ;GetUserPlayerXP              - hl = player, returns xp in ehl
-;GetUserPlayerXPToNextLevel   - hl = player, returns xp in ehl
+;GetUserPlayerXPToNextAge     - hl = player, returns xp in ehl
 ;GetUserPlayerPay             - hl = player, returns pay in ehl
 ;GetUserPlayerName            - hl = user player, returns name in name_buffer
 ;GetOpposingPlayer            - a = lineup index, returns player in hl
@@ -237,9 +239,9 @@ GetPlayerNumber:: ;hl = player, returns number in a
   ld a, [hl]
   ret
   
-GetPlayerLevel:: ;hl = player, returns level in a
+GetPlayerAge:: ;hl = player, returns age in a
   push bc
-  ld bc, UserLineupPlayer1.level - UserLineupPlayer1
+  ld bc, UserLineupPlayer1.age - UserLineupPlayer1
   add hl, bc
   pop bc
   ld a, [hl]
@@ -248,6 +250,14 @@ GetPlayerLevel:: ;hl = player, returns level in a
 GetPlayerPosition:: ;hl = player, returns position in a
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1
+  add hl, bc
+  pop bc
+  ld a, [hl]
+  ret
+
+GetPlayerHandedness:: ;hl = player, returns handedness in a
+  push bc
+  ld bc, UserLineupPlayer1.hand - UserLineupPlayer1
   add hl, bc
   pop bc
   ld a, [hl]
@@ -347,7 +357,7 @@ GetUserPlayerXP:: ;hl = player, returns xp in ehl
   pop bc
   ret
 
-GetUserPlayerXPToNextLevel:: ;hl = player, returns xp in ehl
+GetUserPlayerXPToNextAge:: ;hl = player, returns xp in ehl
   push hl;player
   call GetUserPlayerXP
   ld b, e
@@ -356,22 +366,22 @@ GetUserPlayerXPToNextLevel:: ;hl = player, returns xp in ehl
   pop hl;player
   push bc;current xp in bcd
   push de
-  call GetPlayerLevel
+  call GetPlayerAge  
   inc a
-  push af;next level
+  push af;next age
   ld d, 0
   ld e, a
   call math_Multiply; hl = de * a
-  pop af;next level
+  pop af;next age
   ld d, 0
   ld e, a
   call math_Multiply16;bcde = de * hl
-  ld a, c;next level xp in ahl
+  ld a, c;next age xp in ahl
   ld h, d
   ld l, e
-  pop de;current level in bcd
+  pop de;current age in bcd
   pop bc
-  ld e, a;next level xp in ehl
+  ld e, a;next age xp in ehl
   call math_Sub24;ehl = ehl - bcd
   ret
 

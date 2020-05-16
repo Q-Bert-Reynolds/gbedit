@@ -2,9 +2,6 @@ BASEBALL_SPRITE_ID EQU 0
 AIM_CIRCLE_SPRITE_ID EQU 3
 STRIKEZONE_SPRITE_ID EQU 10
 
-STRIKE_ZONE_CENTER_X EQU 52
-STRIKE_ZONE_CENTER_Y EQU 87
-
 BALLS_MASK   EQU %01110000
 STRIKES_MASK EQU %00001100
 OUTS_MASK    EQU %00000011
@@ -78,6 +75,52 @@ IncrementOuts::;returns outs in a
   ld [runners_on_base+1], a
   call NextFrame
   ld a, 3
+  ret
+
+StrikeZonePosition:: ; returns strike zone pos in de
+  call IsUserFielding
+  jr nz, .userIsPitching
+.userIsBatting
+  call GetCurrentUserPlayer
+  call GetPlayerHandedness
+  ld b, a;handedness
+  and a, BAT_LEFT
+  jr nz, .userBatsLeft
+.userBatsRight
+  ld d, 52
+  ld e, 87
+  ret
+.userBatsLeft
+  ld a, b;handedness
+  and BAT_RIGHT
+  jr .userBatsSwitch
+  ld d, 20
+  ld e, 87
+  ret
+.userBatsSwitch
+  ld d, 20
+  ld e, 87
+  ret
+.userIsPitching
+  call GetCurrentOpponentPlayer
+  call GetPlayerHandedness
+  ld b, a;handedness
+  and a, BAT_LEFT
+  jr nz, .opponentBatsLeft
+.opponentBatsRight
+  ld d, 114
+  ld e, 42
+  ret
+.opponentBatsLeft
+  ld a, b;handedness
+  and BAT_RIGHT
+  jr .opponentBatsSwitch
+  ld d, 146
+  ld e, 42
+  ret
+.opponentBatsSwitch
+  ld d, 146
+  ld e, 42
   ret
 
 CheckStrike::;de = ball xy, returns strike (1) or ball (0) in a

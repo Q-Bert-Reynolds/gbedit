@@ -294,7 +294,7 @@ DrawLineupPlayer: ;hl = player, _j is order on screen
   pop de;player
   push de
   ld hl, tile_buffer+15
-  call SetLevelTiles
+  call SetAgeTiles
 
   pop de;player
   push de

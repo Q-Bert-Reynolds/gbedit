@@ -18,6 +18,7 @@ Optimization
 - overworld map and player image data need to be compressed to fit more
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
+- Load/Set User/Opposing PlayerBkgTiles subroutines share a ton of code
 
 Python scripts
 
@@ -41,9 +42,11 @@ New Game
 
 Play Ball
 
+- pitches in the dirt should bounce
 - hide strikezone after pitcher sets
 - players should disappear immediately after plate appearance or end of inning
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
+- ball should go behind lefty user batter, righty opposing batter
 - ball should fly off screen after contact
 - handle different moves
 - hide / disable selection of pitches when batting / swings when pitching
@@ -65,7 +68,7 @@ Team Menu
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well
-- show appropriate stat (ie. BA, ERA) below level
+- show appropriate stat (ie. BA, ERA) below age
 - animate player when highlighted
 
 Overworld

@@ -30,7 +30,7 @@ SECTION "Core", ROM0
 ; MoveSprites                     bc = xy in screen space, hl = wh in tiles, a = first sprite index
 ; SetSpriteTilesXY                bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
 ; SetHPBarTiles                   de = player, hl = address
-; SetLevelTiles                   de = player, hl = address
+; SetAgeTiles                   de = player, hl = address
 ; SetMovePPTiles                  a = move, de = player, hl = tile address
 ; ScrollXYToTileXY                returns xy in de
 ; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
@@ -1037,21 +1037,21 @@ SetHPBarTiles::;de = player, hl = address
   ld [hli], a
   ret
 
-SetLevelTiles::;de = player, hl = address
+SetAgeTiles::;de = player, hl = address
   push hl;address
   push de;player
-  ld a, LEVEL
+  ld a, AGE
   ld [hl], a
 
   pop hl;player
-  call GetPlayerLevel
+  call GetPlayerAge
   ld h, 0
   ld l, a
   pop de; address
   cp 100
-  jr z, .level100
+  jr z, .age100
   inc de
-.level100
+.age100
   call str_Number
   ret
 

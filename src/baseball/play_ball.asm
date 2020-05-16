@@ -43,7 +43,8 @@ ShowAimCircle: ;hl = size
   ld [hl], a;prop
   ret
 
-ShowStrikeZone; de = xy
+ShowStrikeZone:
+  call StrikeZonePosition
   ld hl, oam_buffer + STRIKEZONE_SPRITE_ID*4
 
   ;top left
@@ -171,12 +172,13 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   and a
   ret z
   ;projection
+  call StrikeZonePosition
   ld a, [pitch_target_y]
-  add a, STRIKE_ZONE_CENTER_Y
+  add a, d
   add a, 4
   ld [hli], a;y
   ld a, [pitch_target_x]
-  add a, STRIKE_ZONE_CENTER_X
+  add a, e
   add a, 4
   ld [hli], a;x
   ld a, 4
@@ -225,15 +227,16 @@ Pitch:
   ld a, DRAW_FLAGS_WIN
   call DisplayText
 
-  ld d, 146
-  ld e, 42
   call ShowStrikeZone
 
   ld hl, 4
   call ShowAimCircle
 
-  ld d, 146
-  ld e, 42
+  call StrikeZonePosition
+  ld a, d
+  ld [aim_x], a
+  ld a, e
+  ld [aim_y], a
   call MoveAimCircle
 
   call GetCurrentBatterName
@@ -244,11 +247,6 @@ Pitch:
   ld hl, str_buffer
   ld a, DRAW_FLAGS_WIN
   call DisplayText
-
-  ld a, 146
-  ld [aim_x], a
-  ld a, 42
-  ld [aim_y], a
   
   xor a
 .preSetAimLoop
@@ -297,12 +295,13 @@ Pitch:
   ld a, DRAW_FLAGS_WIN
   call DisplayText;"And the pitch."
 
+  call StrikeZonePosition
   ld a, [aim_x]
-  sub a, 146
+  sub a, d
   ld [pitch_target_x], a
 
   ld a, [aim_y]
-  sub a, 42
+  sub a, e
   ld [pitch_target_y], a
 
   xor a
@@ -340,15 +339,19 @@ Pitch:
 
     ld de, 1000;TODO: replace with pitch speed
     add hl, de
-    ld a, h
-    ld [pitch_z], a
     ld a, l
     ld [pitch_z+1], a
+    ld a, h
+    ld [pitch_z], a
 
     pop de;ball pos
+
+    cp a, 200
+    jr nc, .exitPitchLoop;if pitch_z >= 200
     ld a, d
     cp a, 168
     jr c, .pitchLoop
+.exitPitchLoop
 
   call AnnounceNoSwing
   call DrawCountOutsInning
@@ -365,11 +368,12 @@ Swing:; xy = de, z = a, returns contact made in a
   call HideStrikeZone
 
   ;TODO: replace with Opponent Pitcher AI
+  call StrikeZonePosition
   ld a, [pitch_target_x]
-  add a, STRIKE_ZONE_CENTER_X
+  add a, d
   ld b, a
   ld a, [pitch_target_y]
-  add a, STRIKE_ZONE_CENTER_Y
+  add a, e
   ld c, a
 
   pop de;xy
@@ -507,12 +511,12 @@ Bat:
   ld hl, 7
   call ShowAimCircle
   
-  ld d, 49
-  ld e, 85
+  call StrikeZonePosition
+  ld a, d
+  ld [aim_x], a
+  ld a, e
+  ld [aim_y], a
   call MoveAimCircle ;TODO: handle lefty batters
-  
-  ld d, 49
-  ld e, 85
   call ShowStrikeZone
   
   call GetCurrentBatterName
@@ -523,11 +527,6 @@ Bat:
   ld hl, str_buffer
   ld a, DRAW_FLAGS_WIN
   call DisplayText
-
-  ld a, 49
-  ld [aim_x], a
-  ld a, 85
-  ld [aim_y], a
   
   xor a
 .preSetAimLoop
@@ -646,14 +645,15 @@ Bat:
       call SetUserPlayerBkgTiles
 
 .moveBaseball
-    ld d, 126;TODO: differentiate between lefties and righties
-    ld e, 13
+    call StrikeZonePosition
     ld a, [pitch_target_x]
-    add a, STRIKE_ZONE_CENTER_X
+    add a, d
     ld h, a
     ld a, [pitch_target_y]
-    add a, STRIKE_ZONE_CENTER_Y
+    add a,e
     ld l, a
+    ld d, 126;release point, TODO: differentiate between lefties and righties
+    ld e, 13
     ld a, [pitch_z]
     ld c, a
     ld a, 1
@@ -669,14 +669,17 @@ Bat:
 
     ld de, 1500;TODO: replace with pitch speed
     add hl, de
-    ld a, h
-    ld [pitch_z], a
     ld a, l
     ld [pitch_z+1], a
+    ld a, h
+    ld [pitch_z], a
     pop de;ball pos
+    cp a, 120
+    jr nc, .exitSwingLoop
     ld a, d
     cp a, 168
     jp c, .swingLoop
+.exitSwingLoop
   ld a, [_c]
   and a
   jr nz, .swingAndMiss
@@ -891,7 +894,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ld a, 1
+  ; ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

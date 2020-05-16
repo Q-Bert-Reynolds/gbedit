@@ -86,17 +86,17 @@ DrawPlayerUI:: ;a = team (0 = user, 1 = opponent)
   pop af;team
   push af
   and a
-  jr nz, .setOpponentLevel
+  jr nz, .setOpponentAge
   call GetCurrentUserPlayer
-  jr .drawLevel
-.setOpponentLevel
+  jr .drawAge
+.setOpponentAge
   call GetCurrentOpponentPlayer
-.drawLevel
+.drawAge
   ld d, h
   ld e, l
   ld hl, tile_buffer+12
-  call SetLevelTiles
-.doneWithLevel
+  call SetAgeTiles
+.doneWithAge
   ld a, [_b]
   and a
   jr z, .isPitcher ;if (b) {

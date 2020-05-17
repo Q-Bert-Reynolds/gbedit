@@ -17,6 +17,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
 - [Old rom hack attempt](https://bitbucket.org/q_bert_reynolds/beisbolromhack)
 
 # Compiling:
+    gcc -o bin/mod2gbt mod2gbt.c
     python3 mod2gbt.py
     python3 img2rgbds.py
     python3 tmx2rgbds.py

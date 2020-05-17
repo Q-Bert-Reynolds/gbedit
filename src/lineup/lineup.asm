@@ -510,9 +510,9 @@ DrawLineupPlayerSprites
   ret
 
 FromWorldMenuText:
-  DB "STATS\nORDER\nSWITCH\nCANCEL", 0
+  DB "STATS\nBAT ORDER\nPOSITION\nCANCEL", 0
 FromGameMenuText:
-  DB "STATS\nSWITCH\nCANCEL", 0
+  DB "STATS\nPOSITION\nCANCEL", 0
 
 ShowPlayerMenu:
   ld a, [_c];number of players
@@ -559,14 +559,14 @@ ShowPlayerMenu:
   xor a
   ld [hl], a
 
-  ld d, 9
+  ld d, 12
   ld a, c
   add a, c
   add a, 2
   ld e, a
 
 .showList
-  ld b, 11
+  ld b, 8
   ld a, 18
   sub a, c
   sub a, c

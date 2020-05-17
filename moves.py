@@ -16,6 +16,8 @@ def generate_move_strings(moves):
     
     c_file.write("\nMoveNames::\n")
     for move in moves:
+      if (len(move["Move"]) > 12):
+        print("Warning: \"" + move["Move"] + "\" is more than 12 characters long.")
       c_file.write("DB \"" + move["Move"] + "\", 0\n")
 
 def generate_move_data(moves):
@@ -26,9 +28,9 @@ def generate_move_data(moves):
     var_names = ""
     for i in range(len(moves)):
       move = moves[i]
-      var_name = move["Move"].replace(" ","").replace("-","") + "Move"
+      var_name = move["Move"].replace(" ","").replace(".","").replace("-","") + "Move"
       var_names += "DW " + var_name + "\n"
-      constants += move["Move"].upper().replace(" ","_").replace("-","_") + "_MOVE EQU " + str(i+1) + "\n"
+      constants += move["Move"].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE EQU " + str(i+1) + "\n"
       c_file.write("\n" + var_name + ":;" + move["Description"] + "\n")
       if move["Category"] == "Pitching":
         c_file.write("DB 0;Pitch\n")

@@ -49,8 +49,8 @@ MyZaphData:
   DB 145                                ; .number
   DB 89                                 ; .age
   DB 9                                  ; .position
-  DB ELECTRIC_SLIDER_MOVE               ; .moves
-  DB THUNDER_STICK_MOVE
+  DB ELEC_SLIDER_MOVE                   ; .moves
+  DB THUNDERSTICK_MOVE
   DB RISER_MOVE
   DB PSYCH_OUT_MOVE
   DB 10, 10, 10, 10                     ; .pp
@@ -270,9 +270,9 @@ MyChuData:
   DB 25                                 ; .number
   DB 23                                 ; .age
   DB 8                                  ; .position
-  DB LIGHTNING_BOLT_MOVE                ; .moves
+  DB LIGHTNINBOLT_MOVE                  ; .moves
   DB SWING_MOVE
-  DB CIRCLE_CHANGE_MOVE
+  DB CIRCLECHANGE_MOVE
   DB CURVEBALL_MOVE
   DB 20, 40, 30, 20                     ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand

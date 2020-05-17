@@ -172,13 +172,15 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   and a
   ret z
   ;projection
+  push hl;store OAM address
   call StrikeZonePosition
+  pop hl;restore OAM address
   ld a, [pitch_target_y]
-  add a, d
+  add a, e
   add a, 4
   ld [hli], a;y
   ld a, [pitch_target_x]
-  add a, e
+  add a, d
   add a, 4
   ld [hli], a;x
   ld a, 4
@@ -575,21 +577,22 @@ Bat:
   ld a, DRAW_FLAGS_WIN
   call DisplayText;"And the pitch."
 
-  call GetCurrentOpponentPlayer
-  ld a, 0
-  call GetPlayerMoveName
+  ; call GetCurrentOpponentPlayer
+  ; ld a, 0
+  ; call GetPlayerMoveName
 
-  ld hl, AndThePitchText
-  ld de, str_buffer
-  call str_Copy
+  ; ld hl, AndThePitchText
+  ; ld de, str_buffer
+  ; call str_Copy
 
-  ld hl, ThrewAPitchText;"\nA %s."
-  ld de, str_buffer
-  call str_Append;"And the pitch.\nA %s."
+  ; ld hl, ThrewAPitchText;"\nA %s."
+  ; ld de, str_buffer
+  ; call str_Append;"And the pitch.\nA %s."
 
-  ld hl, name_buffer;pitch name
-  ld de, str_buffer
-  call str_Replace;"And the pitch.\nA PITCH_NAME."
+  ; ld hl, name_buffer;pitch name
+  ; ld de, str_buffer
+  ; call str_Replace;"And the pitch.\nA PITCH_NAME."
+  ; call DisplayText
 
   xor a
   ld [_c], a; c = swing frame
@@ -600,7 +603,7 @@ Bat:
     inc a
     ld [_i], a
     cp a, 4
-    jr nz, .aim;if (j == s*2)
+    jr nz, .aim
 
 .setFinishPitchFrame
   ld a, 3
@@ -736,7 +739,7 @@ Bat:
   ld d, -8
   ld e, -8
   call MoveAimCircle
-  
+
   xor a
   call SetUserPlayerBkgTiles
 

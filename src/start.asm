@@ -341,7 +341,6 @@ Start::
 .pitchSequence
   ld hl, SGBStartBattleSlideAttrBlk
   call sgb_PacketTransfer
-  ld [_breakpoint], a
 
   HIDE_ALL_SPRITES
   PLAY_SONG charge_fanfare_data, 0

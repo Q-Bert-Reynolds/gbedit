@@ -206,13 +206,13 @@ MoveAimCircle: ;de = xy
   ld a, e
   add a, 8
   ld e, a
-  call gbdk_MoveSprite;move_sprite(5, x,   y+8);
+  call gbdk_MoveSprite
 
   ld c, 6
   ld a, 8
   add a, d
   ld d, a
-  call gbdk_MoveSprite;move_sprite(6, x+8, y+8);
+  call gbdk_MoveSprite
   ret
 
 Pitch:
@@ -577,23 +577,6 @@ Bat:
   ld a, DRAW_FLAGS_WIN
   call DisplayText;"And the pitch."
 
-  ; call GetCurrentOpponentPlayer
-  ; ld a, 0
-  ; call GetPlayerMoveName
-
-  ; ld hl, AndThePitchText
-  ; ld de, str_buffer
-  ; call str_Copy
-
-  ; ld hl, ThrewAPitchText;"\nA %s."
-  ; ld de, str_buffer
-  ; call str_Append;"And the pitch.\nA %s."
-
-  ; ld hl, name_buffer;pitch name
-  ; ld de, str_buffer
-  ; call str_Replace;"And the pitch.\nA PITCH_NAME."
-  ; call DisplayText
-
   xor a
   ld [_c], a; c = swing frame
   ld [pitch_z], a
@@ -603,11 +586,37 @@ Bat:
     inc a
     ld [_i], a
     cp a, 4
-    jr nz, .aim
+    jr z, .setFinishPitchFrame
+    cp a, 8
+    jr z, .displayPitchName
+    jr .aim
 
 .setFinishPitchFrame
   ld a, 3
   call SetOpposingPlayerBkgTiles
+  jr .aim
+
+.displayPitchName
+  call GetCurrentOpponentPlayer
+  ld a, 0;TODO: replace me with selected pitch move
+  call GetPlayerMoveName;move in name_buffer
+
+  ld hl, AndThePitchText
+  ld de, str_buffer
+  call str_Copy ;str_buffer = "And the pitch.""
+
+  ld hl, ThrewAPitchText;"\nA %s."
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace;str_buffer = "\nA PITCH_NAME."
+
+  ld hl, tile_buffer
+  ld de, str_buffer
+  call str_Append;"And the pitch."
+
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
 
 .aim
     ld a, [_c]

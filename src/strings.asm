@@ -144,7 +144,7 @@ str_Append::
 
 ;***************************************************************************
 ;
-; str_Replace - Replaces %s with bc
+; str_Replace - Replaces %s in src with bc, results in dest
 ;
 ; input:
 ;   hl - src string

@@ -11,6 +11,40 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
+; GetBalls - returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
+; SetBalls - a = balls
+; GetStrikes - returns (balls_strikes_outs & STRIKES_MASK) >> 2 in a
+; SetStrikes - a = strikes
+; GetOuts - returns balls_strikes_outs & OUTS_MASK in a
+; SetOuts - a = outs
+; IncrementOuts - returns outs in a
+; StrikeZonePosition - returns strike zone pos in de; 
+; PutBatterOnFirst - upper nibble of runners_on_base stores scoring runner (if any)
+; HealthPctToString - a = health_pct, returns str_buff
+; BattingAvgToString - de = batting average*1000, returns str_buff
+; EarnedRunAvgToString - hl = ERA*100, returns str_buff
+; CurrentOrderInLineup - returns order in a
+; NextFrame
+; NextBatter
+; ShowBatter
+; ShowPitcher
+; ShowUserPlayer
+; ShowOpposingPlayer
+; GetUserPitcher
+; GetUserBatter
+; GetOpponentPitcher
+; GetOpponentBatter
+; GetCurrentBatter - puts batter's player data in hl
+; GetCurrentBatterName - puts batter's name in name_buffer
+; GetCurrentPitcher - puts pitcher's player data in hl
+; GetCurrentPitcherName - pust pitcher's name in name_buffer
+; GetCurrentUserPlayer - puts user's current batter or pitcher player data in hl
+; GetCurrentOpponentPlayer - puts opponent's current batter or pitcher player data in hl
+; GetRunnerOnFirst - puts runner on first player data or zero in hl
+; GetRunnerOnSecond - puts runner on third player data or zero in hl
+; GetRunnerOnThird - puts runner on third player data or zero in hl
+; GetPositionPlayerName - a = position number (1-9), returns position player's name in name_buffer
+
 GetBalls::; returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
   ld a, [balls_strikes_outs]
   and BALLS_MASK
@@ -123,10 +157,6 @@ StrikeZonePosition:: ; returns strike zone pos in de
   ld e, 42
   ret
 
-CheckStrike::;de = ball xy, returns strike (1) or ball (0) in a
-
-  ret
-
 PutBatterOnFirst::;upper nibble of runners_on_base stores scoring runner (if any)
   ld a, [runners_on_base+1]
   and a, FIRST_BASE_MASK
@@ -157,7 +187,7 @@ PutBatterOnFirst::;upper nibble of runners_on_base stores scoring runner (if any
   ld [runners_on_base+1], a
   ret
 
-HealthPctToString: ;a = health_pct, returns str_buff
+HealthPctToString:: ;a = health_pct, returns str_buff
   ld hl, str_buffer
   cp 100; if (a >= 100) strcpy(str_buff, "100");
   jr c, .lessThan100
@@ -191,7 +221,7 @@ HealthPctToString: ;a = health_pct, returns str_buff
   ld [hl], a
   ret
 
-BattingAvgToString: ;de = batting average*1000, returns str_buff
+BattingAvgToString:: ;de = batting average*1000, returns str_buff
   ld hl, str_buffer
   ld a, d
   cp $3
@@ -251,7 +281,7 @@ BattingAvgToString: ;de = batting average*1000, returns str_buff
   ret
 
 ;TODO: fix this broken function
-EarnedRunAvgToString: ;hl = ERA*100, returns str_buff
+EarnedRunAvgToString:: ;hl = ERA*100, returns str_buff
   ld a, 100
   call math_Divide; hl = hl/100, a = hl%100
   push af

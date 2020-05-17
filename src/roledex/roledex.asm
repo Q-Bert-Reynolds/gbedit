@@ -17,6 +17,7 @@ INCLUDE "data/player_data.asm"
 INCLUDE "data/player_strings.asm"
 
 ; GetMoveName - a = move number, returns name_buffer
+; GetMove - a = move number, returns move_data
 
 ; GetPlayerName - a = number, returns name_buffer
 ; GetPlayerDescription - a = number, returns str_buffer

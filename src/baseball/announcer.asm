@@ -136,13 +136,8 @@ AnnounceBatter::
 ;
 ;----------------------------------------------------------------------
 AnnounceNoSwing::
-  ld a, [pitch_target_x]
-  BETWEEN -12, 12
+  call CheckStrike
   jr z, .ball
-  ld a, [pitch_target_y]
-  BETWEEN -16, 16
-  jr z, .ball
-
 .strike
   call GetStrikes
   cp a, 2

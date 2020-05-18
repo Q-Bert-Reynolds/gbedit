@@ -301,12 +301,14 @@ Pitch:
   ld a, [aim_x]
   sub a, d
   ld [pitch_target_x], a
-
   ld a, [aim_y]
   sub a, e
   ld [pitch_target_y], a
 
+  call SwingAI;populates _w_x_y_z
+
   xor a
+  ld [_c], a; c = swing frame
   ld [pitch_z], a
   ld [pitch_z+1], a
   ld [_i], a;step
@@ -334,6 +336,40 @@ Pitch:
     call SetUserPlayerBkgTiles   
 .skip
 
+    ld a, [_c]
+    and a
+    jr nz, .checkFinishSwing
+    ld a, [_w]
+    and a
+    jr z, .noSwing
+.checkSwing
+    ld a, [pitch_z]
+    ld b, a
+    ld a, [_z]
+    cp a, b
+    jr nc, .moveBaseball
+.swing
+      ld a, 1
+      call SetOpposingPlayerBkgTiles
+
+      ld a, [_x]
+      ld d, a
+      ld a, [_y]
+      ld e, a
+      ld a, [pitch_z]
+      ld [_c], a
+      call Swing
+      jr .moveBaseball
+.checkFinishSwing
+    ld a, [_c]
+    add a, 4
+    ld b, a
+    ld a, [_i]
+    cp b
+    jr nz, .moveBaseball
+      ld a, 2
+      call SetOpposingPlayerBkgTiles
+.moveBaseball
     ld a, [pitch_z]
     ld h, a
     ld a, [pitch_z+1]
@@ -349,13 +385,23 @@ Pitch:
     pop de;ball pos
 
     cp a, 200
-    jr nc, .exitPitchLoop;if pitch_z >= 200
+    jr nc, .noSwing;if pitch_z >= 200
     ld a, d
     cp a, 168
-    jr c, .pitchLoop
-.exitPitchLoop
-
+    jp c, .pitchLoop
+  
+  ld a, [_c]
+  and a
+  jr z, .noSwing
+.swingAndMiss
+  call AnnounceSwingMiss
+  jr .finish
+.contactMade
+  call AnnounceSwingContact
+  jr .finish
+.noSwing
   call AnnounceNoSwing
+.finish
   call DrawCountOutsInning
   call DrawBases
   ret
@@ -388,13 +434,6 @@ Swing:; xy = de, z = a, returns contact made in a
   pop af;z
   sub a, 100
   ld [swing_diff_z], a
-
-  ; ld a, [swing_diff_x]
-  ; ld b, a
-  ; ld a, [swing_diff_y]
-  ; ld c, a
-  ; ld a, [swing_diff_z]
-  ; ld [_breakpoint], a
 
   ld a, [swing_diff_z]
   BETWEEN -20, 20
@@ -652,7 +691,7 @@ Bat:
     ld b, a
     ld a, [_i]
     cp b
-    jr nz, .moveBaseball;else if (j == c+2*s)
+    jr nz, .moveBaseball
       ld a, 2
       call SetUserPlayerBkgTiles
 
@@ -906,14 +945,14 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ; ld a, 1
+  ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   ld [_a], a
-  ld a, 1; TODO: replace with team/random encounter
-  call ShowPlayBallIntro
+  ld a, 0; TODO: replace with team/random encounter
+  ; call ShowPlayBallIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame
 

@@ -1,5 +1,10 @@
 Current
 
+- generate and parse pitch path curves
+- handle different moves
+  - pitch path should follow XY curve
+  - high accuracy pitches should have small circles
+  - high accuracy swings should have large circles
 - random opponent batting
 - advancing bases / scoring
 - semi-random contact results (announcer mode)
@@ -48,7 +53,6 @@ Play Ball
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
 - ball should go behind lefty user batter, righty opposing batter
 - ball should fly off screen after contact
-- handle different moves
 - hide / disable selection of pitches when batting / swings when pitching
 - more pitching/batting animations
 - Pitch & Bat subroutines share a ton of code, should call shared subroutine instead

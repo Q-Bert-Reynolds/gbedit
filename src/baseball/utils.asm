@@ -18,6 +18,7 @@ HOME_MASK        EQU $F000
 ; GetOuts - returns balls_strikes_outs & OUTS_MASK in a
 ; SetOuts - a = outs
 ; IncrementOuts - returns outs in a
+; CheckStrike - returns ball (z) or strike (nz)
 ; StrikeZonePosition - returns strike zone pos in de; 
 ; PutBatterOnFirst - upper nibble of runners_on_base stores scoring runner (if any)
 ; HealthPctToString - a = health_pct, returns str_buff
@@ -109,6 +110,56 @@ IncrementOuts::;returns outs in a
   ld [runners_on_base+1], a
   call NextFrame
   ld a, 3
+  ret
+
+CheckStrike:: ;returns ball (z) or strike (nz)
+  ld a, [pitch_target_x]
+  BETWEEN -12, 12
+  ret z
+  ld a, [pitch_target_y]
+  BETWEEN -16, 16
+  ret
+
+SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
+  call gbdk_Random
+;   call CheckStrike
+;   jr z, .ball
+; .strike; swing at strikes 75% of the time
+;   ld a, 192
+;   cp a, e
+;   jr c, .noSwing
+;   jr .swing
+; .ball; swing at balls 25% of the time
+;   ld a, 64
+;   cp a, e
+;   jr c, .noSwing
+; .swing
+  ld a, 1
+  ld [_w], a
+  ld a, d
+  and a, %10000111
+  ld b, a
+  ld a, [pitch_target_x]
+  ; add a, b
+  ld [_x], a
+
+  ld a, d
+  swap a
+  and a, %10000111
+  ld b, a
+  ld a, [pitch_target_y]
+  ; add a, b
+  ld [_y], a
+
+  ; ld a, e
+  ; and a, %10000111
+  ; add a, 100
+  ld a, 100
+  ld [_z], a
+  ret
+; .noSwing
+;   xor a
+;   ld [_w], a
   ret
 
 StrikeZonePosition:: ; returns strike zone pos in de

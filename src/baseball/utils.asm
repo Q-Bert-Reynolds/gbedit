@@ -122,44 +122,52 @@ CheckStrike:: ;returns ball (z) or strike (nz)
 
 SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
   call gbdk_Random
-;   call CheckStrike
-;   jr z, .ball
-; .strike; swing at strikes 75% of the time
-;   ld a, 192
-;   cp a, e
-;   jr c, .noSwing
-;   jr .swing
-; .ball; swing at balls 25% of the time
-;   ld a, 64
-;   cp a, e
-;   jr c, .noSwing
-; .swing
+  call CheckStrike
+  jr z, .ball
+.strike; swing at strikes 75% of the time
+  ld a, 192
+  cp a, e
+  jr c, .noSwing
+  jr .swing
+.ball; swing at balls 25% of the time
+  ld a, 64
+  cp a, e
+  jr c, .noSwing
+.swing
   ld a, 1
   ld [_w], a
+
   ld a, d
-  and a, %10000111
+  and a, %111
   ld b, a
   ld a, [pitch_target_x]
-  ; add a, b
+  add a, b
   ld [_x], a
 
   ld a, d
   swap a
-  and a, %10000111
+  and a, %111
   ld b, a
   ld a, [pitch_target_y]
-  ; add a, b
+  add a, b
   ld [_y], a
 
-  ; ld a, e
-  ; and a, %10000111
-  ; add a, 100
-  ld a, 100
+  call StrikeZonePosition
+  ld a, [_x]
+  add a, d
+  ld [_x], a
+  ld a, [_y]
+  add a, e
+  ld [_y], a
+
+  ld a, e
+  and a, %10000111
+  add a, 100
   ld [_z], a
   ret
-; .noSwing
-;   xor a
-;   ld [_w], a
+.noSwing
+  xor a
+  ld [_w], a
   ret
 
 StrikeZonePosition:: ; returns strike zone pos in de

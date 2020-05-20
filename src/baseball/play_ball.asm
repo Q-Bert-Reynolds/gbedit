@@ -110,7 +110,7 @@ HideBaseball
   call mem_Set
   ret
 
-MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl = end xy, returns ball pos in de
+MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl = end xy
   push af;show projection
   push bc;z
   push de;start xy
@@ -218,6 +218,8 @@ MoveAimCircle: ;de = xy
 Pitch:
   ld a, 0
   call SetUserPlayerBkgTiles
+  ld a, 0
+  call SetOpposingPlayerBkgTiles
 
   call GetCurrentUserPlayer
   call GetUserPlayerName
@@ -323,7 +325,6 @@ Pitch:
     ld c, a
     xor a
     call MoveBaseball
-    push de;ball pos
 
     call gbdk_WaitVBL
 
@@ -335,13 +336,12 @@ Pitch:
     ld a, 3
     call SetUserPlayerBkgTiles   
 .skip
-
+    ld a, [_w]
+    and a
+    jr z, .moveBaseball
     ld a, [_c]
     and a
     jr nz, .checkFinishSwing
-    ld a, [_w]
-    and a
-    jr z, .noSwing
 .checkSwing
     ld a, [pitch_z]
     ld b, a
@@ -359,6 +359,8 @@ Pitch:
       ld a, [pitch_z]
       ld [_c], a
       call Swing
+      and a
+      jr nz, .contactMade
       jr .moveBaseball
 .checkFinishSwing
     ld a, [_c]
@@ -382,11 +384,9 @@ Pitch:
     ld a, h
     ld [pitch_z], a
 
-    pop de;ball pos
-
     cp a, 200
     jr nc, .noSwing;if pitch_z >= 200
-    ld a, d
+    ld a, [oam_buffer + BASEBALL_SPRITE_ID*4 + 1];ball x
     cp a, 168
     jp c, .pitchLoop
   
@@ -395,16 +395,13 @@ Pitch:
   jr z, .noSwing
 .swingAndMiss
   call AnnounceSwingMiss
-  jr .finish
+  jp FinishPitch
 .contactMade
   call AnnounceSwingContact
-  jr .finish
+  jp FinishPitch
 .noSwing
   call AnnounceNoSwing
-.finish
-  call DrawCountOutsInning
-  call DrawBases
-  ret
+  jp FinishPitch
 
 Swing:; xy = de, z = a, returns contact made in a
   push af;z
@@ -415,7 +412,6 @@ Swing:; xy = de, z = a, returns contact made in a
   
   call HideStrikeZone
 
-  ;TODO: replace with Opponent Pitcher AI
   call StrikeZonePosition
   ld a, [pitch_target_x]
   add a, d
@@ -769,18 +765,19 @@ Bat:
   pop af;exit velocity
   call LoadSimulation;a = exit velocity b = spray angle c = launch angle
   call SetupGameUI
-  jr .finish
+  jr FinishPitch
 .announceContact
   pop bc;direction
   pop af;exit velocity
   call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
-  jr .finish
+  jr FinishPitch
 .noSwing
   call AnnounceNoSwing
-  jr .finish
+  jr FinishPitch
 .swingAndMiss
   call AnnounceSwingMiss
-.finish
+
+FinishPitch:
   call HideBaseball
   call HideStrikeZone
 
@@ -790,6 +787,8 @@ Bat:
 
   xor a
   call SetUserPlayerBkgTiles
+  xor a
+  call SetOpposingPlayerBkgTiles
 
   call DrawCountOutsInning
   call DrawBases

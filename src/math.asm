@@ -27,6 +27,8 @@
 ;     a = length(de)
 ;   math_Normalize
 ;     de = normalized(de)
+;   math_Abs
+;     a = |a|
 
 IF !DEF(MATH_ASM)
 MATH_ASM SET 1
@@ -376,4 +378,13 @@ _Lerp:
   call math_Divide
   ld a, l
   ret
+
+math_Abs:: ;a = |a|
+  cp a, 128
+  ret c
+  cpl
+  inc a
+  ret
+
+
 ENDC

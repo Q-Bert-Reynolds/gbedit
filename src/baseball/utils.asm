@@ -119,15 +119,15 @@ CheckStrike:: ;returns ball (z) or strike (nz)
 
 SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
   call gbdk_Random
-  call CheckStrike
-  jr z, .ball
-.strike; swing at strikes 75% of the time
+  ld a, [pitch_target_x]
+  call math_Abs
+  ld b, a
+  ld a, [pitch_target_y]
+  call math_Abs
+  add a, b;Manhattan distance from center
+  ld b, a
   ld a, 192
-  cp a, e
-  jr c, .noSwing
-  jr .swing
-.ball; swing at balls 25% of the time
-  ld a, 64
+  sub a, b;less likely to swing the farther the ball is from dead center
   cp a, e
   jr c, .noSwing
 .swing
@@ -135,7 +135,8 @@ SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
   ld [_w], a
 
   ld a, d
-  and a, %111
+  and a, 31
+  sub a, 15
   ld b, a
   ld a, [pitch_target_x]
   add a, b
@@ -143,7 +144,8 @@ SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
 
   ld a, d
   swap a
-  and a, %111
+  and a, 31
+  sub a, 15
   ld b, a
   ld a, [pitch_target_y]
   add a, b

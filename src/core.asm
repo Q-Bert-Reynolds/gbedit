@@ -1335,7 +1335,29 @@ SignedRandom: ;a = bitmask
 ;
 ;----------------------------------------------------------------------
 DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in a
-  ld a, 200
+  push af;speed
+  ld a, b
+  cp a, 128
+  jr c, .inAir
+
+  pop af;speed
+  srl a;d = speed/2 ... TODO: this could be done better
+  ret
+
+.inAir ;d = v^2 * sin(2 * ang) / g
+  add a, a
+  call math_Sin255
+  ld b, a;sin(2*ang)*255
+  pop af;speed
+  push bc
+  ld d, 0
+  ld e, a
+  call math_Multiply;v^2
+  pop bc
+  ld d, 0
+  ld e, b
+  call math_Multiply16;v^2 * sin(2*ang)*255
+  ld a, c;v^2 * sin(2*ang)/g... bcde -> a, assumes b == 0, drops lower word
   ret
 
 ;----------------------------------------------------------------------

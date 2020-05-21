@@ -95,7 +95,7 @@
 
 
 ;----------------------------------------------------------------------
-; AnnounceBeginningOfFrameText - called at beginning of each frame
+; AnnounceBeginningOfFrame - called at beginning of each frame
 ;
 ;   "GINGER steps on the mound."
 ;   "BUBBI walks up to the plate."
@@ -132,7 +132,7 @@ AnnounceBatter::
   ret
 
 ;----------------------------------------------------------------------
-; AnnounceNoSwingText - called if the player doesn't swing
+; AnnounceNoSwing - called if the player doesn't swing
 ;
 ;   "Ball 1."
 ;
@@ -236,7 +236,7 @@ AnnounceWildPitchOrPassedBall:
 
 
 ;----------------------------------------------------------------------
-; AnnounceSwingMissText - called if the player swings and misses
+; AnnounceSwingMiss - called if the player swings and misses
 ;
 ;   "Swing and a miss."
 ;   "Strike 1."
@@ -299,7 +299,7 @@ AnnounceSwingMiss::;de = pitch xy
 
 
 ;----------------------------------------------------------------------
-; AnnounceSwingContactText - called if the player makes contact
+; AnnounceSwingContact - called if the player makes contact
 ;
 ;   "A deep fly ball to right center."
 ;   "CHU makes the catch."
@@ -309,8 +309,8 @@ AnnounceSwingMiss::;de = pitch xy
 ;      a = exit speed
 ;      b = spray angle
 ;      c = launch angle
-;      de = swing
-;      hl = pitch
+;      de = swing move
+;      hl = pitch move
 ;
 ;----------------------------------------------------------------------
 AnnounceSwingContact::

@@ -133,7 +133,7 @@ ENDR
   pop hl             ; Restore multiplier.
   ret
 
-;FIXME: This seems to be broken for large values of C
+;FIXME: This seems to be broken for large values of C ...
 math_Divide:: ; hl (remainder a) = hl / c
   xor a
   ld b, 16
@@ -150,7 +150,6 @@ math_Divide:: ; hl (remainder a) = hl / c
     jr nz, .loop
   ret
 
-;TODO: this is slow, make it more like div and div24
 math_Divide16:: ;de (remainder hl) = hl / bc
   ld de, 0 ;quotient
 .loop ;while remainder >= denominator
@@ -161,6 +160,7 @@ math_Divide16:: ;de (remainder hl) = hl / bc
   dec de
   ret
 
+;FIXME: This also seems to be broken for large values of D ...
 math_Divide24:: ; ehl (remainder a) = ehl / d
   xor a
   ld b, 24
@@ -386,5 +386,26 @@ math_Abs:: ;a = |a|
   inc a
   ret
 
+math_Sin255:: ;a = sin(a) * 255 where a in degrees <= 180
+  cp a, 91
+  jr c, .lookup
+  ld b, a
+  ld a, 180
+  sub a, b
+.lookup
+  ld hl, Sin255Table
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hl]
+  ret
+  
+Sin255Table:;0 to 90 degrees (also 180 to 90, 0 to -90, and -180 to -90)
+  DB   0,  4,  9, 13, 18, 22, 27, 31, 35, 40, 44, 49, 53, 57, 62
+  DB  66, 70, 75, 79, 83, 87, 91, 96,100,104,108,112,116,120,124
+  DB 127,131,135,139,143,146,150,153,157,160,164,167,171,174,177
+  DB 180,183,186,190,192,195,198,201,204,206,209,211,214,216,219
+  DB 221,223,225,227,229,231,233,235,236,238,240,241,243,244,245
+  DB 246,247,248,249,250,251,252,253,253,254,254,254,255,255,255,255
 
 ENDC

@@ -103,9 +103,16 @@ HideStrikeZone:
   call mem_Set
   ret
 
-HideBaseball
+HideBaseball:
   ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
   ld bc, 3*4
+  xor a
+  call mem_Set
+  ret
+
+HideAimCircle:
+  ld hl, oam_buffer + AIM_CIRCLE_SPRITE_ID*4
+  ld bc, 4*4
   xor a
   call mem_Set
   ret
@@ -190,16 +197,16 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   ret
 
 MoveAimCircle: ;de = xy
-  ld c, 3
+  ld c, AIM_CIRCLE_SPRITE_ID
   call gbdk_MoveSprite;move_sprite(3, x,   y);
 
-  ld c, 4
+  ld c, AIM_CIRCLE_SPRITE_ID+1
   ld a, d
   add a, 8
   ld d, a
   call gbdk_MoveSprite;move_sprite(4, x+8, y);
 
-  ld c, 5
+  ld c, AIM_CIRCLE_SPRITE_ID+2
   ld a, d
   sub a, 8 
   ld d, a
@@ -208,7 +215,7 @@ MoveAimCircle: ;de = xy
   ld e, a
   call gbdk_MoveSprite
 
-  ld c, 6
+  ld c, AIM_CIRCLE_SPRITE_ID+3
   ld a, 8
   add a, d
   ld d, a
@@ -397,8 +404,7 @@ Pitch:
   call AnnounceSwingMiss
   jp FinishPitch
 .contactMade
-  call AnnounceSwingContact
-  jp FinishPitch
+  jp HitBall
 .noSwing
   call AnnounceNoSwing
   jp FinishPitch
@@ -406,10 +412,8 @@ Pitch:
 Swing:; xy = de, z = a, returns contact made in a
   push af;z
   push de;xy
-  ld d, -8
-  ld e, -8
-  call MoveAimCircle
-  
+
+  call HideAimCircle  
   call HideStrikeZone
 
   call StrikeZonePosition
@@ -731,14 +735,24 @@ Bat:
   and a
   jr nz, .swingAndMiss
   jp .noSwing
-
 .hitBall
-  call HideBaseball
+  jr HitBall
+.announceContact
+  pop bc;direction
+  pop af;exit velocity
+  call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
+  jp FinishPitch
+.noSwing
+  call AnnounceNoSwing
+  jp FinishPitch
+.swingAndMiss
+  call AnnounceSwingMiss
+  jp FinishPitch
 
-  ld d, -8
-  ld e, -8
-  call MoveAimCircle
-  
+HitBall:
+  call HideBaseball
+  call HideAimCircle  
+
   ld a, [swing_diff_x]
   ld a, [swing_diff_y]
   ld a, [swing_diff_z]
@@ -746,36 +760,34 @@ Bat:
   ld de, 10
   call gbdk_Delay
 
+  call IsUserFielding
   ld a, 2
+  jr z, .userBatting
+.opponentBatting
+  call SetOpposingPlayerBkgTiles
+  jr .delay
+.userBatting
   call SetUserPlayerBkgTiles
-
+.delay
   ld de, 10
   call gbdk_Delay
 
   ld a, 255;full power
-  ld b, -45;up the middle
+  ld b, 0;up the middle
   ld c, 45;degrees up
   push af;exit velocity
-  push bc;direction
   ld a, 0;TODO:read animation on/off from save ram 
   and a
   jr z, .announceContact
 .loadSimulation
-  pop bc;direction
   pop af;exit velocity
   call LoadSimulation;a = exit velocity b = spray angle c = launch angle
   call SetupGameUI
   jr FinishPitch
 .announceContact
-  pop bc;direction
   pop af;exit velocity
   call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
-  jr FinishPitch
-.noSwing
-  call AnnounceNoSwing
-  jr FinishPitch
-.swingAndMiss
-  call AnnounceSwingMiss
+  ;fall through to FinishPitch  
 
 FinishPitch:
   call HideBaseball

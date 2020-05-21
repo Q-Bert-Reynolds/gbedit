@@ -46,12 +46,12 @@ SwapPositions: ;bc = player count, selected player
     jr z, .checkB
 
     ld a, [_k]
-    call GetUserPlayer
+    call GetUserPlayerInLineup
     call GetPlayerPosition
     push hl;store player k position location
     push af;store player k position
     ld a, [_j]
-    call GetUserPlayer
+    call GetUserPlayerInLineup
     call GetPlayerPosition
     ld b, a;player j position
     pop af;get player k position
@@ -94,14 +94,14 @@ SwapPositions: ;bc = player count, selected player
 
 SwapLineupData:
   ld a, [_k]
-  call GetUserPlayer
+  call GetUserPlayerInLineup
   push hl;player k
   ld de, tile_buffer
   ld bc, UserLineupPlayer2 - UserLineupPlayer1
   call mem_Copy
 
   ld a, [_j]
-  call GetUserPlayer
+  call GetUserPlayerInLineup
   pop de;player k
   push hl;player j
   ld bc, UserLineupPlayer2 - UserLineupPlayer1

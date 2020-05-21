@@ -167,7 +167,7 @@ HitGrandSlamText::            DB "GRAND SLAM!",0
 CriticalHitText::             DB "Critical hit!",0
 
 ;score
-PlayerScoresText::            DB "%s scores.",0
+PlayerScoresText::            DB " scores.",0
 TwoPlayersScoreText::         DB " and\n%s score.",0
 BasesClearedScoreText::       DB "And that clears\nthe bases.",0
 

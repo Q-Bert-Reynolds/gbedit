@@ -41,9 +41,6 @@ HOME_MASK        EQU $F000
 ; GetCurrentPitcherName - pust pitcher's name in name_buffer
 ; GetCurrentUserPlayer - puts user's current batter or pitcher player data in hl
 ; GetCurrentOpponentPlayer - puts opponent's current batter or pitcher player data in hl
-; GetRunnerOnFirst - puts runner on first player data or zero in hl
-; GetRunnerOnSecond - puts runner on third player data or zero in hl
-; GetRunnerOnThird - puts runner on third player data or zero in hl
 ; GetPositionPlayerName - a = position number (1-9), returns position player's name in name_buffer
 
 GetBalls::; returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
@@ -244,6 +241,7 @@ PutBatterOnFirst::;upper nibble of runners_on_base stores scoring runner (if any
   pop bc;b=second base runner
   or a, b
   ld [runners_on_base+1], a
+  call DrawBases
   ret
 
 HealthPctToString:: ;a = health_pct, returns str_buff
@@ -469,7 +467,7 @@ GetUserPitcher::
 GetUserBatter::
   ld a, [current_batter]
   and a, %00001111
-  call GetUserPlayer
+  call GetUserPlayerInLineup
   ret
   
 GetOpponentPitcher::
@@ -481,7 +479,7 @@ GetOpponentBatter::
   ld a, [current_batter]
   swap a
   and a, %00001111
-  call GetOpposingPlayer
+  call GetOpposingPlayerInLineup
   ret
 
 GetCurrentBatter:: ;puts batter's player data in hl
@@ -527,15 +525,6 @@ GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher player data
   call IsUserFielding
   jp z, GetOpponentPitcher
   jp GetOpponentBatter
-
-GetRunnerOnFirst::;TODO: puts runner on first player data or zero in hl
-  ret
-
-GetRunnerOnSecond::;TODO: puts runner on third player data or zero in hl
-  ret
-
-GetRunnerOnThird::;TODO: puts runner on third player data or zero in hl
-  ret
 
 ;----------------------------------------------------------------------
 ;

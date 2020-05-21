@@ -401,10 +401,10 @@ DrawTeamNames::
 DrawScore::
   xor a
   ld h, a
-  ld a, [home_score]
+  ld a, [away_score]
   ld l, a
   ld de, name_buffer
-  call str_Number;sprintf(name_buff, "%d", home_score);
+  call str_Number
 
   ld hl, name_buffer
   call str_Length;l = strlen(name_buff);
@@ -417,7 +417,7 @@ DrawScore::
   
   xor a
   ld h, a
-  ld a, [away_score]
+  ld a, [home_score]
   ld l, a
   ld de, name_buffer
   call str_Number;sprintf(name_buff, "%d", away_score);

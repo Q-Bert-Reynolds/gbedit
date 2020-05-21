@@ -789,9 +789,6 @@ FinishPitch:
   call SetUserPlayerBkgTiles
   xor a
   call SetOpposingPlayerBkgTiles
-
-  call DrawCountOutsInning
-  call DrawBases
   
   ld de, 100
   call gbdk_Delay

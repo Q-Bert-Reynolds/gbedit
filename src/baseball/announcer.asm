@@ -104,6 +104,7 @@
 AnnounceBeginningOfFrame::
   call AnnouncePitcher
   call AnnounceBatter
+  call DrawBases
   HIDE_WIN
   ret
 
@@ -119,6 +120,7 @@ AnnouncePitcher::
   ret
 
 AnnounceBatter::
+  call DrawCountOutsInning
   call ShowBatter
   call GetCurrentBatterName
   ld bc, name_buffer
@@ -145,7 +147,10 @@ AnnounceNoSwing::
   inc a
   ld h, 0
   ld l, a
+  push hl
   call SetStrikes
+  call DrawCountOutsInning
+  pop hl
   ld de, name_buffer
   call str_Number
   ld hl, StrikeText
@@ -167,6 +172,7 @@ AnnounceNoSwing::
   call IncrementOuts
   cp 3
   jp nz, AnnounceBatter
+  call DrawCountOutsInning
   ret
 
 .ball
@@ -176,7 +182,10 @@ AnnounceNoSwing::
   inc a
   ld h, 0
   ld l, a
+  push hl
   call SetBalls
+  call DrawCountOutsInning
+  pop hl
   ld de, name_buffer
   call str_Number
   ld hl, BallText
@@ -196,10 +205,14 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+
+  call AnnounceRunScored
+
   xor a
   call SetBalls
   xor a
   call SetStrikes
+  call DrawCountOutsInning
   call NextBatter
   call AnnounceBatter
   ret
@@ -257,7 +270,10 @@ AnnounceSwingMiss::;de = pitch xy
   inc a
   ld h, 0
   ld l, a
+  push hl
   call SetStrikes
+  call DrawCountOutsInning
+  pop hl
   ld de, name_buffer
   call str_Number
   ld hl, StrikeText
@@ -463,11 +479,70 @@ AnnounceRunnersOn:
   ; RunnersOnBaseTexts
   ret
 
-AnnounceRunScored:
-  ; ;score
-  ; PlayerScoresText
-  ; TwoPlayersScoreText
-  ; BasesClearedScoreText
+;TODO: handle more than one run -> TwoPlayersScoreText, BasesClearedScoreText
+AnnounceRunScored: ;if upper nibble of [runners_on_base] non-zero, announces runner who scored
+  ld a, [runners_on_base]
+  ld b, a
+  and a, %00001111
+  ld [runners_on_base], a
+  swap b
+  ld a, b
+  and a, %00001111
+  ret z;no one scored if a == 0
+  dec a
+  ld b, a;batting order index(0-8)
+  call IsUserFielding
+  jr z, .userIsBatting
+.opponentIsBatting
+  ld a, [home_team]
+  and a
+  jr z, .opponentIsHome
+.opponentIsAway
+  ld a, [away_score]
+  inc a
+  ld [away_score], a
+  jr .getOpponentPlayerName
+.opponentIsHome
+  ld a, [home_score]
+  inc a
+  ld [home_score], a
+.getOpponentPlayerName
+  push bc
+  call DrawScore
+  pop bc
+  ld a, b
+  call GetOpposingPlayerInLineup
+  call GetPlayerName
+  jr .announceScoringPlayer
+.userIsBatting
+  ld a, [home_team]
+  and a
+  jr nz, .userIsHome
+.userIsAway
+  ld a, [away_score]
+  inc a
+  ld [away_score], a
+  jr .getUserPlayerName
+.userIsHome
+  ld a, [home_score]
+  inc a
+  ld [home_score], a
+.getUserPlayerName
+  push bc
+  call DrawScore
+  pop bc
+  ld a, b
+  call GetUserPlayerInLineup
+  call GetUserPlayerName
+.announceScoringPlayer
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld hl, PlayerScoresText
+  ld de, str_buffer
+  call str_Append
+  ld hl, str_buffer
+  call RevealTextAndWait
   ret
 
 AnnounceEndOfGame::

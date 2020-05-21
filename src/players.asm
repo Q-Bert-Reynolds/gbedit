@@ -147,8 +147,8 @@ SECTION "Player Utils", ROM0
 ;GetUserPlayerXPToNextAge     - hl = player, returns xp in ehl
 ;GetUserPlayerPay             - hl = player, returns pay in ehl
 ;GetUserPlayerName            - hl = user player, returns name in name_buffer
-;GetOpposingPlayer            - a = lineup index, returns player in hl
-;GetUserPlayer                - a = lineup index, returns player in hl
+;GetOpposingPlayerInLineup    - a = lineup index(0-8), returns player in hl
+;GetUserPlayerInLineup        - a = lineup index(0-8), returns player in hl
 ;GetOpposingPlayerByPosition  - a = position(1-9), returns player in hl
 ;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
 
@@ -420,14 +420,14 @@ GetUserPlayerName::;hl = user player, returns name in name_buffer
   pop bc
   ret
 
-GetOpposingPlayer::;a = lineup index, returns player in hl
+GetOpposingPlayerInLineup::;a = lineup index, returns player in hl
   ld bc, OpponentLineup
   ld de, OpponentLineupPlayer2 - OpponentLineupPlayer1
   call math_Multiply
   add hl, bc
   ret
 
-GetUserPlayer::;a = lineup index, returns player in hl
+GetUserPlayerInLineup::;a = lineup index, returns player in hl
   ld bc, UserLineup
   ld de, UserLineupPlayer2 - UserLineupPlayer1
   call math_Multiply

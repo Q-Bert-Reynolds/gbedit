@@ -46,6 +46,8 @@ def generate_move_data(moves):
         c_file.write("DB " + str(move["Spray"]) + " ;Spray\n")
       if move["Pull"]:
         c_file.write("DB " + str(int(float(move["Pull"])*45)) + " ;Pull\n")
+      if move["Path"]:
+        c_file.write("DB PITCH_PATH_" + move["Path"].upper() + " ;Path\n")
 
     c_file.write("\n" + constants + "\n")
     c_file.write("MoveList:\n" + var_names + "\n")

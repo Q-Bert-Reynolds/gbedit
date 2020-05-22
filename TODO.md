@@ -5,9 +5,6 @@ Current
   - pitch path should follow XY curve
   - high accuracy pitches should have small circles
   - high accuracy swings should have large circles
-- random opponent batting
-- advancing bases / scoring
-- semi-random contact results (announcer mode)
 
 General
 

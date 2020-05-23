@@ -110,11 +110,105 @@ IncrementOuts::;returns outs in a
   ret
 
 CheckStrike:: ;returns ball (z) or strike (nz)
+  ld b, PITCH_PATH_CURVE
+  ld c, 100
+  call GetPitchBreak
   ld a, [pitch_target_x]
+  sra d
+  add a, d
   BETWEEN -12, 12
   ret z
   ld a, [pitch_target_y]
+  sra e
+  add a, e
   BETWEEN -16, 16
+  ret
+
+GetPitchBreak:: ;b = path, c = z, returns xy offset in de
+  ld de, 0
+
+  ld a, b;path
+  cp PITCH_PATH_STRAIGHT
+  ret z
+  cp PITCH_PATH_EEPHUS
+  jr z, .eephus
+  cp PITCH_PATH_KNUCKLE
+  jr z, .knuckle
+
+  ld hl, PitchPathBreak
+  ld b, 0
+  add hl, bc
+  ld b, a;path
+  ld a, [hl]
+  ld c, a;break
+  ld a, b;path
+
+.curve
+  cp PITCH_PATH_CURVE
+  jr nz, .fade
+  ld e, c
+  jr .hand
+
+.fade
+  cp PITCH_PATH_FADE
+  jr nz, .slider
+  sra c
+  ld a, 255
+  sub a, c
+  ld d, c
+  jr .hand
+
+.slider
+  cp PITCH_PATH_SLIDER
+  jr nz, .rise
+  ld d, c
+  jr .hand
+
+.rise
+  cp PITCH_PATH_RISE
+  jr nz, .drop
+  sra c
+  ld a, 255
+  sub a, c
+  ld e, c
+  jr .hand
+
+.drop
+  cp PITCH_PATH_DROP
+  jr nz, .eephus
+  sra c
+  ld e, c
+  jr .hand
+
+.screw
+  cp PITCH_PATH_SCREW
+  jr nz, .slurve
+  ld e, c
+  ld a, 255
+  sub a, c
+  ld d, a
+  jr .hand
+
+.slurve
+  cp PITCH_PATH_SLURVE
+  jr nz, .cut
+  ld d, c
+  ld e, c
+  jr .hand
+
+.cut
+  cp PITCH_PATH_CUT
+  ret nz
+  sra c
+  ld e, c
+  jr .hand
+
+.eephus
+  
+.knuckle
+
+.hand
+
   ret
 
 SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location

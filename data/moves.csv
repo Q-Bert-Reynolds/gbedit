@@ -42,7 +42,7 @@ Chant,Batting,"Takes a pitch, steps out of the box, the crowd starts to chant. P
 CircleChange,Pitching,A changeup thrown with the thumb and index finger touching. Breaks similar to a screwball.,Normal,30,70,80,,,,Straight
 Curveball,Pitching,A 12-6 curveball.,Normal,25,70,85,,,,Curve
 Cut,Batting,"A good, hard swing.",Normal,30,75,95,15,,,
-Cutter,Pitching,A fastball that tails in from the pitcher.,Normal,20,85,90,,,,Straight
+Cutter,Pitching,A fastball that tails in from the pitcher.,Normal,20,85,90,,,,Cut
 Eephus Pitch,Pitching,A super slow pitch that drops through the strikezone. It often catches batters off guard.,Normal,10,30,80,,,,Eephus
 Fastball,Pitching,A hard thrown ball... with an unsure grip.,Normal,35,40,75,,,,Straight
 Flash,Batting,"At just the right angle, you can blind the pitcher flashing a bunt. Lowers the pitcher's Accuracy by 1 stage.",Normal,20,0,70,,,,

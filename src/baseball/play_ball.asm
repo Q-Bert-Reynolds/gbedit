@@ -11,6 +11,7 @@ INCLUDE "src/baseball/strings.asm"
 INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/announcer.asm"
 INCLUDE "src/baseball/ui.asm"
+INCLUDE "src/baseball/pitch_path.asm"
 
 ShowAimCircle: ;hl = size
   ld c, 8
@@ -117,9 +118,27 @@ HideAimCircle:
   call mem_Set
   ret
 
-MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl = end xy
+GetPitchPathOffset: ;b = path, c = z[0,100], returns xy offset in hl 
+  push bc;path, z
+
+  ld hl, PitchPathArc
+  ld b, 0
+  add hl, bc
+  ld a, [hl]
+  ; sra a ;TODO: high powered pitches shouldn't have as much arc
+  ld h, 0
+  ld l, a;arc
+
+  pop bc;path, z
+  push hl;arc
+  call GetPitchBreak
+  pop hl;arc
+  add hl, de
+  ret
+
+MovePitch: ;a = show projection, b = pitch path, c = z[0,100], de = start xy, hl = end xy
   push af;show projection
-  push bc;z
+  push bc;path,z
   push de;start xy
   push hl;end xy
   ld a, d;start x
@@ -128,7 +147,8 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
 
   pop hl;end xy
   pop de;start xy
-  pop bc;z
+  pop bc;path,z
+  push bc;path,z
   push af;x
   ld a, e;start y
   ld b, l;end y
@@ -137,7 +157,12 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   ld e, a;y
   pop af;x
   ld d, a;x
+  pop bc;path,z
+  push bc;path,z
   push de;ball x, y
+
+  call GetPitchPathOffset
+  push hl;offset
 
   ;TODO: baseball animation should be based on move
   ld h, 0
@@ -148,7 +173,11 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   and a, %00000011;(i/10)%4
   add a, 6;6+(i/10)%4
   ld [_t], a;t = 6+(i/10)%4
+  pop hl;offset
   pop de;ball xy
+  add hl, de
+  ld d, h
+  ld e, l
 
   ; ball outline
   ld hl, oam_buffer + BASEBALL_SPRITE_ID*4
@@ -174,20 +203,35 @@ MoveBaseball: ;a = show projection, c = z where 0 <= z <= 100, de = start xy, hl
   ld [hli], a;tile
   ld a, OAMF_PAL1
   ld [hli], a;prop
-  
-  pop af
+
+  pop bc;path,z
+  ld a, 100
+  cp a, c
+  jr nc, .skip
+  ld c, 100
+.skip
+  push hl;store OAM address
+  call GetPitchBreak
+  pop hl;restore OAM address
+
+  pop af;show
   and a
   ret z
+
   ;projection
+  push de;break
   push hl;store OAM address
   call StrikeZonePosition
   pop hl;restore OAM address
+  pop bc;break
   ld a, [pitch_target_y]
   add a, e
+  add a, c
   add a, 4
   ld [hli], a;y
   ld a, [pitch_target_x]
   add a, d
+  add a, b
   add a, 4
   ld [hli], a;x
   ld a, 4
@@ -330,8 +374,9 @@ Pitch:
     ld l, a
     ld a, [pitch_z]
     ld c, a
+    ld b, PITCH_PATH_CURVE
     xor a
-    call MoveBaseball
+    call MovePitch
 
     call gbdk_WaitVBL
 
@@ -708,7 +753,7 @@ Bat:
     ld a, [pitch_z]
     ld c, a
     ld a, 1
-    call MoveBaseball
+    call MovePitch
     push de;ball pos
     call gbdk_WaitVBL
 
@@ -757,7 +802,7 @@ HitBall:
   ld a, [swing_diff_y]
   ld a, [swing_diff_z]
 
-  ld de, 10
+  ld de, 100
   call gbdk_Delay
 
   call IsUserFielding
@@ -953,7 +998,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ld a, 1
+  ; ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

@@ -110,6 +110,8 @@ home_team:: DB;1 = user is home team
 home_score:: DB
 away_score:: DB
 move_choice:: DB
+pitch_move_id:: DB
+swing_move_id:: DB
 play_menu_selection:: DB
 aim_x::
 swing_diff_x:: DB

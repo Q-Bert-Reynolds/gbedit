@@ -206,6 +206,16 @@ GetPlayerMove:: ;hl = player, a = player move num, returns move in move_data
   ld c, a
   add hl, bc
   ld a, [hl]
+  ld b, a;move num
+  call IsUserFielding
+  ld a, b;move num
+  jr z, .userBatting
+.userFielding
+  ld [pitch_move_id], a
+  jr .setMove
+.userBatting
+  ld [swing_move_id], a
+.setMove
   and a
   jr z, .noMove
   call GetMove

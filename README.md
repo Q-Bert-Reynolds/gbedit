@@ -59,7 +59,7 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
   - exezin
   - Furrtek
   - Gekkio
-  - ISSOtm
+  - Eldred Habert (ISSOtm)
   - Jeff Frohwein
   - John Harrison
   - kOOPa

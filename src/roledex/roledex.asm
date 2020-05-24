@@ -79,8 +79,9 @@ GetMove:: ; a = move number, returns move_data
   and a
   jr nz, .loadMove
 
+  ;TODO: replace with struggle
   ld de, move_data
-  ld bc, 8
+  ld bc, move_data.end - move_data
   xor a
   call mem_Set
   jr .exit

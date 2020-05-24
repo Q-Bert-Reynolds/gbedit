@@ -631,10 +631,7 @@ ShowMoveInfo::
   push hl;current user player
   ld a, [move_choice]
   call GetPlayerMove
-  ld hl, move_data
-  inc hl
-  ld a, [hli]
-  push hl;max play points (pp)
+  ld a, [move_data.type]
   call GetTypeString
 
   ld hl, name_buffer
@@ -646,9 +643,7 @@ ShowMoveInfo::
   ld bc, name_buffer
   call gbdk_SetBkgTiles;set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
   
-  pop de;max play points
   pop hl;current user player
-  push de;max play points
   ld a, [move_choice]
   call GetPlayerMovePP
   ld h, 0
@@ -662,8 +657,7 @@ ShowMoveInfo::
   ld [de], a
   inc de
 
-  pop hl;max play points
-  ld a, [hl]
+  ld a, [move_data.pp]
   ld h, 0
   ld l, a
   call str_Number
@@ -675,7 +669,7 @@ ShowMoveInfo::
   ld d, 5
   ld e, 11
   ld bc, name_buffer
-  call gbdk_SetBkgTiles;set_bkg_tiles(5,11,5,1,"22/35"); //TODO: use real numbers
+  call gbdk_SetBkgTiles
   ret
 
 SelectMoveMenuItem:: ;returns selection in a

@@ -66,8 +66,40 @@ tile_buffer:: DS BUFFER_SIZE
 bkg_buffer:: DS BUFFER_SIZE
 str_buffer:: DS 64
 name_buffer:: DS 16
-player_base:: DS PLAYER_BASE_SIZE
-move_data:: DS 8
+
+;player base data struct
+player_base::
+.num::       DB
+.type1::     DB
+.type2::     DB
+.ev_to::     DB
+.ev_type::   DB
+.ev_age::    DB
+.height::    DB
+.weight::    DW
+.hp::        DB
+.bat::       DB
+.field::     DB
+.speed::     DB
+.throw::     DB
+.body_id::   DB
+.head_id::   DB
+.hat_id::    DB
+.gb_pal::    DB
+.sgb_pal::   DW
+.anim::      DS 32
+.end::
+
+; move data struct
+move_data::
+.is_swing::     DB 
+.type::         DB
+.pp::           DB
+.power::        DB
+.accuracy::     DB
+.path::
+.launch_angle:: DB
+.end::
 
 ;Baseball
 balls_strikes_outs:: DB; XBBBSSOO

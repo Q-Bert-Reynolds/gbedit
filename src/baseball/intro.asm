@@ -227,7 +227,7 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   push af;num
 
   call LoadPlayerBaseData
-  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld hl, player_base.sgb_pal
   ld a, [hli]
   ld e, a
   ld a, [hli]

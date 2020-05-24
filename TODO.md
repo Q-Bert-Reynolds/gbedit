@@ -1,10 +1,8 @@
 Current
 
-- generate and parse pitch path curves
 - handle different moves
-  - pitch path should follow XY curve
-  - high accuracy pitches should have small circles
-  - high accuracy swings should have large circles
+- high accuracy pitches should have small circles
+- high accuracy swings should have large circles
 
 General
 

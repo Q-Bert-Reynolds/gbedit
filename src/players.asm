@@ -213,7 +213,7 @@ GetPlayerMove:: ;hl = player, a = player move num, returns move in move_data
 .noMove
   ld hl, move_data
   ld a, 0
-  ld bc, 8
+  ld bc, move_data.end-move_data
   call mem_Set
 .exit
   pop de

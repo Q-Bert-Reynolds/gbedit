@@ -1086,7 +1086,7 @@ SetMovePPTiles::;a = move, de = player, hl = tile address
   ld de, str_buffer
   call str_Append
 
-  ld hl, move_data+2;max move pp
+  ld hl, move_data.pp
   ld a, [hl]
   ld de, name_buffer
   cp 10

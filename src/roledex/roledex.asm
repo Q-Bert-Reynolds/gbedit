@@ -271,7 +271,7 @@ LoadPlayerBaseData:: ; a = number
   ld h, a
   ld l, b
   ld de, player_base
-  ld bc, PLAYER_BASE_SIZE
+  ld bc, player_base.end - player_base
   call mem_Copy
 
   ld a, [temp_bank]
@@ -504,26 +504,26 @@ LoadUserPlayerBkgTiles::
   and BAT_LEFT
   jr nz, .batsLeft
 .batsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
+  ld hl, player_base.anim+4*RIGHTY_BATTER_USER
   jr .setBank
 .batsLeft
   ld a, [_v];handedness
   and BAT_RIGHT
   jr .batsSwitch
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_USER
+  ld hl, player_base.anim+4*LEFTY_BATTER_USER
   jr .setBank  
 .batsSwitch;TODO: change this depending on pitcher handedness
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_USER
+  ld hl, player_base.anim+4*LEFTY_BATTER_USER
   jr .setBank  
 .userIsPitching
   ld a, [_v];handedness
   and a, THROW_RIGHT
   jr z, .throwsLeft
 .throwsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_USER
+  ld hl, player_base.anim+4*RIGHTY_PITCHER_USER
   jr .setBank
 .throwsLeft
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_USER
+  ld hl, player_base.anim+4*LEFTY_PITCHER_USER
 .setBank
   ld a, [hli]
   call SetBank
@@ -568,26 +568,26 @@ LoadOpposingPlayerBkgTiles::
   and a, THROW_RIGHT
   jr z, .throwsLeft
 .throwsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
+  ld hl, player_base.anim+4*RIGHTY_PITCHER_OPPONENT
   jr .setBank
 .opponentIsBatting
   ld a, [_v];handedness
   and BAT_LEFT
   jr nz, .batsLeft
 .batsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*RIGHTY_BATTER_OPPONENT
   jr .setBank
 .batsLeft
   ld a, [_v];handedness
   and BAT_RIGHT
   jr .batsSwitch
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_BATTER_OPPONENT
   jr .setBank  
 .batsSwitch;TODO: change this depending on pitcher handedness
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_BATTER_OPPONENT
   jr .setBank 
 .throwsLeft
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_PITCHER_OPPONENT
 .setBank
   ld a, [hli]
   call SetBank
@@ -635,26 +635,26 @@ SetUserPlayerBkgTiles:: ;a = frame
   and BAT_LEFT
   jr nz, .batsLeft
 .batsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_USER
+  ld hl, player_base.anim+4*RIGHTY_BATTER_USER
   jr .setBank
 .batsLeft
   ld a, [_v];handedness
   and BAT_RIGHT
   jr .batsSwitch
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_USER
+  ld hl, player_base.anim+4*LEFTY_BATTER_USER
   jr .setBank  
 .batsSwitch;TODO: change this depending on pitcher handedness
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_USER
+  ld hl, player_base.anim+4*LEFTY_BATTER_USER
   jr .setBank  
 .userIsPitching
   ld a, [_v];handedness
   and a, THROW_RIGHT
   jr z, .throwsLeft
 .throwsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_USER
+  ld hl, player_base.anim+4*RIGHTY_PITCHER_USER
   jr .setBank
 .throwsLeft
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_USER
+  ld hl, player_base.anim+4*LEFTY_PITCHER_USER
 .setBank
   ld a, [hli]
   call SetBank
@@ -708,26 +708,26 @@ SetOpposingPlayerBkgTiles:: ;a = frame
   and a, THROW_RIGHT
   jr z, .throwsLeft
 .throwsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_PITCHER_OPPONENT
+  ld hl, player_base.anim+4*RIGHTY_PITCHER_OPPONENT
   jr .setBank
 .throwsLeft
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_PITCHER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_PITCHER_OPPONENT
   jr .setBank
 .opponentIsBatting
   ld a, [_v];handedness
   and BAT_LEFT
   jr nz, .batsLeft
 .batsRight
-  ld hl, player_base+PLAYER_BASE_ANIM+4*RIGHTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*RIGHTY_BATTER_OPPONENT
   jr .setBank
 .batsLeft
   ld a, [_v];handedness
   and BAT_RIGHT
   jr .batsSwitch
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_BATTER_OPPONENT
   jr .setBank  
 .batsSwitch;TODO: change this depending on pitcher handedness
-  ld hl, player_base+PLAYER_BASE_ANIM+4*LEFTY_BATTER_OPPONENT
+  ld hl, player_base.anim+4*LEFTY_BATTER_OPPONENT
 .setBank
   ld a, [hli]
   call SetBank

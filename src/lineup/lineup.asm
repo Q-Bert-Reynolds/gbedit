@@ -365,7 +365,7 @@ DrawLineupPlayerSprites
   add a, 8
   ld [_y], a
 
-  ld hl, player_base+PLAYER_BASE_GB_PAL
+  ld hl, player_base.gb_pal
   ld a, [hl]
   and a
   cp 1
@@ -378,7 +378,7 @@ DrawLineupPlayerSprites
   ld [_s], a
 
 .drawBody
-  ld hl, player_base+PLAYER_BASE_BODY_ID
+  ld hl, player_base.body_id
   ld a, [hl]
   ld b, 0
   ld c, a;body tile
@@ -447,7 +447,7 @@ DrawLineupPlayerSprites
   sub a, e;sub body height
   ld [_y], a
 
-  ld hl, player_base+PLAYER_BASE_HEAD_ID
+  ld hl, player_base.head_id
   ld a, [hl]
   ld b, 0
   ld c, a;head tile
@@ -475,7 +475,7 @@ DrawLineupPlayerSprites
   ld [hli], a;pal
 
   push hl
-  ld hl, player_base+PLAYER_BASE_HAT_ID
+  ld hl, player_base.hat_id
   ld a, [hl]
   ld b, 0
   ld c, a;hat tile

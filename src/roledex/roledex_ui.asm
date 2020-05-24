@@ -367,7 +367,7 @@ ShowRoledexPlayerData:;a player num
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-  ld hl, player_base+PLAYER_BASE_HEIGHT
+  ld hl, player_base.height
   ld a, [hl];upper nibble is feet, lower is inches
   push af;ft,in
   swap a
@@ -443,7 +443,7 @@ ShowRoledexPlayerData:;a player num
   ld a, DRAW_FLAGS_BKG
   call SetTiles
 
-  ld hl, player_base+PLAYER_BASE_WEIGHT
+  ld hl, player_base.weight
   ld a, [hli];lower byte is lbs
   ld b, a
   ld a, [hl];upper byte, upper nibble is decimal, lower is lbs

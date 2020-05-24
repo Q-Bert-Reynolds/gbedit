@@ -932,7 +932,7 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   call GetCurrentUserPlayer
   call GetPlayerNumber
   call LoadPlayerBaseData
-  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld hl, player_base.sgb_pal
   ld a, [hli]
   ld c, a
   ld a, [hli]
@@ -942,7 +942,7 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   call LoadPlayerBaseData
-  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld hl, player_base.sgb_pal
   ld a, [hli]
   ld e, a
   ld a, [hli]

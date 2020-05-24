@@ -324,7 +324,7 @@ DrawPageOne:
   push hl
   call GetPlayerNumber
   call LoadPlayerBaseData
-  ld hl, player_base+PLAYER_BASE_TYPE1
+  ld hl, player_base.type1
   ld a, [hl]
   call GetTypeString
 
@@ -339,7 +339,7 @@ DrawPageOne:
   call gbdk_SetBkgTiles
 
 .drawType2
-  ld hl, player_base+PLAYER_BASE_TYPE2
+  ld hl, player_base.type2
   ld a, [hl]
   and a
   jr z, .drawPay
@@ -365,7 +365,7 @@ DrawPageOne:
   ld bc, str_buffer
   call gbdk_SetBkgTiles
 
-  ld hl, player_base+PLAYER_BASE_TYPE2
+  ld hl, player_base.type2
   ld a, [hl]
   call GetTypeString
 

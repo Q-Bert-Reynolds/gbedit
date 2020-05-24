@@ -112,7 +112,7 @@ ShowPlayer: ;de = player number
 
   pop af;player num
   call LoadPlayerBaseData
-  ld hl, player_base+PLAYER_BASE_SGB_PAL
+  ld hl, player_base.sgb_pal
   ld a, [hli]
   ld e, a
   ld a, [hli]

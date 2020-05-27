@@ -306,7 +306,7 @@ AnnounceSwingMiss::;de = pitch xy
 ;   "Out!"
 ;
 ;   input:
-;      a = exit speed
+;      a = speed
 ;      b = spray angle
 ;      c = launch angle
 ;      de = swing move
@@ -315,7 +315,7 @@ AnnounceSwingMiss::;de = pitch xy
 ;----------------------------------------------------------------------
 AnnounceSwingContact::
   push bc;b=sparay angle, c=launch angle
-  call DistanceFromSpeedLaunchAngle;a = exit speed, c = launch angle
+  call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
 .checkOutfield;wall at 240
   cp 96;bases at 90
   jr c, .checkInfield 
@@ -418,6 +418,24 @@ AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle
   ret 
 
 AnnounceBuntText:;a = launch angle, b = spray angle
+  ld hl, HitBuntText
+  ld de, tile_buffer
+  call str_Copy
+
+  ld hl, ToThePositionText
+  ld de, tile_buffer
+  call str_Append
+
+  ld hl, PositionTexts
+  ld bc, 0
+  call str_FromArray
+
+  ld hl, tile_buffer
+  ld de, str_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  call RevealTextAndWait
   ret
 
 AnnounceFieldingText:;a = position fielding the ball

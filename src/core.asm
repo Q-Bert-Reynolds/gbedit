@@ -1329,14 +1329,14 @@ SignedRandom: ;a = bitmask
 ;
 ;   input: 
 ;     a = speed (0 to 255)
-;     b = launch angle (-127 to 127)
+;     c = launch angle (-127 to 127)
 ;   returns:
 ;     a = distance
 ;
 ;----------------------------------------------------------------------
-DistanceFromSpeedLaunchAngle::;a = speed, b = launch angle, returns distance in a
+DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in a
   push af;speed
-  ld a, b
+  ld a, c
   cp a, 128
   jr c, .inAir
 

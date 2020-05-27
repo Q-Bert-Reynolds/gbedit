@@ -1,5 +1,8 @@
 Current
 
+- looking at a player's stats puts a runner on third
+- balls/strikes/outs broken
+- hide / disable selection of pitches when batting / swings when pitching
 - fix swing animations
 - handle different moves
 - high accuracy pitches should have small circles
@@ -49,7 +52,6 @@ Play Ball
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
 - ball should go behind lefty user batter, righty opposing batter
 - ball should fly off screen after contact
-- hide / disable selection of pitches when batting / swings when pitching
 - more pitching/batting animations
 - Pitch & Bat subroutines share a ton of code, should call shared subroutine instead
 

@@ -48,24 +48,15 @@ GetMoveName:: ; a = move number, returns name in name_buffer
 
 .findName
   dec a
-  ld b, a;number
+  ld b, 0
+  ld c, a;number
   ld a, [loaded_bank]
   ld [temp_bank], a
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
   ld hl, MoveNames
-  dec b
-.loop
-    ld a, b
-    and a
-    jr z, .copy;found name
-    ld a, [hli]
-    and a
-    jr nz, .loop
-    dec b
-    jr .loop
-.copy
+  call str_FromArray
   ld de, name_buffer
   call str_Copy
 

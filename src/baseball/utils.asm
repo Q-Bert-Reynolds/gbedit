@@ -211,7 +211,7 @@ GetPitchBreak:: ;b = path, c = z, returns xy offset in de
 
   ret
 
-SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location
+SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location, TODO: set pitch_move_id
   call gbdk_Random
   ld a, [pitch_target_x]
   call math_Abs

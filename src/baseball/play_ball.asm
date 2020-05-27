@@ -358,7 +358,7 @@ Pitch:
   sub a, e
   ld [pitch_target_y], a
 
-  call SwingAI;populates _w_x_y_z
+  call SwingAI;populates _w_x_y_z and pitch_move_id
 
   xor a
   ld [_c], a; c = swing frame
@@ -814,7 +814,7 @@ HitBall:
 .userBatting
   call SetUserPlayerBkgTiles
 .delay
-  ld de, 10
+  ld de, 100
   call gbdk_Delay
 
   ld a, 255;full power

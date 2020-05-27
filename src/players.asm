@@ -164,7 +164,6 @@ GetPlayerMoveName:: ;hl = player, a = move num, returns move name in name_buffer
   ld a, [hl]
   and a
   jr z, .noMove
-  inc a
   call GetMoveName
   jr .exit
 .noMove

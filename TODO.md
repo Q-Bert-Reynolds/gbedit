@@ -1,7 +1,5 @@
 Current
 
-- looking at a player's stats puts a runner on third
-- balls/strikes/outs broken
 - hide / disable selection of pitches when batting / swings when pitching
 - fix swing animations
 - handle different moves

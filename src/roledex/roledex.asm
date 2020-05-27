@@ -97,7 +97,7 @@ GetMove:: ; a = move number, returns move_data
   ld h, a
   ld l, b
   ld de, move_data
-  ld bc, 8
+  ld bc, move_data.end - move_data
   call mem_Copy
 
   ld a, [temp_bank]

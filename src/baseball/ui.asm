@@ -643,32 +643,16 @@ ShowMoveInfo::
   ld bc, name_buffer
   call gbdk_SetBkgTiles;set_bkg_tiles(2,10,strlen(name_buff),1,name_buff);
   
-  pop hl;current user player
+  pop de;current user player
+  ld hl, tile_buffer
   ld a, [move_choice]
-  call GetPlayerMovePP
-  ld h, 0
-  ld l, a
-  ld de, name_buffer
-  call str_Number
-
-  inc de
-  inc de
-  ld a, "/"
-  ld [de], a
-  inc de
-
-  ld a, [move_data.pp]
-  ld h, 0
-  ld l, a
-  call str_Number
-
-  ld hl, name_buffer
-  call str_Length
-  ld h, e;len
+  call SetMovePPTiles;a = move, de = player, hl = tile address
+  
+  ld h, 5
   ld l, 1
   ld d, 5
   ld e, 11
-  ld bc, name_buffer
+  ld bc, tile_buffer
   call gbdk_SetBkgTiles
   ret
 

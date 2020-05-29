@@ -492,7 +492,7 @@ DrawPageTwo:
     add a, a;i*2
     add a, 10
     ld e, a
-    ld bc, str_buffer
+    ld bc, tile_buffer
     call gbdk_SetBkgTiles
     
     ld a, [_i]

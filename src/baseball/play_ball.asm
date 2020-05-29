@@ -683,6 +683,7 @@ Bat:
 .displayPitchName
   call GetCurrentOpponentPlayer
   ld a, [pitch_move_id]
+  ld d, PITCHING_MOVES
   call GetPlayerMoveName;move in name_buffer
 
   ld hl, AndThePitchText

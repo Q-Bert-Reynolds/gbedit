@@ -67,6 +67,7 @@ GetMoveName:: ; a = move number, returns name in name_buffer
 GetMove:: ; a = move number, returns move_data
   push bc
   push de
+  push hl
   and a
   jr nz, .loadMove
   ld a, STRUGGLE_MOVE
@@ -96,6 +97,7 @@ GetMove:: ; a = move number, returns move_data
   ld a, [temp_bank]
   call SetBank
 .exit
+  pop hl
   pop de
   pop bc
   ret 

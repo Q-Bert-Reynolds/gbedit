@@ -433,6 +433,7 @@ DrawPageTwo:
 
   pop hl;player
   push hl
+  ld d, ALL_MOVES
   call GetPlayerMoveCount
   ld b, a
   xor a
@@ -442,6 +443,7 @@ DrawPageTwo:
     push hl
     push bc;move count
     ld a, [_i]
+    ld d, ALL_MOVES
     call GetPlayerMoveName
 
     ld hl, name_buffer
@@ -483,7 +485,8 @@ DrawPageTwo:
     push bc;move count
     ld a, [_i]
     ld hl, tile_buffer
-    call SetMovePPTiles;a = move, de = player, hl = tile address
+    ld b, ALL_MOVES
+    call SetMovePPTiles;a = move, b = move mask, de = player, hl = tile address
 
     ld h, 5
     ld l, 1

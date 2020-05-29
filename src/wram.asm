@@ -92,7 +92,7 @@ player_base::
 
 ; move data struct
 move_data::
-.is_swing::     DB 
+.use::          DB ;pitching=0, batting=1
 .type::         DB
 .pp::           DB
 .power::        DB

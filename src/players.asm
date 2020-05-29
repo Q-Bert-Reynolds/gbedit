@@ -128,10 +128,10 @@ Runners:
 
 SECTION "Player Utils", ROM0
 
-;GetPlayerMoveName            - hl = player, a = move num, returns move name in name_buffer
-;GetPlayerMoveCount           - hl = player, returns move count in a
-;GetPlayerMove                - hl = player, a = player move num, returns move in move_data
-;GetPlayerMovePP              - hl = player, a = player move num, returns pp in a
+;GetPlayerMoveName            - hl = player, d = move mask, a = move num, returns move name in name_buffer
+;GetPlayerMoveCount           - hl = player, d = move mask, returns move count in a
+;GetPlayerMove                - hl = player, d = move mask, a = player move num, returns move in move_data
+;GetPlayerMovePP              - hl = player, d = move mask, a = player move num, returns pp in a
 ;GetPlayerNumber              - hl = player, returns number in a
 ;GetPlayerAge                 - hl = player, returns age in a
 ;GetPlayerPosition            - hl = player, returns position in a
@@ -153,83 +153,124 @@ SECTION "Player Utils", ROM0
 ;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
 
 NoMove: DB "--------", 0
-GetPlayerMoveName:: ;hl = player, a = move num, returns move name in name_buffer
+GetPlayerMoveName:: ;hl = player, a = move num, d = move mask, returns move name in name_buffer
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
-  ld b, 0
-  ld c, a
-  add hl, bc
-  ld a, [hl]
-  and a
-  jr z, .noMove
-  call GetMoveName
-  jr .exit
+  ld c, a;player move num
+  ld b, MAX_MOVES
+.loop
+    ld a, [hli];move index
+    and a
+    jr z, .skip
+    ld e, a;move index
+    call GetMove
+    ld a, [move_data.use]
+    inc a
+    and a, d;move mask
+    jr z, .skip
+    xor a
+    cp a, c;player move num
+    jr z, .setMoveName
+    dec c
+.skip
+    dec b
+    jr nz, .loop
 .noMove
   ld hl, NoMove
   ld de, name_buffer
   call str_Copy
+  jr .exit
+.setMoveName
+  ld a, e;move index
+  call GetMoveName
 .exit
   pop de
   pop bc
   ret 
 
-GetPlayerMoveCount::;hl = player, returns move count in a
-  push bc
+GetPlayerMoveCount::;hl = player, d = move mask, returns move count in a
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
-  xor a
-  ld c, a;count
+  ld c, 0;count
   ld b, MAX_MOVES
 .loop
     ld a, [hli]
     and a
     jr z, .skip
+    call GetMove
+    ld a, [move_data.use]
+    inc a
+    and a, d
+    jr z, .skip
     inc c
 .skip
     dec b
-    ld a, b
-    and a
     jr nz, .loop
   ld a, c;count
-  pop bc
   ret
 
-GetPlayerMove:: ;hl = player, a = player move num, returns move in move_data
+GetPlayerMove:: ;hl = player, a = player move num, d = move mask, returns move in move_data
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
-  ld b, 0
-  ld c, a
-  add hl, bc
-  ld a, [hl]
-  ld b, a;move num
-  call IsUserFielding
-  ld a, b;move num
-  jr z, .userBatting
-.userFielding
-  ld [pitch_move_id], a
-  jr .setMove
-.userBatting
-  ld [swing_move_id], a
-.setMove
+  ld c, a;move num
+  ld b, MAX_MOVES
+.loop
+    ld a, [hli]
+    and a
+    jr z, .skip
+    call GetMove
+    ld a, [move_data.use]
+    inc a
+    and a, d;move mask
+    jr z, .skip
+    xor a
+    cp a, c;move num
+    jr z, .exit
+    dec c
+.skip
+    dec b
+    jr nz, .loop
+  ld a, STRUGGLE_MOVE
   call GetMove
+.exit
   pop de
   pop bc
   ret 
 
-GetPlayerMovePP:: ;hl = player, a = player move num, returns pp in a
+GetPlayerMovePP:: ;hl = player, a = player move num, d = move mask, returns pp in a
   push bc
-  ld bc, UserLineupPlayer1.pp - UserLineupPlayer1
+  push de
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, bc
-  ld b, 0
-  ld c, a
+  ld c, a;move num
+  ld b, MAX_MOVES
+.loop
+    ld a, [hli]
+    and a
+    jr z, .skip
+    call GetMove
+    ld a, [move_data.use]
+    inc a
+    and a, d;move mask
+    jr z, .skip
+    xor a
+    cp a, c;move num
+    jr z, .exit
+    dec c
+.skip
+    dec b
+    jr nz, .loop
+.exit
+  ld bc, 3
   add hl, bc
   ld a, [hl]
+  pop de
   pop bc
-  ret
+  ret 
 
 GetPlayerNumber:: ;hl = player, returns number in a
   push bc

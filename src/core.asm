@@ -1055,15 +1055,17 @@ SetAgeTiles::;de = player, hl = address
   call str_Number
   ret
 
-SetMovePPTiles::;a = move, de = player, hl = tile address
+SetMovePPTiles::;a = move, b = move mask, de = player, hl = tile address
   push hl;address
   push de;player
 
   pop hl;player
   push hl;player  
   push af;move
+  ld d, b;move mask
+  push de;move mask
   call GetPlayerMove
-
+  pop de;move mask
   pop af;move
   pop hl;player
   call GetPlayerMovePP

@@ -612,7 +612,7 @@ MoveMoveMenuArrow:
   call gbdk_SetBkgTiles;set_bkg_tiles(6,13,1,4,tiles);
   ret
 
-ShowMoveInfo::
+ShowMoveInfo::;[_d] = move mask
   ld b, 0
   ld c, 8
   ld d, 11
@@ -629,6 +629,8 @@ ShowMoveInfo::
 
   call GetCurrentUserPlayer
   push hl;current user player
+  ld a, [_d]
+  ld d, a
   ld a, [move_choice]
   call GetPlayerMove
   ld a, [move_data.type]
@@ -645,8 +647,10 @@ ShowMoveInfo::
   
   pop de;current user player
   ld hl, tile_buffer
+  ld a, [_d];move mask
+  ld b, a
   ld a, [move_choice]
-  call SetMovePPTiles;a = move, de = player, hl = tile address
+  call SetMovePPTiles;a = move, b = move mask, de = player, hl = tile address
   
   ld h, 5
   ld l, 1
@@ -676,12 +680,22 @@ SelectMoveMenuItem:: ;returns selection in a
   ld [_i], a
   call GetCurrentUserPlayer
   push hl
+  call IsUserFielding
+  jr nz, .userIsFielding
+.userIsBatting
+  ld d, BATTING_MOVES
+  jr .getMoveCount
+.userIsFielding
+  ld d, PITCHING_MOVES
+.getMoveCount
   call GetPlayerMoveCount
   ld [_c], a
+  pop hl;player
 .loopMoves
-    pop hl;player
-    push hl
+    push hl;player
+    push de;move mask
     ld a, [_i]
+
     call GetPlayerMoveName
 
     ld hl, name_buffer
@@ -697,13 +711,16 @@ SelectMoveMenuItem:: ;returns selection in a
     ld bc, name_buffer
     call gbdk_SetBkgTiles
 
+    pop de;move mask
+    pop hl;player
     ld a, [_i]
     inc a
     ld [_i], a
     cp MAX_MOVES
     jr nz, .loopMoves
-  pop hl;player
 
+  ld a, d;move mask
+  ld [_d], a
   call MoveMoveMenuArrow
   call ShowMoveInfo
 

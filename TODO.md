@@ -1,6 +1,5 @@
 Current
 
-- hide / disable selection of pitches when batting / swings when pitching
 - fix swing animations
 - handle different moves
 - high accuracy pitches should have small circles

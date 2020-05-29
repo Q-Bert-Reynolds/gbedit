@@ -682,7 +682,7 @@ Bat:
 
 .displayPitchName
   call GetCurrentOpponentPlayer
-  ld a, 0;TODO: replace me with selected pitch move
+  ld a, [pitch_move_id]
   call GetPlayerMoveName;move in name_buffer
 
   ld hl, AndThePitchText

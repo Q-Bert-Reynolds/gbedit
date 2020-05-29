@@ -69,14 +69,7 @@ GetMove:: ; a = move number, returns move_data
   push de
   and a
   jr nz, .loadMove
-
-  ;TODO: replace with struggle
-  ld de, move_data
-  ld bc, move_data.end - move_data
-  xor a
-  call mem_Set
-  jr .exit
-
+  ld a, STRUGGLE_MOVE
 .loadMove
   dec a;since 0 means no move
   ld h, 0

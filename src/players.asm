@@ -215,16 +215,7 @@ GetPlayerMove:: ;hl = player, a = player move num, returns move in move_data
 .userBatting
   ld [swing_move_id], a
 .setMove
-  and a
-  jr z, .noMove
   call GetMove
-  jr .exit
-.noMove
-  ld hl, move_data
-  ld a, 0
-  ld bc, move_data.end-move_data
-  call mem_Set
-.exit
   pop de
   pop bc
   ret 

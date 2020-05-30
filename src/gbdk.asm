@@ -194,10 +194,10 @@ ENDM
 OAM_OVERFLOW_SIZE EQU 256
 
 SECTION "GBDK Vars", WRAM0[$cf00]
-oam_buffer: DS 4*40
-vbl_done: DB
-rand_hi: DB
-rand_lo: DB
+oam_buffer:: DS 4*40
+vbl_done:: DB
+rand_hi:: DB
+rand_lo:: DB
 
 SECTION "GBDK Code", ROM0
 ;***************************************************************************

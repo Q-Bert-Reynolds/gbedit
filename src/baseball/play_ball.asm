@@ -579,12 +579,7 @@ Aim:
   ret  
 
 Bat:
-  ld a, %00001111
-  call SignedRandom
-  ld a, d
-  ld [pitch_target_x], a
-  ld a, e
-  ld [pitch_target_y], a
+  call PitchAI
 
   call LoadOpposingPlayerBkgTiles
   call LoadUserPlayerBkgTiles
@@ -851,12 +846,17 @@ FinishPitch:
   ret
 
 PlayBall:; a = selected move
+  push af;move
   call IsUserFielding
-  jr nz, .pitching
-.batting
+  jr nz, .userPitching
+.userBatting
+  pop af;move
+  ld [swing_move_id], a
   call Bat
   jr .exit
-.pitching
+.userPitching
+  pop af;move
+  ld [pitch_move_id], a
   call Pitch
 .exit
   HIDE_WIN

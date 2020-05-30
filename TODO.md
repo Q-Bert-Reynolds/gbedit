@@ -1,8 +1,8 @@
 Current
 
+- handle different moves pitch paths
 - high accuracy pitches should have small circles
 - high accuracy swings should have large circles
-- handle different moves pitch paths
 
 General
 
@@ -15,6 +15,7 @@ General
 
 Optimization
 
+- move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
 - overworld map and player image data need to be compressed to fit more
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
@@ -49,7 +50,7 @@ Play Ball
 - ball should go behind lefty user batter, righty opposing batter
 - ball should fly off screen after contact
 - more pitching/batting animations
-- Pitch & Bat subroutines share a ton of code, should call shared subroutine instead
+- change color of move info based on type
 
 Simulation
 

@@ -211,7 +211,28 @@ GetPitchBreak:: ;b = path, c = z, returns xy offset in de
 
   ret
 
-SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location, TODO: set pitch_move_id
+PitchAI::;returns pitch_move_id
+  ld a, %00001111
+  call SignedRandom
+  ld a, d
+  ld [pitch_target_x], a
+  ld a, e
+  ld [pitch_target_y], a
+
+  call GetCurrentPitcher
+  ld d, PITCHING_MOVES
+  call GetPlayerMoveCount
+  ld c, a;move count
+  ld a, [rand_lo]
+  ld h, a
+  ld a, [rand_hi]
+  ld l, a
+  call math_Divide
+  ld [pitch_move_id], a; rand % move_count
+  ret
+
+;TODO: offset swing location by break
+SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, selected [swing_move_id]
   call gbdk_Random
   ld a, [pitch_target_x]
   call math_Abs
@@ -257,6 +278,18 @@ SwingAI:: ;returns _w = swing data, _x_y_z = swing timing/location, TODO: set pi
   and a, %10000111
   add a, 100
   ld [_z], a
+
+  call GetCurrentBatter
+  ld d, BATTING_MOVES
+  call GetPlayerMoveCount
+  ld c, a;move count
+  ld a, [rand_lo]
+  ld h, a
+  ld a, [rand_hi]
+  ld l, a
+  call math_Divide
+  ld [swing_move_id], a; rand % move_count
+
   ret
 .noSwing
   xor a

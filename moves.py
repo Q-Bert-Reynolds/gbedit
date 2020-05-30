@@ -26,31 +26,33 @@ def generate_move_data(moves):
 
     constants = ""
     var_names = ""
+    move_data = ""
     for i in range(len(moves)):
       move = moves[i]
       var_name = move["Move"].replace(" ","").replace(".","").replace("-","") + "Move"
       var_names += "DW " + var_name + "\n"
-      constants += move["Move"].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE EQU " + str(i+1) + "\n"
-      c_file.write("\n" + var_name + ":;" + move["Description"] + "\n")
+      constant = move["Move"].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
+      constants += constant + " EQU " + str(i+1) + "\n"
+      move_data += "\n" + var_name + ":;" + move["Description"] + "\n"
+      move_data += "DB " + constant + "\n"
       if move["Category"] == "Pitching":
-        c_file.write("DB 0;Pitch\n")
+        move_data += "DB 0;Pitch\n"
       else:
-        c_file.write("DB 1;Swing\n")
-      c_file.write("DB " + move["Type"].upper() + "\n")
-      c_file.write("DB " + str(move["PP"]) + " ;Play Points\n")
-      c_file.write("DB " + str(move["Power"]) + " ;Power\n")
-      c_file.write("DB " + str(move["Acc"]) + " ;Accuracy\n")
+        move_data += "DB 1;Swing\n"
+      move_data += "DB " + move["Type"].upper() + "\n"
+      move_data += "DB " + str(move["PP"]) + " ;Play Points\n"
+      move_data += "DB " + str(move["Power"]) + " ;Power\n"
+      move_data += "DB " + str(move["Acc"]) + " ;Accuracy\n"
       if move["Launch"]:
-        c_file.write("DB " + str(move["Launch"]) + " ;Launch Angle\n")
+        move_data += "DB " + str(move["Launch"]) + " ;Launch Angle\n"
       if move["Spray"]:
-        c_file.write("DB " + str(move["Spray"]) + " ;Spray\n")
+        move_data += "DB " + str(move["Spray"]) + " ;Spray\n"
       if move["Pull"]:
-        c_file.write("DB " + str(int(float(move["Pull"])*45)) + " ;Pull\n")
+        move_data += "DB " + str(int(float(move["Pull"])*45)) + " ;Pull\n"
       if move["Path"]:
-        c_file.write("DB PITCH_PATH_" + move["Path"].upper() + " ;Path\n")
+        move_data += "DB PITCH_PATH_" + move["Path"].upper() + " ;Path\n"
 
-    c_file.write("\n" + constants + "\n")
-    c_file.write("MoveList:\n" + var_names + "\n")
+    c_file.write("\n" + constants + move_data + "\nMoveList:\n" + var_names + "\n")
 
 if __name__ == "__main__":
   main()

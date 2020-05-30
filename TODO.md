@@ -1,8 +1,8 @@
 Current
 
-- handle different moves
 - high accuracy pitches should have small circles
 - high accuracy swings should have large circles
+- handle different moves pitch paths
 
 General
 

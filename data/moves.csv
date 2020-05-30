@@ -34,7 +34,7 @@ Crack,Batting,"If it connects, it's gone.",Ground,5,250,30,15,30,0.5,
 Dig In,Batting,"On the first pitch, the batter digs in. On the second pitch, the batter attacks anything close.",Ground,10,100,100,0,,,
 Kickup Sand,Batting,Takes a pitch. Lowers the catcher's Accuracy by 1 stage.,Ground,15,0,100,,,,
 Spelunker,Pitching,A forkball that takes a hard turn out of the strikezone at the last second.,Ground,15,0,100,,,,Drop
-ColdShoulder,Pitching,Looks over their shoulder. Throws to first. Has a 30% chance of freezing the runner.,Ice,5,0,30,,,,None
+ColdShoulder,Pitching,Looks over their shoulder. Throws to first. Has a 30% chance of freezing the runner.,Ice,5,0,30,,,,Straight
 Shiver,Batting,Takes a pitch. The batter's preocupation with how cold they've gotten protects them from negative stat modifiers caused by other players until the end of the plate appearance.,Ice,30,0,100,,,,
 Barrage,Pitching,"A harder fastball thrown 2-5 times in a row. This pitch has a 3/8 chance of being thrown twice, a 3/8 chance of being thrown three times, a 1/8 chance of being thrown four times, and a 1/8 chance of being thrown five times.",Normal,10,150,85,,,,Straight
 Changeup,Pitching,"A straight change. Same motion as a fastball, but much slower.",Normal,30,70,95,,,,Straight
@@ -70,7 +70,7 @@ Stomp,Batting,A hack with a big step. Has a ~30% chance to make the target balk 
 Strength,Batting,A big swing that can muscle anything deep.,Normal,15,100,100,35,,,
 Struggle,Batting,"Used automatically when all of the user's other moves have run out of PP or are otherwise inaccessible. The user receives 1/4 recoil damage. Struggle is classified as a Normal-type move, so it is resisted by Rock-type Pokemon and cannot hit Ghost-type Pokemon at all.",Normal,1,50,100,0,,,
 Swing,Batting,An simple swing for contact.,Normal,35,35,95,15,,,
-Toss,Pitching,An easy pitch.,Normal,35,40,100,,,,Toss
+Toss,Pitching,An easy pitch.,Normal,35,40,100,,,,Straight
 Two-Seam,Pitching,A two-seam fastball. It tails away from the pitcher.,Normal,30,80,90,,,,Fade
 Vulcan,Pitching,A changeup thrown like a Star Trek greeting.,Normal,30,70,90,,,,Drop
 Wiff,Batting,Swing... and a miss.,Normal,40,0,100,,,,

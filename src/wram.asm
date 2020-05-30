@@ -98,7 +98,7 @@ move_data::
 .pp::           DB
 .power::        DB
 .accuracy::     DB
-.path::
+.pitch_path::
 .launch_angle:: DB
 .end::
 

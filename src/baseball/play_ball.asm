@@ -298,6 +298,10 @@ Pitch:
   ld l, a
   call ShowAimCircle
 
+.setPitchPath
+  ld a, [move_data.pitch_path]
+  ld [_b], a
+
   call StrikeZonePosition
   ld a, d
   ld [aim_x], a
@@ -385,7 +389,8 @@ Pitch:
     ld l, a
     ld a, [pitch_z]
     ld c, a
-    ld b, PITCH_PATH_CURVE
+    ld a, [_b]
+    ld b, a
     xor a
     call MovePitch
 

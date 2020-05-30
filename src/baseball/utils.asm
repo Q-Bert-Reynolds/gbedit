@@ -110,7 +110,8 @@ IncrementOuts::;returns outs in a
   ret
 
 CheckStrike:: ;returns ball (z) or strike (nz)
-  ld b, PITCH_PATH_CURVE
+  ld a, [_b]
+  ld b, a
   ld c, 100
   call GetPitchBreak
   ld a, [pitch_target_x]

@@ -284,7 +284,18 @@ Pitch:
 
   call ShowStrikeZone
 
-  ld hl, 4
+.setAimSize; 100% accuracy = size 0, 50% accuracy = size 10
+  ld a, [pitch_move_id]
+  call GetMove
+  ld a, [move_data.accuracy]
+  srl a
+  srl a
+  srl a
+  ld l, a
+  ld a, 255
+  sub a, l
+  ld h, 0
+  ld l, a
   call ShowAimCircle
 
   call StrikeZonePosition
@@ -589,7 +600,15 @@ Bat:
   xor a
   call SetUserPlayerBkgTiles
 
-  ld hl, 7
+.setAimSize; 100% accuracy = size 10, 50% accuracy = size 0
+  ld a, [swing_move_id]
+  call GetMove
+  ld a, [move_data.accuracy]
+  srl a
+  srl a
+  srl a
+  ld h, 0
+  ld l, a
   call ShowAimCircle
   
   call StrikeZonePosition
@@ -709,7 +728,6 @@ Bat:
       jp z, .moveBaseball
         ld a, [_v]
         ld [_u], a
-        ld [_breakpoint], a
 
         ld a, 1
         call SetUserPlayerBkgTiles
@@ -729,7 +747,6 @@ Bat:
     ld b, a
     ld a, [_v]
     cp b
-    ; ld [_breakpoint], a
     jr nz, .moveBaseball
       ld a, 2
       call SetUserPlayerBkgTiles
@@ -847,15 +864,22 @@ FinishPitch:
 
 PlayBall:; a = selected move
   push af;move
+  call GetCurrentUserPlayer
   call IsUserFielding
   jr nz, .userPitching
 .userBatting
+  ld d, BATTING_MOVES
   pop af;move
+  call GetPlayerMove
+  ld a, [move_data.id]
   ld [swing_move_id], a
   call Bat
   jr .exit
 .userPitching
+  ld d, PITCHING_MOVES
   pop af;move
+  call GetPlayerMove
+  ld a, [move_data.id]
   ld [pitch_move_id], a
   call Pitch
 .exit
@@ -997,7 +1021,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ; ld a, 1
+  ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

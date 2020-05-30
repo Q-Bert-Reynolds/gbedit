@@ -1,8 +1,6 @@
 Current
 
 - handle different moves pitch paths
-- high accuracy pitches should have small circles
-- high accuracy swings should have large circles
 
 General
 
@@ -23,6 +21,7 @@ Optimization
 
 Python scripts
 
+- generate GBC palette maps from images
 - SGB borders should (optionally?) use PNG palettes directly
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - avatar directional maps should be organized into arrays
@@ -94,10 +93,6 @@ Audio
 - fix title screen SFX and music switching
 - pitch, hit, wiff, catch SFX
 - utilize SGB sound capabilities
-
-GameBoy Color
-
-- generate palette maps from images
 
 Super GameBoy
 

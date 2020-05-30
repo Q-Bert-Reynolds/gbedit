@@ -1,6 +1,5 @@
 Current
 
-- fix swing animations
 - handle different moves
 - high accuracy pitches should have small circles
 - high accuracy swings should have large circles

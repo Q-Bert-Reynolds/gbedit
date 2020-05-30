@@ -361,10 +361,10 @@ Pitch:
   call SwingAI;populates _w_x_y_z and pitch_move_id
 
   xor a
-  ld [_c], a; c = swing frame
+  ld [_u], a; c = swing frame
   ld [pitch_z], a
   ld [pitch_z+1], a
-  ld [_i], a;step
+  ld [_v], a;step
 .pitchLoop
     ld d, 25;TODO: differentiate between lefties and righties
     ld e, 41
@@ -662,13 +662,13 @@ Bat:
   call DisplayText;"And the pitch."
 
   xor a
-  ld [_c], a; c = swing frame
+  ld [_u], a; c = swing frame
   ld [pitch_z], a
-  ld [_i], a
+  ld [_v], a
 .swingLoop
-    ld a, [_i]
+    ld a, [_v]
     inc a
-    ld [_i], a
+    ld [_v], a
     cp a, 4
     jr z, .setFinishPitchFrame
     cp a, 8
@@ -676,47 +676,45 @@ Bat:
     jr .aim
 
 .setFinishPitchFrame
-  ld a, 3
-  call SetOpposingPlayerBkgTiles
-  jr .aim
+    ld a, 3
+    call SetOpposingPlayerBkgTiles
+    jr .aim
 
 .displayPitchName
-  call GetCurrentOpponentPlayer
-  ld a, [pitch_move_id]
-  ld d, PITCHING_MOVES
-  call GetPlayerMoveName;move in name_buffer
+    call GetCurrentOpponentPlayer
+    ld a, [pitch_move_id]
+    ld d, PITCHING_MOVES
+    call GetPlayerMoveName;move in name_buffer
 
-  ld hl, AndThePitchText
-  ld de, str_buffer
-  call str_Copy ;str_buffer = "And the pitch.""
+    ld hl, AndThePitchText
+    ld de, str_buffer
+    call str_Copy ;str_buffer = "And the pitch.""
 
-  ld hl, ThrewAPitchText;"\nA %s."
-  ld de, tile_buffer
-  ld bc, name_buffer
-  call str_Replace;str_buffer = "\nA PITCH_NAME."
+    ld hl, ThrewAPitchText;"\nA %s."
+    ld de, tile_buffer
+    ld bc, name_buffer
+    call str_Replace;str_buffer = "\nA PITCH_NAME."
 
-  ld hl, tile_buffer
-  ld de, str_buffer
-  call str_Append;"And the pitch."
+    ld hl, tile_buffer
+    ld de, str_buffer
+    call str_Append;"And the pitch."
 
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+    ld hl, str_buffer
+    ld a, DRAW_FLAGS_WIN
+    call DisplayText
 
 .aim
-    ld a, [_c]
+    ld a, [_u]
     and a
     jp nz, .checkFinishSwing
-    ld a, [pitch_z]
-    and a
-    jp z, .checkFinishSwing
       call Aim
 
       ld a, [button_state]
       and PADF_A
       jp z, .moveBaseball
-        ld a, [pitch_z]
-        ld [_c], a
+        ld a, [_v]
+        ld [_u], a
+        ld [_breakpoint], a
 
         ld a, 1
         call SetUserPlayerBkgTiles
@@ -729,14 +727,14 @@ Bat:
         call Swing
         and a
         jr nz, .hitBall
-      jp .moveBaseball
 
 .checkFinishSwing
-    ld a, [_c]
+    ld a, [_u]
     add a, 4
     ld b, a
-    ld a, [_i]
+    ld a, [_v]
     cp b
+    ; ld [_breakpoint], a
     jr nz, .moveBaseball
       ld a, 2
       call SetUserPlayerBkgTiles
@@ -777,7 +775,7 @@ Bat:
     cp a, 168
     jp c, .swingLoop
 .exitSwingLoop
-  ld a, [_c]
+  ld a, [_u]
   and a
   jr nz, .swingAndMiss
   jp .noSwing

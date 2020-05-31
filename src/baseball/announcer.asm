@@ -119,6 +119,17 @@ AnnouncePitcher::
   call RevealTextAndWait
   ret
 
+AnnouncePitcherSets::
+  call GetCurrentPitcherName
+  ld bc, name_buffer
+  ld hl, PitcherSetsText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  ret
+
 AnnounceBatter::
   call DrawCountOutsInning
   call ShowBatter
@@ -129,6 +140,17 @@ AnnounceBatter::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+  ret
+
+AnnounceBatterStepsIntoBox::
+  call GetCurrentBatterName
+  ld bc, name_buffer
+  ld hl, BatterStepsIntoTheBoxText
+  ld de, str_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
   ret
 
 ;----------------------------------------------------------------------

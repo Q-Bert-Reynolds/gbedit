@@ -299,16 +299,7 @@ Pitch:
   ld a, 0
   call SetOpposingPlayerBkgTiles
 
-  call GetCurrentUserPlayer
-  call GetUserPlayerName
-  ld bc, name_buffer
-  ld hl, PitcherSetsText
-  ld de, str_buffer
-  call str_Replace
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
-
+  call AnnouncePitcherSets
   call ShowStrikeZone
 
 .setAimSize; 100% accuracy = size 0, 50% accuracy = size 10
@@ -337,14 +328,7 @@ Pitch:
   ld [aim_y], a
   call MoveAimCircle
 
-  call GetCurrentBatterName
-  ld bc, name_buffer
-  ld hl, BatterStepsIntoTheBoxText
-  ld de, str_buffer
-  call str_Replace
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call AnnounceBatterStepsIntoBox
   
   xor a
 .preSetAimLoop
@@ -355,15 +339,7 @@ Pitch:
     cp 10
     jr nz, .preSetAimLoop
 
-  call GetCurrentPitcherName
-
-  ld bc, name_buffer
-  ld hl, PitcherSetsText
-  ld de, str_buffer
-  call str_Replace
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call AnnouncePitcherSets
 
   xor a
 .preWindupAimLoop
@@ -695,15 +671,8 @@ Bat:
   ld [aim_y], a
   call MoveAimCircle ;TODO: handle lefty batters
   call ShowStrikeZone
-  
-  call GetCurrentBatterName
-  ld bc, name_buffer
-  ld hl, BatterStepsIntoTheBoxText
-  ld de, str_buffer
-  call str_Replace
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+
+  call AnnounceBatterStepsIntoBox
   
   xor a
 .preSetAimLoop

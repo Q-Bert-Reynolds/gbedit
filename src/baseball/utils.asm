@@ -249,7 +249,8 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   ld a, 1
   ld [_w], a
 
-  ld a, d
+.setSwingXY
+  ld a, d;rand
   and a, 31
   sub a, 15
   ld b, a
@@ -257,7 +258,7 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   add a, b
   ld [_x], a
 
-  ld a, d
+  ld a, d;rand
   swap a
   and a, 31
   sub a, 15
@@ -265,7 +266,14 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   ld a, [pitch_target_y]
   add a, b
   ld [_y], a
+  
+.setSwingTiming
+  ld a, e;rand
+  and a, %10000111
+  add a, 100
+  ld [_z], a
 
+.adjustSwingXYToZone
   call StrikeZonePosition
   ld a, [_x]
   add a, d
@@ -274,10 +282,20 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   add a, e
   ld [_y], a
 
-  ld a, e
-  and a, %10000111
-  add a, 100
-  ld [_z], a
+.addBreakOffsetToSwingXY
+  call GetCurrentPitcher
+  ld d, PITCHING_MOVES
+  call GetPlayerMove
+  ld a, [move_data.pitch_path]
+  ld b, a
+  ld c, 100
+  call GetPitchBreak
+  ld a, [_x]
+  add a, d
+  ld [_x], a
+  ld a, [_y]
+  add a, e
+  ld [_y], a
 
   call GetCurrentBatter
   ld d, BATTING_MOVES

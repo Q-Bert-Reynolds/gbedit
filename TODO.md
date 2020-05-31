@@ -1,6 +1,6 @@
 Current
 
-- offset AI swing location by break
+- move announcer code and strings into separate bank
 
 General
 

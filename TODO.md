@@ -1,6 +1,5 @@
 Current
 
-- change pitch arc by pitch speed
 - offset pitch target by accuracy
 
 General

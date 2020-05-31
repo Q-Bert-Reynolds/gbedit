@@ -5,7 +5,7 @@ SECTION "Temp Data", ROMX, BANK[TEMP_BANK]
 MyBubbiData:
   DB 001                                ; .number
   DB 5                                  ; .age
-  DB 6                                  ; .position
+  DB SHORTSTOP                          ; .position
   DB TOSS_MOVE                          ; .moves
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
@@ -48,7 +48,7 @@ MyBubbiDataEnd:
 MyZaphData:
   DB 145                                ; .number
   DB 89                                 ; .age
-  DB 9                                  ; .position
+  DB RIGHT_FIELDER                      ; .position
   DB ELEC_SLIDER_MOVE                   ; .moves
   DB THUNDERSTICK_MOVE
   DB RISER_MOVE
@@ -93,7 +93,7 @@ MyZaphDataEnd:
 MyGioData:
   DB 17                                 ; .number
   DB 18                                 ; .age
-  DB 7                                  ; .position
+  DB LEFT_FIELDER                       ; .position
   DB RISER_MOVE                         ; .moves
   DB SWING_MOVE
   DB CUTTER_MOVE, 0
@@ -137,7 +137,7 @@ MyGioDataEnd:
 MyBearData:
   DB 143                                ; .number
   DB 50                                 ; .age
-  DB 3                                  ; .position
+  DB FIRST_BASEMAN                      ; .position
   DB THUNDERBALL_MOVE                   ; .moves
   DB SWING_MOVE
   DB SMASH_MOVE
@@ -182,7 +182,7 @@ MyBearDataEnd:
 MyStarchildData:
   DB 120                                ; .number
   DB 12                                 ; .age
-  DB 5                                  ; .position
+  DB THIRD_BASEMAN                      ; .position
   DB BUBBLEBALL_MOVE                    ; .moves
   DB SHELL_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
@@ -225,7 +225,7 @@ MyStarchildDataEnd:
 MyMetaData:
   DB 11                                 ; .number
   DB 4                                  ; .age
-  DB 4                                  ; .position
+  DB SECOND_BASEMAN                     ; .position
   DB HARDEN_MOVE                        ; .moves
   DB SILKY_SWING_MOVE
   DB SWING_MOVE, 0
@@ -269,7 +269,7 @@ MyMetaDataEnd:
 MyChuData:
   DB 25                                 ; .number
   DB 23                                 ; .age
-  DB 8                                  ; .position
+  DB CENTER_FIELDER                     ; .position
   DB LIGHTNINBOLT_MOVE                  ; .moves
   DB SWING_MOVE
   DB CIRCLECHANGE_MOVE
@@ -314,7 +314,7 @@ MyChuDataEnd:
 MyYogiData:
   DB 9                                  ; .number
   DB 69                                 ; .age
-  DB 2                                  ; .position
+  DB CATCHER                            ; .position
   DB HYDRO_CANNON_MOVE                  ; .moves
   DB SHELL_MOVE
   DB SPITBALL_MOVE
@@ -359,7 +359,7 @@ MyYogiDataEnd:
 MyBigRedData:
   DB 6                                  ; .number
   DB 38                                 ; .age
-  DB 1                                  ; .position
+  DB PITCHER                            ; .position
   DB HIGH_HEAT_MOVE                     ; .moves
   DB SWING_MOVE
   DB HEATER_MOVE
@@ -401,10 +401,33 @@ MyBigRedData:
   DW 8                                  ; .hit_batters       
 MyBigRedDataEnd:
 
+OpponentBigRedData:
+  DB 006                                ; .number
+  DB 42                                 ; .age
+  DB PITCHER                            ; .position
+  DB HIGH_HEAT_MOVE                     ; .moves
+  DB SWING_MOVE
+  DB HEATER_MOVE
+  DB CURVEBALL_MOVE
+  DB 5, 40, 15, 20                      ; .pp
+  DB THROW_LEFT | BAT_RIGHT             ; .hand
+  DB NONE                               ; .status
+  DW 32                                 ; .hp
+  DW 45                                 ; .max_hp 
+  DW 49                                 ; .bat
+  DW 49                                 ; .field
+  DW 45                                 ; .speed
+  DW 65                                 ; .throw
+  DW 100                                ; .hits
+  DW 2000                               ; .at_bats
+  DW 44                                 ; .runs_allowed
+  DW 300                                ; .outs_recorded
+OpponentBigRedDataEnd:
+
 OpponentBubbiData:
   DB 001                                ; .number
   DB 42                                 ; .age
-  DB 1                                  ; .position
+  DB SHORTSTOP                          ; .position
   DB TOSS_MOVE                          ; .moves
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
@@ -425,7 +448,7 @@ OpponentBubbiDataEnd:
 OpponentBearData:
   DB 143                                ; .number
   DB 42                                 ; .age
-  DB 1                                  ; .position
+  DB FIRST_BASEMAN                      ; .position
   DB TOSS_MOVE                          ; .moves
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
@@ -496,9 +519,9 @@ Seed::
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
 
-  ld hl, OpponentBearData
+  ld hl, OpponentBigRedData
   ld de, OpponentLineupPlayer2
-  ld bc, OpponentBubbiDataEnd - OpponentBubbiData
+  ld bc, OpponentBigRedDataEnd - OpponentBigRedData
   call mem_Copy
 
   ld hl, OpponentBubbiData

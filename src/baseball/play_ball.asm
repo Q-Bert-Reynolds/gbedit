@@ -118,17 +118,43 @@ HideAimCircle:
   call mem_Set
   ret
 
-GetPitchPathOffset: ;b = path, c = z[0,100], returns xy offset in hl 
+GetPitchPathOffset: ;a = speed, b = path, c = z[0,100], returns xy offset in hl 
   push bc;path, z
+  ld hl, 0
+  cp a, 100
+  jr nc, .addBreak;no arc if >= 100
 
+.setArc
+  ld e, a;speed
   ld hl, PitchPathArc
   ld b, 0
   add hl, bc
   ld a, [hl]
-  ; sra a ;TODO: high powered pitches shouldn't have as much arc
   ld h, 0
   ld l, a;arc
+  ld a, e;speed
+  cp a, 70
+  jr c, .addBreak;speed < 70, full arc
 
+  ld a, l
+  sra a
+  ld l, a
+  ld a, e;speed
+  cp a, 80
+  jr c, .addBreak;speed < 80, half arc
+
+  ld a, l
+  sra a
+  ld l, a
+  ld a, e;speed
+  cp a, 90
+  jr c, .addBreak;speed < 90, quarter arc
+
+  ld a, l
+  sra a
+  ld l, a;speed < 100, 1/16 arc
+
+.addBreak
   pop bc;path, z
   push hl;arc
   call GetPitchBreak
@@ -136,7 +162,7 @@ GetPitchPathOffset: ;b = path, c = z[0,100], returns xy offset in hl
   add hl, de
   ret
 
-MovePitch: ;a = show projection, b = pitch path, c = z[0,100], de = start xy, hl = end xy
+MovePitch: ;a = show projection, b = pitch path, c = z[0,100], de = start xy, hl = end xy, [_s] = pitch speed
   push af;show projection
   push bc;path,z
   push de;start xy
@@ -161,6 +187,7 @@ MovePitch: ;a = show projection, b = pitch path, c = z[0,100], de = start xy, hl
   push bc;path,z
   push de;ball x, y
 
+  ld a, [_s]
   call GetPitchPathOffset
   push hl;offset
 
@@ -302,6 +329,10 @@ Pitch:
   ld a, [move_data.pitch_path]
   ld [_b], a
 
+.setPitchSpeed
+  ld a, [move_data.power]
+  ld [_s], a
+
   call StrikeZonePosition
   ld a, d
   ld [aim_x], a
@@ -406,7 +437,7 @@ Pitch:
 .skip
     ld a, [_w]
     and a
-    jr z, .moveBaseball
+    jr z, .updatePitchZ
     ld a, [_c]
     and a
     jr nz, .checkFinishSwing
@@ -415,7 +446,7 @@ Pitch:
     ld b, a
     ld a, [_z]
     cp a, b
-    jr nc, .moveBaseball
+    jr nc, .updatePitchZ
 .swing
       ld a, 1
       call SetOpposingPlayerBkgTiles
@@ -429,23 +460,26 @@ Pitch:
       call Swing
       and a
       jr nz, .contactMade
-      jr .moveBaseball
+      jr .updatePitchZ
 .checkFinishSwing
     ld a, [_c]
     add a, 4
     ld b, a
     ld a, [_i]
     cp b
-    jr nz, .moveBaseball
+    jr nz, .updatePitchZ
       ld a, 2
       call SetOpposingPlayerBkgTiles
-.moveBaseball
+.updatePitchZ
+    ld a, [_s];pitch speed
+    ld de, 8
+    call math_Multiply
+    ld de, 200
+    add hl, de
     ld a, [pitch_z]
-    ld h, a
+    ld d, a
     ld a, [pitch_z+1]
-    ld l, a
-
-    ld de, 1000;TODO: replace with pitch speed
+    ld e, a
     add hl, de
     ld a, l
     ld [pitch_z+1], a
@@ -595,7 +629,18 @@ Aim:
   ret  
 
 Bat:
+.getPitch
   call PitchAI
+  ld a, [pitch_move_id]
+  call GetMove
+
+.setPitchPath
+  ld a, [move_data.pitch_path]
+  ld [_b], a
+
+.setPitchSpeed
+  ld a, [move_data.power]
+  ld [_s], a
 
   call LoadOpposingPlayerBkgTiles
   call LoadUserPlayerBkgTiles
@@ -768,23 +813,29 @@ Bat:
     ld e, 13
     ld a, [pitch_z]
     ld c, a
+    ld a, [_b]
+    ld b, a
     ld a, 1
     call MovePitch
     push de;ball pos
     call gbdk_WaitVBL
 
-.increment
+.updatePitchZ
+    ld a, [_s];pitch speed
+    ld de, 20
+    call math_Multiply
+    ld de, 1000
+    add hl, de
     ld a, [pitch_z]
-    ld h, a
+    ld d, a
     ld a, [pitch_z+1]
-    ld l, a
-
-    ld de, 1500;TODO: replace with pitch speed
+    ld e, a
     add hl, de
     ld a, l
     ld [pitch_z+1], a
     ld a, h
     ld [pitch_z], a
+
     pop de;ball pos
     cp a, 120
     jr nc, .exitSwingLoop
@@ -1026,7 +1077,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ld a, 1
+  ; ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

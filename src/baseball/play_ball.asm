@@ -431,7 +431,7 @@ Pitch:
   call SwingAI;populates _w_x_y_z and pitch_move_id
 
   xor a
-  ld [_u], a; c = swing frame
+  ld [_u], a; _u = swing frame
   ld [pitch_z], a
   ld [pitch_z+1], a
   ld [_v], a;step
@@ -462,7 +462,7 @@ Pitch:
     ld a, [_w]
     and a
     jr z, .updatePitchZ
-    ld a, [_c]
+    ld a, [_u]
     and a
     jr nz, .checkFinishSwing
 .checkSwing
@@ -474,19 +474,19 @@ Pitch:
 .swing
       ld a, 1
       call SetOpposingPlayerBkgTiles
-
+      ld [_breakpoint], a
       ld a, [_x]
       ld d, a
       ld a, [_y]
       ld e, a
       ld a, [pitch_z]
-      ld [_c], a
+      ld [_u], a
       call Swing
       and a
       jr nz, .contactMade
       jr .updatePitchZ
 .checkFinishSwing
-    ld a, [_c]
+    ld a, [_u]
     add a, 4
     ld b, a
     ld a, [_i]
@@ -516,7 +516,7 @@ Pitch:
     cp a, 168
     jp c, .pitchLoop
   
-  ld a, [_c]
+  ld a, [_u]
   and a
   jr z, .noSwing
 .swingAndMiss

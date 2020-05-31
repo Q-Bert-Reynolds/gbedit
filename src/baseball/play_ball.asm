@@ -318,9 +318,6 @@ Pitch:
   srl a
   srl a
   srl a
-  ld l, a
-  ld a, 255
-  sub a, l
   ld h, 0
   ld l, a
   call ShowAimCircle
@@ -396,6 +393,32 @@ Pitch:
   ld a, DRAW_FLAGS_WIN
   call DisplayText;"And the pitch."
 
+.checkPitchAccuracy
+  ld a, [move_data.accuracy]
+  cp a, 100
+  jr nc, .getSwingAI;skip if 100% accurate
+  ld c, %1
+  cp a, 90
+  jr nc, .offsetPitchTargetByAccuracy
+  ld c, %11
+  cp a, 75
+  jr nc, .offsetPitchTargetByAccuracy
+  ld c, %111
+  cp a, 60
+  jr nc, .offsetPitchTargetByAccuracy
+  ld c, %1111
+
+.offsetPitchTargetByAccuracy
+  ld a, c
+  call SignedRandom
+  ld a, [aim_x]
+  add a, d
+  ld [aim_x], a
+  ld a, [aim_y]
+  add a, e
+  ld [aim_y], a
+
+.setPitchTarget
   call StrikeZonePosition
   ld a, [aim_x]
   sub a, d
@@ -404,6 +427,7 @@ Pitch:
   sub a, e
   ld [pitch_target_y], a
 
+.getSwingAI
   call SwingAI;populates _w_x_y_z and pitch_move_id
 
   xor a
@@ -657,6 +681,9 @@ Bat:
   srl a
   srl a
   srl a
+  ld l, a
+  ld a, 255
+  sub a, l
   ld h, 0
   ld l, a
   call ShowAimCircle
@@ -1077,7 +1104,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ; ld a, 1
+  ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

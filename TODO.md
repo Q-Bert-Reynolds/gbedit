@@ -1,6 +1,6 @@
 Current
 
-- offset pitch target by accuracy
+- offset AI swing location by break
 
 General
 
@@ -42,6 +42,7 @@ New Game
 
 Play Ball
 
+- if opposing pitcher is ahead - throw more balls, behind - throw more strikes
 - pitches in the dirt should bounce
 - hide strikezone after pitcher sets
 - players should disappear immediately after plate appearance or end of inning

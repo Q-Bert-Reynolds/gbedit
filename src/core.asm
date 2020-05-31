@@ -1293,7 +1293,7 @@ GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects s
   call str_Copy
   ret
 
-SignedRandom:: ;a = bitmask
+SignedRandom:: ;a = bitmask, returns signed random bytes in d and e
   push af
   call gbdk_Random
   pop af

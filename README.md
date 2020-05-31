@@ -63,7 +63,7 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
   - Jeff Frohwein
   - John Harrison
   - kOOPa
-  - LIJI32
+  - Lior Halphon (LIJI32)
   - jrra
   - Mantidactyle
   - mattcurrie

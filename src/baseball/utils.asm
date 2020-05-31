@@ -232,7 +232,6 @@ PitchAI::;returns pitch_move_id
   ld [pitch_move_id], a; rand % move_count
   ret
 
-;TODO: offset swing location by break
 SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, selected [swing_move_id]
   call gbdk_Random
   ld a, [pitch_target_x]

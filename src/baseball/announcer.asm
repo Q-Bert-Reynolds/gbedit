@@ -1,3 +1,5 @@
+INCLUDE "src/baseball/strings.asm"
+
 ;script
   ; "Unsigned GINGER appeared!" or  "CALVIN wants to play 3 innings."
   ; "Play ball!"

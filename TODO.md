@@ -1,7 +1,6 @@
 Current
 
 - move announcer code and strings into separate bank
-- merge START_BANK and TITLE_BANK
 
 General
 

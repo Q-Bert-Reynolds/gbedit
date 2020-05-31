@@ -7,7 +7,6 @@ INCLUDE "img/play/play_ball_sgb_border.asm"
 
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
-INCLUDE "src/baseball/strings.asm"
 INCLUDE "src/baseball/utils.asm"
 INCLUDE "src/baseball/announcer.asm"
 INCLUDE "src/baseball/ui.asm"

@@ -1,5 +1,3 @@
-SECTION "Scale Tile Data 2X", ROM0
-
 SCALE_2X_CALC_A: MACRO
   ld a, [_b]
   swap a

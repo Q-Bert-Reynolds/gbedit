@@ -1080,7 +1080,7 @@ StartGame::
   call GetPlayerNumber
   ld [_a], a
   ld a, 0; TODO: replace with team/random encounter
-  ; call ShowPlayBallIntro
+  call ShowPlayBallIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame
 

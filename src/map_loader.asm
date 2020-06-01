@@ -6,10 +6,11 @@ INCLUDE "maps/overworld.asm"
 
 SECTION "Map Loader", ROM0
 SetMapTilesLeftRight: ;hl = bank shift, a = screen offset
-  push hl;bank shift
-  push af;screen offset
+  ld b, a;screen offset
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  push af;old bank
+  push hl;bank shift
+  push bc;screen offset
 
   call LoadMapData
 
@@ -67,15 +68,16 @@ SetMapTilesLeftRight: ;hl = bank shift, a = screen offset
   call DrawMapTilesChunk
 .skipBottomMap
 
-  ld a, [temp_bank]
+  pop af
   call SetBank
   ret
 
 SetMapTilesUpDown: ;hl = bank shift, a = screen offset
-  push hl;bank shift
-  push af;screen offset
+  ld b, a;screen offset
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  push af;old bank
+  push hl;bank shift
+  push bc;screen offset
 
   call LoadMapData
 
@@ -133,7 +135,7 @@ SetMapTilesUpDown: ;hl = bank shift, a = screen offset
   call DrawMapTilesChunk
 .skipRightMap
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret
 
@@ -163,7 +165,7 @@ SetMapTilesDown:: ;sets 2 rows of tiles offscreen down
 
 SetMapTiles::; sets full background using positional data
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  push af;bank
 
   call LoadMapData;returns bc = map id, de = xy
   push bc ;map id
@@ -231,7 +233,7 @@ SetMapTiles::; sets full background using positional data
   call DrawMapTilesChunk
 .skipBottomMap
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret
 

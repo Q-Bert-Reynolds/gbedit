@@ -1077,8 +1077,8 @@ StartGame::
 
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
-  ld [_a], a
-  ld a, 0; TODO: replace with team/random encounter
+  ld [_a], a; player num
+  ld a, 1; TODO: replace with team/random encounter
   call ShowPlayBallIntro
   call SetupGameUI
   call AnnounceBeginningOfFrame

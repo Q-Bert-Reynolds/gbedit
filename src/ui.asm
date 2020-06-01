@@ -1,5 +1,422 @@
 INCLUDE "src/beisbol.inc"
 
+SECTION "UI Bank 0", ROM0
+
+; LoadFontTiles
+; RevealTextAndWait               hl = text
+; RevealText                      a = draw flags, de = xy hl = text
+; FlashNextArrow                  a = draw flags, de = xy
+; DrawUIBox                       a=draw flags, bc = xy, de = wh
+; DrawText                        a = draw flags, hl = text, de = xy, bc = max lines
+; DisplayText                     a = draw flags, hl = text
+; DrawListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count
+; MoveListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
+; ShowListMenu                    a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+; ShowTextEntry                   bc = title, de = str, l = max_len -> puts text in name_buffer
+; ShowOptions
+
+LoadFontTiles::
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, UI_BANK
+  call SetBank
+
+  call UILoadFontTiles
+
+  pop af;bank
+  call SetBank
+  ret
+
+RevealTextAndWait:: ;hl = text
+  ld de, str_buffer
+  call str_Copy
+
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, UI_BANK
+  call SetBank
+
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_PAD_TOP
+  call UIRevealTextAndWait
+
+  pop af;bank
+  call SetBank
+  ret
+
+RevealText:: ;a = draw flags, de = xy hl = text
+  ld b, a;draw flags
+  ld a, [loaded_bank]
+  push af;bank
+  push bc;draw flags
+  push de;xy
+  ld de, str_buffer
+  call str_Copy
+
+  ld a, UI_BANK
+  call SetBank
+
+  pop de;xy
+  pop af;draw flags
+  ld hl, str_buffer
+  call UIRevealText
+
+  pop af;bank
+  call SetBank
+  ret
+
+FlashNextArrow:: ;a = draw flags, de = xy
+  push de;xy
+  push af;draw flags
+  ld bc, tile_buffer
+  ld a, ARROW_DOWN
+  ld [bc], a ;tile_buffer[0] = ARROW_DOWN;
+  ld hl, $0101
+  pop af;draw flags
+  push af
+  call SetTiles
+
+  WAITPAD_UP
+  ld l, 20
+.loop1 ;for (a = 20; a > 0; --a) {
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, (PADF_A | PADF_B)
+    ld de, 10
+    call gbdk_Delay
+    dec l
+    jp nz, .loop1
+
+  ld bc, tile_buffer
+  xor a
+  ld [bc], a
+  ld hl, $0101
+  pop af;draw flags
+  pop de ;xy
+  push de ;xy
+  push af
+  call SetTiles
+
+  ld l, 20
+.loop2
+    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exitFlashNextArrow, (PADF_A | PADF_B)
+    ld de, 10
+    call gbdk_Delay
+    dec l
+    jp nz, .loop2
+
+  pop af;draw flags
+  pop de ;xy
+  jp FlashNextArrow
+.exitFlashNextArrow
+  PLAY_SFX SelectSound
+  pop af;draw flags
+  pop de ;xy
+  ret
+
+GetUIBoxTiles: ;Entry: de = wh, Affects: hl
+  ld hl, tile_buffer
+  xor a
+  ld [_j], a
+.rowLoop ;for (j = 0; j < h; ++j) {
+  xor a
+  ld [_i], a
+.columnLoop ;for (i = 0; i < w; ++i) {
+.testTop ;if (j == 0) {
+  ld a, [_j] 
+  and a
+  jr nz, .testBottom
+.testUpperLeft ;if (i == 0) k = BOX_UPPER_LEFT;
+  ld a, [_i]
+  and a
+  jr nz, .testUpperRight
+  ld a, BOX_UPPER_LEFT
+  jp .setTile
+.testUpperRight ;else if (i == w-1) k = BOX_UPPER_RIGHT;
+  ld a, [_i]
+  sub a, d
+  inc a
+  jr nz, .setHorizontal
+  ld a, BOX_UPPER_RIGHT
+  jp .setTile
+.testBottom ;else if (j == h-1) {
+  ld a, [_j] 
+  sub a, e
+  inc a
+  jr nz, .testSides
+.testLowerLeft ;if (i == 0) k = BOX_LOWER_LEFT;
+  ld a, [_i]
+  and a
+  jr nz, .testLowerRight
+  ld a, BOX_LOWER_LEFT
+  jp .setTile
+.testLowerRight ;else if (i == w-1) k = BOX_LOWER_RIGHT;
+  ld a, [_i]
+  sub a, d
+  inc a
+  jr nz, .setHorizontal
+  ld a, BOX_LOWER_RIGHT
+  jp .setTile
+.testSides ;else if (i == 0 || i == w-1) k = BOX_VERTICAL;
+  ld a, [_i]
+  and a
+  jr z, .setVertical
+  sub d
+  inc a
+  jr z, .setVertical
+.setNone
+  xor a
+  jr .setTile
+.setVertical
+  ld a, BOX_VERTICAL
+  jr .setTile
+.setHorizontal
+  ld a, BOX_HORIZONTAL
+.setTile
+  ld [hli], a ;tiles[j*w+i] = k;
+
+  ld a, [_i]
+  inc a
+  ld [_i], a
+  sub a, d
+  jr nz, .columnLoop
+
+  ld a, [_j]
+  inc a
+  ld [_j], a
+  sub a, e
+  jr nz, .rowLoop
+  ret
+
+DrawUIBox::;a=draw flags, bc = xy, de = wh
+  push af ;draw flags
+  push bc ;xy
+  push de ;wh
+  call GetUIBoxTiles
+  pop hl ;wh
+  pop de ;xy
+  pop af;draw flags
+  ld bc, tile_buffer
+  call SetTiles
+  ret
+
+DrawText:: ;a = draw flags, hl = text, de = xy, bc = max lines
+    push bc;max lines
+    push af;draw flags
+    push de;xy
+    ld de, tile_buffer
+    call str_CopyLine
+    pop de;xy
+    pop af;draw flags
+    push af;draw flags
+    push de;xy
+    push hl;next line
+    ld h, c;width
+    ld l, 1;height
+    ld bc, tile_buffer
+    call SetTiles
+    pop hl;line
+    dec hl
+    ld a, [hli]
+    and a
+    jr z, .exit
+    pop de;xy
+    inc e
+    inc e;y+=2
+    pop af;draw flags
+    pop bc;max lines
+    dec c
+    ret z
+    jr DrawText
+.exit
+  pop de;xy
+  pop af;draw flags
+  pop bc;max lines
+  ret
+
+DisplayText:: ;a = draw flags, hl = text
+  push hl;text
+  push af;draw flags
+
+  xor a
+  ld b, a
+  ld c, a
+  ld d, 20
+  ld e, 6
+  pop af;draw flags
+  push af
+  call DrawUIBox
+
+  pop af
+  pop hl
+  push af
+  ld d, 2
+  ld e, 2
+  ld bc, 2
+  call DrawText ;a = draw flags, hl = text, de = xy, bc = max lines
+
+.show
+  pop af;draw flags
+  and a, DRAW_FLAGS_WIN
+  ret z;no reason to show win if not drawing on win
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a
+  SHOW_WIN
+  ret
+
+DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
+  push af;draw flags
+  xor a
+  ld [_i], a
+  ld hl, tile_buffer
+.tilesLoop; for (i = 0; i < c; ++i) {
+    xor a
+    ld [hli], a;   tiles[i*2] = 0;
+    ld a, [_j]
+    ld c, a
+    ld a, [_i]
+    sub a, c ;_i - _j
+    jp nz, .setZero ;if (i == _j)
+    ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
+    jr .skip
+.setZero
+    xor a ;else tiles[i*2+1] = 0;
+.skip
+    ld [hli], a ;tiles[i*2+1]
+
+    ld a, [_i]
+    inc a
+    ld [_i], a;++_i
+    ld b, a
+    ld a, [_c]
+    sub a, b ;_c-_i
+    jp nz, .tilesLoop
+
+  xor a
+  ld [hl], a
+
+  ld a, 1
+  ld h, a ;w=1
+  ld a, [_c]
+  add a, a
+  ld l, a ;h=_c*2
+  
+  pop af;draw flags
+  push af
+  ld bc, tile_buffer
+  and a, DRAW_FLAGS_PAD_TOP
+  jr nz, .setTiles
+  inc bc
+  dec l
+.setTiles
+  pop af;draw flags
+  call SetTiles
+  ret
+
+MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
+  push af;draw flags
+.checkMoveArrowUp ;if (button_state & PADF_UP && j > 0) {
+  ld a, [button_state]
+  and a, PADF_UP
+  jp z, .checkMoveArrowDown
+  ld a, [_j]
+  or a
+  jp z, .failMoveUp
+  call gbdk_WaitVBL
+  ld a, [_j]
+  dec a
+  ld [_j], a ;--j
+  pop af;draw flags
+  push af
+  call DrawListMenuArrow;move_menu_arrow(--j);
+.failMoveUp
+  pop af;draw flags
+  WAITPAD_UP ;update_waitpadup();
+  ld a, -1
+  ret
+.checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
+  ld a, [button_state]
+  and a, PADF_DOWN
+  jr z, .noMove
+  ld a, [_c]
+  dec a
+  ld b, a
+  ld a, [_j]
+  cp b
+  jr nc, .failMoveDown
+  call gbdk_WaitVBL
+  ld a, [_j]
+  inc a
+  ld [_j], a ;++j
+  pop af;draw flags
+  push af
+  call DrawListMenuArrow;move_menu_arrow(++j);
+.failMoveDown
+  pop af;draw flags
+  WAITPAD_UP ;update_waitpadup();
+  ld a, 1
+  ret
+.noMove
+  pop af
+  xor a;0
+  ret
+
+ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns a
+  ld h, a;draw flags
+  ld a, [loaded_bank]
+  push af;bank
+  push hl;draw flags
+  ld a, UI_BANK
+  call SetBank
+  
+  pop af;draw flags
+  call UIShowListMenu
+  ld b, a;choice
+
+  pop af;bank
+  call SetBank
+
+  ld a, b;choice
+  ret; return a=choice;
+
+ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
+  ld a, [loaded_bank]
+  push af ;bank
+  push hl ;max_len
+  push de ;str
+  ld h, b
+  ld l, c
+  ld de, str_buffer
+  call str_Copy
+
+  pop hl ;str
+  ld de, name_buffer
+  call str_Copy
+
+  ld a, UI_BANK
+  call SetBank
+  
+  ld de, str_buffer
+  ld hl, name_buffer
+  pop bc ;max_len
+  call UIShowTextEntry
+
+  pop af;bank
+  call SetBank
+  ret
+
+ShowOptions::
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, UI_BANK
+  call SetBank
+
+  call UIShowOptions
+
+  pop af;bank
+  call SetBank
+  ret
+
 SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
 INCLUDE "img/town_map.asm"

@@ -109,41 +109,44 @@ SECTION "Coach Code", ROM0
 LoadCoachTiles:: ;a = coach id, de = vram address
   push af
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  ld b, a;bank
   ld a, COACHES_BANK
   call SetBank
 
   pop af
+  push bc;bank
   call BankedLoadCoachTiles
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret
 
 SetCoachTiles:: ;a = coach, de=xy, h=offset
   push af
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  ld b, a;bank
   ld a, COACHES_BANK
   call SetBank
 
   pop af
+  push bc;bank
   call BankedSetCoachTiles
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret
 
 GetCoachesName:: ;a = coach, returns name in name_buffer
   push af
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  ld b, a;bank
   ld a, COACHES_BANK
   call SetBank
 
   pop af
+  push bc;bank
   call BankedGetCoachsName
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret

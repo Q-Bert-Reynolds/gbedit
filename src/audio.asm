@@ -41,12 +41,12 @@ SECTION "Audio", ROM0
 
 UpdateAudio::
   ld a, [loaded_bank]
-  ld [vblank_bank], a
+  push af
   
   call UpdateSFX
   call gbt_update
   
-  ld a, [vblank_bank]
+  pop af
   call SetBank
   ret
 
@@ -163,7 +163,7 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld [sfx_ticks], a
 
   ld a, [loaded_bank]
-  ld [audio_temp_bank], a
+  push af;bank
 
   ld a, [current_sfx_bank]
   call SetBank
@@ -173,7 +173,7 @@ PlaySFX:: ; a = bank, hl = sfx address
   ld a, [hl];channels to disable on finish
   ld [sfx_disable_mask], a
 
-  ld a, [audio_temp_bank]
+  pop af;bank
   call SetBank
 
   ld a, AUDENA_ON
@@ -192,12 +192,12 @@ PlaySong:: ; a = bank, hl = song address
   ld c, a ;data bank
 
   ld a, [loaded_bank]
-  ld [audio_temp_bank], a
+  push af;bank
 
   ld a, 1 ;song speed
   call gbt_play
 
-  ld a, [audio_temp_bank]
+  pop af;bank
   call SetBank
   ret
 

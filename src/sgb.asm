@@ -250,8 +250,8 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
 
   di
   ld a, [loaded_bank]
-  ld [temp_bank], a
-  ld a, b;bank
+  push af;old bank
+  ld a, b;new bank
   push de;tile map
   push hl;tiles
   call SetBank
@@ -277,7 +277,7 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   ld hl, sgb_MaskEnCancel
   call _sgb_PacketTransfer       ; Super Game Boy screen visualization unfreezing
 
-  ld a, [temp_bank]
+  pop af;old bank
   call SetBank
   reti
 

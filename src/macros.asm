@@ -3,6 +3,12 @@ NICKNAME: MACRO ;\1 = nickname
   DS NICKNAME_LENGTH - STRLEN(\1)
 ENDM
 
+TRAMPOLINE: MACRO ;\1 = jump address
+  ld b, BANK(\1)
+  ld hl, \1
+  call Trampoline
+ENDM
+
 SET_LCD_INTERRUPT: MACRO ;\1 = interrupt address
   di
 

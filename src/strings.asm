@@ -6,12 +6,20 @@
 ;
 ; Library Subroutines:
 ;   str_Copy
-;     Copy a string
-;     Entry: hl = src string, de = dst string
+;     Copy a string from hl to de
+;     Entry: hl = src string, de = dest string
 ;   str_Length
 ;     Length of a string
 ;     Entry: hl = string
 ;     Return: de = length
+;   str_FromArray
+;     gets string by index
+;     Entry: bc = index, hl = string array
+;     Return: hl = string at index bc
+;   str_CopyLine 
+;     Copies line (\n) from hl to de
+;     Entry: hl = src string, de = dest string
+;     Return: bc = length of line, hl = start of next line
 ;   str_Append
 ;     Appends one string to another
 ;     Entry: hl = append string, de = dest string
@@ -20,8 +28,11 @@
 ;     Entry: hl = src string, de = dest string, bc = replace string, af = with string
 ;   str_Number
 ;     Converts number hl to string de
-;     Entry: hl = number, de = dest string
-;
+;     Entry: hl = 16 bit number, de = dest string
+;   str_Number24
+;     Converts number ehl to string de
+;     Entry: ehl = 24 bit number, de = dest string
+
 
 IF !DEF(STRINGS_ASM)
 STRINGS_ASM SET 1

@@ -32,18 +32,6 @@ BaseTexts::                   DB "first",0
 TakesTheMoundText::           DB "%s\ntakes the mound.",0;also used for relievers
 WalksToThePlateText::         DB "%s walks\nup to the plate.",0
 
-;menu
-PlayMenuString::              DB "PLAY  TEAM"
-                              DS 10
-                              DB "ITEM  RUN "
-
-;run selected
-QuittingIsNotAnOptionText::   DB "Quitting is\nnot an option!",0
-
-;play selected
-TypeSlashText::               DB "TYPE/",0
-BlankMoveText::               DB "--------",0
-
 ;move selected
 BatterStepsIntoTheBoxText::   DB "%s steps\ninto the box.",0
 PitcherSetsText::             DB "%s sets.",0

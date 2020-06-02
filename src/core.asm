@@ -2,8 +2,8 @@ SECTION "Core", ROM0
 
 ; GetTypeString                   a = type, string in name_buffer
 ; GetStatusString                 a = status, string in name_buffer
-; SetBank                         a = BANK ;TODO: handle more than 255 banks
-; Trampoline                      a = bank, hl = address
+; SetBank                         a = bank ;TODO: handle more than 255 banks
+; Trampoline                      b = bank, hl = address, can only use de and RAM for args, can't return anything in a
 ; UpdateInput
 ; DrawStateMap
 ; SetTiles                        a = draw flags, hl=wh, de=xy, bc=firstTile
@@ -19,17 +19,14 @@ SECTION "Core", ROM0
 ; MoveSprites                     bc = xy in screen space, hl = wh in tiles, a = first sprite index
 ; SetSpriteTilesXY                bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
 ; SetHPBarTiles                   de = player, hl = address
-; SetAgeTiles                   de = player, hl = address
+; SetAgeTiles                     de = player, hl = address
 ; SetMovePPTiles                  a = move, de = player, hl = tile address
 ; ScrollXYToTileXY                returns xy in de
 ; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
 ; CopyBkgToWin
 ; SaveGame
 ; GetZeroPaddedNumber             a = number, returns padded number in str_buffer, affects str_buffer, all registers
-; DistanceFromSpeedLaunchAngle    a = speed, b = launch angle, returns distance in a
-; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
-; GetClosestFielderByLocation     de = xy, returns position number in a
-; IsUserFielding                  nz = user is fielding, z = user is batting
+; SignedRandom                    a = bitmask, returns signed random bytes in d and e
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
 ; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
 
@@ -83,7 +80,7 @@ SetBank:: ;a = BANK ;TODO: handle more than 255 banks
   ld [rROMB0], a
   ret
   
-Trampoline:: ;b = bank, hl = address
+Trampoline:: ;b = bank, hl = address, can only use de and RAM for args, can't return anything in a
   ld a, [loaded_bank]
   push af;old bank
   ld a, b;new bank
@@ -926,73 +923,6 @@ SignedRandom:: ;a = bitmask, returns signed random bytes in d and e
 .skipE
   ld e, b
 
-  ret
-
-;----------------------------------------------------------------------
-;
-; DistanceFromSpeedLaunchAngle - calculates distance speed and angle
-;
-;   input: 
-;     a = speed (0 to 255)
-;     c = launch angle (-127 to 127)
-;   returns:
-;     a = distance
-;
-;----------------------------------------------------------------------
-DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in a
-  push af;speed
-  ld a, c
-  cp a, 128
-  jr c, .inAir
-
-  pop af;speed
-  srl a;d = speed/2 ... TODO: this could be done better
-  ret
-
-.inAir ;d = v^2 * sin(2 * ang) / g
-  add a, a
-  call math_Sin255
-  ld b, a;sin(2*ang)*255
-  pop af;speed
-  push bc
-  ld d, 0
-  ld e, a
-  call math_Multiply;v^2
-  pop bc
-  ld d, 0
-  ld e, b
-  call math_Multiply16;v^2 * sin(2*ang)*255
-  ld a, c;v^2 * sin(2*ang)/g... bcde -> a, assumes b == 0, drops lower word
-  ret
-
-;----------------------------------------------------------------------
-;
-; LocationFromDistSprayAngle - calculates landing spot from dist spray angle
-;
-;   input: 
-;     a = distance (0 to 255)
-;     b = spray angle (-127 to 127)
-;   returns:
-;     de = xy position
-;
-;----------------------------------------------------------------------
-LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
-  ld d, 43;x
-  ld e, 99;y
-  ret
-
-GetClosestFielderByLocation::;de = xy, returns position number in a
-  ld a, 7
-  ret
-
-IsUserFielding::;nz = user is fielding, z = user is batting
-  push bc
-  ld a, [home_team];1 = user is home team
-  ld b, a
-  ld a, [frame];1 = bottom
-  and a, %00000001
-  xor a, b;home != frame
-  pop bc
   ret
 
 ;----------------------------------------------------------------------

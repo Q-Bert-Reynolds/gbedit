@@ -1,5 +1,7 @@
 INCLUDE "src/beisbol.inc"
 INCLUDE "src/baseball/intro.asm"
+INCLUDE "src/baseball/announcer.asm"
+INCLUDE "src/baseball/utils.asm"
 
 SECTION "Play Ball SGB", ROMX, BANK[SGB_BANK+1]
 
@@ -7,8 +9,7 @@ INCLUDE "img/play/play_ball_sgb_border.asm"
 
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
-INCLUDE "src/baseball/utils.asm"
-INCLUDE "src/baseball/announcer.asm"
+INCLUDE "src/baseball/play_ball_strings.asm"
 INCLUDE "src/baseball/ui.asm"
 INCLUDE "src/baseball/pitch_path.asm"
 
@@ -298,7 +299,7 @@ Pitch:
   ld a, 0
   call SetOpposingPlayerBkgTiles
 
-  call AnnouncePitcherSets
+  TRAMPOLINE AnnouncePitcherSets
   call ShowStrikeZone
 
 .setAimSize; 100% accuracy = size 0, 50% accuracy = size 10
@@ -327,7 +328,7 @@ Pitch:
   ld [aim_y], a
   call MoveAimCircle
 
-  call AnnounceBatterStepsIntoBox
+  TRAMPOLINE AnnounceBatterStepsIntoBox
   
   xor a
 .preSetAimLoop
@@ -338,7 +339,7 @@ Pitch:
     cp 10
     jr nz, .preSetAimLoop
 
-  call AnnouncePitcherSets
+  TRAMPOLINE AnnouncePitcherSets
 
   xor a
 .preWindupAimLoop
@@ -364,10 +365,8 @@ Pitch:
   ld a, 2
   call SetUserPlayerBkgTiles
 
-  ld hl, AndThePitchText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText;"And the pitch."
-
+  TRAMPOLINE AnnounceAndThePitch
+  
 .checkPitchAccuracy
   ld a, [move_data.accuracy]
   cp a, 100
@@ -429,10 +428,16 @@ Pitch:
     ld a, [_i]
     inc a
     ld [_i], a
+    cp a, 8
+    jr z, .displayPitchName
     cp a, 4
     jr nz, .skip
     ld a, 3
-    call SetUserPlayerBkgTiles   
+    call SetUserPlayerBkgTiles  
+
+.displayPitchName
+    TRAMPOLINE AnnouncePitchName 
+
 .skip
     ld a, [_w]
     and a
@@ -449,7 +454,6 @@ Pitch:
 .swing
       ld a, 1
       call SetOpposingPlayerBkgTiles
-      ld [_breakpoint], a
       ld a, [_x]
       ld d, a
       ld a, [_y]
@@ -495,12 +499,12 @@ Pitch:
   and a
   jr z, .noSwing
 .swingAndMiss
-  call AnnounceSwingMiss
+  TRAMPOLINE AnnounceSwingMiss
   jp FinishPitch
 .contactMade
   jp HitBall
 .noSwing
-  call AnnounceNoSwing
+  TRAMPOLINE AnnounceNoSwing
   jp FinishPitch
 
 Swing:; xy = de, z = a, returns contact made in a
@@ -671,7 +675,7 @@ Bat:
   call MoveAimCircle ;TODO: handle lefty batters
   call ShowStrikeZone
 
-  call AnnounceBatterStepsIntoBox
+  TRAMPOLINE AnnounceBatterStepsIntoBox
   
   xor a
 .preSetAimLoop
@@ -716,9 +720,7 @@ Bat:
   ld a, 2
   call SetOpposingPlayerBkgTiles
 
-  ld hl, AndThePitchText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText;"And the pitch."
+  TRAMPOLINE AnnounceAndThePitch
 
   xor a
   ld [_u], a; c = swing frame
@@ -740,27 +742,7 @@ Bat:
     jr .aim
 
 .displayPitchName
-    call GetCurrentOpponentPlayer
-    ld a, [pitch_move_id]
-    ld d, PITCHING_MOVES
-    call GetPlayerMoveName;move in name_buffer
-
-    ld hl, AndThePitchText
-    ld de, str_buffer
-    call str_Copy ;str_buffer = "And the pitch.""
-
-    ld hl, ThrewAPitchText;"\nA %s."
-    ld de, tile_buffer
-    ld bc, name_buffer
-    call str_Replace;str_buffer = "\nA PITCH_NAME."
-
-    ld hl, tile_buffer
-    ld de, str_buffer
-    call str_Append;"And the pitch."
-
-    ld hl, str_buffer
-    ld a, DRAW_FLAGS_WIN
-    call DisplayText
+    TRAMPOLINE AnnouncePitchName
 
 .aim
     ld a, [_u]
@@ -850,10 +832,10 @@ Bat:
   call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
   jp FinishPitch
 .noSwing
-  call AnnounceNoSwing
+  TRAMPOLINE AnnounceNoSwing
   jp FinishPitch
 .swingAndMiss
-  call AnnounceSwingMiss
+  TRAMPOLINE AnnounceSwingMiss
   jp FinishPitch
 
 HitBall:
@@ -1081,7 +1063,7 @@ StartGame::
   ld a, 1; TODO: replace with team/random encounter
   call ShowPlayBallIntro
   call SetupGameUI
-  call AnnounceBeginningOfFrame
+  TRAMPOLINE AnnounceBeginningOfFrame
 
   xor a
   ld [play_menu_selection], a

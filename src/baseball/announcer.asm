@@ -1,5 +1,30 @@
-INCLUDE "src/baseball/strings.asm"
+SECTION "Announcer Bank 0", ROM0
+;----------------------------------------------------------------------
+; AnnounceSwingContact - called if the player makes contact
+;
+;   "A deep fly ball to right center."
+;   "CHU makes the catch."
+;   "Out!"
+;
+;   input:
+;      a = speed
+;      b = spray angle
+;      c = launch angle
+;      de = swing move
+;      hl = pitch move
+;
+;----------------------------------------------------------------------
+AnnounceSwingContact::
+  push af;speed
+  ld a, ANNOUNCER_BANK
+  call SetBank
+  pop af;speed
+  call _AnnounceSwingContact
+  ld a, PLAY_BALL_BANK
+  call SetBank
+  ret
 
+SECTION "Announcer Bank X", ROMX, BANK[ANNOUNCER_BANK]
 ;script
   ; "Unsigned GINGER appeared!" or  "CALVIN wants to play 3 innings."
   ; "Play ball!"
@@ -95,6 +120,7 @@ INCLUDE "src/baseball/strings.asm"
   ;  OPPOSING COACH WIN/LOSS STATEMENT
   ;  "That win brings you to 16W - 5L"
 
+INCLUDE "src/baseball/announcer_strings.asm"
 
 ;----------------------------------------------------------------------
 ; AnnounceBeginningOfFrame - called at beginning of each frame
@@ -106,13 +132,13 @@ INCLUDE "src/baseball/strings.asm"
 AnnounceBeginningOfFrame::
   call AnnouncePitcher
   call AnnounceBatter
-  call DrawBases
+  TRAMPOLINE DrawBases
   HIDE_WIN
   ret
 
 AnnouncePitcher::
-  call ShowPitcher
-  call GetCurrentPitcherName
+  TRAMPOLINE ShowPitcher
+  TRAMPOLINE GetCurrentPitcherName
   ld bc, name_buffer
   ld hl, TakesTheMoundText
   ld de, str_buffer
@@ -122,7 +148,7 @@ AnnouncePitcher::
   ret
 
 AnnouncePitcherSets::
-  call GetCurrentPitcherName
+  TRAMPOLINE GetCurrentPitcherName
   ld bc, name_buffer
   ld hl, PitcherSetsText
   ld de, str_buffer
@@ -132,10 +158,39 @@ AnnouncePitcherSets::
   call DisplayText
   ret
 
+AnnounceAndThePitch::
+  ld hl, AndThePitchText
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText;"And the pitch."
+  ret
+
+AnnouncePitchName::
+  ld a, [pitch_move_id]
+  ld [_breakpoint], a
+  call GetMoveName;move in name_buffer
+  ld [_breakpoint], a
+  ld hl, AndThePitchText
+  ld de, str_buffer
+  call str_Copy ;str_buffer = "And the pitch.""
+
+  ld hl, ThrewAPitchText;"\nA %s."
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace;str_buffer = "\nA PITCH_NAME."
+
+  ld hl, tile_buffer
+  ld de, str_buffer
+  call str_Append;"And the pitch."
+
+  ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+  ret
+
 AnnounceBatter::
-  call DrawCountOutsInning
-  call ShowBatter
-  call GetCurrentBatterName
+  TRAMPOLINE DrawCountOutsInning
+  TRAMPOLINE ShowBatter
+  TRAMPOLINE GetCurrentBatterName
   ld bc, name_buffer
   ld hl, WalksToThePlateText
   ld de, str_buffer
@@ -145,7 +200,7 @@ AnnounceBatter::
   ret
 
 AnnounceBatterStepsIntoBox::
-  call GetCurrentBatterName
+  TRAMPOLINE GetCurrentBatterName
   ld bc, name_buffer
   ld hl, BatterStepsIntoTheBoxText
   ld de, str_buffer
@@ -173,7 +228,7 @@ AnnounceNoSwing::
   ld l, a
   push hl
   call SetStrikes
-  call DrawCountOutsInning
+  TRAMPOLINE DrawCountOutsInning
   pop hl
   ld de, name_buffer
   call str_Number
@@ -186,7 +241,7 @@ AnnounceNoSwing::
   ret
 
 .strikeout
-  call GetCurrentBatterName
+  TRAMPOLINE GetCurrentBatterName
   ld hl, StrikeOutLookingText
   ld de, str_buffer
   ld bc, name_buffer
@@ -196,7 +251,7 @@ AnnounceNoSwing::
   call IncrementOuts
   cp 3
   jp nz, AnnounceBatter
-  call DrawCountOutsInning
+  TRAMPOLINE DrawCountOutsInning
   ret
 
 .ball
@@ -208,7 +263,7 @@ AnnounceNoSwing::
   ld l, a
   push hl
   call SetBalls
-  call DrawCountOutsInning
+  TRAMPOLINE DrawCountOutsInning
   pop hl
   ld de, name_buffer
   call str_Number
@@ -221,8 +276,8 @@ AnnounceNoSwing::
   ret
 
 .walk
-  call PutBatterOnFirst
-  call GetCurrentBatterName
+  TRAMPOLINE PutBatterOnFirst
+  TRAMPOLINE GetCurrentBatterName
   ld hl, WalkText
   ld de, str_buffer
   ld bc, name_buffer
@@ -236,15 +291,15 @@ AnnounceNoSwing::
   call SetBalls
   xor a
   call SetStrikes
-  call DrawCountOutsInning
-  call NextBatter
+  TRAMPOLINE DrawCountOutsInning
+  TRAMPOLINE NextBatter
   call AnnounceBatter
   ret
 
 .hitByPitch
   ; HitByPitchText
   ; BenchesClear
-  call NextBatter
+  TRAMPOLINE NextBatter
   call AnnounceBatter
 
 .updateBaseRunners
@@ -258,7 +313,6 @@ AnnounceWildPitchOrPassedBall:
   ; WildPitchText
   ret
 
-
 ;----------------------------------------------------------------------
 ; AnnounceSwingMiss - called if the player swings and misses
 ;
@@ -266,7 +320,7 @@ AnnounceWildPitchOrPassedBall:
 ;   "Strike 1."
 ;
 ;----------------------------------------------------------------------
-AnnounceSwingMiss::;de = pitch xy
+AnnounceSwingMiss::
 
 .checkPassedBallWildPitch;if any runners on
   ;TODO: check if xy way out of zone
@@ -296,7 +350,7 @@ AnnounceSwingMiss::;de = pitch xy
   ld l, a
   push hl
   call SetStrikes
-  call DrawCountOutsInning
+  TRAMPOLINE DrawCountOutsInning
   pop hl
   ld de, name_buffer
   call str_Number
@@ -309,7 +363,7 @@ AnnounceSwingMiss::;de = pitch xy
   ret
 
 .strikeout
-  call GetCurrentBatterName
+  TRAMPOLINE GetCurrentBatterName
   ld hl, StrikeOutSwingingText
   ld de, str_buffer
   ld bc, name_buffer
@@ -321,23 +375,8 @@ AnnounceSwingMiss::;de = pitch xy
   jp nz, AnnounceBatter
   ret
 
-
-;----------------------------------------------------------------------
-; AnnounceSwingContact - called if the player makes contact
-;
-;   "A deep fly ball to right center."
-;   "CHU makes the catch."
-;   "Out!"
-;
-;   input:
-;      a = speed
-;      b = spray angle
-;      c = launch angle
-;      de = swing move
-;      hl = pitch move
-;
-;----------------------------------------------------------------------
-AnnounceSwingContact::
+;cannot use Trampoline, too many inputs
+_AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle, de = swing move, hl = pitch move
   push bc;b=sparay angle, c=launch angle
   call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
 .checkOutfield;wall at 240
@@ -550,7 +589,7 @@ AnnounceRunScored: ;if upper nibble of [runners_on_base] non-zero, announces run
   ld [home_score], a
 .getOpponentPlayerName
   push bc
-  call DrawScore
+  TRAMPOLINE DrawScore
   pop bc
   ld a, b
   call GetOpposingPlayerInLineup
@@ -571,7 +610,7 @@ AnnounceRunScored: ;if upper nibble of [runners_on_base] non-zero, announces run
   ld [home_score], a
 .getUserPlayerName
   push bc
-  call DrawScore
+  TRAMPOLINE DrawScore
   pop bc
   ld a, b
   call GetUserPlayerInLineup

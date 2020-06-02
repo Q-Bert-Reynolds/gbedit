@@ -11,37 +11,21 @@ SECOND_BASE_MASK EQU $00F0
 THIRD_BASE_MASK  EQU $0F00
 HOME_MASK        EQU $F000
 
-; GetBalls - returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
-; SetBalls - a = balls
-; GetStrikes - returns (balls_strikes_outs & STRIKES_MASK) >> 2 in a
-; SetStrikes - a = strikes
-; GetOuts - returns balls_strikes_outs & OUTS_MASK in a
-; SetOuts - a = outs
-; IncrementOuts - returns outs in a
-; CheckStrike - returns ball (z) or strike (nz)
-; StrikeZonePosition - returns strike zone pos in de; 
-; PutBatterOnFirst - upper nibble of runners_on_base stores scoring runner (if any)
-; HealthPctToString - a = health_pct, returns str_buff
-; BattingAvgToString - de = batting average*1000, returns str_buff
-; EarnedRunAvgToString - hl = ERA*100, returns str_buff
-; CurrentOrderInLineup - returns order in a
-; NextFrame
-; NextBatter
-; ShowBatter
-; ShowPitcher
-; ShowUserPlayer
-; ShowOpposingPlayer
-; GetUserPitcher
-; GetUserBatter
-; GetOpponentPitcher
-; GetOpponentBatter
-; GetCurrentBatter - puts batter's player data in hl
-; GetCurrentBatterName - puts batter's name in name_buffer
-; GetCurrentPitcher - puts pitcher's player data in hl
-; GetCurrentPitcherName - pust pitcher's name in name_buffer
-; GetCurrentUserPlayer - puts user's current batter or pitcher player data in hl
-; GetCurrentOpponentPlayer - puts opponent's current batter or pitcher player data in hl
-; GetPositionPlayerName - a = position number (1-9), returns position player's name in name_buffer
+SECTION "Baseball Utils Bank 0", ROM0
+; GetBalls                        returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
+; SetBalls                        a = balls
+; GetStrikes                      returns (balls_strikes_outs & STRIKES_MASK) >> 2 in a
+; SetStrikes                      a = strikes
+; GetOuts                         returns balls_strikes_outs & OUTS_MASK in a
+; SetOuts                         a = outs
+; IncrementOuts                   returns outs in a
+; CheckStrike                     returns ball (z) or strike (nz)
+; GetPositionPlayerName           a = position number (1-9), returns the name of position player in [name_buffer]
+; DistanceFromSpeedLaunchAngle    a = speed, b = launch angle, returns distance in a
+; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
+; GetClosestFielderByLocation     de = xy, returns position number in a
+; IsUserFielding                  nz = user is fielding, z = user is batting
+; GetPitchBreak                   b = path, c = z, returns xy offset in de
 
 GetBalls::; returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
   ld a, [balls_strikes_outs]
@@ -125,7 +109,139 @@ CheckStrike:: ;returns ball (z) or strike (nz)
   BETWEEN -16, 16
   ret
 
+;----------------------------------------------------------------------
+;
+; GetPositionPlayerName - returns the name of position player 
+;
+;   input: a = position number (1-9)
+;   returns: name_buffer = position player's name
+;
+;----------------------------------------------------------------------
+GetPositionPlayerName::
+  ld b, a;position number
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, PLAY_BALL_BANK
+  call SetBank
+  push bc;position number
+  call IsUserFielding
+  jr nz, .userIsFielding
+.opponentIsFielding
+  pop af;position number
+  call GetOpposingPlayerByPosition
+  call GetPlayerName
+  jr .exit
+.userIsFielding
+  pop af;position number
+  call GetUserPlayerByPosition
+  call GetUserPlayerName
+.exit
+  pop af;bank
+  call SetBank
+  ret
+
+;----------------------------------------------------------------------
+;
+; DistanceFromSpeedLaunchAngle - calculates distance speed and angle
+;
+;   input: 
+;     a = speed (0 to 255)
+;     c = launch angle (-127 to 127)
+;   returns:
+;     a = distance
+;
+;----------------------------------------------------------------------
+DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in a
+  push af;speed
+  ld a, c
+  cp a, 128
+  jr c, .inAir
+
+  pop af;speed
+  srl a;d = speed/2 ... TODO: this could be done better
+  ret
+
+.inAir ;d = v^2 * sin(2 * ang) / g
+  add a, a
+  call math_Sin255
+  ld b, a;sin(2*ang)*255
+  pop af;speed
+  push bc
+  ld d, 0
+  ld e, a
+  call math_Multiply;v^2
+  pop bc
+  ld d, 0
+  ld e, b
+  call math_Multiply16;v^2 * sin(2*ang)*255
+  ld a, c;v^2 * sin(2*ang)/g... bcde -> a, assumes b == 0, drops lower word
+  ret
+
+;----------------------------------------------------------------------
+;
+; LocationFromDistSprayAngle - calculates landing spot from dist spray angle
+;
+;   input: 
+;     a = distance (0 to 255)
+;     b = spray angle (-127 to 127)
+;   returns:
+;     de = xy position
+;
+;----------------------------------------------------------------------
+LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
+  ld d, 43;x
+  ld e, 99;y
+  ret
+
+GetClosestFielderByLocation::;de = xy, returns position number in a
+  ld a, 7
+  ret
+
+IsUserFielding::;nz = user is fielding, z = user is batting
+  push bc
+  ld a, [home_team];1 = user is home team
+  ld b, a
+  ld a, [frame];1 = bottom
+  and a, %00000001
+  xor a, b;home != frame
+  pop bc
+  ret
+
 GetPitchBreak:: ;b = path, c = z, returns xy offset in de
+  ld a, [loaded_bank]
+  push af
+  ld a, BANK(_GetPitchBreak)
+  call SetBank
+  call _GetPitchBreak
+  pop af
+  call SetBank
+  ret
+
+SECTION "Baseball Utils Bank X", ROMX, BANK[PLAY_BALL_BANK]
+; StrikeZonePosition - returns strike zone pos in de; 
+; PutBatterOnFirst - upper nibble of runners_on_base stores scoring runner (if any)
+; HealthPctToString - a = health_pct, returns str_buff
+; BattingAvgToString - de = batting average*1000, returns str_buff
+; EarnedRunAvgToString - hl = ERA*100, returns str_buff
+; CurrentOrderInLineup - returns order in a
+; NextFrame
+; NextBatter
+; ShowBatter
+; ShowPitcher
+; ShowUserPlayer
+; ShowOpposingPlayer
+; GetUserPitcher - puts user pitcher's player data in hl
+; GetUserBatter - puts user batter's player data in hl
+; GetOpponentPitcher - puts opposing pitcher's player data in hl
+; GetOpponentBatter - puts opposing batter's player data in hl
+; GetCurrentBatter - puts batter's player data in hl
+; GetCurrentBatterName - puts batter's name in name_buffer
+; GetCurrentPitcher - puts pitcher's player data in hl
+; GetCurrentPitcherName - pust pitcher's name in name_buffer
+; GetCurrentUserPlayer - puts user's current batter or pitcher player data in hl
+; GetCurrentOpponentPlayer - puts opponent's current batter or pitcher player data in hl
+
+_GetPitchBreak: ;b = path, c = z, returns xy offset in de
   ld de, 0
 
   ld a, b;path
@@ -606,23 +722,23 @@ ShowOpposingPlayer::
   ret
 
 ; Get Player Data
-GetUserPitcher::
+GetUserPitcher::;puts user pitcher's player data in hl
   ld a, 1
   call GetUserPlayerByPosition
   ret
 
-GetUserBatter::
+GetUserBatter::;puts user batter's player data in hl
   ld a, [current_batter]
   and a, %00001111
   call GetUserPlayerInLineup
   ret
   
-GetOpponentPitcher::
+GetOpponentPitcher::;puts opposing pitcher's player data in hl
   ld a, 1
   call GetOpposingPlayerByPosition
   ret
 
-GetOpponentBatter::
+GetOpponentBatter::;puts opposing batter's player data in hl
   ld a, [current_batter]
   swap a
   and a, %00001111
@@ -672,26 +788,3 @@ GetCurrentOpponentPlayer::;puts opponent's current batter or pitcher player data
   call IsUserFielding
   jp z, GetOpponentPitcher
   jp GetOpponentBatter
-
-;----------------------------------------------------------------------
-;
-; GetPositionPlayerName - returns the name of position player 
-;
-;   input: a = position number (1-9)
-;   returns: name_buffer = position player's name
-;
-;----------------------------------------------------------------------
-GetPositionPlayerName::
-  push af;position number
-  call IsUserFielding
-  jr z, .userPlayer;home team in the top or away team in the bottom
-.opposingPlayer
-  pop af;position number
-  call GetOpposingPlayerByPosition
-  call GetPlayerName
-  ret
-.userPlayer
-  pop af;position number
-  call GetUserPlayerByPosition
-  call GetUserPlayerName
-  ret

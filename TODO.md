@@ -13,6 +13,8 @@ General
 
 Optimization
 
+- move type and status strings out of core
+- remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
 - overworld map and player image data need to be compressed to fit more
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions

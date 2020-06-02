@@ -76,7 +76,7 @@ SetOuts::; a = outs
   ret
 
 IncrementOuts::;returns outs in a
-  call NextBatter
+  TRAMPOLINE NextBatter
   ld a, [balls_strikes_outs]
   and OUTS_MASK
   inc a
@@ -89,7 +89,7 @@ IncrementOuts::;returns outs in a
   ld [balls_strikes_outs], a
   ld [runners_on_base], a
   ld [runners_on_base+1], a
-  call NextFrame
+  TRAMPOLINE NextFrame
   ld a, 3
   ret
 

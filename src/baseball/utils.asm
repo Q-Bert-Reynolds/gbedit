@@ -656,7 +656,7 @@ NextFrame::
   ld a, [frame]
   inc a
   ld [frame], a
-  call AnnounceBeginningOfFrame
+  TRAMPOLINE AnnounceBeginningOfFrame
   ret
 
 NextBatter::

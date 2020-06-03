@@ -1,4 +1,16 @@
 SECTION "Announcer Bank 0", ROM0
+
+AnnounceSwingTiming:: ;hl = text address
+  ld a, ANNOUNCER_BANK
+  call SetBank
+  
+  ld a, DRAW_FLAGS_WIN
+  call DisplayText
+
+  ld a, PLAY_BALL_BANK
+  call SetBank
+  ret
+
 ;----------------------------------------------------------------------
 ; AnnounceSwingContact - called if the player makes contact
 ;
@@ -166,9 +178,7 @@ AnnounceAndThePitch::
 
 AnnouncePitchName::
   ld a, [pitch_move_id]
-  ld [_breakpoint], a
   call GetMoveName;move in name_buffer
-  ld [_breakpoint], a
   ld hl, AndThePitchText
   ld de, str_buffer
   call str_Copy ;str_buffer = "And the pitch.""

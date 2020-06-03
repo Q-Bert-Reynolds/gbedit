@@ -9,6 +9,8 @@ INCLUDE "img/play/play_ball_sgb_border.asm"
 
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
+DISPLAY_PITCH_NAME_DELAY EQU 12
+
 INCLUDE "src/baseball/play_ball_strings.asm"
 INCLUDE "src/baseball/ui.asm"
 INCLUDE "src/baseball/pitch_path.asm"
@@ -425,17 +427,19 @@ Pitch:
 
     call gbdk_WaitVBL
 
-    ld a, [_i]
+    ld a, [_v]
     inc a
-    ld [_i], a
-    cp a, 8
+    ld [_v], a
+    cp a, DISPLAY_PITCH_NAME_DELAY
     jr z, .displayPitchName
     cp a, 4
     jr nz, .skip
     ld a, 3
     call SetUserPlayerBkgTiles  
+    jr .skip
 
 .displayPitchName
+    ld [_breakpoint], a
     TRAMPOLINE AnnouncePitchName 
 
 .skip
@@ -541,14 +545,12 @@ Swing:; xy = de, z = a, returns contact made in a
   jr c, .late
 .early
   ld hl, EarlySwingText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call AnnounceSwingTiming
   xor a
   ret
 .late
   ld hl, LateSwingText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call AnnounceSwingTiming
   xor a
   ret
 .checkHit;TODO: replace 12 with swing data
@@ -566,22 +568,17 @@ Swing:; xy = de, z = a, returns contact made in a
   ld b, a
   ld a, [swing_diff_z]
   or a, b
-  jr z, .criticalHit
-  ld hl, CriticalHitText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  jr z, .barrel
   ld a, 1
   ret
-.criticalHit
-  ld hl, CriticalHitText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+.barrel
+  ld hl, HitBarrelText
+  call AnnounceSwingTiming
   ld a, 1
   ret
 .miss
   ld hl, SwingAndMissText
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  call AnnounceSwingTiming
   xor a
   ret
 
@@ -688,13 +685,7 @@ Bat:
 
   call GetCurrentPitcherName
 
-  ld bc, name_buffer
-  ld hl, PitcherSetsText
-  ld de, str_buffer
-  call str_Replace
-  ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
-  call DisplayText
+  TRAMPOLINE AnnouncePitcherSets
 
   xor a
 .preWindupAimLoop
@@ -732,7 +723,7 @@ Bat:
     ld [_v], a
     cp a, 4
     jr z, .setFinishPitchFrame
-    cp a, 8
+    cp a, DISPLAY_PITCH_NAME_DELAY
     jr z, .displayPitchName
     jr .aim
 
@@ -742,6 +733,7 @@ Bat:
     jr .aim
 
 .displayPitchName
+    ld [_breakpoint], a
     TRAMPOLINE AnnouncePitchName
 
 .aim
@@ -1054,7 +1046,7 @@ StartGame::
   ld [home_score], a
   ld [away_score], a
   ld [current_batter], a
-  ld a, 1
+  ; ld a, 1
   ld [home_team], a
 
   call GetCurrentOpponentPlayer

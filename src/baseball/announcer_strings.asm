@@ -46,6 +46,7 @@ ThrewAPitchText::             DB "\nA %s.",0
 EarlySwingText::              DB "Early swing.",0
 LateSwingText::               DB "Late swing.",0
 SwingAndMissText::            DB "Swing and a miss.",0
+HitBarrelText::               DB "Really got the\nbarrel on that one.",0
 
 ;hit to outfield - append outfield location
 HitDeepFlyBallText::          DB "Deep fly ball ",0

@@ -22,8 +22,6 @@ AnnounceSwingTiming:: ;hl = text address
 ;      a = speed
 ;      b = spray angle
 ;      c = launch angle
-;      de = swing move
-;      hl = pitch move
 ;
 ;----------------------------------------------------------------------
 AnnounceSwingContact::
@@ -386,7 +384,7 @@ AnnounceSwingMiss::
   ret
 
 ;cannot use Trampoline, too many inputs
-_AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle, de = swing move, hl = pitch move
+_AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
   push bc;b=sparay angle, c=launch angle
   call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
 .checkOutfield;wall at 240
@@ -500,8 +498,13 @@ AnnounceBuntText:;a = launch angle, b = spray angle
   call str_Append
 
   ld hl, PositionTexts
-  ld bc, 0
+  ld bc, 1
   call str_FromArray
+
+  ld hl, PositionTexts
+  add hl, bc
+  ld b, h
+  ld c, l
 
   ld hl, tile_buffer
   ld de, str_buffer

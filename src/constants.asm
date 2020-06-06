@@ -67,6 +67,10 @@ BATTING_AVG       EQU 26
 INNING_BOTTOM     EQU 28
 INNING_TOP        EQU 29
 
+;home plate position
+HOME_PLATE_X EQU 43
+HOME_PLATE_Y EQU 212
+
 ;position
 PITCHER          EQU 1
 CATCHER          EQU 2

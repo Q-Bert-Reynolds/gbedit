@@ -386,6 +386,17 @@ math_Abs:: ;a = |a|
   inc a
   ret
 
+
+math_Cos255:: ;a = cos(a) * 255 where a in degrees <= 180
+  ld b, a;deg
+  ld a, 90
+  sub a, b
+  jr nc, math_Sin255
+  ld b, a
+  ld a, 255
+  sub a, b
+  ;fall through to sin
+  
 math_Sin255:: ;a = sin(a) * 255 where a in degrees <= 180
   cp a, 91
   jr c, .lookup

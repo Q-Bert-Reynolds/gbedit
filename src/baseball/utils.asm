@@ -157,6 +157,7 @@ DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in 
   cp a, 128
   jr c, .inAir
 
+.onGround
   pop af;speed
   srl a;d = speed/2 ... TODO: this could be done better
   ret
@@ -189,8 +190,97 @@ DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in 
 ;
 ;----------------------------------------------------------------------
 LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
-  ld d, 43;x
-  ld e, 99;y
+  push af;distance
+  ld a, b;spray
+  cp 128
+  ld b, a;spray
+  ld a, 45
+  jr c, .posSpray
+.negSpray;-127 <= spray < 0
+  sub a, b;45 <= angle <=172
+  jr .posAng
+.posSpray; 0 <= spray < 128
+  sub a, b;-82 <= angle < 45
+  jr nc, .posAng
+  ld b, a;neg ang
+  ld a, 255
+  sub a, b
+
+.negAng; -82 < angle < 0
+  ld e, 0;y is foul
+  jr .testX
+.posAng; 0 <= angle < 172
+  ld e, %10;y is fair
+
+.testX
+  cp a, 90
+  jr c, .posX
+.negX
+  ld d, 0;x is foul
+  jr .calcXY
+.posX
+  ld d, %01;x is fair
+
+.calcXY
+  ld b, a;angle
+  ld a, d;x fair/foul
+  or a, e;y fair/foul
+  ld [_t], a;xy fair/foul
+  pop af;distance
+  ld d, 0
+  ld e, a;distance
+  ld a, b;angle
+  push de;distance
+  push af;angle
+  call math_Cos255
+  call math_Multiply
+  ld a, h;discard lower byte
+  ld [ball_pos_x], a
+
+  pop af;angle
+  pop de; distance
+  call math_Sin255
+  call math_Multiply
+  ld a, h;discard lower byte
+  ld [ball_pos_y], a
+
+.offsetX
+  ld a, [_t]
+  and a, %01;test x
+  ld a, [ball_pos_x]
+  jr z, .xFoul
+.xFair
+  add a, HOME_PLATE_X
+  ld d, a
+  jr nc, .offsetY
+  ld d, 255
+  jr .offsetY
+.xFoul
+  ld b, a
+  ld a, HOME_PLATE_X
+  sub a, b
+  ld d, a
+  jr nc, .offsetY
+  ld d, 0
+
+.offsetY
+  ld a, [_t]
+  and a, %10;test y
+  ld a, [ball_pos_y]
+  jr z, .yFoul
+.yFair
+  ld b, a
+  ld a, HOME_PLATE_Y
+  sub a, b
+  ld e, a
+  ret nc
+  ld e, 0
+.yFoul
+  add a, HOME_PLATE_Y
+  ld e, a
+  ret nc
+  ld e, 255
+  ret
   ret
 
 GetClosestFielderByLocation::;de = xy, returns position number in a
@@ -337,6 +427,7 @@ PitchAI::;returns pitch_move_id
   ld [pitch_target_y], a
 
   call GetCurrentPitcher
+  push hl;pitcher
   ld d, PITCHING_MOVES
   call GetPlayerMoveCount
   ld c, a;move count
@@ -344,8 +435,13 @@ PitchAI::;returns pitch_move_id
   ld h, a
   ld a, [rand_hi]
   ld l, a
-  call math_Divide
-  ld [pitch_move_id], a; rand % move_count
+  call math_Divide; rand % move_count
+
+  pop hl;pitcher
+  ld d, PITCHING_MOVES
+  call GetPlayerMove
+  ld a, [move_data.id]
+  ld [pitch_move_id], a
   ret
 
 SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, selected [swing_move_id]
@@ -414,6 +510,7 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   ld [_y], a
 
   call GetCurrentBatter
+  push hl;batter
   ld d, BATTING_MOVES
   call GetPlayerMoveCount
   ld c, a;move count
@@ -421,8 +518,13 @@ SwingAI:: ;returns [_w] = swing/no swing, [_x][_y][_z] = swing timing/location, 
   ld h, a
   ld a, [rand_hi]
   ld l, a
-  call math_Divide
-  ld [swing_move_id], a; rand % move_count
+  call math_Divide; rand % move_count
+
+  pop hl;batter
+  ld d, BATTING_MOVES
+  call GetPlayerMove
+  ld a, [move_data.id]
+  ld [swing_move_id], a
 
   ret
 .noSwing

@@ -1,6 +1,8 @@
 Current
 
-- move announcer code and strings into separate bank
+- GetClosestFielderByLocation
+- results from hitting to the field
+- set contact power from move, player, and barrel
 
 General
 

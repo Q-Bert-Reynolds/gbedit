@@ -9,7 +9,7 @@ INCLUDE "img/play/play_ball_sgb_border.asm"
 
 SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
 
-DISPLAY_PITCH_NAME_DELAY EQU 12
+DISPLAY_PITCH_NAME_DELAY EQU 6
 
 INCLUDE "src/baseball/play_ball_strings.asm"
 INCLUDE "src/baseball/ui.asm"
@@ -404,7 +404,7 @@ Pitch:
   ld [pitch_target_y], a
 
 .getSwingAI
-  call SwingAI;populates _w_x_y_z and pitch_move_id
+  call SwingAI;populates _w_x_y_z and swing_move_id
 
   xor a
   ld [_u], a; _u = swing frame
@@ -439,7 +439,6 @@ Pitch:
     jr .skip
 
 .displayPitchName
-    ld [_breakpoint], a
     TRAMPOLINE AnnouncePitchName 
 
 .skip
@@ -631,8 +630,6 @@ Aim:
 Bat:
 .getPitch
   call PitchAI
-  ld a, [pitch_move_id]
-  call GetMove
 
 .setPitchPath
   ld a, [move_data.pitch_path]
@@ -733,7 +730,6 @@ Bat:
     jr .aim
 
 .displayPitchName
-    ld [_breakpoint], a
     TRAMPOLINE AnnouncePitchName
 
 .aim
@@ -818,11 +814,6 @@ Bat:
   jp .noSwing
 .hitBall
   jr HitBall
-.announceContact
-  pop bc;direction
-  pop af;exit velocity
-  call AnnounceSwingContact;a = exit velocity b = spray angle c = launch angle
-  jp FinishPitch
 .noSwing
   TRAMPOLINE AnnounceNoSwing
   jp FinishPitch
@@ -834,11 +825,7 @@ HitBall:
   call HideBaseball
   call HideAimCircle  
 
-  ld a, [swing_diff_x]
-  ld a, [swing_diff_y]
-  ld a, [swing_diff_z]
-
-  ld de, 100
+  ld de, 100;TODO: replace delay with ball flying off screen
   call gbdk_Delay
 
   call IsUserFielding
@@ -853,9 +840,17 @@ HitBall:
   ld de, 100
   call gbdk_Delay
 
-  ld a, 255;full power
-  ld b, 0;up the middle
-  ld c, 45;degrees up
+  ld a, [swing_diff_x]
+  ld b, 0;degrees left or right
+
+  ld a, [swing_diff_y]
+  ld c, a; degrees up or down
+
+  ld a, [swing_diff_z]
+  ld d, a
+  ld a, 255;full power, TODO: replace with swing power and player bat stat
+  sub a, d;reduce power by swing diff
+
   push af;exit velocity
   ld a, 0;TODO:read animation on/off from save ram 
   and a

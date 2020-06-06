@@ -435,10 +435,10 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   srl a
   ld [ball_vel_z], a
 
-  ; put ball at home plate
-  ld a, 48
+  ; put ball in front of home plate
+  ld a, HOME_PLATE_X+4
   ld [ball_pos_x], a
-  ld a, 224
+  ld a, HOME_PLATE_Y-4
   ld [ball_pos_y], a
   ld a, 1
   ld [ball_pos_z], a

@@ -23,12 +23,18 @@
 ;     tests bit d of byte e, affects z flag, all registers
 ;   math_AddSignedByteToWord
 ;     a = byte, [hl] = word, result in [hl], a -> 2=carry,3=borrow
+;   math_Distance
+;     hl = xy1, de = xy2, returns distance in a
 ;   math_Length
 ;     a = length(de)
 ;   math_Normalize
 ;     de = normalized(de)
 ;   math_Abs
 ;     a = |a|
+;   math_Cos255
+;     a = cos(a) * 255 where a in degrees <= 180
+;   math_Sin255
+;     a = sin(a) * 255 where a in degrees <= 180
 
 IF !DEF(MATH_ASM)
 MATH_ASM SET 1
@@ -278,11 +284,37 @@ math_AddSignedByteToWord:: ;a = byte, [hl] = word, result in [hl], a -> 2=carry,
   xor a
   ret
 
+
+math_Distance:: ;hl = xy1, de = xy2, returns distance in a
+  ld a, d
+  sub a, h
+  ld d, a
+  jr nc, .noBorrowX
+  ld a, 255
+  sub a, d
+  ld d, a
+.noBorrowX
+  ld a, e
+  sub a, l
+  ld e, a
+  jr nc, .noBorrowY
+  ld a, 255
+  sub a, e
+  ld e, a
+.noBorrowY
+  ;fall through to length calculation
+
 ; Finds length of vector DE
 ; Uses the following approximation:
 ;   length = b + 0.5 * a * a / b     where 0 <= a <= b
 ;   b = x, a = y
 math_Length:: ;de = xy, returns length in a
+  ld a, d;x
+  cp a, e;x < y?
+  jr nc, .skip
+  ld d, e
+  ld e, a;swap
+.skip
   ld c, d;b
   push bc
   ld a, e;a

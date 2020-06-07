@@ -444,17 +444,9 @@ AnnounceHitToOutfieldText:;a = distance, b = spray angle
   call AnnounceFieldingText
   ret
 
-AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle
-  ; ;hit to infield - 
-  ; 
-  ; 
-  ; 
+AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle  
   ; HitPopUpText
-
-  ; ;outfield location by angle
   ; InfieldLocationTexts
-
-  ; ;append to bunts and popups
   ; ToThePositionText
 .lineDrive
   cp 200

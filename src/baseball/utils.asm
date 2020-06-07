@@ -283,8 +283,50 @@ LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
   ret
   ret
 
+XLocationsOfPositions::
+  DB  82,  36, 128, 164,  63, 92, 88, 193, 216
+YLocationsOfPositions::
+  DB 174, 219, 199, 159, 119, 92, 38,  67, 191
 GetClosestFielderByLocation::;de = xy, returns position number in a
-  ld a, 7
+  ld a, 255
+  ld [_t], a;min dist
+  xor a
+  ld [_i], a;index
+  ld [_c], a;closest position
+.loop
+    push de;ball xy
+    ld a, [_i]
+    ld b, 0
+    ld c, a
+    ld hl, XLocationsOfPositions
+    add hl, bc
+    ld a, [hl]
+    ld d, a;player x
+    ld hl, YLocationsOfPositions
+    add hl, bc
+    ld a, [hl]
+    ld e, a;player y
+    pop hl;ball xy
+    push hl;ball xy
+    call math_Distance
+    ld d, a;distance from player
+    ld a, [_t];distance from closest player
+    cp a, d
+    jr c, .notCloser
+.closer
+    ld a, d
+    ld [_t], a;distance from closest
+    ld a, [_i]
+    ld [_c], a;closest position
+.notCloser
+    pop de;ball xy
+    ld a, [_i]
+    inc a
+    ld [_i], a
+    cp a, 9
+    jr nz, .loop
+  ld a, [_c]
+  inc a
   ret
 
 IsUserFielding::;nz = user is fielding, z = user is batting

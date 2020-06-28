@@ -54,6 +54,7 @@ Play Ball
 - ball should fly off screen after contact
 - more pitching/batting animations
 - change color of move info based on type
+- bunting
 
 Simulation
 

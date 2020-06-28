@@ -391,13 +391,13 @@ _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
   cp 96;bases at 90
   jr c, .checkInfield 
   pop bc;b=sparay angle, c=launch angle
-  call AnnounceHitToOutfieldText
+  call AnnounceHitToOutfield
   jr .finish
 .checkInfield
   cp 64;pitcher's mound at 60
   jr c, .checkBunt
   pop bc;b=sparay angle, c=launch angle
-  call AnnounceHitToInfieldText
+  call AnnounceHitToInfield
   jr .finish
 .checkBunt
   cp a, 0
@@ -412,7 +412,9 @@ _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
 .finish
   ret 
 
-AnnounceHitToOutfieldText:;a = distance, b = spray angle
+AnnounceHitInAir:;de = ball xy, a = hang time
+
+AnnounceHitToOutfield:;a = distance, b = spray angle
 .deepFly
   cp 200
   jr c, .flyBall
@@ -444,7 +446,7 @@ AnnounceHitToOutfieldText:;a = distance, b = spray angle
   call AnnounceFieldingText
   ret
 
-AnnounceHitToInfieldText:;a = distance, b = spray angle, c = launch angle  
+AnnounceHitToInfield:;a = distance, b = spray angle, c = launch angle  
   ; HitPopUpText
   ; InfieldLocationTexts
   ; ToThePositionText

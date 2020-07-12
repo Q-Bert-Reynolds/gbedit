@@ -355,9 +355,6 @@ DrawCountOutsInning::
   ret
 
 DrawTeamNames::
-  di
-  ENABLE_RAM_MBC5
-
   ld hl, user_name
   ld de, name_buffer
   ld bc, 8
@@ -393,9 +390,6 @@ DrawTeamNames::
 .setOpponentAway
   ld bc, name_buffer
   call gbdk_SetBkgTiles;set_bkg_tiles(0,1,7,1,name_buff);
-
-  DISABLE_RAM_MBC5
-  ei
   ret
 
 DrawScore::

@@ -349,13 +349,9 @@ ShowPauseMenu:
   ld de, str_buffer
   call str_Copy
 
-  di
-  ENABLE_RAM_MBC5
   ld hl, user_name
   ld de, name_buffer
   call str_Copy
-  DISABLE_RAM_MBC5
-  ei
 
   ld hl, name_buffer
   ld de, str_buffer
@@ -415,7 +411,7 @@ ShowPauseMenu:
 .save
   cp 5
   jr nz, .option
-  call SaveGame
+  call ShowSaveGame
   call ShowPlayerAvatar
   call SetMapTiles
   jp .exit

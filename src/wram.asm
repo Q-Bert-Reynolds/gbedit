@@ -1,9 +1,16 @@
-SECTION "Gloval Vars", WRAM0[$c000]
+SECTION "Gloval Vars", WRAM0[_RAM]
 ;debug
 _breakpoint:: DB
 
 ;system info
 sys_info:: DB
+
+;main save data
+text_speed:: DB
+animation_style:: DB
+coaching_style:: DB
+user_name:: DS NAME_LENGTH
+rival_name:: DS NAME_LENGTH
 
 ;drawing
 sprite_props:: DB

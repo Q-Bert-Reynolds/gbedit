@@ -67,7 +67,7 @@ ENDM
 
 SECTION "Player RAM", WRAM0[$c500]
 ;Lineups
-UserLineup: 
+UserLineup::
   PLAYER_DATA UserLineup, 1
   USER_PLAYER_DATA
   PLAYER_DATA UserLineup, 2
@@ -88,7 +88,7 @@ UserLineup:
   USER_PLAYER_DATA
 UserLineupEnd:
 
-OpponentLineup: 
+OpponentLineup::
   PLAYER_DATA OpponentLineup, 1
   OPPONENT_PLAYER_DATA
   PLAYER_DATA OpponentLineup, 2

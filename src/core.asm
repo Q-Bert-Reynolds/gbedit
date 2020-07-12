@@ -24,7 +24,7 @@ SECTION "Core", ROM0
 ; ScrollXYToTileXY                returns xy in de
 ; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
 ; CopyBkgToWin
-; SaveGame
+; ShowSaveGame
 ; GetZeroPaddedNumber             a = number, returns padded number in str_buffer, affects str_buffer, all registers
 ; SignedRandom                    a = bitmask, returns signed random bytes in d and e
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
@@ -844,7 +844,7 @@ YesNoText:
 SaveGameText:
   DB "Would you like to\nSAVE the game?",0
 
-SaveGame::
+ShowSaveGame::
   ld d, 4
   ld e, 0
   ld a, DRAW_FLAGS_WIN
@@ -866,6 +866,9 @@ SaveGame::
   ld e, 5
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
+  cp a, 1;if yes, save game
+  ret nz
+  call SaveGame
   ret
 
 GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects str_buffer, all registers

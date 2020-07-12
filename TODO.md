@@ -1,11 +1,10 @@
-Current
+Priority
 
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
 General
 
-- remove direct use of save file (so it doesn't immediately overwrite old save)
 - track time played
 - link cable support!
 - move all strings to separate (generated) file
@@ -109,3 +108,7 @@ Super GameBoy
 - crowd SFX
 - extra music voices
 - fix LCD interrupt flickering when sending packets
+
+Design Notes
+
+- play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to

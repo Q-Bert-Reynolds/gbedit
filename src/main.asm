@@ -104,26 +104,29 @@ Main::
   call SetBank
   call Seed
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.loadGame
+  call LoadGame
 
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;sets a to 0 if new game pressed
-;   jr nz, .overworld
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;sets a to 0 if new game pressed
+  jr nz, .overworld
+
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
 
 .overworld; walk around, find a game, repeat
-    ; ld a, OVERWORLD_BANK
-    ; call SetBank
-    ; call Overworld
+    ld a, OVERWORLD_BANK
+    call SetBank
+    call Overworld
 
     ;TODO: black out tiles one by one
     PLAY_SONG tessie_data, 1

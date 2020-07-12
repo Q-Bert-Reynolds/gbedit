@@ -267,14 +267,10 @@ ENDC
   FADE_OUT
 
 ;save user name
-  di
-  ENABLE_RAM_MBC5
   ld hl, name_buffer
   ld de, user_name
   ld bc, 7
   call mem_Copy
-  DISABLE_RAM_MBC5
-  ei
 
 ;set image to Nolan
   DISPLAY_OFF
@@ -360,14 +356,10 @@ ENDC
   FADE_OUT
 
 ;save rival name
-  di
-  ENABLE_RAM_MBC5
   ld hl, name_buffer
   ld de, rival_name
   ld bc, 8
   call mem_Copy; memcpy(rival_name, name_buff, 8);
-  DISABLE_RAM_MBC5
-  ei
 
 ;set image to Calvin
   DISPLAY_OFF
@@ -397,14 +389,10 @@ ENDC
   FADE_IN
 
 ;transition to game
-  di
-  ENABLE_RAM_MBC5
   ld hl, user_name
   ld de, name_buffer
   ld bc, 8
   call mem_Copy
-  DISABLE_RAM_MBC5
-  ei
 
   ld hl, ExclaimNameString
   ld de, str_buffer

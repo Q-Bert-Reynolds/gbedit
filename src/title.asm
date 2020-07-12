@@ -439,15 +439,10 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call LoadFontTiles
   DISPLAY_ON
 
-  di
-  SWITCH_RAM_MBC5 0
-  ENABLE_RAM_MBC5
   ld hl, user_name
   ld de, name_buffer
   ld bc, 8
   call mem_Copy; memcpy(name_buff, user_name, 7);
-  DISABLE_RAM_MBC5
-  ei 
   call UpdateAudio
 
   ld hl, name_buffer

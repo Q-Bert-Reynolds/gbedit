@@ -448,17 +448,5 @@ ENDC
   ld de, 500
   call gbdk_Delay
 
-;fade out only BG
-  ld a, $90
-  ld [rBGP], a
-  ld de, 200
-  call gbdk_Delay
-  ld a, $40
-  ld [rBGP], a
-  ld de, 200
-  call gbdk_Delay
-  xor a
-  ld [rBGP], a
-  ld de, 200
-  call gbdk_Delay
+  FADE_OUT
   ret

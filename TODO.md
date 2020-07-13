@@ -39,7 +39,6 @@ Intro
 
 New Game
 
-- transition to overworld without turning off display
 - load bedroom map
 
 Play Ball

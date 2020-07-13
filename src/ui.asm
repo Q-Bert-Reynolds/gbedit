@@ -606,7 +606,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
       ld a, [_i]
       inc a
       ld [_w], a
-      jr .delay
+      jr .getTextSpeed
 .drawCharacter ;else {
     pop de;xy
     pop hl;text
@@ -651,8 +651,16 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
     pop af;draw flags
     call SetTiles
 
+.getTextSpeed
+    ld a, [text_speed]
+    cp a, 2
+    ld de, 100
+    jr z, .delay
+    cp a, 1
+    ld de, 50
+    jr z, .delay
+    ld de, 10
 .delay
-    ld de, 10;TODO: should use text speed
     call gbdk_Delay
 
     ld a, [_i]

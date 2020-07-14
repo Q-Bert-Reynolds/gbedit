@@ -338,7 +338,7 @@ HatPartsLookup:;maps hat ID to other hat part offset or 0
 HatXLookup:;maps hat ID to x offset
   DB 0, 1, 1, 1, 1, 1, 1, 1, 1, -6, 0, -7
 
-DrawLineupPlayerSprites
+DrawLineupPlayerSprites:
   ld a, [hl]
   call LoadPlayerBaseData
   

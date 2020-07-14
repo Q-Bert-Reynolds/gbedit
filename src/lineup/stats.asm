@@ -1,5 +1,58 @@
-DrawStatScreen:;player in hl
-  push hl
+
+SGBStatsPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
+SGBStatsAttrBlk:
+  ATTR_BLK 2
+  ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
+  ATTR_BLK_PACKET %001, 2,2,2, 0,0,   8,7 ;player
+  
+SetStatScreenColors:;hl = player
+  push hl;player
+  ld hl, SGBStatsPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBStatsAttrBlk
+  call sgb_PacketTransfer
+
+  ;GBC UI color
+  ld hl, tile_buffer
+  ld bc, 20*18
+  ld a, 0
+  call mem_Set
+  ld d, 0;x
+  ld e, 0;y
+  ld h, 20;w
+  ld l, 18;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+
+  ;GBC user player color
+  ld hl, tile_buffer
+  ld bc, 8*7
+  ld a, 2
+  call mem_Set
+  ld d, 0;x
+  ld e, 0;y
+  ld h, 8;w
+  ld l, 7;h
+  ld bc, tile_buffer
+  call SetBkgPaletteMap
+  
+  pop hl;player
+  call GetPlayerNumber
+  call LoadPlayerBaseData
+  ld hl, player_base.sgb_pal
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a
+  
+  ld de, PALETTE_GREY;TODO: replace with health bar color
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+
+  ret
+
+DrawStatScreen::;player in hl
+  push hl;player
   DISPLAY_OFF
   CLEAR_TILES " "
 
@@ -18,14 +71,17 @@ DrawStatScreen:;player in hl
     and a
     jr nz, .hideSpritesLoop
 
-  pop hl
-  push hl
+  pop hl;player
+  push hl;player
+  call SetStatScreenColors
+  pop hl;player
+  push hl;player
   call DrawPageOne
   DISPLAY_ON
   WAITPAD_UP
   call WaitForABStart
 
-  pop hl
+  pop hl;player
   call DrawPageTwo
   call WaitForABStart
 

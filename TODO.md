@@ -13,7 +13,6 @@ General
 
 Optimization
 
-- move type and status strings out of core
 - remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
 - overworld map and player image data need to be compressed to fit more
@@ -66,6 +65,7 @@ Simulation
 
 Team Menu
 
+- color palettes
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well
@@ -111,3 +111,6 @@ Super GameBoy
 Design Notes
 
 - play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to
+- pitch speed should be a relative speed so that pitches appear faster when the pitcher's Throw stat is higher than the batter's Bat stat
+- encounter Mike at top of weather research tower
+- trash cans at your rival's house look like they've taken a beating

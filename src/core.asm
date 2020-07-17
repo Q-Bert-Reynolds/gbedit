@@ -596,7 +596,7 @@ GetHealthPct::;hl = player, returns HP * 96 / maxHP in de
   call math_Divide16;de (remainder hl) = hl / bc
   ret;de = HP * 96 / maxHP
 
-SetHPBarTiles::;de = player, hl = address, returns HP * 96 / maxHP in de
+SetHPBarTiles::;de = player, hl = address
   push hl;address
   ld h, d
   ld l, e
@@ -604,7 +604,6 @@ SetHPBarTiles::;de = player, hl = address, returns HP * 96 / maxHP in de
   pop hl;address
   ld a, 128
   ld [hli], a
-  push de;HP*96/maxHP
 
   ld b, 6
   ld c, 16
@@ -640,7 +639,6 @@ SetHPBarTiles::;de = player, hl = address, returns HP * 96 / maxHP in de
   ld a, 138
   ld [hli], a
 
-  pop de;HP * 96 / maxHP
   ret
 
 SetAgeTiles::;de = player, hl = address

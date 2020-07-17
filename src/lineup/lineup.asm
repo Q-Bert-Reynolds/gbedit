@@ -9,10 +9,28 @@ INCLUDE "img/lineup_sprites.asm"
 
 SGBLineupPalSet: PAL_SET PALETTE_UI, PALETTE_SEPIA, PALETTE_WARNING, PALETTE_GOOD
 SGBLineupAttrBlk:
-  ATTR_BLK 3
+  ATTR_BLK 11
   ATTR_BLK_PACKET %001, 0,0,0, 3,0, 17,18 ;main UI
   ATTR_BLK_PACKET %001, 1,1,1, 0,0,  3,18 ;players
-  ATTR_BLK_PACKET %001, 3,3,3, 5,0,  6,18 ;HP bars
+Player1HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,0,  6, 2
+Player2HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,2,  6, 2
+Player3HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,4,  6, 2
+Player4HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,6,  6, 2
+Player5HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,8,  6, 2
+Player6HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,10, 6, 2
+Player7HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,12, 6, 2
+Player8HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,14, 6, 2
+Player9HPBar:
+  ATTR_BLK_PACKET %001, 3,3,3, 5,16, 6, 2
+SGBLineupAttrBlkEnd:
 
 SwapPositions: ;bc = player count, selected player
   ld a, b
@@ -307,7 +325,6 @@ DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
   push de;player
   ld hl, tile_buffer+24
   call SetHPBarTiles;de = HP * 96 / maxHP
-  push de;HP*96/maxHP
   ld d, 0
   ld a, [_j]
   add a, a
@@ -316,9 +333,6 @@ DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
   ld l, 2
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
-
-  pop de;HP*96/maxHP
-  call SetHPBarColor
 
   pop hl;player
   push hl;player
@@ -341,17 +355,20 @@ SetHPBarColor:;e = HP*96/maxHP, [_j] = order
   ld b, 3;good/green
 .setPalettes
   ld a, [_j]
-  add a, a;j*2
-  inc a;j*2+1
-  ld d, 5;x=5
-  ld e, a;y=j*2+1
-  ld h, 6
-  ld l, 1
-  ld c, b;border = fill
-  call sgb_SetBlock;TODO: if GBC, do that instead
+  ld de, Player2HPBar-Player1HPBar
+  call math_Multiply
+  ld de, tile_buffer + (Player1HPBar-SGBLineupAttrBlk)
+  add hl, de
+  inc hl
+  ld a, b;pal
+  ld [hl], a
   ret
 
-SetHPBarColors:
+GetHPBarColors:;returns address of attribute block in hl
+  ld hl, SGBLineupAttrBlk
+  ld de, tile_buffer
+  ld bc, SGBLineupAttrBlkEnd-SGBLineupAttrBlk
+  call mem_Copy
   ld hl, UserLineup
   xor a
 .loop
@@ -369,6 +386,7 @@ SetHPBarColors:
     inc a
     cp 9
     jr nz, .loop
+  ld hl, tile_buffer
   ret
 
 BodyPartsLookup:;maps body ID to other body part offset or 0
@@ -681,9 +699,8 @@ ShowPlayerMenu:
 
   ld hl, SGBLineupPalSet               
   call SetPalettesIndirect
-  ld hl, SGBLineupAttrBlk
+  call GetHPBarColors
   call sgb_PacketTransfer
-  call SetHPBarColors
 
   pop bc
   ld a, b
@@ -699,7 +716,7 @@ ShowLineup::; a = playing_game?
   DISPLAY_OFF
   ld hl, SGBLineupPalSet               
   call SetPalettesIndirect
-  ld hl, SGBLineupAttrBlk
+  call GetHPBarColors
   call sgb_PacketTransfer
 
   ld hl, _LineupSpritesTiles

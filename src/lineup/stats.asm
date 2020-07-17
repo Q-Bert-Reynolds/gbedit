@@ -1,9 +1,10 @@
 
 SGBStatsPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
 SGBStatsAttrBlk:
-  ATTR_BLK 2
+  ATTR_BLK 3
   ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
   ATTR_BLK_PACKET %001, 2,2,2, 0,0,   8,7 ;player
+  ATTR_BLK_PACKET %001, 3,3,3, 12,3,  6,1 ;hp
   
 SetStatScreenColors:;hl = player
   push hl;player
@@ -37,6 +38,7 @@ SetStatScreenColors:;hl = player
   call SetBkgPaletteMap
   
   pop hl;player
+  push hl;player
   call GetPlayerNumber
   call LoadPlayerBaseData
   ld hl, player_base.sgb_pal
@@ -45,7 +47,22 @@ SetStatScreenColors:;hl = player
   ld a, [hli]
   ld b, a
   
-  ld de, PALETTE_GREY;TODO: replace with health bar color
+  pop hl;player
+  push bc;player palette
+  call GetHealthPct;de = HP*96/maxHP
+  ld a, e;shouldn't be more than 96
+.checkRed
+  ld de, PaletteUI;red
+  cp a, 16
+  jr c, .setPalettes
+.checkYellow
+  ld de, PaletteWarning;yellow
+  cp a, 48
+  jr c, .setPalettes
+.otherwiseGren
+  ld de, PaletteGood;green
+.setPalettes
+  pop bc;player palette
   ld a, [sgb_Pal23]
   call SetPalettesDirect
 
@@ -285,7 +302,7 @@ DrawPageOne:
   pop de;player
   push de
   ld hl, tile_buffer
-  call SetHPBarTiles
+  call SetHPBarTiles;de = HP*96/maxHP
   ld h, 8
   ld l, 1
   ld d, 11

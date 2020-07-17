@@ -65,7 +65,8 @@ Simulation
 
 Team Menu
 
-- color palettes
+- color palettes for player sprites
+- color palettes for health bar tiles
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well

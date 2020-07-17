@@ -7,6 +7,13 @@ INCLUDE "src/lineup/stats.asm"
 INCLUDE "img/health_bar.asm"
 INCLUDE "img/lineup_sprites.asm"
 
+SGBLineupPalSet: PAL_SET PALETTE_UI, PALETTE_SEPIA, PALETTE_WARNING, PALETTE_GOOD
+SGBLineupAttrBlk:
+  ATTR_BLK 3
+  ATTR_BLK_PACKET %001, 0,0,0, 3,0, 17,18 ;main UI
+  ATTR_BLK_PACKET %001, 1,1,1, 0,0,  3,18 ;players
+  ATTR_BLK_PACKET %001, 3,3,3, 5,0,  6,18 ;HP bars
+
 SwapPositions: ;bc = player count, selected player
   ld a, b
   ld [_c], a
@@ -271,7 +278,7 @@ DrawLineupPlayers:
     jr nz, .loop
   ret
 
-DrawLineupPlayer: ;hl = player, _j is order on screen
+DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
   push hl
   ld hl, tile_buffer
   xor a
@@ -297,10 +304,10 @@ DrawLineupPlayer: ;hl = player, _j is order on screen
   call SetAgeTiles
 
   pop de;player
-  push de
+  push de;player
   ld hl, tile_buffer+24
-  call SetHPBarTiles
-
+  call SetHPBarTiles;de = HP * 96 / maxHP
+  push de;HP*96/maxHP
   ld d, 0
   ld a, [_j]
   add a, a
@@ -310,11 +317,58 @@ DrawLineupPlayer: ;hl = player, _j is order on screen
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
 
-  pop hl
-  push hl
+  pop de;HP*96/maxHP
+  call SetHPBarColor
+
+  pop hl;player
+  push hl;player
   call DrawLineupPlayerSprites
 
-  pop hl
+  pop hl;player
+  ret
+
+SetHPBarColor:;e = HP*96/maxHP, [_j] = order
+  ld a, e;shouldn't be more than 96
+.checkRed
+  ld b, 0;ui/red
+  cp a, 16
+  jr c, .setPalettes
+.checkYellow
+  ld b, 2;warning/yellow
+  cp a, 48
+  jr c, .setPalettes
+.otherwiseGren
+  ld b, 3;good/green
+.setPalettes
+  ld a, [_j]
+  add a, a;j*2
+  inc a;j*2+1
+  ld d, 5;x=5
+  ld e, a;y=j*2+1
+  ld h, 6
+  ld l, 1
+  ld c, b;border = fill
+  call sgb_SetBlock;TODO: if GBC, do that instead
+  ret
+
+SetHPBarColors:
+  ld hl, UserLineup
+  xor a
+.loop
+    ld [_j], a
+    ld a, [hl]
+    cp 0
+    ret z
+    push hl;player
+    call GetHealthPct
+    call SetHPBarColor
+    pop hl;player
+    ld bc, UserLineupPlayer2 - UserLineupPlayer1
+    add hl, bc
+    ld a, [_j]
+    inc a
+    cp 9
+    jr nz, .loop
   ret
 
 BodyPartsLookup:;maps body ID to other body part offset or 0
@@ -618,23 +672,36 @@ ShowPlayerMenu:
   ld c, a
   push bc
 .exit
+  DISPLAY_OFF
   ld de, 0
   ld h, 20
   ld l, 18
   ld bc, bkg_buffer
   call gbdk_SetBkgTiles
-  WAITPAD_UP
+
+  ld hl, SGBLineupPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBLineupAttrBlk
+  call sgb_PacketTransfer
+  call SetHPBarColors
+
   pop bc
   ld a, b
   ld [_c], a
   ld a, c
   ld [_j], a
+  DISPLAY_ON
   ret 
 
 ShowLineup::; a = playing_game?
   ld [_a], a
 
   DISPLAY_OFF
+  ld hl, SGBLineupPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBLineupAttrBlk
+  call sgb_PacketTransfer
+
   ld hl, _LineupSpritesTiles
   ld de, $8000
   ld bc, _LINEUP_SPRITES_TILE_COUNT*16

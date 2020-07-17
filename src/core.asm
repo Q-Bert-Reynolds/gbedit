@@ -578,29 +578,33 @@ ReverseByte:;byte in a
   pop bc
   ret
 
-SetHPBarTiles::;de = player, hl = address
-  push hl;address
-  ld h, d
-  ld l, e
+GetHealthPct::;hl = player, returns HP * 96 / maxHP in de
   push hl;player
   call GetPlayerHP
   ld d, h
   ld e, l
-  ld a, 96;makes the math easier than multiplying by 100
+  ld a, 96;is divisible by 6, easier than multiplying by 100
   call math_Multiply
   ld d, h
-  ld e, l;hp*100
+  ld e, l;hp*96
   pop hl;player
   call GetPlayerMaxHP
   ld b, h
   ld c, l;maxHP
   ld h, d
-  ld l, e;hp*100
+  ld l, e;hp*96
   call math_Divide16;de (remainder hl) = hl / bc
-  ;de = HP * 100 / maxHP
+  ret;de = HP * 96 / maxHP
+
+SetHPBarTiles::;de = player, hl = address, returns HP * 96 / maxHP in de
+  push hl;address
+  ld h, d
+  ld l, e
+  call GetHealthPct
   pop hl;address
   ld a, 128
   ld [hli], a
+  push de;HP*96/maxHP
 
   ld b, 6
   ld c, 16
@@ -635,6 +639,8 @@ SetHPBarTiles::;de = player, hl = address
 
   ld a, 138
   ld [hli], a
+
+  pop de;HP * 96 / maxHP
   ret
 
 SetAgeTiles::;de = player, hl = address

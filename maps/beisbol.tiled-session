@@ -1,0 +1,1138 @@
+{
+    "activeFile": "overworld.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "/Users/nbaker/Desktop/TEST.tmx": {
+            "scale": 0.721,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1079.0568654646324,
+                "y": 6072.122052704577
+            }
+        },
+        "/Users/nbaker/Desktop/billetTown.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 251,
+                "y": 267
+            }
+        },
+        "/Users/nbaker/Desktop/cloudExample.tmx": {
+            "scale": 1.3558,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 119.48664994836997,
+                "y": 80.3953385455082
+            }
+        },
+        "/Users/nbaker/Desktop/tileTemplate.tmx": {
+            "scale": 0.2926,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1001.3670539986329,
+                "y": 615.1742993848256
+            }
+        },
+        "/Users/nbaker/Desktop/untitled.tmx": {
+            "scale": 0.0157,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 22484.07643312102,
+                "y": 117770.70063694268
+            }
+        },
+        "/Users/nbaker/Google Drive/Games/Dave Story/testGB.tmx": {
+            "scale": 4.1893,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 70.17878881913445,
+                "y": 67.07564509583939
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Beisbol/Assets/Beisbol/TileMaps/billetTown.tmx": {
+            "scale": 1.0609,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 221.51003864643226,
+                "y": 268.63983410312
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Beisbol/Assets/Beisbol/TileMaps/billetTownRooms.tmx": {
+            "scale": 2.8451,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 295.59593687392356,
+                "y": 140.59259779972584
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/BeisbolGB/map/billetTown.tmx": {
+            "scale": 0.5736,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 509.0655509065551,
+                "y": 507.32217573221754
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/DigiFest2017/Assets/DigiFest2017/TileMaps/test.tmx": {
+            "scale": 0.2608,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3914.8773006134975,
+                "y": 1506.9018404907977
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/DigiFest2017/Assets/DigiFest2017/TileMaps/test2.tmx": {
+            "scale": 1.0598,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 652.0098131722966,
+                "y": 539.7244763162861
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/DigiFest2017/Assets/DigiFest2017/TileMaps/untitled.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 516,
+                "y": 447
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/Fin/TileMaps/map.tmx": {
+            "scale": 0.1774,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1910.935738444194,
+                "y": 1025.9301014656144
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/Fin/Tracks/ThePit/ThePitMap.tmx": {
+            "scale": 0.7272,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3382.8382838283833,
+                "y": 730.1980198019803
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/Fin/Tracks/ThePit/ThePitMap1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3305,
+                "y": 1768
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/Fin/Tracks/Title/TitleMap.tmx": {
+            "scale": 0.252,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1023.8095238095239,
+                "y": 674.6031746031746
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/desert-gzip.tmx": {
+            "scale": 0.5029,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 638.2978723404254,
+                "y": 815.2714257307615
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/desert.tmx": {
+            "scale": 0.5029,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 638.2978723404254,
+                "y": 813.2829588387352
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/desert1.tmx": {
+            "scale": 0.3289,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 638.4919428397689,
+                "y": 641.5323806628154
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/desert_inf.tmx": {
+            "scale": 0.2941,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 751.4450867052024,
+                "y": 887.4532471948318
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/desert_inf1.tmx": {
+            "scale": 0.8637,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 644.8998494847748,
+                "y": 1053.6065763575316
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/hexagonal-mini.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 143,
+                "y": 92
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/orthogonal-outside.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 339,
+                "y": 248
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/TileMapExamples/orthogonal-outside1.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 350,
+                "y": 248
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/examples/desert1.tmx": {
+            "scale": 0.4364,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 639.3217231897343,
+                "y": 641.6131989000917
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/Fin/Assets/examples/orthogonal-outside1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 359,
+                "y": 248
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/InTheLightOfAGhostStar/Assets/GhostStar/TileMaps/temple.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1288,
+                "y": 1116
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/InTheLightOfAGhostStar/Assets/GhostStar/TileMaps/test.tmx": {
+            "scale": 0.769,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1313.3940182054616,
+                "y": 942.7828348504551
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/benlevel.tmx": {
+            "scale": 0.7425,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2309.7643097643095,
+                "y": 2125.252525252525
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/bennlevel.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 6398,
+                "y": 1597
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/cavestory/Map 1.tmx": {
+            "scale": 1.7971,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 159.701741694953,
+                "y": 130.2097824272439
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/desert.tmx": {
+            "scale": 0.7646,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 486.52890400209264,
+                "y": 414.59586712006285
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/hexagonal-mini.tmx": {
+            "scale": 12.3537,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 256.7651796627731,
+                "y": 150.56217975181522
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/isometric_staggered_grass_and_water.tmx": {
+            "scale": 0.391,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 815.8567774936062,
+                "y": 409.2071611253197
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/orthogonal-outside.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 359,
+                "y": 248
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/perspective_walls.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 520,
+                "y": 511
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/sewers.tmx": {
+            "scale": 3.81,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 365.8792650918635,
+                "y": 341.73228346456693
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/examples/test_hexagonal_tile_60x60x30.tmx": {
+            "scale": 1.5506,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 239.90713272281695,
+                "y": 204.4369921320779
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/level/arena1.tmx": {
+            "scale": 1,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 856,
+                "y": 352
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/level/testlevel.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1306,
+                "y": 317
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/TileEditor/Assets/Maps/maps/Map 1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 159,
+                "y": 128
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/EggCorridor/eggCorridor.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2226,
+                "y": 344
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/FirstCave/firstCave.tmx": {
+            "scale": 0.5527,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 446.8970508413244,
+                "y": 448.70635064230146
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/FirstCave/startPoint.tmx": {
+            "scale": 1.7006,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 230.50687992473246,
+                "y": 126.42596730565684
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/arthurHouse.tmx": {
+            "scale": 1.98,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 216.16161616161617,
+                "y": 110.60606060606061
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/assemblyHall.tmx": {
+            "scale": 2.4991,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 135.64883358008885,
+                "y": 72.02592933456044
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/cemetery.tmx": {
+            "scale": 1.6043,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 313.5323817241164,
+                "y": 152.0912547528517
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/mimiSavePoint.tmx": {
+            "scale": 3.2388,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 55.884895640360625,
+                "y": 48.165987402741756
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/mimigaVillage.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 537,
+                "y": 546
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/shack.tmx": {
+            "scale": 1.7828,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 229.97531972178598,
+                "y": 128.4496297958268
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/MimigaVillage/yamashitaFarm.tmx": {
+            "scale": 3.1011,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 151.88159040340523,
+                "y": 117.05523846377092
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/firstCave.tmx": {
+            "scale": 1.7988,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 275.73938181009567,
+                "y": 449.1883477874139
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/gunsmith.tmx": {
+            "scale": 1.3083,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 231.59825728044024,
+                "y": 128.41091492776886
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/startPoint.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 231,
+                "y": 128
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/caveStoryUnity/Assets/CaveStory/Maps/store.tmx": {
+            "scale": 1.9243,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 151.7434911396352,
+                "y": 88.34381333471913
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/Assets/DaveStory/TileMaps/rocks.tsx": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/Assets/DaveStory/TileMaps/rocksBG.tsx": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Cave/MookCave.tmx": {
+            "scale": 0.5562,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 920.532182668105,
+                "y": 2416.3969795037756
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Cave/Room1.tmx": {
+            "scale": 0.2453,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1365.6746840603341,
+                "y": 1043.6200570729718
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Cave/SafeRoom.tmx": {
+            "scale": 0.3107,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1177.9851947215964,
+                "y": 859.3498551657548
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Cave/Test.tmx": {
+            "scale": 0.3059,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1147.4338018960445,
+                "y": 751.8796992481203
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/MineShaft.tmx": {
+            "scale": 0.5165,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 533.3978702807357,
+                "y": 2516.940948693127
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Mole/moleHamlet.tmx": {
+            "scale": 0.2311,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1129.3812202509735,
+                "y": 835.1363046300303
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/MoleHamlet.tmx": {
+            "scale": 0.0997314453125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1930.1835985312114,
+                "y": 2025.4394124846997
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/MookCave.tmx": {
+            "scale": 0.5067,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1719.9526346950856,
+                "y": 2131.438721136767
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/MookCave_OLD.tmx": {
+            "scale": 0.1539,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2755.0357374918776,
+                "y": 3658.2196231319035
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/MookCave_TEST.tmx": {
+            "scale": 0.1249,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2281.8254603682944,
+                "y": 2225.7806244995995
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Room1.tmx": {
+            "scale": 0.3169,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 823.6036604607132,
+                "y": 788.8923950773114
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Room2.tmx": {
+            "scale": 0.3552,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 892.4549549549549,
+                "y": 799.5495495495495
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Room3.tmx": {
+            "scale": 0.7031,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 5586.687526667615,
+                "y": 869.0086758640307
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/SafeRoom.tmx": {
+            "scale": 0.5033,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1104.708921120604,
+                "y": 598.0528511821976
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/SafeRoom_OLD.tmx": {
+            "scale": 0.2478,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1472.9620661824054,
+                "y": 920.0968523002422
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/StartPoint.tmx": {
+            "scale": 0.324,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1057.0987654320988,
+                "y": 750
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/TEST.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 373,
+                "y": 92
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Test.tmx": {
+            "scale": 0.3097,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 1120.4391346464322,
+                "y": 665.1598320955763
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/Tunnel.tmx": {
+            "scale": 0.5048,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 4760.301109350237,
+                "y": 552.6941362916006
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/moleHamlet.tmx": {
+            "scale": 0.1101,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1816.53042688465,
+                "y": 3787.4659400544956
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/moleHamlet.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.6563,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/objects.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.3174,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/rockObjects.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/rocks.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.2275,
+            "scaleInEditor": 0.4546
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/rocksBG.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.2937,
+            "scaleInEditor": 0.6335
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/squidCenote.tmx": {
+            "scale": 0.0851,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2561.6921269095183,
+                "y": 1351.3513513513515
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/test.tmx": {
+            "scale": 0.6625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1246.7924528301887,
+                "y": 652.0754716981132
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/tunnel.tmx": {
+            "scale": 0.0987,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 11742.654508611957,
+                "y": 1641.337386018237
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/DaveStory/TileMaps/untitled.tmx": {
+            "scale": 0.2661,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -137.16647876738057,
+                "y": 864.336715520481
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/INFINITY.tmx": {
+            "scale": 0.0224,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 11696.428571428572,
+                "y": 21294.64285714286
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/INFINITY2.tmx": {
+            "scale": 0.0524,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 7118.320610687021,
+                "y": 8015.267175572518
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TEST_EXPORT.tmx": {
+            "scale": 0.3217,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1162.573826546472,
+                "y": 693.192415293752
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/Test.tmx": {
+            "scale": 0.2921,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1074.9743238616911,
+                "y": 756.5902088325915
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/desert.tsx": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/sticker-knight/map/sandbox.objs.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.0818,
+            "scaleInEditor": 0.26
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/sticker-knight/map/sandbox.tmx": {
+            "scale": 0.2671,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1250.467989517035,
+                "y": 872.3324597529015
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/sticker-knight/map/sandbox.tmx#objs": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.0756
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/sticker-knight/map/sandboxEXPORT.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/test_hexagonal_tile_60x60x30.tmx": {
+            "scale": 1.875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 161.06666666666666,
+                "y": 143.46666666666667
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/examples/test_hexagonal_tile_60x60x30.tmx#test_hexagonal_tile_60x60x30": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/tiled-maps-master/MagicLand.tmx": {
+            "scale": 1.8124,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3679.651291105716,
+                "y": 596.4467005076142
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TestTileMaps/tiled-maps-master/MagicLand.tmx#magiclanddizzy_tiles": {
+            "scaleInDock": 1.6002
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TileMaps/rocks.tsx": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/TileMaps/rocksBG.tsx": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/desert.tmx": {
+            "scale": 0.4787109375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 641.3055895552836,
+                "y": 641.3055895552836
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.hexagonal-mini.hex mini.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 7.8727
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.isometric_grass_and_water.isometric_grass_and_water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.isometric_staggered_grass_and_water.isometric_grass_and_water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.orthogonal-outside.outdoor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.sewers.sewer_tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/.test_hexagonal_tile_60x60x30.test_hexagonal_tile_60x60x30.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/HEX.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/desert.tmx": {
+            "scale": 0.4787109375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 640.2611179110568,
+                "y": 641.3055895552836
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/desert.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/hexagonal-mini.hex mini.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 6.8487
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/hexagonal-mini.tmx": {
+            "scale": 1.9099,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 145.819152835227,
+                "y": 89.53348342845177
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/hexagonal-mini.tmx#hex mini": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/isometric_grass_and_water.isometric_grass_and_water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/isometric_grass_and_water.tmx": {
+            "scale": 0.4049375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1381.6947059731442,
+                "y": 348.20188300663676
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/isometric_grass_and_water.tmx#isometric_grass_and_water": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/isometric_staggered_grass_and_water.tmx": {
+            "scale": 0.4329,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 922.8459228459229,
+                "y": 637.5606375606376
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/isometric_staggered_grass_and_water.tmx#isometric_grass_and_water": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/perspective_walls.tmx": {
+            "scale": 0.5978048780487805,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 512.7090983272135,
+                "y": 603.8759689922482
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/perspective_walls.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/rpg/beach_tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.4128
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/rpg/island.tmx": {
+            "scale": 0.9803,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 551.3618280118332,
+                "y": 423.33979394063044
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sewer_automap/rule_009.tmx": {
+            "scale": 2.2491,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 27.121959895069153,
+                "y": 31.12356053532524
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sewer_automap/rule_009.tmx#rules_sewers": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sewer_automap/rule_009.tmx#sewer_tileset": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sewers.tmx": {
+            "scale": 0.475,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 600,
+                "y": 587.3684210526314
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sewers.tmx#sewer_tileset": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2.91
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sticker-knight/map/sandbox.tmx": {
+            "scale": 0.2945,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1516.1290322580646,
+                "y": 842.1052631578948
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sticker-knight/map/sandbox.tmx#objs": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.1392
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sticker-knight/map/sandbox2.tmx": {
+            "scale": 0.5929,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1183.1674818687807,
+                "y": 286.7262607522347
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/sticker-knight/map/sandbox2.tmx#objs": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/test_hexagonal_tile_60x60x30.tmx": {
+            "scale": 0.9986,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 456.6392950130182,
+                "y": 614.8608051271781
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/examples/test_hexagonal_tile_60x60x30.tmx#test_hexagonal_tile_60x60x30": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/level/arena2.shadows.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/nbaker/Projects/shreveportArcade/davestory/Assets/sandbox.tmx": {
+            "scale": 0.2338,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 1266.0393498716849,
+                "y": 722.8400342172796
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/CaveStory/Maps/caveStory/caveStory.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 167,
+                "y": 128
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/CaveStory/Maps/firstCave.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 167,
+                "y": 128
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/CaveStory/Maps/startPoint.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 231,
+                "y": 128
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/Maps/benlevel.tmx": {
+            "scale": 0.0769,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 3198.959687906372,
+                "y": 3211.963589076723
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/Maps/blah.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 799,
+                "y": 799
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/Maps/caveStory.tmx": {
+            "scale": 2.306,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 194.27580225498698,
+                "y": 128.36079791847354
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/Maps/caveStory1.tmx": {
+            "scale": 1.9199,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 169.80051044325225,
+                "y": 121.88134798687432
+            }
+        },
+        "/Users/nbaker/Projects/shreveportArcade/tileEditorSandbox/Assets/Maps/untitled.tmx": {
+            "scale": 0.514,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 319.0661478599222,
+                "y": 321.011673151751
+            }
+        },
+        "/Users/nbaker/Projects/tiled/examples/desert.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 722,
+                "y": 539
+            }
+        },
+        "/Users/nbaker/Projects/tiled/examples/hexagonal-mini.tmx": {
+            "scale": 2.2264604810996564,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 145.74702886247877,
+                "y": 89.37953387868497
+            }
+        },
+        "/Users/nbaker/Projects/tiled/examples/hexagonal-mini.tmx#hex mini": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/tiled/examples/sewer_automap/sewers.tmx#rules_sewers": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/tiled/examples/sewer_automap/sewers.tmx#sewer_tileset": {
+            "scaleInDock": 1
+        },
+        "/Users/nbaker/Projects/tiled/tests/wangtiles/PathAndObjects.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "baseball_field.tmx": {
+            "scale": 1.7748,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 139.17061077304487,
+                "y": 165.0890241153933
+            }
+        },
+        "billetTown.tmx": {
+            "scale": 1.9114,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 565.5540441561159,
+                "y": 700.533640263681
+            }
+        },
+        "building.tmx": {
+            "scale": 1.7427,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 84.35186779135822,
+                "y": 117.63355712400299
+            }
+        },
+        "bullpen.tmx": {
+            "scale": 4.3294,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 42.50011548944426,
+                "y": 72.29639210976117
+            }
+        },
+        "forest.tmx": {
+            "scale": 4.787109375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 45.95675234598124,
+                "y": 49.507955936352516
+            }
+        },
+        "house.tmx": {
+            "scale": 4.8783,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 43.45776192526084,
+                "y": 33.003300330033
+            }
+        },
+        "house_small.tmx": {
+            "scale": 6.9728,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 29.901904543368516,
+                "y": 16.636071592473613
+            }
+        },
+        "overworld.tmx": {
+            "scale": 3.0034,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 173.13711127388956,
+                "y": 899.3141106745688
+            }
+        },
+        "overworld.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3.7502,
+            "scaleInEditor": 5.5531
+        },
+        "sign.tmx": {
+            "scale": 7.8387,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 31.51032696748185,
+                "y": 13.012361743656477
+            }
+        },
+        "tree.tmx": {
+            "scale": 5.0163,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 15.549309251838999,
+                "y": 17.144110200745565
+            }
+        }
+    },
+    "openFiles": [
+        "overworld.tmx"
+    ],
+    "project": "",
+    "recentFiles": [
+        "building.tmx",
+        "forest.tmx",
+        "house_small.tmx",
+        "overworld.tmx",
+        "bullpen.tmx",
+        "sign.tmx",
+        "tree.tmx",
+        "baseball_field.tmx"
+    ]
+}

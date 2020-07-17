@@ -17,7 +17,7 @@ COLOR_BLACK       : MACRO RGB  0,  0,  0 ENDM
 COLOR_DEEP_PURPLE : MACRO RGB  0,  2,  5 ENDM
 COLOR_PURPLE_GREY : MACRO RGB 10, 10, 12 ENDM
 
-COLOR_TAN         : MACRO RGB 22, 18, 13 ENDM
+COLOR_TAN         : MACRO RGB 25, 21, 18 ENDM
 COLOR_BROWN       : MACRO RGB 15, 12,  7 ENDM
 COLOR_DARK_BROWN  : MACRO RGB  3,  2,  0 ENDM
 
@@ -27,6 +27,7 @@ COLOR_SALMON      : MACRO RGB 25,  8, 10 ENDM
 COLOR_DARK_RED    : MACRO RGB 13,  3,  8 ENDM
 
 COLOR_YELLOW      : MACRO RGB 29, 27, 17 ENDM
+COLOR_WARNING     : MACRO RGB 29, 28, 10 ENDM
 COLOR_PEACH       : MACRO RGB 28, 24, 17 ENDM
 
 COLOR_LIGHT_GREEN : MACRO RGB 16, 23, 13 ENDM
@@ -52,6 +53,41 @@ PaletteSepia::
   COLOR_BROWN
   COLOR_DARK_BROWN
 PALETTE_SEPIA EQU (PaletteSepia-DefaultPalettes)/8
+
+PaletteUI::
+  COLOR_ALMOST_WHITE
+  COLOR_TAN    
+  COLOR_RED      
+  COLOR_BLACK 
+PALETTE_UI EQU (PaletteUI-DefaultPalettes)/8
+
+PaletteBaseball::
+  COLOR_ALMOST_WHITE
+  COLOR_ALMOST_WHITE    
+  COLOR_RED      
+  COLOR_DARK_RED 
+PALETTE_BASEBALL EQU (PaletteBaseball-DefaultPalettes)/8
+
+PaletteDark::
+  COLOR_ALMOST_WHITE
+  COLOR_DARKER_GREY
+  COLOR_ALMOST_BLACK
+  COLOR_BLACK 
+PALETTE_DARK EQU (PaletteDark-DefaultPalettes)/8
+
+PaletteWarning::
+  COLOR_ALMOST_WHITE
+  COLOR_TAN    
+  COLOR_WARNING      
+  COLOR_BLACK 
+PALETTE_WARNING EQU (PaletteWarning-DefaultPalettes)/8
+
+PaletteGood::
+  COLOR_ALMOST_WHITE
+  COLOR_TAN    
+  COLOR_GREEN      
+  COLOR_BLACK 
+PALETTE_GOOD EQU (PaletteGood-DefaultPalettes)/8
 
 PaletteIntro::
   COLOR_ALMOST_WHITE
@@ -95,48 +131,6 @@ ELSE;AWAY
 ENDC
 PALETTE_HOME_AWAY_VERSION EQU (PaletteHomeAwayVersion-DefaultPalettes)/8
 
-PaletteUI::
-  COLOR_ALMOST_WHITE
-  COLOR_TAN    
-  COLOR_RED      
-  COLOR_BLACK 
-PALETTE_UI EQU (PaletteUI-DefaultPalettes)/8
-
-PaletteBubbi::
-  COLOR_ALMOST_WHITE
-  COLOR_LIGHT_GREEN     
-  COLOR_BROWN
-  COLOR_BLACK
-PALETTE_BUBBI EQU (PaletteBubbi-DefaultPalettes)/8
-
-PaletteGinger::
-  COLOR_ALMOST_WHITE
-  COLOR_PEACH
-  COLOR_SALMON
-  COLOR_BLACK 
-PALETTE_GINGER EQU (PaletteGinger-DefaultPalettes)/8
-
-PaletteSquirt::
-  COLOR_ALMOST_WHITE
-  COLOR_TAN
-  COLOR_BLUE
-  COLOR_DARK_BLUE
-PALETTE_SQUIRT EQU (PaletteSquirt-DefaultPalettes)/8
-
-PaletteBaseball::
-  COLOR_ALMOST_WHITE
-  COLOR_ALMOST_WHITE    
-  COLOR_RED      
-  COLOR_DARK_RED 
-PALETTE_BASEBALL EQU (PaletteBaseball-DefaultPalettes)/8
-
-PaletteDark::
-  COLOR_ALMOST_WHITE
-  COLOR_DARKER_GREY
-  COLOR_ALMOST_BLACK
-  COLOR_BLACK 
-PALETTE_DARK EQU (PaletteDark-DefaultPalettes)/8
-
 PaletteHomeAwayNolan::
 IF DEF(_AWAY)
   COLOR_ALMOST_WHITE
@@ -157,6 +151,28 @@ PaletteStartLights::
   COLOR_BROWN
   COLOR_BLACK
 PALETTE_START_LIGHTS EQU (PaletteStartLights-DefaultPalettes)/8
+
+;Players
+PaletteBubbi::
+  COLOR_ALMOST_WHITE
+  COLOR_LIGHT_GREEN     
+  COLOR_BROWN
+  COLOR_BLACK
+PALETTE_BUBBI EQU (PaletteBubbi-DefaultPalettes)/8
+
+PaletteGinger::
+  COLOR_ALMOST_WHITE
+  COLOR_PEACH
+  COLOR_SALMON
+  COLOR_BLACK 
+PALETTE_GINGER EQU (PaletteGinger-DefaultPalettes)/8
+
+PaletteSquirt::
+  COLOR_ALMOST_WHITE
+  COLOR_TAN
+  COLOR_BLUE
+  COLOR_DARK_BLUE
+PALETTE_SQUIRT EQU (PaletteSquirt-DefaultPalettes)/8
 
 PaletteMacobb::
   COLOR_ALMOST_WHITE

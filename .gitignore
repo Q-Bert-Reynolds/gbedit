@@ -23,6 +23,9 @@ music/*.bak
 *.2bpp
 *.sav
 
+# Tiled map editor
+*.tiled-session
+
 # generated python
 __pycache__/*
 

@@ -360,7 +360,7 @@ Start::
   ld h, 32;w
   ld l, 10;h
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld hl, rBGP
   ld [hl], DMG_PAL_BDLW

@@ -946,7 +946,7 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   ld h, 20;w
   ld l, 18;h
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ;GBC user player color
   ld hl, tile_buffer
@@ -958,7 +958,7 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   ld h, 8;w
   ld l, 7;h
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ;GBC opposing player color
   ld hl, tile_buffer
@@ -970,7 +970,7 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   ld h, 8;w
   ld l, 7;h
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
   
   call GetCurrentUserPlayer
   call GetPlayerNumber

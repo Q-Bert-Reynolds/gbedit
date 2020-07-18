@@ -1,5 +1,6 @@
 Priority
 
+- apply SGB palettes to CGB
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -65,8 +66,6 @@ Simulation
 
 Team Menu
 
-- color palettes for player sprites
-- color palettes for health bar tiles
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well
@@ -89,6 +88,7 @@ Rolédex
 - hold button to scroll fast
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
+- if player descriptions only span 1 page, garbage text is drawn on the next
 - create tileset specific to dex
 - show player home towns / recruitment locations
 

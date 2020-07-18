@@ -266,8 +266,6 @@ ShowRoledexPlayerData:;a player num
   call LoadPlayerBaseData
   DISPLAY_OFF
 
-  ld hl, SGBRoledexPalSet               
-  call SetPalettesIndirect
   ld hl, SGBRoledexPlayerAttrBlk
   call sgb_PacketTransfer
 
@@ -641,6 +639,10 @@ ShowRoledexMenu:;returns exit code in a
       ld [_j], a
       call DrawRoledexBaseUI
       call ShowRoledexPage
+
+      ld hl, SGBRoledexAttrBlk
+      call sgb_PacketTransfer
+
       ld a, [_j];y
       add a, a
       add a, 3

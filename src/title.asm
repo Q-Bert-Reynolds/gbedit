@@ -167,7 +167,7 @@ ShowTitle:
   ld l, 8
   ld de, 0
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld a, 1;home/away
   ld hl, tile_buffer
@@ -179,14 +179,14 @@ ShowTitle:
   ld d, 0
   ld e, 8
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld h, 32;credits
   ld l, 1
   ld d, 0
   ld e, 17
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld a, 3;player
   ld hl, tile_buffer
@@ -198,7 +198,7 @@ ShowTitle:
   ld d, 20
   ld e, 10
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
 .playMusic
   PLAY_SONG take_me_out_to_the_ballgame_data, 1
@@ -432,7 +432,7 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld l, 18
   ld de, 0
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   call UpdateAudio
   CLEAR_SCREEN 0

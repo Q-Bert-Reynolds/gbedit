@@ -47,7 +47,7 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld h, 20
   ld l, 12
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _CALVIN_BACK_2X_TILE_COUNT
@@ -193,7 +193,7 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld h, 8
   ld l, 7
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld a, 2
   ld hl, tile_buffer
@@ -205,7 +205,7 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld h, 8
   ld l, 7
   ld bc, tile_buffer
-  call SetBkgPaletteMap
+  call GBCSetBkgPaletteMap
 
   ld c, 21
 .setCalvinSpriteColorsLoop

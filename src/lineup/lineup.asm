@@ -690,7 +690,6 @@ ShowPlayerMenu:
   ld c, a
   push bc
 .exit
-  DISPLAY_OFF
   ld de, 0
   ld h, 20
   ld l, 18
@@ -707,7 +706,6 @@ ShowPlayerMenu:
   ld [_c], a
   ld a, c
   ld [_j], a
-  DISPLAY_ON
   ret 
 
 ShowLineup::; a = playing_game?

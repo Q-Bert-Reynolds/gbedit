@@ -935,6 +935,8 @@ SignedRandom:: ;a = bitmask, returns signed random bytes in d and e
 ;----------------------------------------------------------------------
 ;
 ; SetPalettesIndirect - sets first 4 palettes by index
+;   
+;   works for both CGB and SGB
 ;
 ;   input: 
 ;     hl = palettes in PAL_SET (SGB) fromat
@@ -991,6 +993,8 @@ SetPalettesIndirect::;hl = palettes in PAL_SET (SGB) fromat
 ;----------------------------------------------------------------------
 ;
 ; SetPalettesDirect - sets 2 palettes
+;   
+;   works for both CGB and SGB
 ;
 ;   input: 
 ;     a = SGB packet header
@@ -1043,7 +1047,83 @@ GBCSetPalette::;a = palette id, hl = colors
     jr nz, .loopColors
   ret
 
-SetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
+;----------------------------------------------------------------------
+;
+; SetColorBlocks - sets rectangles of color in screenspace
+;   
+;   works for both CGB and SGB
+;
+;   input: 
+;     hl = SGB ATTR_BLK
+;
+;----------------------------------------------------------------------
+SetColorBlocks::
+.checkCGB
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .checkSGB
+.setColorBlocksCGB
+  jp GBCSetColorBlocks
+.checkSGB
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  ret z
+.setColorBlocksSGB
+  jp sgb_PacketTransfer
+
+GBCSetColorBlocks::;hl = SGB ATTR_BLK address
+  inc hl;skip SGB_PACKET
+  ld a, [hli];packet count
+.loop
+    push af;packet count
+    call GBCSetColorBlock
+    pop af;packet count
+    dec a
+    jr nz, .loop
+  ret
+
+;assumes no bg offset, only handles inside blocks
+;TODO: handle outside and border cases
+GBCSetColorBlock::;hl = ATTR_BLK_PACKET address, returns address of next ATTR_BLK_PACKET if any
+  ld a, [hli];bit 2 = outside block, bit 1 = on border, bit 0 = inisde block... not used here
+  ld a, [hli];(outside << 4) + (border << 2) + inside XXoobbii
+  and %00000011;toss outside and border palettes
+  ld b, a;palette in b
+  ld a, [hli];x
+  ld d, a;x
+  ld a, [hli];y
+  ld e, a;y
+  ld a, [hli];x+w-1
+  sub a, d;w-1
+  inc a;w
+  ld c, a;w
+  ld a, [hli];y+h-1
+  sub a, e;h-1
+  inc a;h
+  push hl;next ATTR_BLK_PACKET
+  ld h, c;w
+  ld l, a;h
+  push hl;wh
+  push de;xy
+
+  ld d, 0
+  ld e, c;w
+  call math_Multiply;hl = de * a = w * h, b untouched
+  ld a, b;palette
+  ld b, h
+  ld c, l
+  ld hl, tile_buffer
+  call mem_Set;fills tile buffer with palette from above
+
+  pop de;xy
+  pop hl;wh
+  ld bc, tile_buffer
+  ld [_breakpoint], a
+  call GBCSetWinPaletteMap
+  pop hl;next ATTR_BLK_PACKET
+  ret
+
+GBCSetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   ret z
@@ -1054,7 +1134,7 @@ SetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld [rVBK], a
   ret
 
-SetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
+GBCSetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   ret z

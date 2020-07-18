@@ -15,6 +15,15 @@ RoledexMenuText:
   DB "AREA    "
   DB "QUIT"
 
+SGBRoledexPalSet: PAL_SET PALETTE_UI, PALETTE_DARK, PALETTE_GREY, PALETTE_GREY
+SGBRoledexPlayerAttrBlk:
+  ATTR_BLK 2
+  ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
+  ATTR_BLK_PACKET %001, 2,2,2, 1,1,   8,7 ;player
+SGBRoledexAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %001, 0,0,0, 0,0, 20,18 ;main UI
+
 DrawRoledexBaseUI:
   CLEAR_BKG_AREA 0,0,20,18," "
 
@@ -256,7 +265,20 @@ ShowRoledexPlayerData:;a player num
   push af;num
   call LoadPlayerBaseData
   DISPLAY_OFF
-  
+
+  ld hl, SGBRoledexPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBRoledexPlayerAttrBlk
+  call sgb_PacketTransfer
+
+  ld hl, player_base.sgb_pal
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+
   ld bc, 0
   ld de, $1412
   ld a, DRAW_FLAGS_BKG
@@ -695,6 +717,11 @@ ShowRoledexUI::
   ld [rSCY], a
   HIDE_ALL_SPRITES
   HIDE_WIN
+
+  ld hl, SGBRoledexPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBRoledexAttrBlk
+  call sgb_PacketTransfer
 
   call DrawRoledexBaseUI
 

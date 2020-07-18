@@ -934,43 +934,8 @@ SetPlayerColors::;since SGB requires 2 palettes to change at the same time, alwa
   ld hl, SGBPlayBallPalSet               
   call SetPalettesIndirect
   ld hl, SGBPlayBallAttrBlk
-  call sgb_PacketTransfer
-
-  ;GBC UI color
-  ld hl, tile_buffer
-  ld bc, 20*18
-  ld a, 0
-  call mem_Set
-  ld d, 0;x
-  ld e, 0;y
-  ld h, 20;w
-  ld l, 18;h
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
-
-  ;GBC user player color
-  ld hl, tile_buffer
-  ld bc, 8*7
-  ld a, 2
-  call mem_Set
-  ld d, 0;x
-  ld e, 5;y
-  ld h, 8;w
-  ld l, 7;h
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
-
-  ;GBC opposing player color
-  ld hl, tile_buffer
-  ld bc, 8*7
-  ld a, 3
-  call mem_Set
-  ld d, 12;x
-  ld e, 0;y
-  ld h, 8;w
-  ld l, 7;h
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
   
   call GetCurrentUserPlayer
   call GetPlayerNumber

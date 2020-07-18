@@ -357,7 +357,7 @@ SetHPBarColor:;e = HP*96/maxHP, [_j] = order
   ld a, [_j]
   ld de, Player2HPBar-Player1HPBar
   call math_Multiply
-  ld de, tile_buffer + (Player1HPBar-SGBLineupAttrBlk)
+  ld de, cmd_buffer + (Player1HPBar-SGBLineupAttrBlk)
   add hl, de
   inc hl
   ld a, b;pal
@@ -366,7 +366,7 @@ SetHPBarColor:;e = HP*96/maxHP, [_j] = order
 
 GetHPBarColors:;returns address of attribute block in hl
   ld hl, SGBLineupAttrBlk
-  ld de, tile_buffer
+  ld de, cmd_buffer
   ld bc, SGBLineupAttrBlkEnd-SGBLineupAttrBlk
   call mem_Copy
   ld hl, UserLineup
@@ -386,7 +386,7 @@ GetHPBarColors:;returns address of attribute block in hl
     inc a
     cp 9
     jr nz, .loop
-  ld hl, tile_buffer
+  ld hl, cmd_buffer
   ret
 
 BodyPartsLookup:;maps body ID to other body part offset or 0
@@ -699,7 +699,8 @@ ShowPlayerMenu:
   ld hl, SGBLineupPalSet               
   call SetPalettesIndirect
   call GetHPBarColors
-  call sgb_PacketTransfer
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
 
   pop bc
   ld a, b
@@ -715,7 +716,8 @@ ShowLineup::; a = playing_game?
   ld hl, SGBLineupPalSet               
   call SetPalettesIndirect
   call GetHPBarColors
-  call sgb_PacketTransfer
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
 
   ld hl, _LineupSpritesTiles
   ld de, $8000

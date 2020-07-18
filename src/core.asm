@@ -1054,6 +1054,7 @@ GBCSetPalette::;a = palette id, hl = colors
 ;   works for both CGB and SGB
 ;
 ;   input: 
+;     b = draw flags
 ;     hl = SGB ATTR_BLK
 ;
 ;----------------------------------------------------------------------
@@ -1071,20 +1072,23 @@ SetColorBlocks::
 .setColorBlocksSGB
   jp sgb_PacketTransfer
 
-GBCSetColorBlocks::;hl = SGB ATTR_BLK address
+;assumes no window offset, only handles inside blocks
+GBCSetColorBlocks::;b = draw flags, hl = SGB ATTR_BLK address
   inc hl;skip SGB_PACKET
   ld a, [hli];packet count
 .loop
     push af;packet count
+    push bc;draw flags
     call GBCSetColorBlock
+    pop bc;draw flags
     pop af;packet count
     dec a
     jr nz, .loop
   ret
 
-;assumes no bg offset, only handles inside blocks
 ;TODO: handle outside and border cases
-GBCSetColorBlock::;hl = ATTR_BLK_PACKET address, returns address of next ATTR_BLK_PACKET if any
+GBCSetColorBlock::;b = draw flags, hl = ATTR_BLK_PACKET address, returns address of next ATTR_BLK_PACKET if any
+  push bc;draw flags
   ld a, [hli];bit 2 = outside block, bit 1 = on border, bit 0 = inisde block... not used here
   ld a, [hli];(outside << 4) + (border << 2) + inside XXoobbii
   and %00000011;toss outside and border palettes
@@ -1117,11 +1121,18 @@ GBCSetColorBlock::;hl = ATTR_BLK_PACKET address, returns address of next ATTR_BL
 
   pop de;xy
   pop hl;wh
+  pop bc;next ATTR_BLK_PACKET
+  pop af;draw flags
+  push bc;next ATTR_BLK_PACKET
   ld bc, tile_buffer
-  ld [_breakpoint], a
-  call GBCSetWinPaletteMap
+  call GBCSetPaletteMap
   pop hl;next ATTR_BLK_PACKET
   ret
+
+GBCSetPaletteMap::;a = draw flags, hl = wh, de = xy, bc = firstTile
+  and a, DRAW_FLAGS_WIN
+  jr nz, GBCSetWinPaletteMap
+  ;fall through to bkg pal map
 
 GBCSetBkgPaletteMap::;hl = wh, de = xy, bc = firstTile
   ld a, [sys_info]
@@ -1140,7 +1151,7 @@ GBCSetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
   ret z
   ld a, 1
   ld [rVBK], a
-  call gbdk_SetBkgTiles
+  call gbdk_SetWinTiles
   xor a
   ld [rVBK], a
   ret

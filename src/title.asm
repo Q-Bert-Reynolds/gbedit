@@ -151,43 +151,13 @@ ShowTitle:
   ld [hl], DMG_PAL_BDLW
   ld hl, rOBP1
   ld [hl], $E0
-.setColorPalettes
+.setColors
   ld hl, TitlePalSet               
   call SetPalettesIndirect
-.setSGBColors
+  ld b, DRAW_FLAGS_BKG
   ld hl, SGBTitleAttrBlk
-  call sgb_PacketTransfer
+  call SetColorBlocks
 .setGBCColors
-  xor a;title 
-  ld hl, tile_buffer
-  ld bc, 20*8
-  call mem_Set
-
-  ld h, 20
-  ld l, 8
-  ld de, 0
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
-
-  ld a, 1;home/away
-  ld hl, tile_buffer
-  ld bc, 32
-  call mem_Set
-
-  ld h, 32
-  ld l, 1
-  ld d, 0
-  ld e, 8
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
-
-  ld h, 32;credits
-  ld l, 1
-  ld d, 0
-  ld e, 17
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
-
   ld a, 3;player
   ld hl, tile_buffer
   ld bc, 7*7

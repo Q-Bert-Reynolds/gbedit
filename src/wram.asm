@@ -69,6 +69,7 @@ button_state:: DB
 ;buffers
 tile_buffer:: DS BUFFER_SIZE
 bkg_buffer:: DS BUFFER_SIZE
+cmd_buffer:: DS BUFFER_SIZE/2
 str_buffer:: DS 64
 name_buffer:: DS 16
 

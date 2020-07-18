@@ -10,33 +10,9 @@ SetStatScreenColors:;hl = player
   push hl;player
   ld hl, SGBStatsPalSet               
   call SetPalettesIndirect
+  ld b, DRAW_FLAGS_BKG
   ld hl, SGBStatsAttrBlk
-  ; call sgb_PacketTransfer
   call SetColorBlocks
-
-  ; ;GBC UI color
-  ; ld hl, tile_buffer
-  ; ld bc, 20*18
-  ; ld a, 0
-  ; call mem_Set
-  ; ld d, 0;x
-  ; ld e, 0;y
-  ; ld h, 20;w
-  ; ld l, 18;h
-  ; ld bc, tile_buffer
-  ; call GBCSetBkgPaletteMap
-
-  ; ;GBC user player color
-  ; ld hl, tile_buffer
-  ; ld bc, 8*7
-  ; ld a, 2
-  ; call mem_Set
-  ; ld d, 0;x
-  ; ld e, 0;y
-  ; ld h, 8;w
-  ; ld l, 7;h
-  ; ld bc, tile_buffer
-  ; call GBCSetBkgPaletteMap
   
   pop hl;player
   push hl;player

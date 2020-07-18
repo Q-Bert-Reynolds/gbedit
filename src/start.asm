@@ -213,7 +213,8 @@ Start::
   ld hl, StartPalSet
   call SetPalettesIndirect
   ld hl, SGBStartLightsAttrBlk
-  call sgb_PacketTransfer
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
 
   ld hl, rBGP
   ld [hl], $E0

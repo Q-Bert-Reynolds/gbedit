@@ -267,7 +267,8 @@ ShowRoledexPlayerData:;a player num
   DISPLAY_OFF
 
   ld hl, SGBRoledexPlayerAttrBlk
-  call sgb_PacketTransfer
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
 
   ld hl, player_base.sgb_pal
   ld a, [hli]
@@ -641,7 +642,8 @@ ShowRoledexMenu:;returns exit code in a
       call ShowRoledexPage
 
       ld hl, SGBRoledexAttrBlk
-      call sgb_PacketTransfer
+      ld b, DRAW_FLAGS_BKG
+      call SetColorBlocks
 
       ld a, [_j];y
       add a, a
@@ -723,7 +725,8 @@ ShowRoledexUI::
   ld hl, SGBRoledexPalSet               
   call SetPalettesIndirect
   ld hl, SGBRoledexAttrBlk
-  call sgb_PacketTransfer
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
 
   call DrawRoledexBaseUI
 

@@ -612,7 +612,7 @@ ShowRoledexMenu:;returns exit code in a
   ld e, 10
   ld a, DRAW_FLAGS_BKG
   call DrawListMenuArrow
-  WAITPAD_UP
+  WAITPAD_UP_OR_FRAMES 20
 .loop
     call UpdateInput
     ld d, 15
@@ -770,13 +770,13 @@ ShowRoledexUI::
     sub a, 7
     ld [_s], a
     call ShowRoledexPage
-    WAITPAD_UP
+    WAITPAD_UP_OR_FRAMES 20
     jr .waitAndLoop
 .showFirstPage
     ld a, 1
     ld [_s], a
     call ShowRoledexPage
-    WAITPAD_UP
+    WAITPAD_UP_OR_FRAMES 20
     jr .waitAndLoop
 .checkMovePageRight
     ld a, [button_state]
@@ -786,7 +786,7 @@ ShowRoledexUI::
     add a, 7
     ld [_s], a
     call ShowRoledexPage
-    WAITPAD_UP
+    WAITPAD_UP_OR_FRAMES 20
     jr .waitAndLoop
 .checkAPressed
     ld a, [button_state]

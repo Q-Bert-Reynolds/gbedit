@@ -206,6 +206,23 @@ WAITPAD_UP: MACRO
   jr nz, .loop\@
 ENDM
 
+WAITPAD_UP_OR_FRAMES: MACRO ; \1=frames
+  ld a, \1
+.loop\@
+    push af;frames
+    call gbdk_WaitVBL
+    call UpdateInput
+    ld a, [button_state]
+    and a
+    jr z, .exit\@
+    pop af;frames
+    dec a
+    jr nz, .loop\@
+  push af;frames
+.exit\@
+  pop af;frames
+ENDM
+
 SET_DEFAULT_PALETTE: MACRO
   ld hl, rBGP
   ld [hl], DMG_PAL_BDLW

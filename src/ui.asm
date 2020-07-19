@@ -331,7 +331,7 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   call DrawListMenuArrow;move_menu_arrow(--j);
 .failMoveUp
   pop af;draw flags
-  WAITPAD_UP ;update_waitpadup();
+  WAITPAD_UP_OR_FRAMES 20
   ld a, -1
   ret
 .checkMoveArrowDown ;else if (button_state & PADF_DOWN && _j < _c-1) {
@@ -353,7 +353,7 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   call DrawListMenuArrow;move_menu_arrow(++j);
 .failMoveDown
   pop af;draw flags
-  WAITPAD_UP ;update_waitpadup();
+  WAITPAD_UP_OR_FRAMES 20
   ld a, 1
   ret
 .noMove

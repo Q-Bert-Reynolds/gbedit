@@ -1,7 +1,6 @@
 Priority
 
 - show pitch or bat icon next to move PP
-- hold button to scroll roledex fast
 - pitch/bat anim for home version
 - track time played
 - results from hitting to the field

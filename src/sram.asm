@@ -4,6 +4,10 @@ sram_animation_style: DB
 sram_coaching_style: DB
 sram_user_name: DS NAME_LENGTH
 sram_rival_name: DS NAME_LENGTH
+sram_hours:: DW
+sram_minutes:: DB
+sram_seconds:: DB
+sram_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]
 sram_UserLineup:
@@ -40,7 +44,7 @@ LoadGame::
   SWITCH_RAM_MBC5 MAIN_SRAM_BANK
   ld hl, sram_user_name
   ld de, user_name
-  ld bc, NAME_LENGTH * 2
+  ld bc, sram_end - sram_user_name
   call mem_Copy
 
   ;load user's lineup
@@ -62,7 +66,7 @@ SaveGame::
   SWITCH_RAM_MBC5 MAIN_SRAM_BANK
   ld hl, user_name
   ld de, sram_user_name
-  ld bc, NAME_LENGTH * 2
+  ld bc, sram_end - sram_user_name
   call mem_Copy
 
   ;save user's lineup

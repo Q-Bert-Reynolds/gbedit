@@ -2,7 +2,6 @@ Priority
 
 - show pitch or bat icon next to move PP
 - pitch/bat anim for home version
-- track time played
 - results from hitting to the field
 - set contact power from move, player, and barrel
 

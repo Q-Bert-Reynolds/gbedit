@@ -120,9 +120,7 @@ VBLInterrupt::
   push de
   push hl
   call _HRAM
-  ld a, [vbl_timer]
-  inc a
-  ld [vbl_timer], a
+  call UpdateTime
   call UpdateAudio
   ld a, 1
   ld [vbl_done], a
@@ -131,6 +129,50 @@ VBLInterrupt::
   pop bc
   pop af
   reti
+
+UpdateTime::
+  ld a, [vbl_timer]
+  inc a
+  ld [vbl_timer], a
+  cp a, 60
+  ret c
+  xor a
+  ld [vbl_timer], a
+
+.testGameState
+  ld a, [game_state]
+  and a
+  ret z;if game hasn't started, don't increment game time
+
+.incrementSeconds
+  ld a, [seconds]
+  inc a
+  ld [seconds], a
+  cp a, 60
+  ret c
+
+.incrementMinutes
+  xor a
+  ld [seconds], a
+  ld a, [minutes]
+  inc a
+  ld [minutes], a
+  cp a, 60
+  ret c
+
+.incrementHours
+  xor a
+  ld [minutes], a
+  ld a, [hours]
+  ld h, a
+  ld a, [hours+1]
+  ld l, a
+  inc hl
+  ld a, h
+  ld [hours], a
+  ld a, l
+  ld [hours+1], a
+  ret
  
 UpdateInput::
   push bc

@@ -449,4 +449,10 @@ ENDC
   call gbdk_Delay
 
   FADE_OUT
+
+  xor a
+  ld [seconds], a
+  ld [minutes], a
+  ld [hours], a
+  ld [hours+1], a
   ret

@@ -5,12 +5,18 @@ _breakpoint:: DB
 ;system info
 sys_info:: DB
 
+;game state
+game_state:: DB
+
 ;main save data
 text_speed:: DB
 animation_style:: DB
 coaching_style:: DB
 user_name:: DS NAME_LENGTH
 rival_name:: DS NAME_LENGTH
+hours:: DW
+minutes:: DB
+seconds:: DB
 
 ;drawing
 sprite_props:: DB
@@ -20,7 +26,7 @@ sprite_skip_id:: DB
 sprite_first_tile:: DB
 
 ;timers
-vbl_timer:: DB
+vbl_timer:: DB ;counts to 60
 
 ;map
 last_map_button_state:: DB

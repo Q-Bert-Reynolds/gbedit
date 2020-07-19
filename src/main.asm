@@ -116,12 +116,16 @@ Main::
   ld a, TITLE_BANK
   call SetBank
   call Title ;sets a to 0 if new game pressed
-  jr nz, .overworld
+  jr nz, .startClock
 
 .newGame
   ld a, NEW_GAME_BANK
   call SetBank
   call NewGame
+
+.startClock
+  ld a, 1
+  ld [game_state], a
 
 .overworld; walk around, find a game, repeat
     ld a, OVERWORLD_BANK

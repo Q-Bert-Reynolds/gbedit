@@ -75,6 +75,20 @@ PaletteDark::
   COLOR_BLACK 
 PALETTE_DARK EQU (PaletteDark-DefaultPalettes)/8
 
+PaletteTownMap::
+  COLOR_ALMOST_WHITE
+  COLOR_BLUE_GREY    
+  COLOR_GREEN      
+  COLOR_BLACK 
+PALETTE_TOWN_MAP EQU (PaletteTownMap-DefaultPalettes)/8
+
+PaletteTownMapLocation::
+  COLOR_ALMOST_WHITE
+  COLOR_RED    
+  COLOR_GREEN      
+  COLOR_BLACK 
+PALETTE_TOWN_MAP_LOCATION EQU (PaletteTownMapLocation-DefaultPalettes)/8
+
 PaletteWarning::
   COLOR_ALMOST_WHITE
   COLOR_TAN    

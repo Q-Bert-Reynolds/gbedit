@@ -421,6 +421,17 @@ SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
 INCLUDE "img/town_map.asm"
 
+SGBTownMapPalSet: PAL_SET PALETTE_UI, PALETTE_TOWN_MAP, PALETTE_TOWN_MAP_LOCATION, PALETTE_GREY
+SGBTownMapAttrBlk:
+  ATTR_BLK 7
+  ATTR_BLK_PACKET %001, 0,0,0,  0,0, 20,1  ;title
+  ATTR_BLK_PACKET %001, 1,1,1,  0,1, 20,17 ;map
+  ATTR_BLK_PACKET %001, 2,2,2,  1,2,  7,1  ;locations
+  ATTR_BLK_PACKET %001, 2,2,2,  3,6,  6,7
+  ATTR_BLK_PACKET %001, 2,2,2, 12,11, 1,1
+  ATTR_BLK_PACKET %001, 2,2,2, 16,14, 1,1
+  ATTR_BLK_PACKET %001, 2,2,2, 17,12, 1,1
+
 ;UILoadFontTiles
 ;UIRevealText - a = draw flags, hl = text, de = xy
 ;UIRevealTextAndWait - a = draw flags, hl = text
@@ -448,6 +459,13 @@ UIDrawStateMap::
   ld bc, _TownMapTileMap
   ld a, _UI_FONT_TILE_COUNT
   call SetBKGTilesWithOffset
+
+  ld hl, SGBTownMapPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBTownMapAttrBlk
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
+
   DISPLAY_ON
   ret
 

@@ -27,6 +27,13 @@ SGBRoledexAttrBlk:
 DrawRoledexBaseUI:
   CLEAR_BKG_AREA 0,0,20,18," "
 
+.setPalettes
+  ld hl, SGBRoledexPalSet               
+  call SetPalettesIndirect
+  ld hl, SGBRoledexAttrBlk
+  ld b, DRAW_FLAGS_BKG
+  call SetColorBlocks
+
 .drawHeading
   ld de, $0101
   ld hl, $0701
@@ -721,13 +728,6 @@ ShowRoledexUI::
   ld [rSCY], a
   HIDE_ALL_SPRITES
   HIDE_WIN
-
-  ld hl, SGBRoledexPalSet               
-  call SetPalettesIndirect
-  ld hl, SGBRoledexAttrBlk
-  ld b, DRAW_FLAGS_BKG
-  call SetColorBlocks
-
   call DrawRoledexBaseUI
 
   xor a

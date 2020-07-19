@@ -1,6 +1,5 @@
 Priority
 
-- pitch/bat anim for home version
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -32,6 +31,7 @@ Python scripts
 
 Intro
 
+- home version batter has too many tiles
 - make ball movement smooth
 - randomize players
 

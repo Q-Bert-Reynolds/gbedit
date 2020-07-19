@@ -1,6 +1,5 @@
 Priority
 
-- apply SGB palettes to CGB
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -74,12 +73,17 @@ Team Menu
 
 Overworld
 
+- replace map system, should be sparse objects in 32x32 tile regions
+  - different building sizes
+  - patches of trees, grass, water
+  - paths, fences, 
+  - 
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions
 - animated tiles
 - load black tiles outside of map bounds
-- fix move left/up bug where boundary tiles don't load sometimes
+- fix move left/up bug where boundary tiles don't load sometimes (if the map system doesn't change) 
 - enter/exit buildings
 - read signs
 
@@ -113,5 +117,9 @@ Design Notes
 
 - play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to
 - pitch speed should be a relative speed so that pitches appear faster when the pitcher's Throw stat is higher than the batter's Bat stat
-- encounter Mike at top of weather research tower
-- trash cans at your rival's house look like they've taken a beating
+- after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
+- trash cans at your rival's house "look like they've taken a beating"
+- each town should have an age limits for their league, you should be able to replay home teams as many times as you want
+- teammates in their 20s and 30s have a small chance of producing a child
+- players should have an age peak, after which speed and throw stats begin to decline (bat and field don't)
+- players should a retirement age

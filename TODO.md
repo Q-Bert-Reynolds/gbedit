@@ -1,6 +1,5 @@
 Priority
 
-- show pitch or bat icon next to move PP
 - pitch/bat anim for home version
 - results from hitting to the field
 - set contact power from move, player, and barrel
@@ -68,6 +67,7 @@ Team Menu
 - stat page
   - missing moves in move list should show "-"
   - should be accessible from PC as well
+  - show pitch or bat icon next to move PP
 - show appropriate stat (ie. BA, ERA) below age
 
 Overworld

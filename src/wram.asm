@@ -20,7 +20,7 @@ sprite_skip_id:: DB
 sprite_first_tile:: DB
 
 ;timers
-vbl_timer:: DB ;TODO:: use me
+vbl_timer:: DB
 
 ;map
 last_map_button_state:: DB

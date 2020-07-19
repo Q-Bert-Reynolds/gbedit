@@ -12,23 +12,23 @@ SGBLineupAttrBlk:
   ATTR_BLK 11
   ATTR_BLK_PACKET %001, 0,0,0, 3,0, 17,18 ;main UI
   ATTR_BLK_PACKET %001, 1,1,1, 0,0,  3,18 ;players
-Player1HPBar:
+.player1HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,0,  6, 2
-Player2HPBar:
+.player2HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,2,  6, 2
-Player3HPBar:
+.player3HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,4,  6, 2
-Player4HPBar:
+.player4HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,6,  6, 2
-Player5HPBar:
+.player5HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,8,  6, 2
-Player6HPBar:
+.player6HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,10, 6, 2
-Player7HPBar:
+.player7HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,12, 6, 2
-Player8HPBar:
+.player8HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,14, 6, 2
-Player9HPBar:
+.player9HPBar
   ATTR_BLK_PACKET %001, 3,3,3, 5,16, 6, 2
 SGBLineupAttrBlkEnd:
 
@@ -336,6 +336,8 @@ DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
 
   pop hl;player
   push hl;player
+  xor a
+  ld [_u], a;x offset
   call DrawLineupPlayerSprites
 
   pop hl;player
@@ -355,9 +357,9 @@ SetHPBarColor:;e = HP*96/maxHP, [_j] = order
   ld b, 3;good/green
 .setPalettes
   ld a, [_j]
-  ld de, Player2HPBar-Player1HPBar
+  ld de, SGBLineupAttrBlk.player2HPBar-SGBLineupAttrBlk.player1HPBar
   call math_Multiply
-  ld de, cmd_buffer + (Player1HPBar-SGBLineupAttrBlk)
+  ld de, cmd_buffer + (SGBLineupAttrBlk.player1HPBar-SGBLineupAttrBlk)
   add hl, de
   inc hl
   ld a, b;pal
@@ -410,7 +412,7 @@ HatPartsLookup:;maps hat ID to other hat part offset or 0
 HatXLookup:;maps hat ID to x offset
   DB 0, 1, 1, 1, 1, 1, 1, 1, 1, -6, 0, -7
 
-DrawLineupPlayerSprites:
+DrawLineupPlayerSprites:;hl = player, [_u] = x offset
   ld a, [hl]
   call LoadPlayerBaseData
   
@@ -463,6 +465,9 @@ DrawLineupPlayerSprites:
   ld hl, BodyHeadXLookup
   add hl, bc
   ld a, [hl];head x offset
+  ld e, a
+  ld a, [_u];x offset
+  add a, e
   ld [_x], a
 
   ld hl, BodyHeightLookup
@@ -476,11 +481,13 @@ DrawLineupPlayerSprites:
   ld a, d
   cp 1
   jr z, .shiftBodyLeft
-  ld a, 20
+  ld a, [_u]
+  add a, 20
   ld [hli], a;x
   jr .skipBodyShift
 .shiftBodyLeft
-  ld a, 16
+  ld a, [_u]
+  add a, 16
   ld [hli], a;x
 .skipBodyShift
   ld a, c
@@ -497,13 +504,15 @@ DrawLineupPlayerSprites:
   ld a, [_y]
   sub a, 8
   ld [hli], a;y
-  ld a, 20
+  ld a, [_u]
+  add a, 20
   ld [hli], a;x
   jr .setSecondBodyTile
 .shiftBody2Right
   ld a, [_y]
   ld [hli], a;y
-  ld a, 24
+  ld a, [_u]
+  add a, 24
   ld [hli], a;x
 .setSecondBodyTile
   ld a, d
@@ -759,13 +768,20 @@ ShowLineup::; a = playing_game?
     jr z, .testBButton
     call ShowPlayerMenu
     WAITPAD_UP
-    jr .waitVBLAndLoop
+    jr .animateSelectedPlayer
 .testBButton
     ld a, [button_state]
     and a, PADF_B
     jr nz, .exit
-.waitVBLAndLoop
+.animateSelectedPlayer
     call gbdk_WaitVBL
+    ld a, [vbl_timer]
+    swap a
+    and a, 1
+    ld [_u], a;x offset
+    ld a, [_j]
+    call GetUserPlayerInLineup
+    call DrawLineupPlayerSprites
     jr .loop
 .exit
 

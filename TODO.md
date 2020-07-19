@@ -1,11 +1,14 @@
 Priority
 
+- show pitch or bat icon next to move PP
+- hold button to scroll roledex fast
+- pitch/bat anim for home version
+- track time played
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
 General
 
-- track time played
 - link cable support!
 - move all strings to separate (generated) file
 - give math subroutines more appropriate names
@@ -33,7 +36,6 @@ Python scripts
 Intro
 
 - make ball movement smooth
-- pitch/bat anim for home version
 - randomize players
 
 New Game
@@ -69,7 +71,6 @@ Team Menu
   - missing moves in move list should show "-"
   - should be accessible from PC as well
 - show appropriate stat (ie. BA, ERA) below age
-- animate player when highlighted
 
 Overworld
 
@@ -89,7 +90,6 @@ Overworld
 
 Rolédex
 
-- hold button to scroll fast
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
 - if player descriptions only span 1 page, garbage text is drawn on the next
@@ -122,4 +122,4 @@ Design Notes
 - each town should have an age limits for their league, you should be able to replay home teams as many times as you want
 - teammates in their 20s and 30s have a small chance of producing a child
 - players should have an age peak, after which speed and throw stats begin to decline (bat and field don't)
-- players should a retirement age
+- players should have a retirement age

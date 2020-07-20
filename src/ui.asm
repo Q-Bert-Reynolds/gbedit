@@ -44,7 +44,7 @@ RevealTextAndWait:: ;hl = text
   call SetBank
   ret
 
-RevealText:: ;a = draw flags, de = xy hl = text
+RevealText:: ;a = draw flags, de = xy, hl = text
   ld b, a;draw flags
   ld a, [loaded_bank]
   push af;bank
@@ -232,29 +232,37 @@ DrawText:: ;a = draw flags, hl = text, de = xy, bc = max lines
   pop bc;max lines
   ret
 
-DisplayText:: ;a = draw flags, hl = text
+DisplayTextAtPos:: ;a = draw flags, hl = text, bc = xy
   push hl;text
   push af;draw flags
 
-  xor a
-  ld b, a
-  ld c, a
   ld d, 20
   ld e, 6
   pop af;draw flags
-  push af
+  push af;draw flags
+  push bc;xy
   call DrawUIBox
-
-  pop af
-  pop hl
-  push af
-  ld d, 2
-  ld e, 2
-  ld bc, 2
-  call DrawText ;a = draw flags, hl = text, de = xy, bc = max lines
-
-.show
+  pop de;xy
+  inc d
+  inc e
   pop af;draw flags
+  push af;draw flags
+  and a, DRAW_FLAGS_PAD_TOP
+  jr z, .skipPad
+  inc e
+.skipPad
+  pop af;draw flags
+  pop hl;text
+  push af;draw flags
+  ld bc, 2;max lines
+  call DrawText ;a = draw flags, hl = text, de = xy, bc = max lines
+  pop af;draw flags
+  ret
+
+DisplayText:: ;a = draw flags, hl = text
+  ld bc, 0
+  call DisplayTextAtPos
+.show
   and a, DRAW_FLAGS_WIN
   ret z;no reason to show win if not drawing on win
   ld a, 7
@@ -433,6 +441,7 @@ SGBTownMapAttrBlk:
   ATTR_BLK_PACKET %001, 2,2,2, 17,12, 1,1
 
 ;UILoadFontTiles
+;UIDrawStateMap
 ;UIRevealText - a = draw flags, hl = text, de = xy
 ;UIRevealTextAndWait - a = draw flags, hl = text
 ;UIShowOptions

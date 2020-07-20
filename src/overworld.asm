@@ -342,7 +342,7 @@ UpperStartMenuText:
 LowerStartMenuText:
   DB "\nSAVE\nOPTION\nEXIT", 0
 
-ShowPauseMenu:
+ShowPauseMenu::
   call CopyBkgToWin
 
   ld hl, UpperStartMenuText
@@ -384,30 +384,22 @@ ShowPauseMenu:
   cp 1
   jr nz, .lineup
   call ShowRoledex
-  call LoadAvatarSprites
-  call LoadOverworldTiles
-  call ShowPlayerAvatar
-  call SetMapTiles
-  jp ShowPauseMenu
+  jr .returnToPauseMenu
 .lineup
   cp 2
   jr nz, .item
   call ShowLineupFromWorld
-  call LoadAvatarSprites
-  call LoadOverworldTiles
-  call ShowPlayerAvatar
-  call SetMapTiles
-  jp ShowPauseMenu
+  jr .returnToPauseMenu
 .item
   cp 3
   jr nz, .user
-
-  jp ShowPauseMenu
+  call ShowItemListFromWorld
+  jr .returnToPauseMenu
 .user
   cp 4
   jr nz, .save
-
-  jp ShowPauseMenu
+  ;TODO: call ShowUserData
+  jr .returnToPauseMenu
 .save
   cp 5
   jr nz, .option
@@ -434,6 +426,9 @@ ShowPauseMenu:
   ld [rSCX], a
   ld a, l
   ld [rSCY], a
+.returnToPauseMenu
+  call LoadAvatarSprites
+  call LoadOverworldTiles
   call ShowPlayerAvatar
   call SetMapTiles
   jp ShowPauseMenu

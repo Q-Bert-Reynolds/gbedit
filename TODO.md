@@ -1,5 +1,6 @@
 Priority
 
+- items button should open a list on both pause menu and play ball
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -72,6 +73,7 @@ Team Menu
 
 Overworld
 
+- pause menu should remember last selection
 - replace map system, should be sparse objects in 32x32 tile regions
   - different building sizes
   - patches of trees, grass, water

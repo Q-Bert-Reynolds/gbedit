@@ -890,6 +890,12 @@ YesNoText:
 SaveGameText:
   DB "Would you like to\nSAVE the game?",0
 
+NowSavingText:
+  DB "Now saving...",0
+
+SavedTheGameText:
+  DB "%s saved\nthe game.",0
+
 ShowSaveGame::
   ld d, 4
   ld e, 0
@@ -904,9 +910,8 @@ ShowSaveGame::
   ld hl, YesNoText
   ld de, str_buffer
   call str_Copy
-  ld hl, name_buffer
   xor a
-  ld [hl], a
+  ld [name_buffer], a
   ld bc, 7;(0,7)
   ld d, 6
   ld e, 5
@@ -914,7 +919,28 @@ ShowSaveGame::
   call ShowListMenu
   cp a, 1;if yes, save game
   ret nz
+  
+  ld bc, 12
+  ld hl, NowSavingText
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call DisplayTextAtPos
+
   call SaveGame
+  ld de, 1000
+  call gbdk_Delay;HACK: artificial delay because it's doesn't take long yet
+
+  ld hl, SavedTheGameText
+  ld bc, user_name
+  ld de, str_buffer
+  call str_Replace
+  ld de, 12;(0,12)
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  ld hl, str_buffer
+  call RevealText
+  
+  ld de, $1210
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
   ret
 
 GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects str_buffer, all registers

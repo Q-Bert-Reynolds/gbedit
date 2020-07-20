@@ -1,6 +1,17 @@
 INCLUDE "src/beisbol.inc"
 
 SECTION "Temp Data", ROMX, BANK[TEMP_BANK]
+TempItems:
+  DB BASEBALL_ITEM,    10
+  DB TM01_ITEM,        1
+  DB STEROIDS_ITEM,    99
+  DB TOWN_MAP_ITEM,    0
+  DB DREAM_SCOPE_ITEM, 0
+  DB HARMONICA_ITEM,   0
+  DB EXP_ALL_ITEM,     0
+  DB POTION_ITEM,      32
+  DB BICYCLE_ITEM,     0
+  DS MAX_ITEMS*2 - 18;18=num bytes above
 
 MyBubbiData:
   DB 001                                ; .number
@@ -602,5 +613,10 @@ Seed::
   ld [hli], a
   ld a, %01111000
   ld [hl], a
+
+  ld hl, TempItems
+  ld de, items
+  ld bc, MAX_ITEMS*2
+  call mem_Copy
 
   ret

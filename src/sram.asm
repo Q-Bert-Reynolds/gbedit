@@ -7,6 +7,7 @@ sram_rival_name: DS NAME_LENGTH
 sram_hours:: DW
 sram_minutes:: DB
 sram_seconds:: DB
+sram_items:: DS MAX_ITEMS*2
 sram_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]

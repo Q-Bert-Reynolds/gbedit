@@ -17,6 +17,7 @@ rival_name:: DS NAME_LENGTH
 hours:: DW
 minutes:: DB
 seconds:: DB
+items:: DS MAX_ITEMS*2;each item is 2 bytes
 
 ;drawing
 sprite_props:: DB

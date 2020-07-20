@@ -1,0 +1,120 @@
+Name,Description,Type,Cost
+Baseball,Used to recruit Players. The cost is reasonable.,Baseball,3
+Game Ball,Regulation Game balls perform better than cheap balls.,Baseball,15
+Series Ball,Post-season Series balls perform better than a Game Ball.,Baseball,50
+Park Ball,This special ball is for recruiting Players in Strike Zone.,Baseball,
+Signed Ball,This ball can recruit Players 100% of the time.,Baseball,
+Helix Jersey,You will need to find the secret of this item.,DNA,
+Dome Helmet,You will need to find the secret of this item.,DNA,
+Old Hat,You will need to find the secret of this item.,DNA,
+Fire Glove,This glove has a connection to Fire Players.,Evolution,10000
+Spark Glove,This glove has a connection to Electric Players.,Evolution,10000
+Water Glove,This glove has a connection to Water Players.,Evolution,10000
+Leaf Glove,This glove has a connection to Grass Players.,Evolution,10000
+Moon Glove,This glove has a connection to ? Players.,Evolution,
+X-Bat,"Available only in games, batting ability will increase.",Game,100
+X-Field,"Available only in games, field ability will increase.",Game,100
+X-Speed,"Available only in games, speed will increase.",Game,100
+X-Throw,"In a game, throwing ability will increase.",Game,100
+Guard Spec.,"In a game, the opposing Player can’t use special abilities.",Game,100
+Dire Hit,"In a game, your swings will be more effective.",Game,100
+X-Accuracy,"In a game, your pitching accuracy will increase.",Game,100
+X-Contact,"In a game, your hitting contact will increase.",Game,100
+Cutout,A cardboard cutout of a Player. Try using it in a game.,Game,
+HM01,,Move,
+HM02,,Move,
+HM03,,Move,
+HM04,,Move,
+HM05,,Move,
+TM01,,Move,
+TM02,,Move,
+TM03,,Move,
+TM04,,Move,
+TM05,,Move,
+TM06,,Move,
+TM07,,Move,
+TM08,,Move,
+TM09,,Move,
+TM10,,Move,
+TM11,,Move,
+TM12,,Move,
+TM13,,Move,
+TM14,,Move,
+TM15,,Move,
+TM16,,Move,
+TM17,,Move,
+TM18,,Move,
+TM19,,Move,
+TM20,,Move,
+TM21,,Move,
+TM22,,Move,
+TM23,,Move,
+TM24,,Move,
+TM25,,Move,
+TM26,,Move,
+TM27,,Move,
+TM28,,Move,
+TM29,,Move,
+TM30,,Move,
+TM31,,Move,
+TM32,,Move,
+TM33,,Move,
+TM34,,Move,
+TM35,,Move,
+TM36,,Move,
+TM37,,Move,
+TM38,,Move,
+TM39,,Move,
+TM40,,Move,
+TM41,,Move,
+TM42,,Move,
+TM43,,Move,
+TM44,,Move,
+TM45,,Move,
+TM46,,Move,
+TM47,,Move,
+TM48,,Move,
+TM49,,Move,
+TM50,,Move,
+Steroids,Increases Player’s level by 1.,Powerup,10000
+HGH,HP level will increase.,Powerup,8000
+Protein,Batting ability points will increase.,Powerup,2000
+Iron,Fielding ability points will increase.,Powerup,2000
+Carbos,Speed points will increase.,Powerup,2000
+Calcium,Throwing ability points will increase.,Powerup,2000
+PP Up,PP level will increase.,Powerup,5000
+Town Map,This map will help you navigate the world of Baseball.,Special,
+Gold Teeth,These belong to the warden of Strike Zone.,Special,
+S.S. Ticket,A boarding ticket for the S.S. Manny.,Special,
+Dream Scope,This allows you to identify a ghostly Player.,Special,
+Harmonica,It wakes up sleeping Players. It’s handy during games.,Special,
+Old Rod,Use this rod to fish with water Players.,Special,
+Good Rod,This rod can recruit Players that the OLD ROD can’t.,Special,
+Super Rod,The best rod. It recruits Players that the other rods can’t.,Special,
+Itemfinder,This handy machine helps you find items.,Special,
+Exp. All,Share experience with Players who didn’t play.,Special,
+Token Case,"Save a maximum of 9,999 tokens in this.",Special,
+Antidote,This removes poison from a Player,Status,100
+Burn Heal,This heals a Player that is burned.,Status,100
+Ice Heal,Thaws a frozen Player.,Status,100
+Awakening,This wakes up a sleeping Player.,Status,100
+Parlyz Heal,This heals a paralyzed Player.,Status,100
+Full Heal,This will heal all of the conditions stated above.,Status,100
+Potion,This will restore some HP.,Status,100
+Super Potion,This will restore more HP than a POTION.,Status,100
+Hyper Potion,This will restore more HP than a SUPER POTION.,Status,100
+Max Potion,This restores HP to its maximum.,Status,100
+Full Restore,This will heal all conditions and fully restore HP.,Status,100
+Revive,This will revive an exhausted Player and restore ½ HP.,Status,100
+Max Revive,This will revive an exhausted Player and fully restore HP.,Status,100
+Water,"During a game, it will restore HP a little.",Status,1
+Beer,"During a game, it will restore HP a lot.",Status,5
+Sport-Ade,"During a game, it will restore HP a lot more.",Status,8
+Rolédex,Record Player data in this high-tech index.,Unlisted,
+Token,Use those at the Casino.,Unlisted,
+Nugget,This item is not very effective unless you’re after gold.,Sell,50000
+Bicycle,This is too expensive for a child to buy.,World,
+Escape Rope,This rope can pull you out of a cave instantly.,World,100
+Repel,Spray on and weak Players will avoid you for a while.,World,100
+Super Repel,This spray lasts longer than REPEL.,World,1000
+Max Repel,This spray lasts longer than SUPER REPEL.,World,10000

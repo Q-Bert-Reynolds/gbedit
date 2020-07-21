@@ -30,7 +30,7 @@ SECTION "Core", ROM0
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
 ; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
 
-Types:
+TypeStrings:
   DB "", 0
   DB "Normal", 0
   DB "Fire", 0
@@ -48,7 +48,7 @@ Types:
   DB "Ghost", 0
   DB "Dragon", 0
 
-Status:
+StatusStrings:
   DB "OK", 0
   DB "BRN", 0
   DB "FRZ", 0
@@ -56,10 +56,13 @@ Status:
   DB "PSN", 0
   DB "SLP", 0
 
+CancelString::
+  DB "CANCEL", 0
+
 GetTypeString:: ;a = type, string in name_buffer
   ld b, 0
   ld c, a
-  ld hl, Types
+  ld hl, TypeStrings
   call str_FromArray
   ld de, name_buffer
   call str_Copy
@@ -68,7 +71,7 @@ GetTypeString:: ;a = type, string in name_buffer
 GetStatusString:: ;a = status, string in name_buffer
   ld b, 0
   ld c, a
-  ld hl, Status
+  ld hl, StatusStrings
   ld de, name_buffer
   call str_FromArray
   ld de, name_buffer

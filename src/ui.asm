@@ -820,9 +820,6 @@ CoachingOptionString:
   DB "                  "
   DB " SHIFT    SET     "
 
-CancelOptionString:
-  DB "CANCEL"
-
 UIShowOptions::
   DISPLAY_OFF
   CLEAR_BKG_AREA 0,0,20,18," "
@@ -916,7 +913,7 @@ UIShowOptions::
   ld e, 16
   ld h, 6
   ld l, 1
-  ld bc, CancelOptionString
+  ld bc, CancelString
   call gbdk_SetBkgTiles
 
   DISPLAY_ON

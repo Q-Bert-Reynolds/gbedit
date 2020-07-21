@@ -30,7 +30,7 @@ ShowItemList::
   ld de, $0503
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
-  call ShowItems
+  call DrawItems
   WAITPAD_UP_OR_FRAMES 20
 .loop
     call UpdateInput
@@ -50,7 +50,7 @@ ShowItemList::
     ld a, [_s]
     add a, b
     ld [_s], a
-    call ShowItems
+    call DrawItems
 .checkA
     ld a, [button_state]
     and a, PADF_A
@@ -69,13 +69,14 @@ ShowItemList::
   SHOW_SPRITES
   ret
 
-ShowItems::
+DrawItems::
   CLEAR_WIN_AREA 6,3,13,9,0
+  call GetItemListLength;list len in b
   ld a, [_s]
   and a
   cp 1
   jr c, .numTooLow
-  cp MAX_ITEMS
+  cp b
   jr nc, .numTooHigh
   jr .draw
 .numTooLow
@@ -83,13 +84,13 @@ ShowItems::
   ld [_s], a
   jr .draw
 .numTooHigh
-  ld a, MAX_ITEMS
+  ld a, b
   ld [_s], a
 .draw
   ld de, $0603
   ld c, 4
 .loop
-    push bc;count
+    push bc;list len, draw count
     push af;num
     push de;xy
     call DrawItemListEntry
@@ -103,9 +104,29 @@ ShowItems::
     jr nz, .loop
   ret
 
-DrawItemListEntry::;a = num, de = xy
-  push de;xy
+GetItemListLength::;puts item list len in b
+  ld b, 0
+  ld hl, items
+.loop
+    inc b
+    ld a, [hli]
+    inc hl
+    and a
+    ret z
+    jr .loop
 
+DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
+  push de;xy
+  cp a, b;is num last?
+  jr c, .drawItem
+  jr z, .drawCancel
+  pop de;xy
+  ret
+.drawCancel
+  ld hl, CancelString
+  jr .draw
+
+.drawItem
   dec a
   ld hl, items
   ld b, 0
@@ -119,6 +140,7 @@ DrawItemListEntry::;a = num, de = xy
   ld hl, ItemNames 
   call str_FromArray
 
+.draw
   ld de, str_buffer
   call str_Copy
 

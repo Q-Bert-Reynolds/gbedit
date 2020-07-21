@@ -116,6 +116,7 @@ GetItemListLength::;puts item list len in b
     jr .loop
 
 DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
+  inc e;y++
   push de;xy
   cp a, b;is num last?
   jr c, .drawItem
@@ -136,9 +137,47 @@ DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
   ld a, [hli];get item id
   dec a
   ld c, a
+  ld a, [hl];get item count
+  and a
+  jr z, .getItemName
 
+.drawItemCount
+  ld h, 0
+  ld l, a;item count
+  push bc;item index
+  push de;xy
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  pop de;xy
+  inc e
+  push de;xy
+  ld a, 17
+  sub a, h
+  ld d, a
+  ld bc, name_buffer
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  call SetTiles
+
+  pop de
+  ld d, 14
+  ld bc, name_buffer
+  ld a, "x"
+  ld [bc], a
+  ld hl, $0101
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  call SetTiles
+
+  pop bc;item index
+
+.getItemName
   ld hl, ItemNames 
-  call str_FromArray
+  call str_FromArray;item index in bc
 
 .draw
   ld de, str_buffer
@@ -150,7 +189,6 @@ DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
   ld h, e
   ld l, 1
   pop de;xy
-  inc e
   ld bc, str_buffer
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call SetTiles

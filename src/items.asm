@@ -7,7 +7,6 @@ ShowItemListFromWorld::
   ld a, ITEM_BANK
   call SetBank
 
-  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call ShowItemList
 
   ld a, OVERWORLD_BANK
@@ -15,31 +14,31 @@ ShowItemListFromWorld::
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
-ShowItemList::; a = draw flags
-  push af;draw flags
+ShowItemList::
   ld bc, $0402
   ld de, $100B
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawUIBox
   HIDE_SPRITES
 
   xor a
-  ld [_s], a
   ld [_j], a
+  ld a, 1
+  ld [_s], a
   ld a, 3
   ld [_c], a
-  pop af;draw flags
-  push af;draw flags
   ld de, $0503
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
+  call ShowItems
   WAITPAD_UP_OR_FRAMES 20
 .loop
     call UpdateInput
     ld de, $0503
     ld a, [_j]
     ld c, a
-    pop af;draw flags
-    push af;draw flags
     push bc;old _j in c
+    ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
     call MoveListMenuArrow
     pop bc;old _j in c
     ld b, a;store dir
@@ -67,11 +66,11 @@ ShowItemList::; a = draw flags
     call gbdk_WaitVBL
     jp .loop
 .exit
-  pop af;draw flags
   SHOW_SPRITES
   ret
 
 ShowItems::
+  CLEAR_WIN_AREA 6,3,13,9,0
   ld a, [_s]
   and a
   cp 1
@@ -104,7 +103,36 @@ ShowItems::
     jr nz, .loop
   ret
 
-DrawItemListEntry
+DrawItemListEntry::;a = num, de = xy
+  push de;xy
+
+  dec a
+  ld hl, items
+  ld b, 0
+  ld c, a
+  add hl, bc
+  add hl, bc
+  ld a, [hli];get item id
+  dec a
+  ld c, a
+
+  ld hl, ItemNames 
+  call str_FromArray
+
+  ld de, str_buffer
+  call str_Copy
+
+  ld hl, str_buffer
+  call str_Length
+
+  ld h, e
+  ld l, 1
+  pop de;xy
+  inc e
+  ld bc, str_buffer
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  call SetTiles
+  ret
 
 UseSelectedItem::
   ld a, -1

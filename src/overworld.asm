@@ -456,6 +456,7 @@ ShowPlayerAvatar:
   call MoveSprites ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld a, [last_map_button_state]
   call Look
+  SHOW_SPRITES
   ret 
 
 LoadAvatarSprites:

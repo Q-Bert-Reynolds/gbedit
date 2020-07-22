@@ -106,7 +106,6 @@ ShowInventory::
     call gbdk_WaitVBL
     jp .loop
 .exit
-  SHOW_SPRITES
   ret
 
 DrawItems::

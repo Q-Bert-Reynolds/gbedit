@@ -45,12 +45,28 @@ ShowItemList::
     ld a, [_j]
     sub a, c;change in _j
     cp b;check if change is same as expected
-    jr z, .checkA
+    jr z, .flashDownArrow
 .scrollItems
     ld a, [_s]
     add a, b
     ld [_s], a
     call DrawItems
+.flashDownArrow
+    ld a, [vbl_timer]
+    cp a, 30
+    ld a, 0
+    jr c, .drawDown
+.drawDownArrow
+    ld a, ARROW_DOWN
+.drawDown
+    ld d, 18
+    ld e, 11
+    ld bc, name_buffer
+    ld [bc], a
+    ld hl, $0101
+    pop af;draw flags
+    push af
+    call SetTiles
 .checkA
     ld a, [button_state]
     and a, PADF_A
@@ -72,6 +88,9 @@ ShowItemList::
 DrawItems::
   CLEAR_WIN_AREA 6,3,13,9,0
   call GetItemListLength;list len in b
+  ld a, b
+  sub a, 3
+  ld b, a
   ld a, [_s]
   and a
   cp 1
@@ -85,6 +104,7 @@ DrawItems::
   jr .draw
 .numTooHigh
   ld a, b
+  sub a, 2
   ld [_s], a
 .draw
   ld de, $0603

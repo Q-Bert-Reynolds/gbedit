@@ -1,7 +1,6 @@
 Priority
 
 - items button should open a list on both pause menu and play ball
-  - don't allow cursor past cancel button
   - use select to swap items in list
   - use items
 - results from hitting to the field

@@ -64,8 +64,7 @@ ShowItemList::
     ld bc, name_buffer
     ld [bc], a
     ld hl, $0101
-    pop af;draw flags
-    push af
+    ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
     call SetTiles
 .checkA
     ld a, [button_state]
@@ -88,9 +87,7 @@ ShowItemList::
 DrawItems::
   CLEAR_WIN_AREA 6,3,13,9,0
   call GetItemListLength;list len in b
-  ld a, b
-  sub a, 3
-  ld b, a
+  dec b
   ld a, [_s]
   and a
   cp 1
@@ -103,10 +100,11 @@ DrawItems::
   ld [_s], a
   jr .draw
 .numTooHigh
-  ld a, b
-  sub a, 2
+  ld a, [_s]
+  dec a
   ld [_s], a
 .draw
+  inc b
   ld de, $0603
   ld c, 4
 .loop

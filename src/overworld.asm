@@ -394,6 +394,7 @@ ShowPauseMenu::
   cp 3
   jr nz, .user
   call ShowItemListFromWorld
+  ld [_breakpoint], a
   jr .returnToPauseMenu
 .user
   cp 4

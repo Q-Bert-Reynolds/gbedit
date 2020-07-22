@@ -393,13 +393,12 @@ ShowPauseMenu::
 .item
   cp 3
   jr nz, .user
-  call ShowItemListFromWorld
-  ld [_breakpoint], a
+  call ShowInventoryFromWorld
   jr .returnToPauseMenu
 .user
   cp 4
   jr nz, .save
-  ;TODO: call ShowUserData
+  call ShowUserData
   jr .returnToPauseMenu
 .save
   cp 5
@@ -440,8 +439,12 @@ ShowPauseMenu::
 
   ret
 
-CheckActions:
+ShowUserData:
+  ;TODO
+  ret
 
+CheckActions:
+  ;look up position + facing in action map
   ret
 
 ShowPlayerAvatar:

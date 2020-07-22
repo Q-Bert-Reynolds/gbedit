@@ -3,30 +3,55 @@ INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
-ShowItemListFromWorld::
+ShowInventoryFromWorld::
   ld a, ITEM_BANK
   call SetBank
 
-  call ShowItemList
+  call ShowInventory
 
   ld a, OVERWORLD_BANK
   call SetBank
   ret
 
+GetInventoryItemID::; a = index of item in list
+  ld hl, items
+  ld b, 0
+  ld c, a
+  add hl, bc
+  add hl, bc
+  ld a, [hli];get item id
+  ret 
+
+GetItemData::;a = item id, returns item data address in hl
+  ld hl, ItemList
+  ld b, 0
+  ld c, a
+  add hl, bc
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ret
+
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
-ShowItemList::
+ShowInventory::
   ld bc, $0402
   ld de, $100B
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawUIBox
   HIDE_SPRITES
 
+  call GetInventoryLength;number of items in b
+  ld a, b
+  ld [_b], a;number of items
   xor a
-  ld [_j], a
+  ld [_j], a;index
   ld a, 1
-  ld [_s], a
+  ld [_s], a;current page
   ld a, 3
-  ld [_c], a
+  ld [_c], a;number of places the list menu arrow can be
   ld de, $0503
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
@@ -70,7 +95,7 @@ ShowItemList::
     ld a, [button_state]
     and a, PADF_A
     jr z, .checkB
-    call UseSelectedItem
+    call SelectItem
     cp a, -1
     jr z, .exit
 .checkB
@@ -86,7 +111,8 @@ ShowItemList::
 
 DrawItems::
   CLEAR_WIN_AREA 6,3,13,9,0
-  call GetItemListLength;list len in b
+  ld a, [_b]
+  ld b, a
   dec b
   ld a, [_s]
   and a
@@ -111,7 +137,7 @@ DrawItems::
     push bc;list len, draw count
     push af;num
     push de;xy
-    call DrawItemListEntry
+    call DrawInventoryEntry
     pop de;xy
     inc e
     inc e;y+=2
@@ -122,7 +148,7 @@ DrawItems::
     jr nz, .loop
   ret
 
-GetItemListLength::;puts item list len in b
+GetInventoryLength::;puts item list len in b
   ld b, 0
   ld hl, items
 .loop
@@ -133,7 +159,7 @@ GetItemListLength::;puts item list len in b
     ret z
     jr .loop
 
-DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
+DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   inc e;y++
   push de;xy
   cp a, b;is num last?
@@ -212,6 +238,58 @@ DrawItemListEntry::;a = num, de = xy, bc = list len, draw count
   call SetTiles
   ret
 
-UseSelectedItem::
+UseTossText:
+  db "USE\nTOSS",0
+
+SelectItem::
+  ld a, [_b]
+  ld b, a
+  ld a, [_s]
+  ld c, a
+  ld a, [_j]
+  add a, c
+  cp a, b
+  jr z, .exit
+.getItem
+  dec a
+  call GetInventoryItemID;item id in a
+  call GetItemData;item data address in hl
+  push hl;item data address
+
+  ld hl, UseTossText
+  ld de, str_buffer
+  call str_Copy
+  xor a
+  ld [name_buffer], a
+  ld a, DRAW_FLAGS_WIN
+  ld b, 13
+  ld c, 10
+  ld d, 7
+  ld e, 5
+  call ShowListMenu
+  and a
+  jp z, .exit
+
+.tossItem
+  pop hl;item data address
+  jp .exit
+
+.useItem
+  pop hl;item data address
+  inc hl
+  ld a, [hld];a = item type
+  cp ITEM_TYPE_BASEBALL
+  cp ITEM_TYPE_DNA
+  cp ITEM_TYPE_EVOLUTION
+  cp ITEM_TYPE_GAME
+  cp ITEM_TYPE_MOVE
+  cp ITEM_TYPE_POWERUP
+  cp ITEM_TYPE_SPECIAL
+  cp ITEM_TYPE_STATUS
+  cp ITEM_TYPE_UNLISTED
+  cp ITEM_TYPE_SELL
+  cp ITEM_TYPE_WORLD
+  
+.exit
   ld a, -1
   ret

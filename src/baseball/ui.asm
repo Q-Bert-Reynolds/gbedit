@@ -683,7 +683,7 @@ SelectMoveMenuItem:: ;returns selection in a
   ld d, PITCHING_MOVES
 .getMoveCount
   call GetPlayerMoveCount
-  ld [_c], a
+  ld [_c], a;move count
   pop hl;player
 .loopMoves
     push hl;player
@@ -740,13 +740,13 @@ SelectMoveMenuItem:: ;returns selection in a
     ld a, [button_state]
     and PADF_DOWN
     jr z, .checkButtonStartA
-    ld a, [_c]
+    ld a, [_c];move count
     dec a
     ld c, a
     ld a, [move_choice]
     cp c
     jr nc, .checkButtonStartA
-    inc a ;++move_choice;
+    inc a
     ld [move_choice], a
     call MoveMoveMenuArrow
     call ShowMoveInfo

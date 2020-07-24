@@ -1043,6 +1043,7 @@ StartGame::
 .itemMenuItemSelected
     cp 2
     jr nz, .runMenuItemSelected
+    call ShowInventoryFromPlayBall
     jr .playBallLoop
 .runMenuItemSelected
     cp 3

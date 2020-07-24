@@ -13,6 +13,25 @@ ShowInventoryFromWorld::
   call SetBank
   ret
 
+ShowInventoryFromPlayBall::
+  call CopyBkgToWin
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  SHOW_WIN
+  
+  ld a, ITEM_BANK
+  call SetBank
+
+  call ShowInventory
+
+  ld a, PLAY_BALL_BANK
+  call SetBank
+
+  HIDE_WIN
+  ret
+
 GetInventoryItemID::; a = index of item in list
   ld hl, items
   ld b, 0

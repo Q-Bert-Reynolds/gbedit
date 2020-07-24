@@ -1,8 +1,5 @@
 Priority
 
-- items button should open a list on both pause menu and play ball
-  - use select to swap items in list
-  - use items
 - show user data when name selected from pause menu
 - results from hitting to the field
 - set contact power from move, player, and barrel
@@ -73,6 +70,11 @@ Team Menu
   - should be accessible from PC as well
   - show pitch or bat icon next to move PP
 - show appropriate stat (ie. BA, ERA) below age
+
+Items
+  - use status items
+  - make offer to unsigned players
+  - use select to swap items in list
 
 Overworld
 

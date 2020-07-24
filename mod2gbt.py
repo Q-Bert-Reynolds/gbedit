@@ -1,4 +1,5 @@
 import os
+import subprocess
 import shutil
 
 def main():
@@ -9,7 +10,8 @@ def main():
         if ext != ".mod":
             continue
         name = os.path.basename(base)
-        os.system("bin/mod2gbt {0} {1}".format(path, name))
+        mod2gbt = os.path.join(os.getcwd(), "bin", "mod2gbt") 
+        subprocess.Popen("{0} {1} {2}".format(mod2gbt, path, name), shell=True).wait()
         shutil.move("./" + name + ".asm", "./music/" + name + ".asm")
 
 if __name__ == "__main__":

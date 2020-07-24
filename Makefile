@@ -18,7 +18,12 @@ all:
 	rgblink -m $(OBJ_DIR)/main.map -n $(SYM_FILE) -o $(ROM_FILE) $(OBJ_DIR)/main.o
 	rgbfix -jvcs -k 01 -l 0x33 -m 0x1B -p 0 -r 03 -t $(GAME_NAME) $(ROM_FILE)
 
-	# open $(ROM_FILE)
+ifeq ($(OS), Windows_NT)
+	start "$(ROM_FILE)"
+else
+	open $(ROM_FILE)
+endif
+	
 
 clean:
 	# @rm -rf $(DIST_DIR)

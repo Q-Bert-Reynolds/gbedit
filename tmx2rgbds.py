@@ -4,7 +4,6 @@ import xml.etree.ElementTree as tree
 import pathlib 
 
 bank = 0
-data_written = 0
 
 def main():
   for root, folders, files in os.walk("./maps"):
@@ -16,7 +15,7 @@ def main():
 
 def tmx_to_asm(path):
   global bank
-  global data_written
+  data_written = 0
 
   base, ext = os.path.splitext(path)
   if ext != ".tmx":
@@ -49,7 +48,7 @@ def tmx_to_asm(path):
       hex_string = hex_strings[i]
       asm_file.write("_" + PascalCase(name) + str(i) + "Tiles: INCBIN \"")
       path = pathlib.PurePath(base + str(i) + ".tilemap").as_posix()
-      asm_file.write(path+"\"\n")
+      asm_file.write(path+ "\"\n")
       
       with open(base + str(i) + ".tilemap", "wb") as bin_file:
         bin_file.write(bytes.fromhex(hex_string))

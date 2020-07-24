@@ -415,16 +415,8 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   call mem_Copy; memcpy(name_buff, user_name, 7);
   call UpdateAudio
 
-  ld hl, name_buffer
-  call str_Length
-  ld a, d
-  and a
-  jp nz, .noSaveFile
-  ld a, e
-  and a
-  jp z, .noSaveFile
-  cp 8
-  jp nc, .noSaveFile
+  call CheckSave
+  jr z, .noSaveFile
 
 .newGameContinueLoop; while (name_buff[0] > 0) {
   xor a

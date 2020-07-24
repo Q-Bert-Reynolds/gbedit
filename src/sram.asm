@@ -48,6 +48,11 @@ LoadGame::
   ld bc, sram_end - sram_user_name
   call mem_Copy
 
+  ld hl, name_buffer
+  call str_Length
+  ld a, d
+  and a
+
   ;load user's lineup
   SWITCH_RAM_MBC5 TEAM_SRAM_BANK
   ld hl, sram_UserLineup
@@ -58,6 +63,25 @@ LoadGame::
   DISABLE_RAM_MBC5
   reti
 
+CheckSave::;returns z if no save
+  ENABLE_RAM_MBC5
+  SWITCH_RAM_MBC5 MAIN_SRAM_BANK
+  ld hl, sram_user_name
+  call str_Length
+  DISABLE_RAM_MBC5
+
+  ld a, d
+  and a
+  jp nz, .noSaveFile
+  ld a, e
+  and a
+  jp z, .noSaveFile
+  cp 8
+  jp nc, .noSaveFile
+  ret
+.noSaveFile
+  xor a
+  ret
   
 SaveGame::
   di

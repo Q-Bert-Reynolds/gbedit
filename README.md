@@ -23,6 +23,7 @@ You've finally been granted your Béisbol coach's license. Now, it's time to hea
     python3 tmx2rgbds.py
     python3 roledex.py
     python3 moves.py
+    python3 items.py
     make clean
     make
 

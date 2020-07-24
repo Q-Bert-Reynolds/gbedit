@@ -1,4 +1,4 @@
-SECTION "Play Ball", ROMX, BANK[PLAY_BALL_BANK]
+SECTION "Play Ball Images", ROMX, BANK[PLAY_BALL_BANK]
 
 INCLUDE "img/baseball.asm"
 INCLUDE "img/circle.asm"

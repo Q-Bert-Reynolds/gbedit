@@ -565,7 +565,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
 
   ret
 
-FlipTileMapX;hl=wh; bc=in_tiles, de=out_tiles
+FlipTileMapX:;hl=wh; bc=in_tiles, de=out_tiles
   push hl;wh
   xor a
   ld [_j], a

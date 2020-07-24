@@ -78,7 +78,7 @@ IntroBattingXSeq:
   DB  5,  5,  5,  5,  5,  5,  5,  5 ;ready
   DB  2,  4,  4,  4,  4,  4,  4,  4 ;swing
 
-IntroPitchingTileMaps
+IntroPitchingTileMaps:
   DW _IntroPitch0TileMap
   DW _IntroPitch1TileMap
   DW _IntroPitch2TileMap

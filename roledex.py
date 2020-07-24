@@ -3,6 +3,7 @@ import glob
 import csv
 import textwrap
 import math
+import pathlib 
 
 players_per_file = 27
 file_count = math.ceil(151 / players_per_file)
@@ -88,6 +89,7 @@ def generate_img_bank(roledex):
       player = roledex[index]
       name = player["#"] + player["Nickname"].replace(" ","").replace("-","")
       for path in glob.glob("./img/players/"+name+"/"+name+"_*.asm"):
+        path = pathlib.PurePath(path).as_posix()
         asm_file.write("INCLUDE \"" + path + "\"\n")
         bytes_so_far += bytes_per_anim
         if (bytes_so_far >= 16384):

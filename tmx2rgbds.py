@@ -1,6 +1,7 @@
 import os
 import csv
 import xml.etree.ElementTree as tree
+import pathlib 
 
 bank = 0
 data_written = 0
@@ -47,7 +48,8 @@ def tmx_to_asm(path):
         asm_file.write("SECTION \""+name+str(bank)+"\", ROMX, BANK[MAPS_BANK+"+str(bank)+"]\n")
       hex_string = hex_strings[i]
       asm_file.write("_" + PascalCase(name) + str(i) + "Tiles: INCBIN \"")
-      asm_file.write(base + str(i) + ".tilemap\"\n")
+      path = pathlib.PurePath(base + str(i) + ".tilemap").as_posix()
+      asm_file.write(path+"\"\n")
       
       with open(base + str(i) + ".tilemap", "wb") as bin_file:
         bin_file.write(bytes.fromhex(hex_string))

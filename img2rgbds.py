@@ -1,6 +1,7 @@
 import os
 import math
 import colorsys
+import pathlib 
 from PIL import Image
 from PIL import GifImagePlugin
 from sgb_border import convert as sgb_convert
@@ -127,20 +128,22 @@ def folder_to_asm (root, files):
 def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
   if len(tileset) == 0:
     return
-  if len(tileset) > 256:
-    print("Error: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
-  elif "_2x" in name and len(tileset) > 16:
-    print("Warning: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
-  elif len(tileset) > 64:
-    print("Warning: " + os.path.join(root, name + ".tiles") + " has " + str(len(tileset)) + " tiles.")
-    
+  
   name = name.replace("home_", "").replace("away_", "")
+  tilesPath = pathlib.PurePath(root, name + ".tiles").as_posix()
+  if len(tileset) > 256:
+    print("Error: " + tilesPath + " has " + str(len(tileset)) + " tiles.")
+  elif "_2x" in name and len(tileset) > 16:
+    print("Warning: " + tilesPath + " has " + str(len(tileset)) + " tiles.")
+  elif len(tileset) > 64:
+    print("Warning: " + tilesPath + " has " + str(len(tileset)) + " tiles.")
+    
   with open(os.path.join(root, name + ".asm"), "w+") as asm_file:
     asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
     asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(len(tileset)) + "\n")
 
     asm_file.write("_"+PascalCase(name)+"Tiles: INCBIN \"")
-    asm_file.write(os.path.join(root, name) + ".tiles\"\n")
+    asm_file.write(tilesPath + "\"\n")
     
     with open(os.path.join(root, name) + ".tiles", "wb") as bin_file:
       hex_string = ""
@@ -153,8 +156,9 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
       if "avatar" not in img_name:
         asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
         asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
+      tilemapPath = pathlib.PurePath(root, img_name + ".tilemap").as_posix()
       asm_file.write("_" + PascalCase(img_name)+"TileMap: INCBIN \"")
-      asm_file.write(os.path.join(root, img_name) + ".tilemap\"\n")
+      asm_file.write(tilemapPath+"\"\n")
 
       with open(os.path.join(root, img_name) + ".tilemap", "wb") as bin_file:
         hex_string = ""
@@ -163,8 +167,9 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
         bin_file.write(bytes.fromhex(hex_string))
 
       if "avatar" in img_name:
+        propmapPath = pathlib.PurePath(root, img_name + ".propmap").as_posix()
         asm_file.write("_" + PascalCase(img_name)+"PropMap: INCBIN \"")
-        asm_file.write(os.path.join(root, img_name) + ".propmap\"\n")
+        asm_file.write(propmapPath+"\"\n")
         with open(os.path.join(root, img_name) + ".propmap", "wb") as bin_file:
           hex_string = ""
           for i in range(0, len(properties[img_name])):
@@ -259,8 +264,9 @@ def png_to_gb (path, base, name):
       asm_file.write("IF !DEF(_" + name.upper() + "_TILE_COUNT)\n")
       asm_file.write("_" + name.upper() + "_TILE_COUNT EQU " + str(tile_count) + "\n")
 
+      tilesPath = pathlib.PurePath(base + ".tiles").as_posix()
       asm_file.write("_"+PascalCase(name)+"Tiles: INCBIN \"")
-      asm_file.write(base + ".tiles\"\n")
+      asm_file.write(tilesPath+"\"\n")
       with open(base + ".tiles", "wb") as bin_file:
         hex_string = ""
         for tile in tileset:
@@ -307,8 +313,9 @@ def png_to_gb (path, base, name):
         asm_file.write("_" + name.upper() + "_ROWS EQU " + str(rows) + "\n")
         asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
       
+      tilesPath = pathlib.PurePath(base + ".tiles").as_posix()
       asm_file.write("_"+PascalCase(name)+"Tiles: INCBIN \"")
-      asm_file.write(base + ".tiles\"\n")
+      asm_file.write(tilesPath+"\"\n")
       with open(base + ".tiles", "wb") as bin_file:
         hex_string = ""
         for tile in tileset:
@@ -316,8 +323,9 @@ def png_to_gb (path, base, name):
         bin_file.write(bytes.fromhex(hex_string))
 
       if has_map:
+        tilemapPath = pathlib.PurePath(base + ".tilemap").as_posix()
         asm_file.write("_"+PascalCase(name)+"TileMap: INCBIN \"")
-        asm_file.write(base + ".tilemap\"\n")
+        asm_file.write(tilemapPath+"\"\n")
         with open(base + ".tilemap", "wb") as bin_file:
           hex_string = ""
           for i in range(0, len(tilemap), cols):

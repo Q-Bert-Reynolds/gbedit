@@ -2,7 +2,7 @@ import csv
 
 def main():
   items = []
-  with open("./data/items.csv") as file:
+  with open("./data/items.csv", encoding='utf8') as file:
     dict_reader = csv.DictReader(file)
     for item in dict_reader:
       items.append(item)
@@ -11,7 +11,7 @@ def main():
   generate_item_strings(items)
 
 def generate_item_strings(items):
-  with open("./data/item_strings.asm", "w+") as c_file:
+  with open("./data/item_strings.asm", "w+", encoding='utf8') as c_file:
     c_file.write("SECTION \"Item Strings\", ROMX, BANK[ITEM_BANK]\n")
     
     c_file.write("\nItemNames::\n")

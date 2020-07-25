@@ -16,6 +16,7 @@ INCLUDE "src/sgb.asm"
 INCLUDE "src/audio.asm"
 INCLUDE "src/ui.asm"
 INCLUDE "src/items.asm"
+INCLUDE "src/user.asm"
 
 INCLUDE "src/baseball/images.asm"
 INCLUDE "src/roledex/roledex.asm"

@@ -398,7 +398,7 @@ ShowPauseMenu::
 .user
   cp 4
   jr nz, .save
-  call ShowUserData
+  call ShowUserInfo
   jr .returnToPauseMenu
 .save
   cp 5
@@ -437,10 +437,6 @@ ShowPauseMenu::
   call SetMapTiles
   WAITPAD_UP
 
-  ret
-
-ShowUserData:
-  ;TODO
   ret
 
 CheckActions:

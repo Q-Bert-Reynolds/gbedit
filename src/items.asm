@@ -1,4 +1,3 @@
-
 INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 

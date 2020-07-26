@@ -18,7 +18,7 @@ hours:: DW
 minutes:: DB
 seconds:: DB
 items:: DS MAX_ITEMS*2;each item is 2 bytes
-money:: DS 3
+money:: DS 3;max ~$17m, probably should be 32bit so we can store ~$4b
 
 ;drawing
 sprite_props:: DB

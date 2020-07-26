@@ -1,6 +1,5 @@
 Priority
 
-- show user data when name selected from pause menu
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -72,6 +71,7 @@ Team Menu
 - show appropriate stat (ie. BA, ERA) below age
 
 Items
+  - showing items from play ball breaks sprites and text padding
   - use status items
   - make offer to unsigned players
   - use select to swap items in list

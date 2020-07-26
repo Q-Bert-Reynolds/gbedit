@@ -1914,7 +1914,8 @@ UIDrawSaveStats::;a = draw flags, de = xy
   TRAMPOLINE GetTimePlayedString
   pop af;draw flags
   pop de;xy
-
+  push de;xy
+  push af;draw flags
   ld hl, str_buffer
   call str_Length
   

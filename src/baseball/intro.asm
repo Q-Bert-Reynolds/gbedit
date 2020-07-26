@@ -121,7 +121,7 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld l, _CALVIN_BACK_2X_ROWS-4
   ld bc, _CalvinBack2xTileMap + 3*_CALVIN_BACK_2X_COLUMNS
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   pop af;player or team
   push af;player or team

@@ -23,7 +23,7 @@ ShowField:
   ld de, 0
   ld bc, _FieldTileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld de, $8000
   ld bc, _SIMULATION_TILE_COUNT*16

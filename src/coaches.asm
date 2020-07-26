@@ -89,7 +89,7 @@ BankedSetCoachTiles:: ;a = coach, de=xy, h=offset
   ld a, h; a = offset
 
   ld hl, $0707
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
   ret
 
 BankedGetCoachsName:: ;a = coach, returns name in name_buffer

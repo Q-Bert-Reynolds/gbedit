@@ -417,7 +417,7 @@ ENDC
   ld l, _SILHOUETTE0_ROWS
   ld bc, _Silhouette0TileMap
   ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld de, 500
   call gbdk_Delay
@@ -428,7 +428,7 @@ ENDC
   ld l, _SILHOUETTE1_ROWS
   ld bc, _Silhouette1TileMap
   ld a, _UI_FONT_TILE_COUNT+_CALVIN_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld de, 500
   call gbdk_Delay

@@ -280,7 +280,7 @@ ShowTitle:
   ld l, _VERSION_ROWS
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   PLAY_SFX VersionSlideInSound
 
@@ -302,7 +302,7 @@ ShowTitle:
   ld l, _VERSION_ROWS
   ld a, _TITLE_TILE_COUNT
   ld bc, _VersionTileMap
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ; PLAY_SONG take_me_out_to_the_ballgame_data, 1
 
@@ -440,9 +440,6 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld a, DRAW_FLAGS_BKG
   call DrawSaveStats
 
-  ; sprintf(str_buff, "%d:%d", 999, 59);
-  ; l = strlen(str_buff);
-  ; call gbdk_SetBkgTiles ;set_bkg_tiles(19-l,15,l,1,str_buff);
   WAITPAD_UP
 .showGameStatsLoop ;while (1) {
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .returnY, PADF_A ;if (joypad() & J_A) return y;

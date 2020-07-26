@@ -18,6 +18,7 @@ hours:: DW
 minutes:: DB
 seconds:: DB
 items:: DS MAX_ITEMS*2;each item is 2 bytes
+money:: DS 3
 
 ;drawing
 sprite_props:: DB

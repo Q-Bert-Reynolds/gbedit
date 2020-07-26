@@ -450,7 +450,7 @@ PreSetPlayerBkgTiles:
 
 SetPlayerBkgTiles:: ; a = number, bc = xy, de = vram_offset
   call PreSetPlayerBkgTiles
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld a, [temp_bank]
   call SetBank
@@ -466,8 +466,8 @@ SetPlayerBkgTilesFlipped:: ; a = number, bc = xy, de = vram_offset
   pop af
   pop de
   pop hl
-  ld bc, str_buffer;because SetBKGTilesWithOffset uses tile buffer
-  call SetBKGTilesWithOffset;hl=wh, de=xy, bc=in_tiles, a=offset
+  ld bc, str_buffer;because SetBkgTilesWithOffset uses tile buffer
+  call SetBkgTilesWithOffset;hl=wh, de=xy, bc=in_tiles, a=offset
 
   ld a, [temp_bank]
   call SetBank
@@ -668,7 +668,7 @@ SetUserPlayerBkgTiles:: ;a = frame
   ld hl, $0807;wh
   ld de, $0005;xy
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld a, [temp_bank]
   call SetBank
@@ -741,7 +741,7 @@ SetOpposingPlayerBkgTiles:: ;a = frame
   ld hl, $0807;wh
   ld de, $0C00;xy
   ld a, _UI_FONT_TILE_COUNT+64
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld a, [temp_bank]
   call SetBank

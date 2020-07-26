@@ -467,7 +467,7 @@ UIDrawStateMap::
   ld l, _TOWN_MAP_ROWS
   ld bc, _TownMapTileMap
   ld a, _UI_FONT_TILE_COUNT
-  call SetBKGTilesWithOffset
+  call SetBkgTilesWithOffset
 
   ld hl, SGBTownMapPalSet               
   call SetPalettesIndirect
@@ -1911,37 +1911,9 @@ UIDrawSaveStats::;a = draw flags, de = xy
   push af
   call SetTiles
 
-.drawTimeNums
-  ld a, [hours]
-  ld h, a
-  ld a, [hours+1]
-  ld l, a
-  ld de, str_buffer
-  call str_Number
-
-  ld hl, name_buffer
-  ld a, ":"
-  ld [hli], a
-  xor a
-  ld [hld], a
-  ld de, str_buffer
-  call str_Append
-
-  ld de, name_buffer
-  ld h, 0
-  ld a, [minutes]
-  ld l, a
-  cp a, 10
-  jr nc, .skipTensDigit
-  ld a, "0"
-  ld [de], a
-  inc de
-.skipTensDigit
-  call str_Number
-
-  ld hl, name_buffer
-  ld de, str_buffer
-  call str_Append
+  TRAMPOLINE GetTimePlayedString
+  pop af;draw flags
+  pop de;xy
 
   ld hl, str_buffer
   call str_Length

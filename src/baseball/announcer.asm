@@ -4,7 +4,7 @@ AnnounceSwingTiming:: ;hl = text address
   ld a, ANNOUNCER_BANK
   call SetBank
   
-  ld a, DRAW_FLAGS_WIN
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText
 
   ld a, PLAY_BALL_BANK
@@ -164,13 +164,13 @@ AnnouncePitcherSets::
   ld de, str_buffer
   call str_Replace
   ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText
   ret
 
 AnnounceAndThePitch::
   ld hl, AndThePitchText
-  ld a, DRAW_FLAGS_WIN
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText;"And the pitch."
   ret
 
@@ -191,7 +191,7 @@ AnnouncePitchName::
   call str_Append;"And the pitch."
 
   ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText
   ret
 
@@ -214,7 +214,7 @@ AnnounceBatterStepsIntoBox::
   ld de, str_buffer
   call str_Replace
   ld hl, str_buffer
-  ld a, DRAW_FLAGS_WIN
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText
   ret
 

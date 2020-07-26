@@ -33,6 +33,13 @@ _ShowUserInfo:
   ld a, _UI_FONT_TILE_COUNT
   call SetWinTilesWithOffset
 
+.drawPennantsText
+  ld bc, PennantsText
+  ld hl, $0A01
+  ld de, $0509
+  ld a, DRAW_FLAGS_WIN
+  call SetTiles
+
 .drawUserName
   ld hl, NameText
   ld de, str_buffer

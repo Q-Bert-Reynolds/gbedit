@@ -71,19 +71,18 @@ Team Menu
 - show appropriate stat (ie. BA, ERA) below age
 
 Items
-  - showing items from play ball breaks sprites and text padding
-  - use status items
-  - make offer to unsigned players
-  - use select to swap items in list
 
+- use status items
+- make offer to unsigned players
+- use select to swap items in list
+ 
 Overworld
 
 - pause menu should remember last selection
 - replace map system, should be sparse objects in 32x32 tile regions
   - different building sizes
   - patches of trees, grass, water
-  - paths, fences, 
-  - 
+  - paths, fences
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions

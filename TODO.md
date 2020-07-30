@@ -1,5 +1,6 @@
 Priority
 
+- use potions
 - results from hitting to the field
 - set contact power from move, player, and barrel
 
@@ -72,7 +73,6 @@ Team Menu
 
 Items
 
-- use status items
 - make offer to unsigned players
 - use select to swap items in list
  

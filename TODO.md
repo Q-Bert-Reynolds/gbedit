@@ -1,16 +1,10 @@
-Priority
-
-- toss item logic
-- use potions
-- results from hitting to the field
-- set contact power from move, player, and barrel
-
 General
 
 - link cable support!
 - move all strings to separate (generated) file
 - give math subroutines more appropriate names
 - big list of "real names" to use in place of ID and OT
+- cut off sprites with the text box using an LCD interrupt (see https://gbdev.io/pandocs/#faux-layer-textbox-status-bar)
 
 Optimization
 
@@ -23,26 +17,25 @@ Optimization
 
 Python scripts
 
+- roledex description parser should print warning when more than 6 lines
+- avatar directional maps should be organized into arrays
 - generate GBC palette maps from images
 - SGB borders should (optionally?) use PNG palettes directly
 - duplicate functionality (like the PascalCase function) should be moved to library file
-- avatar directional maps should be organized into arrays
 - only update .asm file when PNG, GIF, TMX, or MOD files change
 - handle 1bpp and rle images
-- roledex description parser should print warning when more than 6 lines
 
-Intro
+Start
 
-- home version batter has too many tiles
-- make ball movement smooth
-- randomize players
-
-New Game
-
-- load bedroom map
+- intro home version batter has too many tiles
+- make intro ball movement smooth
+- randomize(ish) scrolling players on title screen
+- load bedroom map after new game scene ends
 
 Play Ball
 
+- results from hitting to the field
+- set contact power from move, player, and barrel
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes
 - pitches in the dirt should bounce
 - hide strikezone after pitcher sets
@@ -66,14 +59,16 @@ Simulation
 
 Team Menu
 
-- stat page
-  - missing moves in move list should show "-"
-  - should be accessible from PC as well
-  - show pitch or bat icon next to move PP
+- missing moves in stat page move list should show "-"
+- stat page should be accessible from PC
+- show pitch or bat icon next to move PP
 - show appropriate stat (ie. BA, ERA) below age
 
 Items
 
+- toss item logic
+- show "ABLE" or not in team
+- use potions
 - make offer to unsigned players
 - use select to swap items in list
  
@@ -120,6 +115,7 @@ Super GameBoy
 
 Design Notes
 
+- rather than selecting a player, you're selecting one of Doc Hicory's three teams - you get to name it
 - play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to
 - pitch speed should be a relative speed so that pitches appear faster when the pitcher's Throw stat is higher than the batter's Bat stat
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
@@ -128,3 +124,4 @@ Design Notes
 - teammates in their 20s and 30s have a small chance of producing a child
 - players should have an age peak, after which speed and throw stats begin to decline (bat and field don't)
 - players should have a retirement age
+- A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.

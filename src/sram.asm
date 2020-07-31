@@ -68,17 +68,33 @@ CheckSave::;returns z if no save
   ENABLE_RAM_MBC5
   SWITCH_RAM_MBC5 MAIN_SRAM_BANK
   ld hl, sram_user_name
-  call str_Length
+  ld de, name_buffer
+  ld bc, NAME_LENGTH
+  call mem_Copy
   DISABLE_RAM_MBC5
 
+.checkLength
+  ld hl, name_buffer
+  call str_Length
   ld a, d
   and a
   jp nz, .noSaveFile
   ld a, e
   and a
   jp z, .noSaveFile
-  cp 8
-  jp nc, .noSaveFile
+
+  ld hl, name_buffer
+  ld b, NAME_LENGTH
+.testLettersLoop
+    ld a, [hli]
+    cp a, 128
+    jr nc, .noSaveFile
+    dec b
+    jr nz, .testLettersLoop
+
+.saveExists
+  ld a, 1
+  or a
   ret
 .noSaveFile
   xor a

@@ -188,7 +188,7 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   ret
 .drawCancel
   ld hl, CancelString
-  jr .draw
+  jp .draw
 
 .drawItem
   dec a
@@ -200,7 +200,6 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   ld a, [hli];get item id
   dec a
   ld c, a
-  DEBUG_LOG_STRING "ITEM: %BC%"
   ld a, [hl];get item count
   and a
   jr z, .getItemName

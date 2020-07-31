@@ -17,7 +17,7 @@ DEBUG_LOG_STRING: MACRO; \1 = string
   jr .end\@
   dw $6464
   dw $0000
-  db \1
+  db \1,0
 .end\@:
 ENDM
 

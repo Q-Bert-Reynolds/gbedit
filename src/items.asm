@@ -266,6 +266,9 @@ TooImportantText:
 NoCyclingText:
   db "No cycling\nallowed here.",0
 
+IsItOkToTossText:
+  db "Is it OK to toss\n%s?",0
+
 SelectItem::
   ld a, [_b]
   ld b, a
@@ -310,9 +313,9 @@ SelectItem::
   ld a, [hld];a = item type, item data address in hl
   cp ITEM_TYPE_SPECIAL
   jr z, .tooImportant
-.showTossCount
-
-.askSure
+  call TossItem
+  ld a, 0
+  ret
 
 .tooImportant
   ld hl, TooImportantText
@@ -320,6 +323,23 @@ SelectItem::
 
 .useItem
   pop hl;item data address
+
+  jr .exit
+  
+.displayText
+  ld de, $0012
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+  
+  ld de, $1210
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
+
+.exit
+  ld a, -1
+  ret
+
+UseItem:;hl = item address
   inc hl
   ld a, [hld];a = item type
   cp ITEM_TYPE_BASEBALL
@@ -329,16 +349,9 @@ SelectItem::
   cp ITEM_TYPE_STATS
   cp ITEM_TYPE_SELL
   cp ITEM_TYPE_WORLD
-  
-.displayText
-  ld de, 12;(0,12)
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call RevealText
-  
-  ld de, $1210
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call FlashNextArrow
-  jp .exit
-.exit
-  ld a, -1
+
+TossItem:;hl = item address
+.showTossCount
+
+.askSure
   ret

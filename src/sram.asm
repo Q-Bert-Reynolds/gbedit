@@ -89,6 +89,8 @@ CheckSave::;returns z if no save
     ld a, [hli]
     cp a, 128
     jr nc, .noSaveFile
+    and a
+    jr z, .saveExists
     dec b
     jr nz, .testLettersLoop
 

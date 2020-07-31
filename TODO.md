@@ -67,8 +67,8 @@ Team Menu
 Items
 
 - toss item logic
-- show "ABLE" or not in team
-- use potions
+- show "ABLE" or not in team menu
+- use drugs
 - make offer to unsigned players
 - use select to swap items in list
  

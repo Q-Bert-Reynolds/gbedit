@@ -9,6 +9,32 @@ TRAMPOLINE: MACRO ;\1 = jump address
   call Trampoline
 ENDM
 
+;Debug messages can contain expressions between %%. 
+;When enabled in the settings, whenever a debug message is encountered in the code, it will be logged to the debug messages window or log file.
+;Debug messages also support ternary operators in the form: "%boolean expression%text if true;text if false;".
+DEBUG_LOG_STRING: MACRO; \1 = string
+  ld  d, d
+  jr .end\@
+  dw $6464
+  dw $0000
+  db \1
+.end\@:
+ENDM
+
+DEBUG_LOG_ADDRESS: MACRO; \1 = address, \2 = bank
+  ld  d, d
+  jr .end\@
+  dw $6464
+  dw $0001
+  db \1
+  dw \2
+.end\@:
+ENDM
+
+DEBUG_LOG_LABEL: MACRO; \1 = label
+  DEBUG_LOG_ADDRESS \1, BANK(\1)
+ENDM
+
 SET_LCD_INTERRUPT: MACRO ;\1 = interrupt address
   di
 

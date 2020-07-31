@@ -619,4 +619,6 @@ Seed::
   ld bc, MAX_ITEMS*2
   call mem_Copy
 
+  ld a, [items+2]
+
   ret

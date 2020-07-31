@@ -1,5 +1,6 @@
 Priority
 
+- toss item logic
 - use potions
 - results from hitting to the field
 - set contact power from move, player, and barrel

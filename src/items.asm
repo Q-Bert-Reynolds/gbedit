@@ -1,3 +1,5 @@
+INCLUDE "src/beisbol.inc"
+
 INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
@@ -198,6 +200,7 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   ld a, [hli];get item id
   dec a
   ld c, a
+  DEBUG_LOG_STRING "ITEM: %BC%"
   ld a, [hl];get item count
   and a
   jr z, .getItemName
@@ -225,7 +228,7 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call SetTiles
 
-  pop de
+  pop de;xy
   ld d, 14
   ld bc, name_buffer
   ld a, "x"
@@ -258,6 +261,12 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
 UseTossText:
   db "USE\nTOSS",0
 
+TooImportantText:
+  db "That's too impor-\ntant to toss!",0
+
+NoCyclingText:
+  db "No cycling\nallowed here.",0
+
 SelectItem::
   ld a, [_b]
   ld b, a
@@ -270,6 +279,15 @@ SelectItem::
 .getItem
   dec a
   call GetInventoryItemID;item id in a
+.checkBike
+  cp BICYCLE_ITEM
+  jr nz, .notBike
+
+  ;TODO: check if cycling allowed
+  ld hl, NoCyclingText
+  jr .displayText
+
+.notBike
   call GetItemData;item data address in hl
   push hl;item data address
 
@@ -289,24 +307,39 @@ SelectItem::
 
 .tossItem
   pop hl;item data address
-  jp .exit
+  inc hl
+  ld a, [hld];a = item type, item data address in hl
+  cp ITEM_TYPE_SPECIAL
+  jr z, .tooImportant
+.showTossCount
+
+.askSure
+
+.tooImportant
+  ld hl, TooImportantText
+  jr .displayText
 
 .useItem
   pop hl;item data address
   inc hl
   ld a, [hld];a = item type
   cp ITEM_TYPE_BASEBALL
-  cp ITEM_TYPE_DNA
-  cp ITEM_TYPE_EVOLUTION
   cp ITEM_TYPE_GAME
   cp ITEM_TYPE_MOVE
-  cp ITEM_TYPE_POWERUP
   cp ITEM_TYPE_SPECIAL
-  cp ITEM_TYPE_STATUS
-  cp ITEM_TYPE_UNLISTED
+  cp ITEM_TYPE_STATS
   cp ITEM_TYPE_SELL
   cp ITEM_TYPE_WORLD
   
+.displayText
+  ld de, 12;(0,12)
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+  
+  ld de, $1210
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
+  jp .exit
 .exit
   ld a, -1
   ret

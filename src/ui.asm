@@ -14,6 +14,7 @@ SECTION "UI Bank 0", ROM0
 ; ShowListMenu                    a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
 ; ShowTextEntry                   bc = title, de = str, l = max_len -> puts text in name_buffer
 ; ShowOptions
+; ShowNumberPicker                a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
 
 LoadFontTiles::
   ld a, [loaded_bank]
@@ -425,6 +426,24 @@ ShowOptions::
   call SetBank
   ret
 
+ShowNumberPicker::; a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
+  ld l, a;draw flags
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, UI_BANK
+  call SetBank
+  
+  ld a, l;draw flags
+  call UIShowNumberPicker
+  ld b, a;number
+
+  pop af;bank
+  call SetBank
+
+  ld a, b;number
+  ret
+
+
 SECTION "UI", ROMX, BANK[UI_BANK]
 INCLUDE "img/ui_font.asm"
 INCLUDE "img/town_map.asm"
@@ -447,6 +466,8 @@ SGBTownMapAttrBlk:
 ;UIShowOptions
 ;UIShowTextEntry - a = draw flags, de = title, hl = str, c = max_len
 ;UIShowListMenu - a = draw flags, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
+;UIShowNumberPicker - a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
+;UIDrawSaveStats - a = draw flags, de = xy
 
 UILoadFontTiles::
   ld hl, _UiFontTiles
@@ -478,7 +499,7 @@ UIDrawStateMap::
   DISPLAY_ON
   ret
 
-UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,,_j_x,_y,_w,_l
+UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,_j,_x,_y,_w,_l
   push af;draw flags
   push hl;text
   push de;xy
@@ -1751,6 +1772,122 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   pop de ;discard draw flags
   pop bc ;xy
   ret ;return a
+
+UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, returns number in a (0 = cancel)
+  push hl;max/start nums
+  push bc;xy
+  push af;draw flags
+  call DrawUIBox
+
+  ld a, "x"
+  ld [name_buffer], a
+  pop af;draw flags
+  pop de;xy
+  inc d
+  inc e
+  push de;xy
+  push af;draw flags
+  ld bc, name_buffer
+  ld hl, $0101
+  call SetTiles
+
+  pop hl;draw flags
+  pop de;xy
+  inc d
+  pop bc;max/start nums
+.loop
+    push hl;draw flags
+    push de;xy
+    push bc;max/current nums
+
+    ld h, 0
+    ld l, c
+    ld de, name_buffer
+    call str_Number
+
+    pop bc;max/current nums
+    push bc
+    ld a, 9
+    cp a, b
+    jr nc, .drawDigits
+
+    ; ld hl, name_buffer
+    ; ld a, [hli]
+    ; ld [hli], a
+    ; xor a
+    ; ld [hld], a
+    ; dec hl
+    ; ld a, "0"
+    ; ld [hl], a
+
+.drawDigits
+    pop bc;max/current nums
+    pop de;xy
+    pop af;draw flags
+    push af;draw flags
+    push de;xy
+    push bc;max/current nums
+    ld bc, name_buffer
+    ld hl, $0201
+    call SetTiles
+
+.inputLoop
+      call gbdk_WaitVBL
+      call UpdateInput
+.wait
+      ld a, [last_button_state]
+      and a
+      jr nz, .inputLoop
+.checkUp
+      ld a, [button_state]
+      and a, PADF_UP
+      jr z, .checkDown
+      pop bc;max/current nums
+      ld a, c;current num
+      cp a, b
+      jr c, .currentLessThanMax
+      ld c, 0;wrap around
+.currentLessThanMax
+      inc c
+      push bc;max/current nums
+      jr .finishInput
+
+.checkDown
+      ld a, [button_state]
+      and a, PADF_DOWN
+      jr z, .checkStartA
+      pop bc;max/current nums
+      dec c
+      jr nz, .currentGreaterThanZero
+      ld c, b;wrap around
+.currentGreaterThanZero
+      push bc;max/current nums
+      jr .finishInput
+
+.checkStartA
+      ld a, [button_state]
+      and a, PADF_A | PADF_START
+      jr z, .checkB
+      pop bc;max/current nums
+      pop de;xy
+      pop hl;draw flags
+      ld a, c;selected num
+      ret
+.checkB
+      ld a, [button_state]
+      and a, PADF_B
+      jr z, .inputLoop
+      pop bc;max/current nums
+      pop de;xy
+      pop hl;draw flags
+      xor a
+      ret
+
+.finishInput
+    pop bc;max/current nums
+    pop de;xy
+    pop hl;draw flags
+    jr .loop
 
 CoachStatText:
   db "COACH"

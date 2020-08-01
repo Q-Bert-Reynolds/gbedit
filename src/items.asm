@@ -33,16 +33,19 @@ ShowInventoryFromPlayBall::
   HIDE_WIN
   ret
 
-GetInventoryItemID::; a = index of item in list
+GetInventoryItemID::; a = index of item in list, returns item id in a, item count in [hl]
+  push bc
   ld hl, items
   ld b, 0
   ld c, a
   add hl, bc
   add hl, bc
   ld a, [hli];get item id
+  pop bc
   ret 
 
 GetItemData::;a = item id, returns item data address in hl
+  push bc
   ld hl, ItemList
   ld b, 0
   ld c, a
@@ -53,6 +56,7 @@ GetItemData::;a = item id, returns item data address in hl
   ld a, [hli]
   ld h, a
   ld l, b
+  pop bc
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
@@ -269,8 +273,8 @@ NoCyclingText:
 IsItOkToTossText:
   db "Is it OK to toss\n%s?",0
 
-SelectItem::
-  ld a, [_b]
+SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
+  ld a, [_b] 
   ld b, a
   ld a, [_s]
   ld c, a
@@ -279,7 +283,8 @@ SelectItem::
   cp a, b
   jr z, .exit
 .getItem
-  dec a
+  dec a;index
+  ld b, a;index
   call GetInventoryItemID;item id in a
 .checkBike
   cp BICYCLE_ITEM
@@ -290,6 +295,7 @@ SelectItem::
   jr .displayText
 
 .notBike
+  push bc;index in b
   call GetItemData;item data address in hl
   push hl;item data address
 
@@ -304,30 +310,32 @@ SelectItem::
   ld d, 7
   ld e, 5
   call ShowListMenu
-  and a
-  jp z, .exit
-
-.tossItem
   pop hl;item data address
+  pop bc;index in b
+  and a
+  ret z
+  cp a, 1
+  jr z, .useItem
+.tossItem
   inc hl
   ld a, [hld];a = item type, item data address in hl
   cp ITEM_TYPE_SPECIAL
   jr z, .tooImportant
+  ld a, b;item index
   call TossItem
-  ld a, 0
-  ret
+  jr .exit
 
 .tooImportant
   ld hl, TooImportantText
   jr .displayText
 
 .useItem
-  pop hl;item data address
-
+  ld a, b;item index
+  call UseItem
   jr .exit
   
 .displayText
-  ld de, $0012
+  ld de, $000C
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call RevealText
   
@@ -336,10 +344,10 @@ SelectItem::
   call FlashNextArrow
 
 .exit
-  ld a, -1
+  xor a
   ret
 
-UseItem:;hl = item address
+UseItem:;hl = item data address, a = index
   inc hl
   ld a, [hld];a = item type
   cp ITEM_TYPE_BASEBALL
@@ -349,9 +357,28 @@ UseItem:;hl = item address
   cp ITEM_TYPE_STATS
   cp ITEM_TYPE_SELL
   cp ITEM_TYPE_WORLD
+  ret
 
-TossItem:;hl = item address
+TossItem:;hl = item data address, a = index
+  push hl;item data address
 .showTossCount
+  push af;index
+  call GetInventoryItemID
+  ld a, [hl];item count
 
+  ld h, a;item count
+  ld a, DRAW_FLAGS_WIN
+  ld b, 15;x
+  ld c, 9;y
+  ld d, 5;w
+  ld e, 3;h
+  call ShowNumberPicker
+  pop bc;b = item index
+  pop hl;item data address
+  ld c, a;count
+  and a
+  ret z;cancel if a == 0
+  
 .askSure
+  
   ret

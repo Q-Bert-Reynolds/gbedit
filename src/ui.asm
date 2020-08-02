@@ -1807,18 +1807,15 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
 
     pop bc;max/current nums
     push bc
-    ld a, 9
-    cp a, b
+    ld a, c
+    cp a, 10
     jr nc, .drawDigits
 
-    ; ld hl, name_buffer
-    ; ld a, [hli]
-    ; ld [hli], a
-    ; xor a
-    ; ld [hld], a
-    ; dec hl
-    ; ld a, "0"
-    ; ld [hl], a
+    ld hl, name_buffer
+    ld a, [hli]
+    ld [hld], a
+    ld a, "0"
+    ld [hl], a
 
 .drawDigits
     pop bc;max/current nums

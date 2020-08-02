@@ -82,6 +82,7 @@ ShowInventory::
   call DrawItems
   WAITPAD_UP_OR_FRAMES 20
 .loop
+    call gbdk_WaitVBL
     call UpdateInput
     ld de, $0503
     ld a, [_j]
@@ -132,6 +133,8 @@ ShowInventory::
     ld hl, $1412
     ld bc, bkg_buffer
     call gbdk_SetWinTiles
+    call DrawItems
+    WAITPAD_UP
     jp .loop
     
 .checkB
@@ -139,9 +142,9 @@ ShowInventory::
     ld a, [button_state]
     and a, PADF_B
     jr nz, .exit
-    call gbdk_WaitVBL
     jp .loop
 .exit
+  WAITPAD_UP
   ret
 
 DrawItems::
@@ -282,14 +285,23 @@ TooImportantText:
 NoCyclingText:
   db "No cycling\nallowed here.",0
 
-IsItOkToTossText:
+IsItOkToTossItemText:
   db "Is it OK to toss\n%s?",0
 
+ThrewAwayItemText:
+  db "Threw away\n%s.",0
+
 SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
-  ld a, [_b] 
+  ld a, [_j];index
   ld b, a
-  ld a, [_s]
+  ld a, [_c];number of places the list menu arrow can be
   ld c, a
+  push bc;index/places
+  ld a, [_b];num items
+  ld b, a
+  ld a, [_s];page
+  ld c, a
+  push bc;num items,page
   ld a, [_j]
   add a, c
   cp a, b
@@ -325,7 +337,7 @@ SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
   pop hl;item data address
   pop bc;index in b
   and a
-  ret z
+  jp z, .backToItemList
   cp a, 1
   jr z, .useItem
 .tossItem
@@ -355,11 +367,29 @@ SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call FlashNextArrow
 
-.exit
-  xor a
+.backToItemList
+  ld a, 1
+
+.exit;a = exit code (-1 = exit inventory, 0 = decrement item count)
+  ld d, a;exit code
+  pop bc;num items,page
+  and a
+  jr nz, .skip
+  dec b
+.skip
+  ld a, b
+  ld [_b], a;num items
+  ld a, c
+  ld [_s], a;page
+  pop bc;index/places
+  ld a, b
+  ld [_j], a;index
+  ld a, c
+  ld [_c], a;number of places the list menu arrow can be
+  ld a, d;exit code
   ret
 
-UseItem:;hl = item data address, a = index
+UseItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
   inc hl
   ld a, [hld];a = item type
   cp ITEM_TYPE_BASEBALL
@@ -369,9 +399,11 @@ UseItem:;hl = item data address, a = index
   cp ITEM_TYPE_STATS
   cp ITEM_TYPE_SELL
   cp ITEM_TYPE_WORLD
+
+  ld a, 1
   ret
 
-TossItem:;hl = item data address, a = index
+TossItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
   push hl;item data address
 .showTossCount
   push af;index
@@ -389,6 +421,7 @@ TossItem:;hl = item data address, a = index
   jr nz, .askSure
   pop bc;b = item index
   pop hl;item data address
+  ld a, 1
   ret
   
 .askSure
@@ -402,10 +435,11 @@ TossItem:;hl = item data address, a = index
   ld c, a
   ld hl, ItemNames 
   call str_FromArray;item index in bc
+  push hl;item name
   ld de, name_buffer
   call str_Copy
 
-  ld hl, IsItOkToTossText
+  ld hl, IsItOkToTossItemText
   ld de, str_buffer
   ld bc, name_buffer
   call str_Replace
@@ -426,10 +460,15 @@ TossItem:;hl = item data address, a = index
   ld e, 5;h
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
+  pop hl;item name
   pop bc;index/count
   cp a, 1
-  ret nz
+  jr z, .tossItems
+  ld a, 1;return code
+  ret
+
 .tossItems
+  push hl;item name
   ld d, 0
   ld e, b
   ld hl, inventory
@@ -440,7 +479,8 @@ TossItem:;hl = item data address, a = index
   sub a, c;item count - toss count
   jr z, .removeItemCompletely
   ld [hl], a
-  ret
+  ld a, 1;exit code
+  jr .showText
 .removeItemCompletely
   inc hl
   ld d, h
@@ -453,4 +493,26 @@ TossItem:;hl = item data address, a = index
   ld b, 0
   ld c, a;items to move down
   call mem_Copy;copies hl to hl-2
+  xor a;exit code
+.showText
+  pop hl;item name
+  push af;exit code
+  ld de, name_buffer
+  call str_Copy
+
+  ld hl, ThrewAwayItemText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  ld de, $000C
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+  
+  ld de, $1210
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
+
+  pop af;exit code (-1 = item removed completely)
   ret

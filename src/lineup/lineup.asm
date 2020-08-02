@@ -1,5 +1,18 @@
 INCLUDE "src/beisbol.inc"
 
+SECTION "Lineup Bank 0", ROM0
+ShowLineup::;b = item (0 = no item)
+  ld a, [loaded_bank]
+  push af
+  ld a, LINEUP_BANK
+  call SetBank
+
+  call _ShowLineup
+
+  pop af
+  call SetBank
+  ret
+
 SECTION "Lineup", ROMX, BANK[LINEUP_BANK]
 
 INCLUDE "src/lineup/stats.asm"
@@ -623,8 +636,8 @@ ShowPlayerMenu:
   ld bc, name_buffer
   call gbdk_SetBkgTiles
 
-  ld a, [_a]
-  and a
+  ld a, [game_state]
+  and a, GAME_STATE_PLAY_BALL
   jr z, .notPlaying
   ld hl, FromGameMenuText
   ld c, 3
@@ -660,8 +673,8 @@ ShowPlayerMenu:
   cp 1
   jr z, .showStatScreen
   ld b, a;selection
-  ld a, [_a]
-  and a;if 0, can reorder lineup
+  ld a, [game_state]
+  and a, GAME_STATE_PLAY_BALL;if 0, can reorder lineup
   ld a, b
   jr z, .outOfGameMenu
 .inGameMenu
@@ -718,8 +731,7 @@ ShowPlayerMenu:
   ld [_j], a
   ret 
 
-ShowLineup::; a = playing_game?
-  ld [_a], a
+_ShowLineup:;b = item (0 = no item)
 
   DISPLAY_OFF
   ld hl, SGBLineupPalSet               

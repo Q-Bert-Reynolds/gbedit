@@ -11,8 +11,6 @@ SECTION "Core", ROM0
 ; DrawSaveStats                   draw flags, de = xy
 ; ShowRoledex
 ; LoadSimulation                  a = ball speed b = spray angle c = launch angle
-; ShowLineupFromWorld
-; ShowLineupFromGame
 ; ShowPlayBallIntro               a = unsigned player(0) or team(1), [_a] = player num or coach id
 ; SetSpriteTiles                  bc = count, hl = map, de = offset\props
 ; SetSpriteTilesProps             bc = offset\count, hl = tilemap, de = propmap
@@ -322,28 +320,6 @@ LoadSimulation::;a = ball speed b = spray angle c = launch angle
   pop af;ball speed
   call RunSimulation
   
-  ld a, PLAY_BALL_BANK
-  call SetBank
-  ret
-
-ShowLineupFromWorld::
-  ld a, LINEUP_BANK
-  call SetBank
-
-  ld a, 0
-  call ShowLineup
-
-  ld a, OVERWORLD_BANK
-  call SetBank
-  ret
-
-ShowLineupFromGame::
-  ld a, LINEUP_BANK
-  call SetBank
-
-  ld a, 1
-  call ShowLineup
-
   ld a, PLAY_BALL_BANK
   call SetBank
   ret

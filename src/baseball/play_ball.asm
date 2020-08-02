@@ -1035,7 +1035,8 @@ StartGame::
 .teamMenuItemSelected
     cp 1
     jr nz, .itemMenuItemSelected
-    call ShowLineupFromGame
+    ld b, 0
+    call ShowLineup
     call SetupGameUI
     call ShowPitcher
     call ShowBatter
@@ -1043,7 +1044,7 @@ StartGame::
 .itemMenuItemSelected
     cp 2
     jr nz, .runMenuItemSelected
-    call ShowInventoryFromPlayBall
+    call ShowInventory
     jr .playBallLoop
 .runMenuItemSelected
     cp 3

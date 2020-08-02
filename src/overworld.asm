@@ -388,12 +388,13 @@ ShowPauseMenu::
 .lineup
   cp 2
   jr nz, .item
-  call ShowLineupFromWorld
+  ld b, 0
+  call ShowLineup
   jr .returnToPauseMenu
 .item
   cp 3
   jr nz, .user
-  call ShowInventoryFromWorld
+  call ShowInventory
   jr .returnToPauseMenu
 .user
   cp 4

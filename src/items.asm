@@ -4,33 +4,32 @@ INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
-ShowInventoryFromWorld::
+ShowInventory::
+  ld a, [game_state]
+  and a, GAME_STATE_PLAY_BALL
+  jr z, .show
+    call CopyBkgToWin
+    ld a, 7
+    ld [rWX], a
+    xor a
+    ld [rWY], a
+    SHOW_WIN
+
+.show
+  ld a, [loaded_bank]
+  push af
   ld a, ITEM_BANK
   call SetBank
+  call _ShowInventory
 
-  call ShowInventory
+  ld a, [game_state]
+  and a, GAME_STATE_PLAY_BALL
+  jr z, .exit
+    HIDE_WIN
 
-  ld a, OVERWORLD_BANK
+.exit
+  pop af
   call SetBank
-  ret
-
-ShowInventoryFromPlayBall::
-  call CopyBkgToWin
-  ld a, 7
-  ld [rWX], a
-  xor a
-  ld [rWY], a
-  SHOW_WIN
-  
-  ld a, ITEM_BANK
-  call SetBank
-
-  call ShowInventory
-
-  ld a, PLAY_BALL_BANK
-  call SetBank
-
-  HIDE_WIN
   ret
 
 GetInventoryItemID::; a = index of item in list, returns item id in a, item count in [hl]
@@ -60,7 +59,7 @@ GetItemData::;a = item id, returns item data address in hl
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
-ShowInventory::
+_ShowInventory:
   ld bc, $0402
   ld de, $100B
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP

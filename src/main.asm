@@ -126,10 +126,13 @@ Main::
   call NewGame
 
 .startClock
-  ld a, 1
+  ld a, GAME_STATE_CLOCK_STARTED
   ld [game_state], a
 
 .overworld; walk around, find a game, repeat
+    ld a, [game_state]
+    and a, ~GAME_STATE_PLAY_BALL
+    ld [game_state], a
     ld a, OVERWORLD_BANK
     call SetBank
     call Overworld
@@ -138,6 +141,9 @@ Main::
     PLAY_SONG tessie_data, 1
 
 .startGame
+    ld a, [game_state]
+    or a, GAME_STATE_PLAY_BALL
+    ld [game_state], a
     ld a, PLAY_BALL_BANK
     call SetBank
     call StartGame

@@ -66,7 +66,7 @@ Team Menu
 
 Items
 
-- toss item logic
+- waitpadup and re-show item list after finishing use/toss menu
 - show "ABLE" or not in team menu
 - use drugs
 - make offer to unsigned players

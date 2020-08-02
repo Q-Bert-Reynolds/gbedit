@@ -35,7 +35,7 @@ ShowInventoryFromPlayBall::
 
 GetInventoryItemID::; a = index of item in list, returns item id in a, item count in [hl]
   push bc
-  ld hl, items
+  ld hl, inventory
   ld b, 0
   ld c, a
   add hl, bc
@@ -173,7 +173,7 @@ DrawItems::
 
 GetInventoryLength::;puts item list len in b
   ld b, 0
-  ld hl, items
+  ld hl, inventory
 .loop
     inc b
     ld a, [hli]
@@ -196,7 +196,7 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
 
 .drawItem
   dec a
-  ld hl, items
+  ld hl, inventory
   ld b, 0
   ld c, a
   add hl, bc
@@ -375,18 +375,15 @@ TossItem:;hl = item data address, a = index
   call ShowNumberPicker
   and a
   jr nz, .askSure
-
   pop bc;b = item index
   pop hl;item data address
-  ld c, a;count
-  and a
-  ret z;cancel if a == 0
+  ret
   
 .askSure
-  pop af;item index
+  pop bc;item index
+  ld c, a;count
   pop hl;item data address
-  ; push hl
-  ; push af
+  push bc;index/count
   ld a, [hl]
   sub a, 2;why 2 instead of one?
   ld b, 0
@@ -413,10 +410,35 @@ TossItem:;hl = item data address, a = index
   ld [name_buffer], a
   ld b, 14;x
   ld c, 7;y
-  ld d, 6
-  ld e, 5
+  ld d, 6;w
+  ld e, 5;h
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
-  cp a, 1;if yes, save game
+  pop bc;index/count
+  cp a, 1
   ret nz
+.tossItems
+  ld d, 0
+  ld e, b
+  ld hl, inventory
+  add hl, de
+  add hl, de 
+  inc hl
+  ld a, [hl]
+  sub a, c;item count - toss count
+  jr z, .removeItemCompletelyLoop
+  ld [hl], a
+  ret
+.removeItemCompletelyLoop
+  inc hl
+  ld d, h
+  ld e, l
+  dec de
+  dec de
+  ld a, MAX_ITEMS*BYTES_PER_ITEM
+  sub a, b
+  sub a, b
+  ld b, 0
+  ld c, a;items to move down
+  call mem_Copy;copies hl to hl-2
   ret

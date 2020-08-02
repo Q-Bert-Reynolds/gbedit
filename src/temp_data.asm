@@ -11,7 +11,8 @@ TempItems:
   DB EXP_ALL_ITEM,     0
   DB POTION_ITEM,      32
   DB BICYCLE_ITEM,     0
-  DS MAX_ITEMS*2 - 18;18=num bytes above
+EndTempItems:
+  DS MAX_ITEMS*BYTES_PER_ITEM - (EndTempItems-TempItems)
 
 MyBubbiData:
   DB 001                                ; .number
@@ -615,8 +616,8 @@ Seed::
   ld [hl], a
 
   ld hl, TempItems
-  ld de, items
-  ld bc, MAX_ITEMS*2
+  ld de, inventory
+  ld bc, MAX_ITEMS*BYTES_PER_ITEM
   call mem_Copy
 
   ret

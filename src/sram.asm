@@ -7,7 +7,7 @@ sram_rival_name: DS NAME_LENGTH
 sram_hours:: DW
 sram_minutes:: DB
 sram_seconds:: DB
-sram_items:: DS MAX_ITEMS*2
+sram_inventory:: DS MAX_ITEMS*BYTES_PER_ITEM
 sram_money:: DS 3
 sram_main_save_end::
 

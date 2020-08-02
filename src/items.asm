@@ -119,9 +119,21 @@ ShowInventory::
     ld a, [button_state]
     and a, PADF_A
     jr z, .checkB
+    ld de, 0
+    ld hl, $1412
+    ld bc, bkg_buffer
+    call gbdk_GetWinTiles
+
     call SelectItem
     cp a, -1
     jr z, .exit
+    
+    ld de, 0
+    ld hl, $1412
+    ld bc, bkg_buffer
+    call gbdk_SetWinTiles
+    jp .loop
+    
 .checkB
     ld b, 0
     ld a, [button_state]
@@ -426,10 +438,10 @@ TossItem:;hl = item data address, a = index
   inc hl
   ld a, [hl]
   sub a, c;item count - toss count
-  jr z, .removeItemCompletelyLoop
+  jr z, .removeItemCompletely
   ld [hl], a
   ret
-.removeItemCompletelyLoop
+.removeItemCompletely
   inc hl
   ld d, h
   ld e, l

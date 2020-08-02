@@ -400,7 +400,6 @@ setTiles:
 gbdk_GetWinTiles::
 
   push hl ; store wh
-  push hl ; store wh
   ldh a,[rLCDC]
   bit 6,a
   jr nz, .skip

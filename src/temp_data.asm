@@ -571,6 +571,7 @@ Seed::
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
 
+.seenSigned
   ld hl, 2020
   call gbdk_Seed
   ld hl, players_seen
@@ -615,9 +616,18 @@ Seed::
   ld a, %01111000
   ld [hl], a
 
+.items
   ld hl, TempItems
   ld de, inventory
   ld bc, MAX_ITEMS*BYTES_PER_ITEM
   call mem_Copy
 
+.money
+  ld hl, money
+  ld a, $e4; $e4e1c0 == 15,000,000
+  ld [hli], a
+  ld a, $e1
+  ld [hli], a
+  ld a, $c0
+  ld [hli], a
   ret

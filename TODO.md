@@ -67,7 +67,7 @@ Team Menu
 Items
 
 - waitpadup and re-show item list after finishing use/toss menu
-- show "ABLE" or not in team menu
+- show "ABLE" or not in team menu after using an item
 - use drugs
 - make offer to unsigned players
 - use select to swap items in list

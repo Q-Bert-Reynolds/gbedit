@@ -70,6 +70,8 @@ _ShowUserInfo:
   ld h, a
   ld a, [money+2]
   ld l, a
+
+  DEBUG_LOG_STRING "%E%%HL%"
   ld bc, name_buffer
   call str_Number24
 

@@ -291,7 +291,8 @@ IsItOkToTossItemText:
 ThrewAwayItemText:
   db "Threw away\n%s.",0
 
-SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
+SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory)
+  PLAY_SFX SelectSound
   ld a, [_j];index
   ld b, a
   ld a, [_c];number of places the list menu arrow can be
@@ -305,7 +306,7 @@ SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
   ld a, [_j]
   add a, c
   cp a, b
-  jr z, .exit
+  jr z, .closeInventory
 .getItem
   dec a;index
   ld b, a;index
@@ -369,6 +370,10 @@ SelectItem::;returns exit code in a (-1 = exit inventory, 0 = exit to list)
 
 .backToItemList
   ld a, 1
+  jr .exit
+
+.closeInventory
+  ld a, -1
 
 .exit;a = exit code (-1 = exit inventory, 0 = decrement item count)
   ld d, a;exit code

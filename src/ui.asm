@@ -1865,6 +1865,7 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
       ld a, [button_state]
       and a, PADF_A | PADF_START
       jr z, .checkB
+      PLAY_SFX SelectSound
       pop bc;max/current nums
       pop de;xy
       pop hl;draw flags
@@ -1884,7 +1885,7 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
     pop bc;max/current nums
     pop de;xy
     pop hl;draw flags
-    jr .loop
+    jp .loop
 
 CoachStatText:
   db "COACH"

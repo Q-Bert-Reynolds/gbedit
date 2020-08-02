@@ -373,6 +373,9 @@ TossItem:;hl = item data address, a = index
   ld d, 5;w
   ld e, 3;h
   call ShowNumberPicker
+  and a
+  jr nz, .askSure
+
   pop bc;b = item index
   pop hl;item data address
   ld c, a;count
@@ -380,5 +383,40 @@ TossItem:;hl = item data address, a = index
   ret z;cancel if a == 0
   
 .askSure
+  pop af;item index
+  pop hl;item data address
+  ; push hl
+  ; push af
+  ld a, [hl]
+  sub a, 2;why 2 instead of one?
+  ld b, 0
+  ld c, a
+  ld hl, ItemNames 
+  call str_FromArray;item index in bc
+  ld de, name_buffer
+  call str_Copy
+
+  ld hl, IsItOkToTossText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  ld de, $000C
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
   
+  ld hl, YesNoText
+  ld de, str_buffer
+  call str_Copy
+  xor a
+  ld [name_buffer], a
+  ld b, 14;x
+  ld c, 7;y
+  ld d, 6
+  ld e, 5
+  ld a, DRAW_FLAGS_WIN
+  call ShowListMenu
+  cp a, 1;if yes, save game
+  ret nz
   ret

@@ -59,6 +59,17 @@ GetItemData::;a = item id, returns item data address in hl
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
+
+UseTossText:          db "USE\nTOSS",0
+TooImportantText:     db "That's too impor-\ntant to toss!",0
+NoCyclingText:        db "No cycling\nallowed here.",0
+IsItOkToTossItemText: db "Is it OK to toss\n%s?",0
+ThrewAwayItemText:    db "Threw away\n%s.",0
+NowIsNotTheTimeText:  db "Doc: %s!\nThis isn't the\ntime to use that!",0
+BootedUpTMText:       db "Booted up a TM!",0
+ItContainedMoveText:  db "It contained\n%s!",0
+TeachMoveText:        db "Teach %s\nto a PLAYER?",0
+
 _ShowInventory:
   ld bc, $0402
   ld de, $100B
@@ -275,21 +286,6 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   call SetTiles
   ret
 
-UseTossText:
-  db "USE\nTOSS",0
-
-TooImportantText:
-  db "That's too impor-\ntant to toss!",0
-
-NoCyclingText:
-  db "No cycling\nallowed here.",0
-
-IsItOkToTossItemText:
-  db "Is it OK to toss\n%s?",0
-
-ThrewAwayItemText:
-  db "Threw away\n%s.",0
-
 SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory)
   PLAY_SFX SelectSound
   ld a, [_j];index
@@ -359,13 +355,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   jr .exit
   
 .displayText
-  ld de, $000C
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call RevealText
-  
-  ld de, $1210
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call FlashNextArrow
+  call RevealItemTextAndWait
 
 .backToItemList
   ld a, 1
@@ -394,18 +384,99 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ret
 
 UseItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
+  DEBUG_LOG_STRING "USE ITEM %a%"
+
+  push af;index
+  ld a, [game_state]
+  and a, GAME_STATE_PLAY_BALL
+  push af;play ball flag
   inc hl
   ld a, [hld];a = item type
+.checkBaseballItem
   cp ITEM_TYPE_BASEBALL
+  jr nz, .checkGameItem
+  pop af;play ball flag
+  jr z, .notTheTime
+    
+.checkGameItem
   cp ITEM_TYPE_GAME
-  cp ITEM_TYPE_MOVE
-  cp ITEM_TYPE_SPECIAL
-  cp ITEM_TYPE_STATS
-  cp ITEM_TYPE_SELL
-  cp ITEM_TYPE_WORLD
+  jr nz, .checkMoveItem
+  pop af;play ball flag
+  jr z, .notTheTime
 
+.checkMoveItem
+  cp ITEM_TYPE_MOVE
+  jr nz, .checkSpecialItem
+  pop af;play ball flag
+  jr nz, .notTheTime
+  call TeachMove
+  
+.checkSpecialItem
+  cp ITEM_TYPE_SPECIAL
+  jr nz, .checkStatsItem
+
+.checkStatsItem
+  cp ITEM_TYPE_STATS
+  jr nz, .checkSellItem
+
+.checkSellItem
+  cp ITEM_TYPE_SELL
+  jr nz, .checkWorldItem
+
+.checkWorldItem
+  cp ITEM_TYPE_WORLD
+  jr nz, .exit
+
+.notTheTime
+  ld hl, NowIsNotTheTimeText
+  call RevealItemTextAndWait
+
+.exit
+  pop af;index
   ld a, 1
   ret
+
+TeachMove:;hl = item data address
+  ld a, [hl]
+  sub a, 2;why 2?
+  ld b, 0
+  ld c, a
+  ld hl, ItemNames
+  call str_FromArray
+  ld de, name_buffer
+  call str_Copy
+
+  ld hl, BootedUpTMText
+  call RevealItemTextAndWait
+
+  ld hl, ItContainedMoveText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealItemTextAndWait
+
+  ld hl, TeachMoveText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  ld de, $000C
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+
+  ld hl, YesNoText
+  ld de, str_buffer
+  call str_Copy
+  xor a
+  ld [name_buffer], a
+  ld b, 14;x
+  ld c, 7;y
+  ld d, 6;w
+  ld e, 5;h
+  ld a, DRAW_FLAGS_WIN
+  call ShowListMenu
+  ret 
 
 TossItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
   push hl;item data address
@@ -510,6 +581,12 @@ TossItem:;hl = item data address, a = index, returns exit code in a (0 = item re
   call str_Replace
 
   ld hl, str_buffer
+  call RevealItemTextAndWait
+
+  pop af;exit code (-1 = item removed completely)
+  ret
+
+RevealItemTextAndWait:;hl = text
   ld de, $000C
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call RevealText
@@ -517,6 +594,4 @@ TossItem:;hl = item data address, a = index, returns exit code in a (0 = item re
   ld de, $1210
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call FlashNextArrow
-
-  pop af;exit code (-1 = item removed completely)
   ret

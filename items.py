@@ -41,6 +41,10 @@ def generate_item_data(items):
         item_data += item["Cost"] + " ;cost\n"
       else:
         item_data += "0 ;can't be sold\n"
+      if item["Type"] == "Move":
+        move = item["Data1"].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
+        item_data += "DB " + move + "\n"
+
 
     c_file.write("\n" + constants + item_data + "\nItemList:\n" + var_names + "\n")
 

@@ -45,6 +45,7 @@ GetInventoryItemID::; a = index of item in list, returns item id in a, item coun
 
 GetItemData::;a = item id, returns item data address in hl
   push bc
+  dec a
   ld hl, ItemList
   ld b, 0
   ld c, a
@@ -384,8 +385,6 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ret
 
 UseItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
-  DEBUG_LOG_STRING "USE ITEM %a%"
-
   push af;index
   ld a, [game_state]
   and a, GAME_STATE_PLAY_BALL
@@ -437,14 +436,10 @@ UseItem:;hl = item data address, a = index, returns exit code in a (0 = item rem
   ret
 
 TeachMove:;hl = item data address
+  ld bc, 4
+  add hl, bc
   ld a, [hl]
-  sub a, 2;why 2?
-  ld b, 0
-  ld c, a
-  ld hl, ItemNames
-  call str_FromArray
-  ld de, name_buffer
-  call str_Copy
+  call GetMoveName
 
   ld hl, BootedUpTMText
   call RevealItemTextAndWait

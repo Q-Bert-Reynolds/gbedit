@@ -409,30 +409,120 @@ UseItem:;hl = item data address, a = index, returns exit code in a (0 = item rem
   pop af;play ball flag
   jr nz, .notTheTime
   call TeachMove
+  jr .exit
   
 .checkSpecialItem
   cp ITEM_TYPE_SPECIAL
   jr nz, .checkStatsItem
+  pop af;play ball flag
+  call UseSpecialItem
+  jr z, .notTheTime
+  jr .exit
 
 .checkStatsItem
   cp ITEM_TYPE_STATS
   jr nz, .checkSellItem
+  pop af;play ball flag, not used here
+  jr .exit
 
 .checkSellItem
   cp ITEM_TYPE_SELL
   jr nz, .checkWorldItem
+  pop af;play ball flag
+  jr nz, .notTheTime
+  jr .exit
 
 .checkWorldItem
   cp ITEM_TYPE_WORLD
   jr nz, .exit
+  pop af;play ball flag
+  jr z, .notTheTime
+  jr .exit
 
 .notTheTime
   ld hl, NowIsNotTheTimeText
+  ld de, str_buffer
+  ld bc, user_name
+  call str_Replace
+  ld hl, str_buffer
   call RevealItemTextAndWait
 
 .exit
   pop af;index
   ld a, 1
+  ret
+
+UseSpecialItem:;hl = item data address, f = playball flag, returns z if can't use now
+  ld a, [hli]
+  jr nz, .playingBaseball
+.walkingAround
+  DEBUG_LOG_STRING "HERE"
+  cp TOWN_MAP_ITEM
+  jr z, .useTownMap
+  cp HARMONICA_ITEM
+  jr z, .playMusic
+  cp OLD_ROD_ITEM
+  jr z, .goFish
+  cp GOOD_ROD_ITEM
+  jr z, .goFish
+  cp SUPER_ROD_ITEM
+  jr z, .goFish
+  cp TOKEN_CASE_ITEM
+  jr z, .showTokens
+  jr .anywhere
+.playingBaseball
+  cp HARMONICA_ITEM
+  jr z, .wakePlayer
+  cp TOWN_MAP_ITEM
+  ret z
+  cp OLD_ROD_ITEM
+  ret z
+  cp GOOD_ROD_ITEM
+  ret z
+  cp SUPER_ROD_ITEM
+  ret z
+  cp TOKEN_CASE_ITEM
+  ret z
+.anywhere
+  cp HELIX_JERSEY_ITEM
+  ret z
+  cp DOME_HELMET_ITEM
+  ret z
+  cp OLD_HAT_ITEM
+  ret z
+  cp GOLD_TEETH_ITEM
+  ret z
+  cp SS_TICKET_ITEM
+  ret z
+  cp DREAM_SCOPE_ITEM
+  ret z
+  cp EXP_ALL_ITEM
+  ret z
+  xor a
+  ret
+.goFish
+  jr .exit
+.showTokens
+  jr .exit
+.useTownMap
+  call ShowTownMap
+  jr .exit
+.playMusic
+  jr .exit
+.wakePlayer
+.exit
+  ld a, 1
+  or a
+  ret
+
+ShowTownMap:
+  HIDE_WIN
+  call DrawStateMap
+.loop
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_B | PADF_START
+  jr .loop
+.exit
+  SHOW_WIN
   ret
 
 TeachMove:;hl = item data address

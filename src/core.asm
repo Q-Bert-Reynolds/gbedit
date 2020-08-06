@@ -209,12 +209,14 @@ UpdateInput::
   pop bc
   ret
 
-DrawStateMap::
+DrawStateMap::;a = draw flags
+  ld b, a;draw flags
   ld a, [loaded_bank]
   push af;bank
   ld a, UI_BANK
   call SetBank
 
+  ld a, b;draw flags
   call UIDrawStateMap
 
   pop af;bank

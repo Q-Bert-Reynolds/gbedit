@@ -526,6 +526,10 @@ ShowTownMap:
   ret
 
 TeachMove:;hl = item data address
+  ld a, [hl]
+  ld b, a
+  push bc;item id
+
   ld bc, 4
   add hl, bc
   ld a, [hl]
@@ -561,6 +565,9 @@ TeachMove:;hl = item data address
   ld e, 5;h
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
+
+  pop bc;b = item id 
+  call ShowLineup
   ret 
 
 TossItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)

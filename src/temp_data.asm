@@ -22,7 +22,7 @@ MyBubbiData:
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
   DB THROW_LEFT | BAT_RIGHT | BAT_LEFT  ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 45                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -67,7 +67,7 @@ MyZaphData:
   DB PSYCH_OUT_MOVE
   DB 10, 10, 10, 10                     ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 47                                 ; .hp
   DW 48                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -111,7 +111,7 @@ MyGioData:
   DB CUTTER_MOVE, 0
   DB 20, 40, 20, 0                      ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -156,7 +156,7 @@ MyBearData:
   DB ROCK_MOVE
   DB 20, 40, 15, 10                     ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_PSN                         ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -199,7 +199,7 @@ MyStarchildData:
   DB SHELL_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -243,7 +243,7 @@ MyMetaData:
   DB SWING_MOVE, 0
   DB 20, 40, 15, 0                      ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_SLP                         ; .status
   DW 15                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -288,7 +288,7 @@ MyChuData:
   DB CURVEBALL_MOVE
   DB 20, 40, 30, 20                     ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 5                                  ; .hp
   DW 49                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -333,7 +333,7 @@ MyYogiData:
   DB SMASH_MOVE
   DB 5, 5, 10, 20                       ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -378,7 +378,7 @@ MyBigRedData:
   DB CURVEBALL_MOVE
   DB 5, 40, 15, 20                      ; .pp
   DB THROW_LEFT | BAT_RIGHT             ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 69                                 ; .hp
   DW 101                                ; .max_hp 
   DW 109                                ; .bat
@@ -423,7 +423,7 @@ OpponentBigRedData:
   DB CURVEBALL_MOVE
   DB 5, 40, 15, 20                      ; .pp
   DB THROW_LEFT | BAT_RIGHT             ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -444,7 +444,7 @@ OpponentBubbiData:
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
   DB THROW_RIGHT | BAT_LEFT             ; .hand
-  DB NONE                               ; .status
+  DB STATUS_BRN                         ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat
@@ -465,7 +465,7 @@ OpponentBearData:
   DB SWING_MOVE, 0, 0
   DB 20, 40, 0, 0                       ; .pp
   DB THROW_RIGHT | BAT_RIGHT            ; .hand
-  DB NONE                               ; .status
+  DB STATUS_OK                          ; .status
   DW 32                                 ; .hp
   DW 45                                 ; .max_hp 
   DW 49                                 ; .bat

@@ -70,6 +70,7 @@ Items
 - use drugs
 - make offer to unsigned players
 - use select to swap items in list
+- add town names and cursor to town map
  
 Overworld
 

@@ -1,7 +1,7 @@
 INCLUDE "src/beisbol.inc"
 
 SECTION "Lineup Bank 0", ROM0
-ShowLineup::;b = item (0 = no item)
+ShowLineup::;b = item id (0 = no item)
   ld a, [loaded_bank]
   push af
   ld a, LINEUP_BANK
@@ -291,7 +291,7 @@ ReorderLineup: ;bc = player count, selected player
     jp z, .loop
   ret
 
-DrawLineupPlayers:
+DrawLineupPlayers:;b = item id (0 = no item)
   ld hl, UserLineup
   xor a
 .loop
@@ -299,9 +299,13 @@ DrawLineupPlayers:
     ld a, [hl]
     cp 0
     ret z
-    call DrawLineupPlayer;doesn't change hl
-    ld bc, UserLineupPlayer2 - UserLineupPlayer1
-    add hl, bc
+    push hl;player
+    push bc;item
+    call DrawLineupPlayer
+    pop bc;item
+    pop hl;player
+    ld de, UserLineupPlayer2 - UserLineupPlayer1
+    add hl, de
     ld a, [_j]
     inc a
     ld [_c], a;count, used for arrow
@@ -309,8 +313,9 @@ DrawLineupPlayers:
     jr nz, .loop
   ret
 
-DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
-  push hl
+DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
+  push bc;b = item id
+  push hl;player
   ld hl, tile_buffer
   xor a
   ld bc, 40
@@ -354,6 +359,45 @@ DrawLineupPlayer: ;hl = player, _j is order on screen, returns player in hl
   call DrawLineupPlayerSprites
 
   pop hl;player
+  pop bc;b = item id
+  xor a
+  cp a, b
+  jr nz, .showStat
+.showItem
+  ld a, b
+  call GetItemData
+  inc hl
+  ld a, [hld]
+  cp a, ITEM_TYPE_STATS
+  jr z, .showStat
+  cp a, ITEM_TYPE_GAME
+  jr z, .showStat
+  ;show able/unable
+  ret 
+
+.showStat; batting average, ERA, or fielding percentage
+  call GetPlayerStatus
+  and a
+  jr nz, .showStatus
+  
+  ret
+
+.showStatus; poison, sleep, burn, etc. 
+  DEBUG_LOG_STRING "STATUS"
+  ld b, 0
+  ld c, a
+  ld hl, StatusStrings
+  call str_FromArray
+  ld b, h
+  ld c, l
+  ld d, 15
+  ld a, [_j]
+  add a, a
+  inc a
+  ld e, a
+  ld h, 3
+  ld l, 1
+  call gbdk_SetBkgTiles
   ret
 
 SetHPBarColor:;e = HP*96/maxHP, [_j] = order
@@ -731,7 +775,13 @@ ShowPlayerMenu:
   ld [_j], a
   ret 
 
-_ShowLineup:;b = item (0 = no item)
+UseItemOnPlayer:;b = item id, returns, returns item used in c (0 = not used, 1 = used)
+  
+  ret
+
+_ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 = used)
+  ld c, 0;0
+  push bc;b = item id
 
   DISPLAY_OFF
   ld hl, SGBLineupPalSet               
@@ -759,6 +809,8 @@ _ShowLineup:;b = item (0 = no item)
   ld hl, rOBP1
   ld [hl], %11111000
 
+  pop bc;item id, item used
+  push bc
   call DrawLineupPlayers
 
   xor a
@@ -778,6 +830,18 @@ _ShowLineup:;b = item (0 = no item)
     ld a, [button_state]
     and a, PADF_A | PADF_START
     jr z, .testBButton
+    pop bc;b = item id
+    xor a
+    cp a, b;
+    jr z, .showPlayerMenu;no item
+    call UseItemOnPlayer
+    WAITPAD_UP
+    xor a
+    cp a, c
+    push bc;b = item id, c = item used
+    jr z, .animateSelectedPlayer;item not used
+    jr .exit;item used
+.showPlayerMenu
     call ShowPlayerMenu
     WAITPAD_UP
     jr .animateSelectedPlayer
@@ -808,4 +872,6 @@ _ShowLineup:;b = item (0 = no item)
 
   CLEAR_SCREEN " "
   DISPLAY_ON
+
+  pop bc;b = item id, c = item used
   ret

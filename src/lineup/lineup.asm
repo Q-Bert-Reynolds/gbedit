@@ -362,7 +362,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   pop bc;b = item id
   xor a
   cp a, b
-  jr nz, .showStat
+  jr z, .showStat
 .showItem
   ld a, b
   call GetItemData
@@ -819,7 +819,9 @@ _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 
   ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call DrawListMenuArrow
 
-  DISPLAY_ON
+  ld a, [rLCDC]
+  or LCDCF_BGON | LCDCF_OBJON | LCDCF_ON
+  ld [rLCDC], a
   WAITPAD_UP
 .loop
     call UpdateInput
@@ -831,9 +833,11 @@ _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 
     and a, PADF_A | PADF_START
     jr z, .testBButton
     pop bc;b = item id
+    push bc
     xor a
     cp a, b;
     jr z, .showPlayerMenu;no item
+    pop bc;b = item id
     call UseItemOnPlayer
     WAITPAD_UP
     xor a

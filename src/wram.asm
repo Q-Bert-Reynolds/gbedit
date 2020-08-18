@@ -102,6 +102,8 @@ player_base::
 .gb_pal::    DB
 .sgb_pal::   DW
 .anim::      DS 32
+.tm_hm::     DS 7;ceiling((5 HMs + 50 TMs) / 8)
+.learnset::  DS 22;largest learnset is 11 moves
 .end::
 
 ; move data struct

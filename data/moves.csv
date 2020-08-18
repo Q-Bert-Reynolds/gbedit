@@ -1,5 +1,6 @@
 Move,Category,Description,Type,PP,Power,Acc,Launch,Spray,Pull,Path
-Pinpoint,Pitching,An incredibly accurate four-seam.,Bug,30,80,100,,,,Straight
+Pinpoint,Pitching,An incredibly accurate four-seam.,Bug,10,80,100,,,,Straight
+Thread,Pitching,An incredibly accurate two-seam.,Bug,20,75,100,,,,Fade
 Silky Swing,Batting,Lowers the fielder's Speed by 1 stage.,Bug,30,50,95,15,45,,
 Dragon Bunt,Batting,A drag bunt that wears down the fielder 40 HP.,Dragon,10,40,100,-15,5,,
 Dragonball,Pitching,A shuuto with an off-center pivot.,Dragon,10,70,100,,,,Fade
@@ -20,12 +21,16 @@ Scorch,Batting,A hard hit ball with a ~10% chance to burn the fielder.,Fire,25,1
 Bender,Pitching,A curveball that seems to drop out of the sky.,Flying,10,70,65,,,,Curve
 Fly,Batting,An uppercut swing with a high chance of a fly ball.,Flying,15,70,95,35,,,
 Riser,Pitching,A gravity-defying four-seam with a monster spin-rate.,Flying,10,120,75,,,,Rise
+Mock,Batting,Takes a pitch to mock the pitcher. 20% chance of getting thrown at.,Flying,10,0,20,,,,
 Sky Smash,Batting,"Batter digs in, takes the first pitch, and smashes anything close on the second pitch.",Flying,5,140,90,45,,,
 BafflingBunt,Batting,Squares for a bunt. Unsquares. Squares again. Takes a pitch. Confuses the pitcher.,Ghost,10,0,100,,,,
 Dead Pull,Batting,"Hard hit, pulled right down the line.",Ghost,10,90,100,5,5,1,
 Lick,Batting,Has a ~30% chance to paralyze the fielder. This move fails against Psychic-type pitches.,Ghost,30,20,100,10,,,
-Possess,Batting,Takes a pitch. Control the next pitch.,Ghost,5,0,10,5,5,1,
+Possess,Pitching,A pitch that can be controlled after it's thrown,Ghost,5,0,100,,,,Knuckle
 Kudzuball,Pitching,A fastball that's all over the place.,Grass,10,90,60,,,,Straight
+Grassburner,Batting,A hard hit ground ball with a chance of burning the fielder.,Grass,5,120,100,0,30,-0.5,
+Hardwood,Batting,A hard swing with a big stick.,Grass,15,90,75,30,30,0,
+Sleeper,Batting,Takes a pitch. Lulls the pitcher to sleep. ,Grass,10,0,25,,,,None
 Plant n Turn,Batting,Has a high critical hit ratio.,Grass,25,55,95,15,10,0.5,
 Bouncer,Pitching,Bounces in the dirt.,Ground,15,0,100,,,,Straight
 Chop Down,Batting,Almost certainly a grounder. Often bounces right in front of the plate and stays in the air for a long time.,Ground,45,60,100,-10,,,
@@ -34,7 +39,11 @@ Dig In,Batting,"On the first pitch, the batter digs in. On the second pitch, the
 Kickup Sand,Batting,Takes a pitch. Lowers the catcher's Accuracy by 1 stage.,Ground,15,0,100,,,,
 Spelunker,Pitching,A forkball that takes a hard turn out of the strikezone at the last second.,Ground,15,0,100,,,,Drop
 ColdShoulder,Pitching,Looks over their shoulder. Throws to first. Has a 30% chance of freezing the runner.,Ice,5,0,30,,,,None
+Frozen Rope,Batting,A hard hit line drive that has a 10% chance of freezing the fielder.,Ice,10,90,90,10,,,
 Shiver,Batting,Takes a pitch. The batter's preocupation with how cold they've gotten protects them from negative stat modifiers caused by other players until the end of the plate appearance.,Ice,30,0,100,,,,
+Bunt,Batting,Great for advancing runners.,Normal,30,10,100,,,,
+Push Bunt,Batting,A hard bunt meant to go past a charging infielder.,Normal,20,40,100,,,,
+Drag Bunt,Batting,A bunt with a running start. Speed +1.,Normal,15,10,100,,,,
 Barrage,Pitching,"A harder fastball thrown 2-5 times in a row. This pitch has a 3/8 chance of being thrown twice, a 3/8 chance of being thrown three times, a 1/8 chance of being thrown four times, and a 1/8 chance of being thrown five times.",Normal,10,150,85,,,,Straight
 Bash,Batting,"Takes a pitch, lowers their head, and swings hard on the next turn.",Normal,25,90,100,,,,
 Bomb,Batting,A hard swing with a high launch angle.,Normal,15,120,70,,,,
@@ -85,6 +94,7 @@ Two-Seam,Pitching,A two-seam fastball. It tails away from the pitcher.,Normal,30
 Vulcan,Pitching,A changeup thrown like a Star Trek greeting.,Normal,30,70,90,,,,Drop
 Wiff,Batting,Swing... and a miss.,Normal,40,0,100,,,,
 Filth,Pitching,A filthy breaking changeup. Has a 30% chance to poison the batter.,Poison,10,90,100,,,,Fade
+Nasty Curve,Pitching,A hard curveball with a 25% chance to poison the batter.,Poison,10,80,100,,,,Curve
 Gas,Pitching,Straight gas. 10% chance of poisioning the batter.,Poison,10,120,70,,,,Straight
 Puff,Batting,A nasty puff of smoke. Good contact swing. Has a ~30% chance to poison the catcher.,Poison,20,20,100,20,,,
 Blink,Pitching,A fastball that seems to jump from the mound to the plate in the blink of an eye.,Psychic,10,100,50,,,,Straight

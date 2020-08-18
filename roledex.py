@@ -26,9 +26,44 @@ def main():
     dict_reader = csv.DictReader(file)
     for player in dict_reader:
       roledex.append(player)
-  
+
+  learned_moves = {}
+  with open("./data/learned_moves.csv") as file:
+    rows = csv.reader(file)
+    moves = next(rows)
+    max_learnset = 0
+    player_with_largest = ""
+    for row in rows:
+      player = row[0]
+      player_moves = []
+      for i in range(1, len(row)):
+        if (row[i]):
+          player_moves.append((row[i], moves[i]))
+      if len(player_moves) > max_learnset:
+        max_learnset = len(player_moves)
+        player_with_largest = player
+      learned_moves[player] = sorted(player_moves)
+  print(player_with_largest + " has largest learnset at " + str(max_learnset) + " moves.")
+
+  taught_moves = {}
+  with open("./data/taught_moves.csv") as file:
+    rows = csv.reader(file)
+    moves = next(rows)
+    count = math.ceil(55/8)*8 #number of HMs + TMs rounded to the next multiple of 8
+    for row in rows:
+      player = row[0]
+      player_moves = ["0"]*count
+      for i in range(1, len(row)):
+        if (row[i]):
+          player_moves[i-1] = "1"
+      bin_str = "".join(player_moves)
+      byte_array = []
+      for i in range(0,count,8):
+        byte_array.append("${:02X}".format(int(bin_str[i:i+8], 2)))
+      taught_moves[player] = byte_array
+
   generate_player_strings(roledex)
-  generate_player_data(roledex)
+  generate_player_data(roledex, learned_moves, taught_moves)
   generate_img_bank(roledex)
 
 def generate_img_bank(roledex):
@@ -174,7 +209,7 @@ def weight_string(player):
   frac = "{0:01X}".format(int((w*10)%10))
   return "DW $" + frac + lbs + " ;weight\n"
 
-def generate_player_data(roledex):
+def generate_player_data(roledex, learned_moves, taught_moves):
   with open("./data/player_data.asm", "w+") as asm_file:
     asm_file.write("SECTION \"Player Data\", ROMX, BANK[PLAYER_DATA_BANK]\n")
     asm_file.write(";weight format: DDDDLLLL LLLLLLLL where D is decimal and L is lbs\n")
@@ -202,6 +237,8 @@ def generate_player_data(roledex):
       asm_file.write("DB " + str(player["HatID"]) + " ;Lineup Hat\n")
       asm_file.write("DB " + str(player["GBPal"]) + " ;Lineup Palette\n")
       asm_file.write("DW " + str(player["SGBPal"]) + " ;Color Palette\n")
+
+      asm_file.write(";animations\n")
       for anim in anims:
         count = anim.upper() + "_TILE_COUNT"
         label = PascalCase(anim) + "Tiles"
@@ -214,6 +251,13 @@ def generate_player_data(roledex):
         asm_file.write("DB BANK(_"+label+")\n")
         asm_file.write("DW _"+label+"\n")
         asm_file.write("DB _"+count+"\n")
+
+      asm_file.write("DB " + ", ".join(taught_moves[player["Nickname"]]) + " ;HM/TM bit field\n")
+
+      asm_file.write(";learnset\n")
+      for move in learned_moves[player["Nickname"]]:
+        move_const = move[1].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
+        asm_file.write("DB " + move[0] + ", " + move_const + "\n")
       
     asm_file.write("\nRoledex:\n"+var_names)
 

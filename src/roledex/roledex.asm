@@ -47,6 +47,7 @@ GetMoveName:: ; a = move number, returns name in name_buffer
   ret
 
 .findName
+  ld [_breakpoint], a
   dec a
   ld b, 0
   ld c, a;number
@@ -55,6 +56,7 @@ GetMoveName:: ; a = move number, returns name in name_buffer
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
+  ld [_breakpoint], a
   ld hl, MoveNames
   call str_FromArray
   ld de, name_buffer

@@ -313,6 +313,8 @@ DrawLineupPlayers:;b = item id (0 = no item)
     jr nz, .loop
   ret
 
+UnableText: DB "NOT "
+AbleText: DB "ABLE"
 DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   push bc;b = item id
   push hl;player
@@ -356,7 +358,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   push hl;player
   xor a
   ld [_u], a;x offset
-  call DrawLineupPlayerSprites
+  call DrawLineupPlayerSprites;populates [player_base]
 
   pop hl;player
   pop bc;b = item id
@@ -372,10 +374,46 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   jr z, .showStat
   cp a, ITEM_TYPE_GAME
   jr z, .showStat
-  ;show able/unable
+  cp a, ITEM_TYPE_MOVE
+  jr z, .checkCanLearn
+; .checkEvolvesFrom
+;   ret
+.checkCanLearn
+  ld a, [hl];item id
+  sub a, HM01_ITEM;move index
+  ld h, 0
+  ld l, a
+  ld c, 8
+  call math_Divide
+  ld bc, player_base.tm_hm
+  add hl, bc
+  ld d, a
+  ld a, 7
+  sub a, d
+  ld d, a;bit
+  ld a, [hl]
+  ld e, a;byte
+  call math_TestBit
+  jr nz, .unable
+.able
+  ld bc, AbleText
+  ld h, 4
+  ld d, 16
+  jr .drawText
+.unable
+  ld bc, UnableText
+  ld h, 8
+  ld d, 12
+.drawText
+  ld a, [_j]
+  add a, a
+  inc a
+  ld e, a
+  ld l, 1
+  call gbdk_SetBkgTiles
   ret 
 
-.showStat; batting average, ERA, or fielding percentage
+.showStat; TODO: show batting average, ERA, or fielding percentage
   call GetPlayerStatus
   and a
   jr nz, .showStatus

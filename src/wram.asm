@@ -118,6 +118,14 @@ move_data::
 .launch_angle:: DB
 .end::
 
+; item data
+item_data::
+.id::    DB
+.type::  DB
+.cost::  DW
+.extra:: DS 2
+.end::
+
 ;Baseball
 balls_strikes_outs:: DB; XBBBSSOO
 runners_on_base:: DW; lineup order of runners on base - HHHHTTTT SSSSFFFF

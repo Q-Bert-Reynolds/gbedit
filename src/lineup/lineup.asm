@@ -368,8 +368,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
 .showItem
   ld a, b
   call GetItemData
-  inc hl
-  ld a, [hld]
+  ld a, [item_data.type]
   cp a, ITEM_TYPE_STATS
   jr z, .showStat
   cp a, ITEM_TYPE_GAME
@@ -379,7 +378,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
 ; .checkEvolvesFrom
 ;   ret
 .checkCanLearn
-  ld a, [hl];item id
+  ld a, [item_data.id]
   sub a, HM01_ITEM;move index
   ld h, 0
   ld l, a
@@ -394,7 +393,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   ld a, [hl]
   ld e, a;byte
   call math_TestBit
-  jr nz, .unable
+  jr z, .unable
 .able
   ld bc, AbleText
   ld h, 4

@@ -43,8 +43,15 @@ GetInventoryItemID::; a = index of item in list, returns item id in a, item coun
   pop bc
   ret 
 
-GetItemData::;a = item id, returns item data address in hl
+GetItemData::;a = item id, returns [item data]
+  push de
   push bc
+  ld b, a;item id
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, ITEM_BANK
+  call SetBank
+  ld a, b;item id
   dec a
   ld hl, ItemList
   ld b, 0
@@ -56,7 +63,13 @@ GetItemData::;a = item id, returns item data address in hl
   ld a, [hli]
   ld h, a
   ld l, b
+  ld de, item_data
+  ld bc, item_data.end - item_data
+  call mem_Copy
+  pop af;bank
+  call SetBank
   pop bc
+  pop de
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
@@ -317,8 +330,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
 
 .notBike
   push bc;index in b
-  call GetItemData;item data address in hl
-  push hl;item data address
+  call GetItemData;returns [item_data]
 
   ld hl, UseTossText
   ld de, str_buffer
@@ -331,15 +343,13 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld d, 7
   ld e, 5
   call ShowListMenu
-  pop hl;item data address
   pop bc;index in b
   and a
   jp z, .backToItemList
   cp a, 1
   jr z, .useItem
 .tossItem
-  inc hl
-  ld a, [hld];a = item type, item data address in hl
+  ld a, [item_data.type]
   cp ITEM_TYPE_SPECIAL
   jr z, .tooImportant
   ld a, b;item index
@@ -384,13 +394,12 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, d;exit code
   ret
 
-UseItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
+UseItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)
   push af;index
   ld a, [game_state]
   and a, GAME_STATE_PLAY_BALL
   push af;play ball flag
-  inc hl
-  ld a, [hld];a = item type
+  ld a, [item_data.type]
 .checkBaseballItem
   cp ITEM_TYPE_BASEBALL
   jr nz, .checkGameItem
@@ -452,11 +461,10 @@ UseItem:;hl = item data address, a = index, returns exit code in a (0 = item rem
   ld a, 1
   ret
 
-UseSpecialItem:;hl = item data address, f = playball flag, returns z if can't use now
-  ld a, [hli]
+UseSpecialItem:;[item_data], f = playball flag, returns z if can't use now
+  ld a, [item_data.id]
   jr nz, .playingBaseball
 .walkingAround
-  DEBUG_LOG_STRING "HERE"
   cp TOWN_MAP_ITEM
   jr z, .useTownMap
   cp HARMONICA_ITEM
@@ -525,11 +533,8 @@ ShowTownMap:
   SHOW_WIN
   ret
 
-TeachMove:;hl = item data address
-  ld a, [hl]
-  ld b, a
-  push bc;item id
-
+TeachMove:;[item_data]
+  ld hl, item_data
   ld bc, 4
   add hl, bc
   ld a, [hl]
@@ -566,12 +571,12 @@ TeachMove:;hl = item data address
   ld a, DRAW_FLAGS_WIN
   call ShowListMenu
 
-  pop bc;b = item id 
+  ld a, [item_data.id] 
+  ld b, a
   call ShowLineup
   ret 
 
-TossItem:;hl = item data address, a = index, returns exit code in a (0 = item removed completely)
-  push hl;item data address
+TossItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)
 .showTossCount
   push af;index
   call GetInventoryItemID
@@ -587,16 +592,14 @@ TossItem:;hl = item data address, a = index, returns exit code in a (0 = item re
   and a
   jr nz, .askSure
   pop bc;b = item index
-  pop hl;item data address
   ld a, 1
   ret
   
 .askSure
   pop bc;item index
   ld c, a;count
-  pop hl;item data address
   push bc;index/count
-  ld a, [hl]
+  ld a, [item_data.id]
   sub a, 2;why 2 instead of one?
   ld b, 0
   ld c, a

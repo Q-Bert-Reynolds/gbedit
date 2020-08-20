@@ -375,24 +375,10 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   jr z, .showStat
   cp a, ITEM_TYPE_MOVE
   jr z, .checkCanLearn
-; .checkEvolvesFrom
-;   ret
+.checkEvolvesFrom
+  ret
 .checkCanLearn
-  ld a, [item_data.id]
-  sub a, HM01_ITEM;move index
-  ld h, 0
-  ld l, a
-  ld c, 8
-  call math_Divide
-  ld bc, player_base.tm_hm
-  add hl, bc
-  ld d, a
-  ld a, 7
-  sub a, d
-  ld d, a;bit
-  ld a, [hl]
-  ld e, a;byte
-  call math_TestBit
+  call CheckCanLearnMove
   jr z, .unable
 .able
   ld bc, AbleText
@@ -812,8 +798,152 @@ ShowPlayerMenu:
   ld [_j], a
   ret 
 
-UseItemOnPlayer:;b = item id, returns, returns item used in c (0 = not used, 1 = used)
+CheckCanLearnMove:;[item data], [player_base], returns z if unable
+  ld a, [item_data.id]
+  sub a, HM01_ITEM;move index
+  ld h, 0
+  ld l, a
+  ld c, 8
+  call math_Divide
+  ld bc, player_base.tm_hm
+  add hl, bc
+  ld d, a
+  ld a, 7
+  sub a, d
+  ld d, a;bit
+  ld a, [hl]
+  ld e, a;byte
+  call math_TestBit
+  ret 
+
+NotCompatibleWithText: DB " is not\ncompatible with\n%s.",0
+TheyCantLearnText:DB "They can't learn\n%s.",0
+UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
+  ld a, b
+  call GetItemData
+  ld a, [_j]
+  call GetUserPlayerInLineup
+  ld a, [hl]
+  push hl;player
+  call LoadPlayerBaseData
+  ld a, [item_data.type]
+  cp a, ITEM_TYPE_STATS
+  jr z, .changeStat
+  cp a, ITEM_TYPE_GAME
+  jr z, .changeGame
+  cp a, ITEM_TYPE_MOVE
+  jr z, .learnMove
+  ret
+.learnMove
+  call CheckCanLearnMove
+  pop hl;player
+  jr z, .unable
+.able
+  ld c, 1
   
+.unable
+  call GetUserPlayerName
+  ld [_breakpoint], a
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld hl, NotCompatibleWithText
+  ld de, str_buffer
+  call str_Append
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, str_buffer
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+  ld hl, TheyCantLearnText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextForPlayer
+  HIDE_WIN
+  ld a, [item_data.id]
+  ld b, a
+  ld c, 0
+  ret 
+
+.changeStat
+.changeGame
+  pop hl;player
+  ld a, [item_data.id]
+  ld b, a
+  ld c, 0
+  ret
+
+RevealTextForPlayer:;[_j] = player index, hl = text
+  ld a, [_j]
+  push af;_j
+  push hl;text
+  call CopyBkgToWin
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  ld a, [_j]
+  cp a, 6
+  jr c, .bottom
+.top
+  ld c, 3*4;3 players, 4 sprites each
+  ld hl, oam_buffer+1;x sprite
+  ld de, 4
+.topLoop
+    ld a, [hl]
+    add a, 160
+    ld [hl], a
+    add hl, de
+    dec c
+    jr nz, .topLoop
+  ld de, 0
+  jr .draw
+.bottom
+  ld c, 3*4;3 players, 4 sprites each
+  ld hl, oam_buffer+1+6*16;x sprite
+  ld de, 4
+.bottomLoop
+    ld a, [hl]
+    add a, 160
+    ld [hl], a
+    add hl, de
+    dec c
+    jr nz, .bottomLoop
+  ld de, 12
+.draw
+  pop hl;text
+  push de;xy
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+
+  pop hl;xy
+  ld de, $1203
+  add hl, de
+  ld d, h
+  ld e, l
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
+
+  ld c, 9*4;9 players, 4 sprites each
+  ld hl, oam_buffer+1;x sprite
+  ld de, 4
+.putBack
+    ld a, [hl]
+    cp a, 160
+    jr c, .skip
+      sub a, 160
+      ld [hl], a
+.skip
+    add hl, de
+    dec c
+    jr nz, .putBack
+  pop af;_j
+  ld [_j], a
   ret
 
 _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 = used)

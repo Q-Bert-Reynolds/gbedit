@@ -66,7 +66,7 @@ Team Menu
 
 Items
 
-- show "ABLE" or not in team menu after using an item
+- teach moves
 - use drugs
 - make offer to unsigned players
 - use select to swap items in list

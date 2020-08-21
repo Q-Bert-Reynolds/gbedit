@@ -816,8 +816,17 @@ CheckCanLearnMove:;[item data], [player_base], returns z if unable
   call math_TestBit
   ret 
 
-NotCompatibleWithText: DB " is not\ncompatible with\n%s.",0
-TheyCantLearnText:DB "They can't learn\n%s.",0
+NotCompatibleWithText:          DB " is not\ncompatible with\n%s.",0
+TheyCantLearnText:              DB "They can't learn\n%s.",0
+TryingToLearnText:              DB " is\ntrying to learn\n%s!",0
+ButCantLearnMoreText:           DB "But, %s\ncan't learn more\nthan 4 moves.",0
+ForgetAMoveText:                DB "Forget an older\nmove to make room\nfor %s?",0
+WhichMoveShouldBeForgottenText: DB "Which move should\nbe forgotten?",0
+OneTwoAndPoofText:              DB "1, 2 and... Poof!"
+PlayerForgotMoveText:           DB " forgot\n%s!",0
+AndElipsisText:                 DB "And...",0
+PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
+
 UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld a, b
   call GetItemData
@@ -840,6 +849,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jr z, .unable
 .able
   ld c, 1
+  ret
   
 .unable
   call GetUserPlayerName

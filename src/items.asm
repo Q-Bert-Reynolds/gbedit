@@ -559,17 +559,10 @@ TeachMove:;[item_data]
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call RevealText
 
-  ld hl, YesNoText
-  ld de, str_buffer
-  call str_Copy
-  xor a
-  ld [name_buffer], a
-  ld b, 14;x
-  ld c, 7;y
-  ld d, 6;w
-  ld e, 5;h
+  ld b, 14
+  ld c, 7
   ld a, DRAW_FLAGS_WIN
-  call ShowListMenu
+  call AskYesNo
 
   ld a, [item_data.id] 
   ld b, a
@@ -619,17 +612,10 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call RevealText
   
-  ld hl, YesNoText
-  ld de, str_buffer
-  call str_Copy
-  xor a
-  ld [name_buffer], a
-  ld b, 14;x
-  ld c, 7;y
-  ld d, 6;w
-  ld e, 5;h
+  ld b, 14
+  ld c, 7
   ld a, DRAW_FLAGS_WIN
-  call ShowListMenu
+  call AskYesNo
   pop hl;item name
   pop bc;index/count
   cp a, 1

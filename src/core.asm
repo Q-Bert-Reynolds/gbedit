@@ -54,8 +54,11 @@ StatusStrings:
   DB "PSN", 0
   DB "SLP", 0
 
-CancelString::
-  DB "CANCEL", 0
+CancelString::    DB "CANCEL", 0
+YesNoText::       DB "YES\nNO",0
+SaveGameText:     DB "Would you like to\nSAVE the game?",0
+NowSavingText:    DB "Now saving...",0
+SavedTheGameText: DB "%s saved\nthe game.",0
 
 GetTypeString:: ;a = type, string in name_buffer
   ld b, 0
@@ -978,18 +981,6 @@ CopyBkgToWin::
   
   ret
 
-YesNoText:
-  DB "YES\nNO",0
-
-SaveGameText:
-  DB "Would you like to\nSAVE the game?",0
-
-NowSavingText:
-  DB "Now saving...",0
-
-SavedTheGameText:
-  DB "%s saved\nthe game.",0
-
 ShowSaveGame::
   ld d, 4
   ld e, 0
@@ -1001,16 +992,9 @@ ShowSaveGame::
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call RevealText
 
-  ld hl, YesNoText
-  ld de, str_buffer
-  call str_Copy
-  xor a
-  ld [name_buffer], a
   ld bc, 7;(0,7)
-  ld d, 6
-  ld e, 5
   ld a, DRAW_FLAGS_WIN
-  call ShowListMenu
+  call AskYesNo
   cp a, 1;if yes, save game
   ret nz
   

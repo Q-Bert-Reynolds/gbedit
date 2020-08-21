@@ -20,6 +20,23 @@ INCLUDE "src/lineup/stats.asm"
 INCLUDE "img/health_bar.asm"
 INCLUDE "img/lineup_sprites.asm"
 
+UnableText:                     DB "NOT "
+AbleText:                       DB "ABLE";must be defined directly after UnableText
+NotCompatibleWithText:          DB " is not\ncompatible with\n%s.",0
+TheyCantLearnText:              DB "They can't learn\n%s.",0
+TryingToLearnText:              DB " is\ntrying to learn\n%s!",0
+ButCantLearnMoreText:           DB "But, %s\ncan't learn more\nthan 4 moves.",0
+ForgetAMoveText:                DB "Forget an older\nmove to make room\nfor %s?",0
+AbandonLearningText:            DB "Abandon learning\n%s?",0
+DidNotLearnText:                DB "\ndid not learn\n%s!",0
+WhichMoveShouldBeForgottenText: DB "Which move should\nbe forgotten?",0
+OneTwoAndPoofText:              DB "1, 2 and... Poof!"
+PlayerForgotMoveText:           DB " forgot\n%s!",0
+AndElipsisText:                 DB "And...",0
+PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
+FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL", 0
+FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL", 0
+
 SGBLineupPalSet: PAL_SET PALETTE_UI, PALETTE_SEPIA, PALETTE_WARNING, PALETTE_GOOD
 SGBLineupAttrBlk:
   ATTR_BLK 11
@@ -313,8 +330,6 @@ DrawLineupPlayers:;b = item id (0 = no item)
     jr nz, .loop
   ret
 
-UnableText: DB "NOT "
-AbleText: DB "ABLE"
 DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   push bc;b = item id
   push hl;player
@@ -406,7 +421,6 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   ret
 
 .showStatus; poison, sleep, burn, etc. 
-  DEBUG_LOG_STRING "STATUS"
   ld b, 0
   ld c, a
   ld hl, StatusStrings
@@ -670,11 +684,6 @@ DrawLineupPlayerSprites:;hl = player, [_u] = x offset
 
   ret
 
-FromWorldMenuText:
-  DB "STATS\nBAT ORDER\nPOSITION\nCANCEL", 0
-FromGameMenuText:
-  DB "STATS\nPOSITION\nCANCEL", 0
-
 ShowPlayerMenu:
   ld a, [_c];number of players
   ld b, a
@@ -816,17 +825,6 @@ CheckCanLearnMove:;[item data], [player_base], returns z if unable
   call math_TestBit
   ret 
 
-NotCompatibleWithText:          DB " is not\ncompatible with\n%s.",0
-TheyCantLearnText:              DB "They can't learn\n%s.",0
-TryingToLearnText:              DB " is\ntrying to learn\n%s!",0
-ButCantLearnMoreText:           DB "But, %s\ncan't learn more\nthan 4 moves.",0
-ForgetAMoveText:                DB "Forget an older\nmove to make room\nfor %s?",0
-WhichMoveShouldBeForgottenText: DB "Which move should\nbe forgotten?",0
-OneTwoAndPoofText:              DB "1, 2 and... Poof!"
-PlayerForgotMoveText:           DB " forgot\n%s!",0
-AndElipsisText:                 DB "And...",0
-PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
-
 UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld a, b
   call GetItemData
@@ -837,23 +835,123 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call LoadPlayerBaseData
   ld a, [item_data.type]
   cp a, ITEM_TYPE_STATS
-  jr z, .changeStat
+  jp z, .changeStat
   cp a, ITEM_TYPE_GAME
-  jr z, .changeGame
+  jp z, .changeGame
   cp a, ITEM_TYPE_MOVE
   jr z, .learnMove
   ret
 .learnMove
+  call CopyBkgToWin
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  call HideSpritesBehindTextBox
   call CheckCanLearnMove
-  pop hl;player
-  jr z, .unable
+  jp z, .unable
 .able
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld hl, TryingToLearnText
+  ld de, str_buffer
+  call str_Append
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, str_buffer
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, ButCantLearnMoreText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextForPlayer
+
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, ForgetAMoveText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextForPlayer
+
+  call AskYesNoForPlayer
+  cp a, 1
+  jr z, .confirmed
+.cancel
+  call CopyBkgToWin
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, AbandonLearningText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextForPlayer
+  call AskYesNoForPlayer
+  cp a, 1
+  push af
+  call CopyBkgToWin
+  pop af
+  jp nz, .able
+.didNotLearn
+  pop hl;player
+  call GetUserPlayerName
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld hl, DidNotLearnText
+  ld de, str_buffer
+  call str_Append
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, str_buffer
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+  ld c, 0
+  ret
+
+.confirmed
+  ld hl, WhichMoveShouldBeForgottenText
+  call RevealTextForPlayer
+
+  pop hl;player
+  push hl;player
+  call SelectMoveToForget
+  and a
+  jr z, .cancel
+
+  ld hl, OneTwoAndPoofText
+
+  pop hl;player
+  call GetUserPlayerName
+  ld hl, PlayerForgotMoveText
+  ld hl, AndElipsisText
+  ld hl, PlayerLearnedMoveText
+  call ShowSpritesHiddenByTextBox
   ld c, 1
   ret
   
 .unable
+  pop hl;player
   call GetUserPlayerName
-  ld [_breakpoint], a
   ld hl, name_buffer
   ld de, str_buffer
   call str_Copy
@@ -866,6 +964,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld de, tile_buffer
   ld bc, name_buffer
   call str_Replace
+  call HideSpritesBehindTextBox
   ld hl, tile_buffer
   call RevealTextForPlayer
   ld hl, TheyCantLearnText
@@ -874,7 +973,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call str_Replace
   ld hl, str_buffer
   call RevealTextForPlayer
-  HIDE_WIN
+  call ShowSpritesHiddenByTextBox
   ld a, [item_data.id]
   ld b, a
   ld c, 0
@@ -888,61 +987,83 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld c, 0
   ret
 
-RevealTextForPlayer:;[_j] = player index, hl = text
-  ld a, [_j]
-  push af;_j
-  push hl;text
-  call CopyBkgToWin
-  ld a, 7
-  ld [rWX], a
+SelectMoveToForget:;hl = player, returns selection in a (0 = cancel)
+  and a
   xor a
-  ld [rWY], a
+  ld [str_buffer], a
+  ld c, 4;count
+.loopMoves
+    push bc;count
+    push hl;player
+    ld a, 4
+    sub a, c
+    ld d, ALL_MOVES
+    call GetPlayerMoveName
+    ld hl, name_buffer
+    ld de, str_buffer
+    call str_Append
+    dec de
+    ld a, "\n"
+    ld [de], a
+    inc de
+    xor a
+    ld [de], a
+    pop hl;player
+    pop bc;count
+    dec c
+    jr nz, .loopMoves
+  dec de
+  xor a
+  ld [name_buffer], a
+  ld [de], a
+  ld b, 4
+  ld c, 6
+  ld d, 16
+  ld e, 6
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_NO_SPACE
+  call ShowListMenu
+  ret 
+
+AskYesNoForPlayer:;[_j] = selected player, returns 
   ld a, [_j]
   cp a, 6
   jr c, .bottom
 .top
-  ld c, 3*4;3 players, 4 sprites each
-  ld hl, oam_buffer+1;x sprite
-  ld de, 4
-.topLoop
-    ld a, [hl]
-    add a, 160
-    ld [hl], a
-    add hl, de
-    dec c
-    jr nz, .topLoop
-  ld de, 0
-  jr .draw
+  ld c, 6
+  jr .ask
 .bottom
-  ld c, 3*4;3 players, 4 sprites each
-  ld hl, oam_buffer+1+6*16;x sprite
+  ld c, 7
+.ask
+  ld b, 14
+  ld a, DRAW_FLAGS_WIN
+  call AskYesNo
+  ret 
+
+HideSpritesBehindTextBox:;[_j] = selected player
   ld de, 4
-.bottomLoop
+  ld c, 3*4;3 players, 4 sprites each
+  ld a, [_j]
+  cp a, 6
+  jr c, .bottom
+.top
+  ld hl, oam_buffer+1;x sprite
+  jr .loop
+.bottom
+  ld hl, oam_buffer+1+6*16;x sprite
+.loop
     ld a, [hl]
     add a, 160
     ld [hl], a
     add hl, de
     dec c
-    jr nz, .bottomLoop
-  ld de, 12
-.draw
-  pop hl;text
-  push de;xy
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call RevealText
+    jr nz, .loop
+  ret
 
-  pop hl;xy
-  ld de, $1203
-  add hl, de
-  ld d, h
-  ld e, l
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call FlashNextArrow
-
+ShowSpritesHiddenByTextBox:
   ld c, 9*4;9 players, 4 sprites each
   ld hl, oam_buffer+1;x sprite
   ld de, 4
-.putBack
+.loop
     ld a, [hl]
     cp a, 160
     jr c, .skip
@@ -951,7 +1072,36 @@ RevealTextForPlayer:;[_j] = player index, hl = text
 .skip
     add hl, de
     dec c
-    jr nz, .putBack
+    jr nz, .loop
+  HIDE_WIN
+  ret
+
+RevealTextForPlayer:;[_j] = selected player, hl = text
+  ld a, [_j]
+  push af;_j
+  push hl;text
+  ld a, [_j]
+  cp a, 6
+  jr c, .bottom
+.top
+  ld de, 0
+  jr .draw
+.bottom
+  ld de, 12
+.draw
+  pop hl;text
+  push de;xy
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call RevealText
+
+  pop hl;xy
+  ld de, $1204
+  add hl, de
+  ld d, h
+  ld e, l
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call FlashNextArrow
+
   pop af;_j
   ld [_j], a
   ret

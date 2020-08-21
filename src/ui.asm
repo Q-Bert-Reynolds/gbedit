@@ -3,18 +3,19 @@ INCLUDE "src/beisbol.inc"
 SECTION "UI Bank 0", ROM0
 
 ; LoadFontTiles
-; RevealTextAndWait               hl = text
-; RevealText                      a = draw flags, de = xy hl = text
-; FlashNextArrow                  a = draw flags, de = xy
-; DrawUIBox                       a=draw flags, bc = xy, de = wh
-; DrawText                        a = draw flags, hl = text, de = xy, bc = max lines
-; DisplayText                     a = draw flags, hl = text
-; DrawListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count
-; MoveListMenuArrow               a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
-; ShowListMenu                    a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
-; ShowTextEntry                   bc = title, de = str, l = max_len -> puts text in name_buffer
+; RevealTextAndWait   hl = text
+; RevealText          a = draw flags, de = xy hl = text
+; FlashNextArrow      a = draw flags, de = xy
+; DrawUIBox           a=draw flags, bc = xy, de = wh
+; DrawText            a = draw flags, hl = text, de = xy, bc = max lines
+; DisplayText         a = draw flags, hl = text
+; DrawListMenuArrow   a = draw flags, de = xy, _j = current index, _c = count
+; MoveListMenuArrow   a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
+; ShowListMenu        a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
+; AskYesNo            a = draw flags, bc = xy, returns choice in a (0 = cancel, 1 = yes, 2 = no)
+; ShowTextEntry       bc = title, de = str, l = max_len -> puts text in name_buffer
 ; ShowOptions
-; ShowNumberPicker                a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
+; ShowNumberPicker    a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
 
 LoadFontTiles::
   ld a, [loaded_bank]
@@ -306,8 +307,13 @@ DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
 
   ld a, 1
   ld h, a ;w=1
+  pop af;draw flags
+  push af;draw flags
+  and a, DRAW_FLAGS_NO_SPACE
   ld a, [_c]
+  jr nz, .noSpace
   add a, a
+.noSpace
   ld l, a ;h=_c*2
   
   pop af;draw flags
@@ -387,6 +393,21 @@ ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buf
 
   ld a, b;choice
   ret; return a=choice;
+
+AskYesNo::;a = draw flags, bc = xy, returns choice in a (0 = cancel, 1 = yes, 2 = no)
+  push af;draw flags
+  push bc;xy
+  ld hl, YesNoText
+  ld de, str_buffer
+  call str_Copy
+  xor a
+  ld [name_buffer], a
+  pop bc;xy
+  ld d, 6
+  ld e, 5
+  pop af;draw flags
+  call ShowListMenu
+  ret
 
 ShowTextEntry:: ;bc = title, de = str, l = max_len -> puts text in name_buffer
   ld a, [loaded_bank]
@@ -1632,8 +1653,15 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     call DrawListEntry
     xor a
     ld [_l], a
+    pop af;draw flags
+    push af;draw flags
+    ld c, 2;spacing
+    and a, DRAW_FLAGS_NO_SPACE
+    jr z, .incrementY
+    ld c, 1
+.incrementY
     ld a, [_j]
-    add a, 2
+    add a, c;spacing
     ld [_j], a
     ld a, [_c]
     inc a

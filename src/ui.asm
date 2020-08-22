@@ -276,33 +276,31 @@ DisplayText:: ;a = draw flags, hl = text
 
 DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
   push af;draw flags
-  xor a
-  ld [_i], a
-  ld hl, tile_buffer
-.tilesLoop; for (i = 0; i < c; ++i) {
-    xor a
-    ld [hli], a;   tiles[i*2] = 0;
-    ld a, [_j]
-    ld c, a
-    ld a, [_i]
-    sub a, c ;_i - _j
-    jp nz, .setZero ;if (i == _j)
-    ld a, ARROW_RIGHT ;tiles[i*2+1] = ARROW_RIGHT;
-    jr .skip
-.setZero
-    xor a ;else tiles[i*2+1] = 0;
+  and a, DRAW_FLAGS_NO_SPACE
+  ld a, [_c]
+  jr nz, .skip
+  add a, a
 .skip
-    ld [hli], a ;tiles[i*2+1]
-
-    ld a, [_i]
-    inc a
-    ld [_i], a;++_i
-    ld b, a
-    ld a, [_c]
-    sub a, b ;_c-_i
-    jp nz, .tilesLoop
-
+  inc a
+  ld b, 0
+  ld c, a
+  ld hl, tile_buffer
   xor a
+  call mem_Set
+
+  pop af;draw flags
+  push af;draw flags
+  and a, DRAW_FLAGS_NO_SPACE
+  ld a, [_j]
+  jr nz, .skip2
+  add a, a
+.skip2
+  inc a
+  ld b, 0
+  ld c, a
+  ld hl, tile_buffer
+  add hl, bc
+  ld a, ARROW_RIGHT
   ld [hl], a
 
   ld a, 1
@@ -311,9 +309,12 @@ DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
   push af;draw flags
   and a, DRAW_FLAGS_NO_SPACE
   ld a, [_c]
-  jr nz, .noSpace
+  jr nz, .skip3
   add a, a
-.noSpace
+  jr .skip4
+.skip3
+  inc a
+.skip4
   ld l, a ;h=_c*2
   
   pop af;draw flags

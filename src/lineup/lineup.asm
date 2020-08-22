@@ -937,8 +937,15 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call SelectMoveToForget
   and a
   jr z, .cancel
+  dec a
+  push af;move num
+  
+  call ShowOneTwoPoofForPlayer
 
-  ld hl, OneTwoAndPoofText
+  pop af;move num
+  pop hl;player
+  push hl;player
+  call GetPlayerMoveName
 
   pop hl;player
   call GetUserPlayerName
@@ -987,6 +994,59 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld c, 0
   ret
 
+ShowOneTwoPoofForPlayer:;[_j] = selected player
+  ld a, [_j]
+  cp a, 6
+  jr c, .bottom
+  
+.top
+  CLEAR_WIN_AREA 1, 1, 18, 4, " "
+  ld e, 2
+  jr .ask
+.bottom
+  CLEAR_WIN_AREA 1, 13, 18, 4, " "
+  ld e, 14
+.ask
+  ld hl, $0201
+  ld d, 1
+  ld bc, OneTwoAndPoofText;"1,"
+  push de;xy
+  call gbdk_SetWinTiles
+
+  ld de, 1000
+  call gbdk_Delay
+
+  ld hl, $0401
+  ld d, 1
+  ld bc, OneTwoAndPoofText;"1, 2"
+  pop de;xy
+  push de;xy
+  call gbdk_SetWinTiles
+
+  ld de, 1000
+  call gbdk_Delay
+  
+  ld hl, $0B01
+  ld d, 1
+  ld bc, OneTwoAndPoofText;"1, 2 and..."
+  pop de;xy
+  push de;xy
+  call gbdk_SetWinTiles
+
+  ld de, 1000
+  call gbdk_Delay
+  
+  ld hl, $1101
+  ld d, 1
+  ld bc, OneTwoAndPoofText;"1, 2 and... Poof!"
+  pop de;xy
+  call gbdk_SetWinTiles
+  
+  ld de, 1000
+  call gbdk_Delay
+  
+  ret
+
 SelectMoveToForget:;[_j] = selected player, hl = player, returns selection in a (0 = cancel)
   xor a
   ld [str_buffer], a
@@ -1024,6 +1084,7 @@ SelectMoveToForget:;[_j] = selected player, hl = player, returns selection in a 
   ret 
 
 AskYesNoForPlayer:;[_j] = selected player, returns 
+  ld a, [_j]
   cp a, 6
   jr c, .bottom
 .top

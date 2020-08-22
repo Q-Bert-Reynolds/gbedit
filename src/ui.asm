@@ -115,6 +115,9 @@ FlashNextArrow:: ;a = draw flags, de = xy
   ret
 
 GetUIBoxTiles: ;Entry: de = wh, Affects: hl
+  PUSH_VAR _i
+  PUSH_VAR _j
+
   ld hl, tile_buffer
   xor a
   ld [_j], a
@@ -186,6 +189,9 @@ GetUIBoxTiles: ;Entry: de = wh, Affects: hl
   ld [_j], a
   sub a, e
   jr nz, .rowLoop
+
+  POP_VAR _j
+  POP_VAR _i
   ret
 
 DrawUIBox::;a=draw flags, bc = xy, de = wh
@@ -467,19 +473,9 @@ ShowNumberPicker::; a = draw flags, bc = xy, de = wh, h = max number, returns nu
 
 
 SECTION "UI", ROMX, BANK[UI_BANK]
+
 INCLUDE "img/ui_font.asm"
 INCLUDE "img/town_map.asm"
-
-SGBTownMapPalSet: PAL_SET PALETTE_UI, PALETTE_TOWN_MAP, PALETTE_TOWN_MAP_LOCATION, PALETTE_GREY
-SGBTownMapAttrBlk:
-  ATTR_BLK 7
-  ATTR_BLK_PACKET %001, 0,0,0,  0,0, 20,1  ;title
-  ATTR_BLK_PACKET %001, 1,1,1,  0,1, 20,17 ;map
-  ATTR_BLK_PACKET %001, 2,2,2,  1,2,  7,1  ;locations
-  ATTR_BLK_PACKET %001, 2,2,2,  3,6,  6,7
-  ATTR_BLK_PACKET %001, 2,2,2, 12,11, 1,1
-  ATTR_BLK_PACKET %001, 2,2,2, 16,14, 1,1
-  ATTR_BLK_PACKET %001, 2,2,2, 17,12, 1,1
 
 ;UILoadFontTiles
 ;UIDrawStateMap
@@ -491,12 +487,49 @@ SGBTownMapAttrBlk:
 ;UIShowNumberPicker - a = draw flags, bc = xy, de = wh, h = max number, returns number in a (0 = cancel)
 ;UIDrawSaveStats - a = draw flags, de = xy
 
+; User Stats
+CoachStatText:         DB "COACH"
+PennantsStatText:      DB "PENNANTS"
+RoledexStatText:       DB "ROLéDEX"
+TimeStatText:          DB "TIME"
+
+; Options
+TextSpeedOptionString: DB "TEXT SPEED        "
+                       DB "                  "
+                       DB " FAST  MEDIUM SLOW"
+
+AnimationOptionString: DB "AT-BAT ANIMATIONS "
+                       DB "                  "
+                       DB " ON       OFF     "
+
+CoachingOptionString:  DB "COACHING STYLE    "
+                       DB "                  "
+                       DB " SHIFT    SET     "
+
+; Text Entry
+LowerCase:             DB "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,↵", 0
+LowerCaseTitle:        DB "lower case", 0
+UpperCase:             DB "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,↵", 0
+UpperCaseTitle:        DB "UPPER CASE", 0
+
 UILoadFontTiles::
   ld hl, _UiFontTiles
   ld de, _VRAM+$1000
   ld bc, _UI_FONT_TILE_COUNT*16
   call mem_CopyVRAM ;doesn't loop so mem_CopyToTileData is unnecessary
   ret
+
+; State Map SGB Palettes
+SGBTownMapPalSet: PAL_SET PALETTE_UI, PALETTE_TOWN_MAP, PALETTE_TOWN_MAP_LOCATION, PALETTE_GREY
+SGBTownMapAttrBlk:
+  ATTR_BLK 7
+  ATTR_BLK_PACKET %001, 0,0,0,  0,0, 20,1  ;title
+  ATTR_BLK_PACKET %001, 1,1,1,  0,1, 20,17 ;map
+  ATTR_BLK_PACKET %001, 2,2,2,  1,2,  7,1  ;locations
+  ATTR_BLK_PACKET %001, 2,2,2,  3,6,  6,7
+  ATTR_BLK_PACKET %001, 2,2,2, 12,11, 1,1
+  ATTR_BLK_PACKET %001, 2,2,2, 16,14, 1,1
+  ATTR_BLK_PACKET %001, 2,2,2, 17,12, 1,1
 
 UIDrawStateMap::
   DISPLAY_OFF
@@ -521,7 +554,15 @@ UIDrawStateMap::
   DISPLAY_ON
   ret
 
-UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,_j,_x,_y,_w,_l
+UIRevealText:: ;a = draw flags, hl = text, de = xy
+  ld b, a;draw flags
+  PUSH_VAR _i
+  PUSH_VAR _j
+  PUSH_VAR _l
+  PUSH_VAR _w
+  PUSH_VAR _x
+  PUSH_VAR _y
+  ld a, b;draw flags
   push af;draw flags
   push hl;text
   push de;xy
@@ -744,6 +785,12 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy, uses _i,_j,_x,_y,_w,_l
   pop de;xy
   pop hl;text
   pop af;draw flags
+  POP_VAR _y
+  POP_VAR _x
+  POP_VAR _w
+  POP_VAR _l
+  POP_VAR _j
+  POP_VAR _i
   ret
 
 UIRevealTextAndWait::
@@ -848,22 +895,8 @@ MoveOptionsArrow:
   call gbdk_SetBkgTiles; set_bkg_tiles(1,16,1,1,tile_buffer + (y==3 ? 1 : 2));
   ret
 
-TextSpeedOptionString:
-  DB "TEXT SPEED        "
-  DB "                  "
-  DB " FAST  MEDIUM SLOW"
-
-AnimationOptionString:
-  DB "AT-BAT ANIMATIONS "
-  DB "                  "
-  DB " ON       OFF     "
-
-CoachingOptionString:
-  DB "COACHING STYLE    "
-  DB "                  "
-  DB " SHIFT    SET     "
-
 UIShowOptions::
+  PUSH_VAR _y
   DISPLAY_OFF
   CLEAR_BKG_AREA 0,0,20,18," "
 
@@ -1100,7 +1133,7 @@ UIShowOptions::
   call SaveOptions
 
   PLAY_SFX SelectSound
-
+  POP_VAR _y
   ret
 
 MoveTextEntryArrow: ; bc = from xy, de = to xy
@@ -1216,16 +1249,14 @@ UpdateTextEntryDisplay: ; hl = str, d = max_len
 
   ret
 
-LowerCase:
-  db "abcdefghijklmnopqrstuvwxyz *():;[]#%-?!*+/.,↵", 0
-LowerCaseTitle:
-  db "lower case", 0
-UpperCase:
-  db "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]#%-?!*+/.,↵", 0
-UpperCaseTitle:
-  db "UPPER CASE", 0
-
 UIShowTextEntry:: ; de = title, hl = str, c = max_len
+  PUSH_VAR _c
+  PUSH_VAR _i
+  PUSH_VAR _j
+  PUSH_VAR _l
+  PUSH_VAR _x
+  PUSH_VAR _y
+
   push bc;c = max_len
   push hl;str
   push de;title
@@ -1579,6 +1610,13 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   PLAY_SFX SelectSound
   pop af;str
   pop af;a = max_len
+
+  POP_VAR _y
+  POP_VAR _x
+  POP_VAR _l
+  POP_VAR _j
+  POP_VAR _i
+  POP_VAR _c
   ret
 
 DrawListEntry:; a=draw flags, bc=xy, de=wh, hl=text
@@ -1623,6 +1661,11 @@ DrawListEntry:; a=draw flags, bc=xy, de=wh, hl=text
   ret 
 
 UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title = [name_buff], returns choice in a
+  ld h, a;draw flags
+  PUSH_VAR _c
+  PUSH_VAR _j
+  PUSH_VAR _l
+  ld a, h ;draw flags
   push af ;draw flags
   push bc ;xy
   push de ;wh
@@ -1630,7 +1673,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   pop de ;wh
   pop bc ;xy
   pop af ;draw flags
-  push af
+  push af ;draw flags
 
   xor a
   ld [_l], a ; length of current entry
@@ -1800,7 +1843,13 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
 .exitMenu
   pop de ;discard draw flags
   pop bc ;xy
-  ret ;return a
+
+  ld h, a;choice
+  POP_VAR _l
+  POP_VAR _j
+  POP_VAR _c
+  ld a, h;choice
+  ret
 
 UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, returns number in a (0 = cancel)
   push hl;max/start nums
@@ -1916,14 +1965,6 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
     pop hl;draw flags
     jp .loop
 
-CoachStatText:
-  db "COACH"
-PennantsStatText:
-  db "PENNANTS"
-RoledexStatText:
-  db "ROLéDEX"
-TimeStatText:
-  db "TIME"
 UIDrawSaveStats::;a = draw flags, de = xy
   push de;xy
   push af;draw flags

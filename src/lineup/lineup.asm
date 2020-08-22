@@ -987,8 +987,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld c, 0
   ret
 
-SelectMoveToForget:;hl = player, returns selection in a (0 = cancel)
-  and a
+SelectMoveToForget:;[_j] = selected player, hl = player, returns selection in a (0 = cancel)
   xor a
   ld [str_buffer], a
   ld c, 4;count
@@ -1016,20 +1015,19 @@ SelectMoveToForget:;hl = player, returns selection in a (0 = cancel)
   xor a
   ld [name_buffer], a
   ld [de], a
-  ld b, 4
-  ld c, 6
-  ld d, 16
-  ld e, 6
+  ld b, 4;x
+  ld c, 6;y
+  ld d, 16;w
+  ld e, 6;h
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_NO_SPACE
   call ShowListMenu
   ret 
 
 AskYesNoForPlayer:;[_j] = selected player, returns 
-  ld a, [_j]
   cp a, 6
   jr c, .bottom
 .top
-  ld c, 6
+  ld c, 5
   jr .ask
 .bottom
   ld c, 7
@@ -1077,8 +1075,6 @@ ShowSpritesHiddenByTextBox:
   ret
 
 RevealTextForPlayer:;[_j] = selected player, hl = text
-  ld a, [_j]
-  push af;_j
   push hl;text
   ld a, [_j]
   cp a, 6
@@ -1102,8 +1098,6 @@ RevealTextForPlayer:;[_j] = selected player, hl = text
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call FlashNextArrow
 
-  pop af;_j
-  ld [_j], a
   ret
 
 _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 = used)

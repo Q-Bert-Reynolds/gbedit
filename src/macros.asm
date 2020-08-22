@@ -9,6 +9,16 @@ TRAMPOLINE: MACRO ;\1 = jump address
   call Trampoline
 ENDM
 
+PUSH_VAR: MACRO ;\1 = WRAM address
+  ld a, [\1]
+  push af
+ENDM
+
+POP_VAR: MACRO ;\1 = WRAM address
+  pop af
+  ld [\1], a
+ENDM
+
 ;Debug messages can contain expressions between %%. 
 ;When enabled in the settings, whenever a debug message is encountered in the code, it will be logged to the debug messages window or log file.
 ;Debug messages also support ternary operators in the form: "%boolean expression%text if true;text if false;".

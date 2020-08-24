@@ -394,7 +394,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, d;exit code
   ret
 
-UseItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)
+UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   push af;index
   ld a, [game_state]
   and a, GAME_STATE_PLAY_BALL
@@ -418,6 +418,9 @@ UseItem:;[item_data], a = index, returns exit code in a (0 = item removed comple
   pop af;play ball flag
   jr nz, .notTheTime
   call TeachMove
+  ld a, c
+  and 1
+  jr nz, .used
   jr .exit
   
 .checkSpecialItem
@@ -426,12 +429,14 @@ UseItem:;[item_data], a = index, returns exit code in a (0 = item removed comple
   pop af;play ball flag
   call UseSpecialItem
   jr z, .notTheTime
+  ld b, 0
   jr .exit
 
 .checkStatsItem
   cp ITEM_TYPE_STATS
   jr nz, .checkSellItem
   pop af;play ball flag, not used here
+  ld b, 0
   jr .exit
 
 .checkSellItem
@@ -439,6 +444,7 @@ UseItem:;[item_data], a = index, returns exit code in a (0 = item removed comple
   jr nz, .checkWorldItem
   pop af;play ball flag
   jr nz, .notTheTime
+  ld b, 0
   jr .exit
 
 .checkWorldItem
@@ -446,6 +452,7 @@ UseItem:;[item_data], a = index, returns exit code in a (0 = item removed comple
   jr nz, .exit
   pop af;play ball flag
   jr z, .notTheTime
+  ld b, 0
   jr .exit
 
 .notTheTime
@@ -455,10 +462,44 @@ UseItem:;[item_data], a = index, returns exit code in a (0 = item removed comple
   call str_Replace
   ld hl, str_buffer
   call RevealItemTextAndWait
+  ld b, 0
+  jr .exit
+
+.used;TODO: this logic can be combined with the TossItem logic
+  pop af;index
+  ld d, 0
+  ld e, a
+  ld hl, inventory
+  add hl, de
+  add hl, de 
+  inc hl
+  ld a, [hl]
+  dec a
+  jr z, .removeItemCompletely
+  ld [hl], a
+  ld a, b;exit code
+  ret
+
+.removeItemCompletely
+  push bc;exit code in b
+  inc hl
+  ld d, h
+  ld e, l
+  dec de
+  dec de
+  ld a, MAX_ITEMS*BYTES_PER_ITEM
+  sub a, b
+  sub a, b
+  ld b, 0
+  ld c, a;items to move down
+  call mem_Copy;copies hl to hl-2
+  pop bc;exit code in b
+  ld a, b
+  ret
 
 .exit
   pop af;index
-  ld a, 1
+  ld a, b;exit code
   ret
 
 UseSpecialItem:;[item_data], f = playball flag, returns z if can't use now
@@ -533,7 +574,7 @@ ShowTownMap:
   SHOW_WIN
   ret
 
-TeachMove:;[item_data]
+TeachMove:;[item_data], returns exit code in b (-1 = exit inventory), item used in c (0 = not used, 1 = used)
   ld hl, item_data
   ld bc, 4
   add hl, bc
@@ -563,10 +604,15 @@ TeachMove:;[item_data]
   ld c, 7
   ld a, DRAW_FLAGS_WIN
   call AskYesNo
-
+  cp a, 1
+  ld b, 0
+  ld c, 0
+  ret nz
+  
   ld a, [item_data.id] 
   ld b, a
   call ShowLineup
+  ld b, -1
   ret 
 
 TossItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)

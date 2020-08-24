@@ -1,7 +1,7 @@
 INCLUDE "src/beisbol.inc"
 
 SECTION "Lineup Bank 0", ROM0
-ShowLineup::;b = item id (0 = no item)
+ShowLineup::;b = item id (0 = no item), returns item used in c (0 = not used, 1 = used)
   ld a, [loaded_bank]
   push af
   ld a, LINEUP_BANK
@@ -839,9 +839,9 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   cp a, ITEM_TYPE_GAME
   jp z, .changeGame
   cp a, ITEM_TYPE_MOVE
-  jr z, .learnMove
+  jr z, .tryToLearnMove
   ret
-.learnMove
+.tryToLearnMove
   call CopyBkgToWin
   ld a, 7
   ld [rWX], a
@@ -891,7 +891,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 
   call AskYesNoForPlayer
   cp a, 1
-  jr z, .confirmed
+  jr z, .forgetMove
 .cancel
   call CopyBkgToWin
   ld a, [item_data.extra]
@@ -928,9 +928,9 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld c, 0
   ret
 
-.confirmed
+.forgetMove
   ld hl, WhichMoveShouldBeForgottenText
-  call RevealTextForPlayer
+  call DisplayTextForPlayer
 
   pop hl;player
   push hl;player
@@ -938,20 +938,65 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   and a
   jr z, .cancel
   dec a
-  push af;move num
+  push af;move num to forget
   
   call ShowOneTwoPoofForPlayer
 
-  pop af;move num
+  pop af;move num to forget
   pop hl;player
   push hl;player
+  push af;move num to forget
+  ld d, ALL_MOVES
   call GetPlayerMoveName
+  ld hl, PlayerForgotMoveText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  pop af;move num to forget
+  pop hl;player
+  push hl;player
+  push af;move num to forget
+  call GetUserPlayerName
+  ld hl, name_buffer
+  ld de, tile_buffer
+  call str_Copy
+  ld hl, str_buffer
+  ld de, tile_buffer
+  call str_Append
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+  
+  ld hl, AndElipsisText
+  call RevealTextForPlayer
 
+.learnMove
+  ld a, [item_data.extra]
+  ld b, a
+  pop af;move num to forget
+  dec a
+  pop hl;player
+  push hl;player
+  call SetPlayerMove
+
+  ld a, [item_data.extra]
+  call GetMoveName
+  pop hl;player
+  push hl;player
+  ld hl, PlayerLearnedMoveText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
   pop hl;player
   call GetUserPlayerName
-  ld hl, PlayerForgotMoveText
-  ld hl, AndElipsisText
-  ld hl, PlayerLearnedMoveText
+  ld hl, name_buffer
+  ld de, tile_buffer
+  call str_Copy
+  ld hl, str_buffer
+  ld de, tile_buffer
+  call str_Append
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+
   call ShowSpritesHiddenByTextBox
   ld c, 1
   ret
@@ -1012,8 +1057,7 @@ ShowOneTwoPoofForPlayer:;[_j] = selected player
   ld bc, OneTwoAndPoofText;"1,"
   push de;xy
   call gbdk_SetWinTiles
-
-  ld de, 1000
+  ld de, 800
   call gbdk_Delay
 
   ld hl, $0401
@@ -1022,8 +1066,7 @@ ShowOneTwoPoofForPlayer:;[_j] = selected player
   pop de;xy
   push de;xy
   call gbdk_SetWinTiles
-
-  ld de, 1000
+  ld de, 400
   call gbdk_Delay
   
   ld hl, $0B01
@@ -1032,8 +1075,7 @@ ShowOneTwoPoofForPlayer:;[_j] = selected player
   pop de;xy
   push de;xy
   call gbdk_SetWinTiles
-
-  ld de, 1000
+  ld de, 1200
   call gbdk_Delay
   
   ld hl, $1101
@@ -1133,6 +1175,23 @@ ShowSpritesHiddenByTextBox:
     dec c
     jr nz, .loop
   HIDE_WIN
+  ret
+
+DisplayTextForPlayer:;[_j] = selected player, hl = text
+  push hl;text
+  ld a, [_j]
+  cp a, 6
+  jr c, .bottom
+.top
+  ld bc, 0
+  jr .draw
+.bottom
+  ld bc, 12
+.draw
+  pop hl;text
+  push bc;xy
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  call DisplayTextAtPos
   ret
 
 RevealTextForPlayer:;[_j] = selected player, hl = text

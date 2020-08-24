@@ -47,6 +47,10 @@ Play Ball
 - change color of move info based on type
 - bunting
 
+Game Results
+- Show box score
+- Learn moves at certain ages. (sepatrate learn move logic from UseItemOnPlayer subroutine)
+
 Simulation
 
 - initial velocity should be calculated from ball speed, spray angle, and launch angle

@@ -65,7 +65,7 @@ Simulation\1\2:
 .dest_y     DB
 ENDM
 
-SECTION "Player RAM", WRAM0[$c600]
+SECTION "Player RAM", WRAM0[$c700]
 ;Lineups
 UserLineup::
   PLAYER_DATA UserLineup, 1
@@ -128,6 +128,7 @@ Runners:
 
 SECTION "Player Utils", ROM0
 
+;SetPlayerMove                - hl = player, a = move num, b = new move id
 ;GetPlayerMoveName            - hl = player, d = move mask, a = move num, returns move name in name_buffer
 ;GetPlayerMoveCount           - hl = player, d = move mask, returns move count in a
 ;GetPlayerMove                - hl = player, d = move mask, a = player move num, returns move in move_data
@@ -153,6 +154,17 @@ SECTION "Player Utils", ROM0
 ;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
 
 NoMove: DB "--------", 0
+SetPlayerMove:: ;hl = player, a = move num, b = new move id
+  inc a
+  ld de, UserLineupPlayer1.moves - UserLineupPlayer1
+  add hl, de;player.moves
+  ld d,0
+  ld e,a
+  add hl, de;move #a
+  ld a, b
+  ld [hl], a;set new move
+  ret
+
 GetPlayerMoveName:: ;hl = player, a = move num, d = move mask, returns move name in name_buffer
   push bc
   push de

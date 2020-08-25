@@ -28,7 +28,7 @@ SECTION "Core", ROM0
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
 ; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
 
-TypeStrings:
+TypeStrings::
   DB "", 0
   DB "Normal", 0
   DB "Fire", 0
@@ -46,7 +46,7 @@ TypeStrings:
   DB "Ghost", 0
   DB "Dragon", 0
 
-StatusStrings:
+StatusStrings::
   DB "OK", 0
   DB "BRN", 0
   DB "FRZ", 0

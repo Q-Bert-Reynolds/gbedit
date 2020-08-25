@@ -1,7 +1,7 @@
 Items
 
 - use drugs
-- make offer to unsigned players
+- make offer to unsigned players (use baseball)
 - use select to swap items in list
 - add town names and cursor to town map
  

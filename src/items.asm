@@ -436,7 +436,10 @@ UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   cp ITEM_TYPE_STATS
   jr nz, .checkSellItem
   pop af;play ball flag, not used here
-  ld b, 0
+  ld a, [item_data.id] 
+  ld b, a
+  call ShowLineup
+  ld b, -1
   jr .exit
 
 .checkSellItem

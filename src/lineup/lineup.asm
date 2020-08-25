@@ -34,8 +34,9 @@ OneTwoAndPoofText:              DB "1, 2 and... Poof!"
 PlayerForgotMoveText:           DB " forgot\n%s!",0
 AndElipsisText:                 DB "And...",0
 PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
-FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL", 0
-FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL", 0
+ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0;exit to inventory
+FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL",0
+FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL",0
 
 SGBLineupPalSet: PAL_SET PALETTE_UI, PALETTE_SEPIA, PALETTE_WARNING, PALETTE_GOOD
 SGBLineupAttrBlk:
@@ -382,7 +383,9 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   jr z, .showStat
 .showItem
   ld a, b
+  push hl;player
   call GetItemData
+  pop hl;player
   ld a, [item_data.type]
   cp a, ITEM_TYPE_STATS
   jr z, .showStat
@@ -391,7 +394,9 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   cp a, ITEM_TYPE_MOVE
   jr z, .checkCanLearn
 .checkEvolvesFrom
-  ret
+  ;TODO; if player can evolve using item
+  ;jr nz, .able
+  jr .unable
 .checkCanLearn
   call CheckCanLearnMove
   jr z, .unable
@@ -417,8 +422,14 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   call GetPlayerStatus
   and a
   jr nz, .showStatus
-  
-  ret
+
+.showNothing
+  ld hl, name_buffer
+  ld bc, 3
+  xor a
+  call mem_Set
+  ld bc, name_buffer
+  jr .draw
 
 .showStatus; poison, sleep, burn, etc. 
   ld b, 0
@@ -427,6 +438,8 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   call str_FromArray
   ld b, h
   ld c, l
+
+.draw
   ld d, 15
   ld a, [_j]
   add a, a
@@ -833,21 +846,24 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld a, [hl]
   push hl;player
   call LoadPlayerBaseData
-  ld a, [item_data.type]
-  cp a, ITEM_TYPE_STATS
-  jp z, .changeStat
-  cp a, ITEM_TYPE_GAME
-  jp z, .changeGame
-  cp a, ITEM_TYPE_MOVE
-  jr z, .tryToLearnMove
-  ret
-.tryToLearnMove
+
   call CopyBkgToWin
   ld a, 7
   ld [rWX], a
   xor a
   ld [rWY], a
   call HideSpritesBehindTextBox
+
+  ld a, [item_data.type]
+  cp a, ITEM_TYPE_STATS
+  jp z, .tryChangeStat
+  
+  cp a, ITEM_TYPE_GAME
+  jp z, .tryChangeStat
+  cp a, ITEM_TYPE_MOVE
+  jr z, .tryToLearnMove
+  ret
+.tryToLearnMove
   call CheckCanLearnMove
   jp z, .unable
 .able
@@ -1033,9 +1049,11 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld c, 0
   ret 
 
-.changeStat
-.changeGame
+.tryChangeStat
+  ld hl, ItWontHaveAnyEffectText
+  call RevealTextForPlayer
   pop hl;player
+  call ShowSpritesHiddenByTextBox
   ld a, [item_data.id]
   ld b, a
   ld c, 0

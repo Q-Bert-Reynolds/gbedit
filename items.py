@@ -21,6 +21,8 @@ def generate_item_strings(items):
       c_file.write("DB \"" + item["Name"].upper().replace("É","é") + "\", 0\n")
 
 def generate_item_data(items):
+  status_changes = ["Poison","Burn","Freeze","Sleep","Paralyze","Conditions"]
+  status_symbol_map = ["PSN","BRN","FRZ","SLP","PAR","ALL"]
   with open("./data/item_data.asm", "w+") as c_file:
     c_file.write("SECTION \"Item Data\", ROMX, BANK[ITEM_BANK]\n")
 
@@ -44,6 +46,14 @@ def generate_item_data(items):
       if item["Type"] == "Move":
         move = item["Data1"].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
         item_data += "DB " + move + "\n"
+      if item["Type"] in ["Stats", "Game"]:
+        if item["Data1"] in status_changes:
+          item_data += "DB STAT_STATUS_" + status_symbol_map[status_changes.index(item["Data1"])] + "\n"
+        elif item["Data1"]:
+          item_data += "DB STAT_" + item["Data1"].upper().replace(" ","_").replace(".","").replace("-","_") + "\n"
+        
+        if item["Data2"]:
+          item_data += "DW " + item["Data2"] + ";change\n"
 
 
     c_file.write("\n" + constants + item_data + "\nItemList:\n" + var_names + "\n")

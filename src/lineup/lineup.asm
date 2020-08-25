@@ -35,6 +35,7 @@ PlayerForgotMoveText:           DB " forgot\n%s!",0
 AndElipsisText:                 DB "And...",0
 PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
 ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0;exit to inventory
+PlayerRecoveredByNumberText:    DB "\nrecovered by %s!",0
 FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL",0
 FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL",0
 
@@ -862,6 +863,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jp z, .tryChangeStat
   cp a, ITEM_TYPE_MOVE
   jr z, .tryToLearnMove
+  jp .exit
   ret
 .tryToLearnMove
   call CheckCanLearnMove
@@ -1050,13 +1052,176 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ret 
 
 .tryChangeStat
+  pop hl;player
+  push hl;player
+  call GetPlayerHP
+  ld d, 1;not dead
+  ld a, h
+  and a
+  jr nz, .getStatItemData
+  ld a, l
+  and a
+  jr nz, .getStatItemData
+  ld d, 0;dead
+.getStatItemData
+  ld hl, item_data.extra
+  ld a, [hli];stat type in a, amount in [hl]
+  ld e, a;stat type
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a;bc = amount
+  ld a, e;stat type
+  pop hl;player
+  push hl;player
+
+;a = stat type, bc = amount, d = dead, hl = player
+.tryChangeHP
+  cp a, STAT_HP
+  jr z, .tryChangeRevive
+  ld a, d
+  and a;if 0, dead
+  jp z, .noEffect
+  jr .healPlayer
+  
+.tryChangeRevive
+  cp a, STAT_REVIVE
+  jr z, .tryChangeAll
+.healPlayer
+  call HealPlayer;bc = amount healed
+  and a
+  jp z, .noEffect
+  ;TODO: animate health bar
+  ld h, b
+  ld l, c;amount
+  ld de, name_buffer
+  call str_Number
+  ld hl, PlayerRecoveredByNumberText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, str_buffer
+  ld de, name_buffer;this works because str_buffer is later in memory than name_buffer
+  call str_Append
+  ld hl, name_buffer
+  call RevealTextForPlayer
+  
+  jp .used
+  
+.tryChangeAll
+  cp a, STAT_ALL
+  jr z, .tryChangeEvolve
+  jp .unused
+  
+.tryChangeEvolve
+  cp a, STAT_EVOLVE
+  jr z, .tryChangeMaxPP
+  jp .unused
+  
+.tryChangeMaxPP
+  cp a, STAT_MAXPP
+  jr z, .tryChangeThrow
+  jp .unused
+  
+.tryChangeThrow
+  cp a, STAT_THROW
+  jr z, .tryChangeSpeed
+  jp .unused
+  
+.tryChangeSpeed
+  cp a, STAT_SPEED
+  jr z, .tryChangeField
+  jp .unused
+  
+.tryChangeField
+  cp a, STAT_FIELD
+  jr z, .tryChangeBat
+  jp .unused
+  
+.tryChangeBat
+  cp a, STAT_BAT
+  jr z, .tryChangeMaxHP
+  jp .unused
+  
+.tryChangeMaxHP
+  cp a, STAT_MAXHP
+  jr z, .tryChangeAge
+  jp .unused
+  
+.tryChangeAge
+  cp a, STAT_AGE
+  jr z, .tryChangeCrit
+  jp .unused
+  
+.tryChangeCrit
+  cp a, STAT_CRIT
+  jr z, .tryChangeContact
+  jp .unused
+  
+.tryChangeContact
+  cp a, STAT_CONTACT
+  jr z, .tryChangeAccuracy
+  jp .unused
+  
+.tryChangeAccuracy
+  cp a, STAT_ACCURACY
+  jr z, .tryChangeSpecial
+  jp .unused
+  
+.tryChangeSpecial
+  cp a, STAT_SPECIAL
+  jr z, .tryChangeStatusBurn
+  jp .unused
+  
+.tryChangeStatusBurn
+  cp a, STAT_STATUS_BRN
+  jr z, .tryChangeStatusFreeze
+  jp .unused
+  
+.tryChangeStatusFreeze
+  cp a, STAT_STATUS_FRZ
+  jr z, .tryChangeStatusParalyze
+  jp .unused
+  
+.tryChangeStatusParalyze
+  cp a, STAT_STATUS_PAR
+  jr z, .tryChangeStatusPoison
+  jp .unused
+  
+.tryChangeStatusPoison
+  cp a, STAT_STATUS_PSN
+  jr z, .tryChangeStatusSleep
+  jp .unused
+  
+.tryChangeStatusSleep
+  cp a, STAT_STATUS_SLP
+  jr z, .tryChangeStatusAll
+  jp .unused
+  
+.tryChangeStatusAll
+  cp a, STAT_STATUS_ALL
+  jr nz, .unused
+  
+.noEffect
   ld hl, ItWontHaveAnyEffectText
   call RevealTextForPlayer
+.unused
+  ld c, 0;item not used
+  jr .exit
+.used
+  ld c, 1;item used
+.exit
   pop hl;player
-  call ShowSpritesHiddenByTextBox
   ld a, [item_data.id]
   ld b, a
-  ld c, 0
+  push bc;item id, used
+  ld b, 0
+  call DrawLineupPlayer
+  call ShowSpritesHiddenByTextBox
+  pop bc;item id, used
   ret
 
 ShowOneTwoPoofForPlayer:;[_j] = selected player

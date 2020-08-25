@@ -133,11 +133,11 @@ SECTION "Player Utils", ROM0
 ;GetPlayerMoveCount           - hl = player, d = move mask, returns move count in a
 ;GetPlayerMove                - hl = player, d = move mask, a = player move num, returns move in move_data
 ;GetPlayerMovePP              - hl = player, d = move mask, a = player move num, returns pp in a
-;GetPlayerNumber              - hl = player, returns number in a
-;GetPlayerAge                 - hl = player, returns age in a
-;GetPlayerPosition            - hl = player, returns position in a
-;GetPlayerHandedness          - hl = player, returns handedness in a
-;GetPlayerStatus              - hl = player, returns status in a
+;GetPlayerNumber              - hl = player, returns number in a, number in hl
+;GetPlayerAge                 - hl = player, returns age in a, age in hl
+;GetPlayerPosition            - hl = player, returns position in a, position in hl
+;GetPlayerHandedness          - hl = player, returns handedness in a, handedness in hl
+;GetPlayerStatus              - hl = player, returns status in a, status in hl
 ;GetPlayerHP                  - hl = player, returns hp in hl
 ;GetPlayerMaxHP               - hl = player, returns max hp in hl
 ;GetPlayerBat                 - hl = player, returns bat in hl
@@ -223,7 +223,7 @@ GetPlayerMoveCount::;hl = player, d = move mask, returns move count in a
   ld a, c;count
   ret
 
-GetPlayerMove:: ;hl = player, a = player move num, d = move mask, returns move in move_data
+GetPlayerMove:: ;hl = player, a = player move num, d = move mask, returns move in move_data, move address in hl
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -253,7 +253,7 @@ GetPlayerMove:: ;hl = player, a = player move num, d = move mask, returns move i
   pop bc
   ret 
 
-GetPlayerMovePP:: ;hl = player, a = player move num, d = move mask, returns pp in a
+GetPlayerMovePP:: ;hl = player, a = player move num, d = move mask, returns pp in a, address of pp in hl
   push bc
   push de
   ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -284,7 +284,7 @@ GetPlayerMovePP:: ;hl = player, a = player move num, d = move mask, returns pp i
   pop bc
   ret 
 
-GetPlayerNumber:: ;hl = player, returns number in a
+GetPlayerNumber:: ;hl = player, returns number in a, address of number in hl
   push bc
   ld bc, UserLineupPlayer1.number - UserLineupPlayer1
   add hl, bc
@@ -292,7 +292,7 @@ GetPlayerNumber:: ;hl = player, returns number in a
   ld a, [hl]
   ret
   
-GetPlayerAge:: ;hl = player, returns age in a
+GetPlayerAge:: ;hl = player, returns age in a, address of age in hl
   push bc
   ld bc, UserLineupPlayer1.age - UserLineupPlayer1
   add hl, bc
@@ -300,7 +300,7 @@ GetPlayerAge:: ;hl = player, returns age in a
   ld a, [hl]
   ret
 
-GetPlayerPosition:: ;hl = player, returns position in a
+GetPlayerPosition:: ;hl = player, returns position in a, address of position in hl
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1
   add hl, bc
@@ -308,7 +308,7 @@ GetPlayerPosition:: ;hl = player, returns position in a
   ld a, [hl]
   ret
 
-GetPlayerHandedness:: ;hl = player, returns handedness in a
+GetPlayerHandedness:: ;hl = player, returns handedness in a, address of handedness in hl
   push bc
   ld bc, UserLineupPlayer1.hand - UserLineupPlayer1
   add hl, bc
@@ -316,12 +316,72 @@ GetPlayerHandedness:: ;hl = player, returns handedness in a
   ld a, [hl]
   ret
 
-GetPlayerStatus:: ;hl = player, returns status in a
+GetPlayerStatus:: ;hl = player, returns status in a, address of status in hl
   push bc
   ld bc, UserLineupPlayer1.status - UserLineupPlayer1
   add hl, bc
   pop bc
   ld a, [hl]
+  ret
+
+HealPlayer:: ;hl = player, bc = amount, returns used in a(0=not used), amount healed in bc
+  push hl;player
+  push bc;amount
+  ld bc, UserLineupPlayer1.hp - UserLineupPlayer1
+  add hl, bc
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a;hp in bc
+  ld a, [hli]
+  ld e, a
+  ld a, [hli]
+  ld d, a;max_hp in de
+
+  ld a, b;upper byte of hp
+  cp a, d;compare to upper byte of max hp
+  jr c, .heal
+  ld a, c;lower byte of hp
+  cp a, e;compare to lower byte of max hp
+  jr c, .heal
+
+  pop bc;amount
+  pop hl;player
+  xor a
+  ld bc, 0
+  ret
+
+.heal
+  pop hl;amount
+  add hl, bc;new_hp = amount + old_hp
+  push bc;old hp
+  ld a, h;upper byte of new hp
+  cp a, d;compare to upper byte of max hp
+  jr c, .write
+  ld a, d;upper byte of max hp
+  cp a, h;compare to upper byte of new hp
+  jr c, .max
+  ld a, l;lower byte of new hp
+  cp a, e;compare to lower byte of max hp
+  jr c, .write
+.max
+  ld h, d
+  ld l, e;new hp = max hp
+.write
+  pop bc;old hp
+  push hl;new hp
+  call math_Sub16
+  pop bc;new hp
+  pop de;player
+  push hl;hp diff
+  ld hl, UserLineupPlayer1.hp - UserLineupPlayer1
+  add hl, de;player hp
+  ld a, c
+  ld [hli], a
+  ld a, b
+  ld [hl], a
+  pop bc;hp diff
+  ld a, 1
   ret
 
 GetPlayerHP:: ;hl = player, returns hp in hl

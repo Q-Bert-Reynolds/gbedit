@@ -17,6 +17,8 @@
 ;     ehl (remainder a) = ehl / d
 ;   math_Sub24
 ;     ehl = ehl - bcd
+;   math_Sub16
+;      hl = hl - bc
 ;   math_CountBits
 ;     a = byte, returns count in a
 ;   math_TestBit
@@ -193,6 +195,15 @@ math_Sub24:: ;ehl = ehl - bcd
   ld a, e
   sbc a, b
   ld e, a
+  ret
+
+math_Sub16:: ;hl = hl - bc
+  ld a, l
+  sub a, c
+  ld l, a
+  ld a, h
+  sbc a, b
+  ld h, a
   ret
 
 math_CountBits:: ;a = byte, returns count in a

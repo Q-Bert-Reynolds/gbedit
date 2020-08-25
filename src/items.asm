@@ -440,6 +440,9 @@ UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   ld b, a
   call ShowLineup
   ld b, -1
+  ld a, c
+  and 1
+  jr nz, .used
   jr .exit
 
 .checkSellItem

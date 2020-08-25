@@ -8,10 +8,10 @@ X-Bat,"Available only in games, batting ability will increase.",Game,100,Bat,2
 X-Field,"Available only in games, field ability will increase.",Game,100,Field,2
 X-Speed,"Available only in games, speed will increase.",Game,100,Speed,2
 X-Throw,"In a game, throwing ability will increase.",Game,100,Throw,2
-Guard Spec.,"In a game, the opposing Player can’t use special abilities.",Game,100,,
-Dire Hit,"In a game, your swings will be more effective.",Game,100, ,
-X-Accuracy,"In a game, your pitching accuracy will increase.",Game,100,,
-X-Contact,"In a game, your hitting contact will increase.",Game,100,,
+Guard Spec.,"In a game, the opposing Player can’t use special abilities.",Game,100,Special,
+Dire Hit,"In a game, your swings will be more effective.",Game,100,Crit,
+X-Accuracy,"In a game, your pitching accuracy will increase.",Game,100,Accuracy,
+X-Contact,"In a game, your hitting contact will increase.",Game,100,Contact,
 Cutout,A cardboard cutout of a Player. Try using it in a game.,Game,,,
 HM01,,Move,,Cut,
 HM02,,Move,,Fly,
@@ -30,7 +30,7 @@ TM09,,Move,,Forkball,
 TM10,,Move,,Two-Seam,
 TM11,,Move,,Bubbleball,
 TM12,,Move,,Spitball,
-TM13,,Move,,ColdShoulder,
+TM13,,Move,,Frozen Rope,
 TM14,,Move,,Shiver,
 TM15,,Move,,Smash,
 TM16,,Move,,Moneyball,

@@ -893,6 +893,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   cp a, 1
   jr z, .forgetMove
 .cancel
+  call gbdk_WaitVBL
   call CopyBkgToWin
   ld a, [item_data.extra]
   call GetMoveName
@@ -925,6 +926,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call str_Replace
   ld hl, tile_buffer
   call RevealTextForPlayer
+  call ShowSpritesHiddenByTextBox
   ld c, 0
   ret
 
@@ -1279,10 +1281,13 @@ _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 
     cp a, b;
     jr z, .showPlayerMenu;no item
     pop bc;b = item id
+    push bc;b = item id
     call UseItemOnPlayer
     WAITPAD_UP
-    xor a
-    cp a, c
+    ld a, c
+    and a
+    pop bc;b = item id
+    ld c, a
     push bc;b = item id, c = item used
     jr z, .animateSelectedPlayer;item not used
     jr .exit;item used
@@ -1316,6 +1321,7 @@ _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 
   call mem_Set
 
   CLEAR_SCREEN " "
+  HIDE_WIN
   DISPLAY_ON
 
   pop bc;b = item id, c = item used

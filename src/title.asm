@@ -410,9 +410,11 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISPLAY_ON
 
   call CheckSave
-  jr z, .noSaveFile
+  jp z, .noSaveFile
 
 .newGameContinueLoop; while (name_buff[0] > 0) {
+  ld a, 3
+  ld [_c], a
   xor a
   ld hl, name_buffer
   ld [hl], a
@@ -448,6 +450,8 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ret
 
 .noSaveFile
+  ld a, 2
+  ld [_c], a
   xor a;title
   ld hl, name_buffer
   ld [hl], a
@@ -498,7 +502,7 @@ Title:: ; puts (c-d-1) in a
   jr z, .showTitleAndNewGameMenuLoop
   ld b, a
   ld a, [_c]
-  sub a, b ;d==c
+  cp a, b ;d==c
   jr z, .showTitleAndNewGameMenuLoop
 
   DISABLE_LCD_INTERRUPT

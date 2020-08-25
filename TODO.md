@@ -1,4 +1,11 @@
-General
+Items
+
+- use drugs
+- make offer to unsigned players
+- use select to swap items in list
+- add town names and cursor to town map
+ 
+ General
 
 - link cable support!
 - move all strings to separate (generated) file
@@ -68,14 +75,6 @@ Team Menu
 - show pitch or bat icon next to move PP
 - show appropriate stat (ie. BA, ERA) below age
 
-Items
-
-- teach moves
-- use drugs
-- make offer to unsigned players
-- use select to swap items in list
-- add town names and cursor to town map
- 
 Overworld
 
 - pause menu should remember last selection

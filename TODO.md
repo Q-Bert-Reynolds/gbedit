@@ -5,17 +5,19 @@ Items
 - make offer to unsigned players (use baseball)
 - use select to swap items in list
 - add town names and cursor to town map
+- status clearing items should have more specific messages (ie. "Chu is no longer paralyzed.")
  
  General
 
 - link cable support!
-- move all strings to separate (generated) file
+- copy string labels and English text to spreadsheet, translate to other languages, parse CSV
 - give math subroutines more appropriate names
 - big list of "real names" to use in place of ID and OT
 - cut off sprites with the text box using an LCD interrupt (see https://gbdev.io/pandocs/#faux-layer-textbox-status-bar)
 
 Optimization
 
+- replace long chains of compares and jumps with jump tables
 - remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
 - overworld map and player image data need to be compressed to fit more

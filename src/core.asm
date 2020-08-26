@@ -638,12 +638,56 @@ GetHealthPct::;hl = player, returns HP * 96 / maxHP in de
   call math_Divide16;de (remainder hl) = hl / bc
   ret;de = HP * 96 / maxHP
 
+AnimateHealth::;[_j] = selected player, b=start pct, c=end pct
+  PUSH_VAR _a
+  PUSH_VAR _b
+  ld a, b
+  ld [_a], a
+  ld a, c
+  ld [_b], a
+.loop
+    ld hl, name_buffer
+    ld a, [_a]
+    ld d, 0
+    ld e, a
+    call SetHPBarTilesFromPct;hl = address, de = health pct
+    call gbdk_WaitVBL
+    ld d, 4
+    ld a, [_j]
+    add a, a
+    inc a
+    ld e, a
+    ld h, 8
+    ld l, 1
+    ld bc, name_buffer
+    call gbdk_SetWinTiles
+    ld a, [_b]
+    ld b, a
+    ld a, [_a]
+    cp a, b
+    jr z, .exit
+    jr c, .less
+.greater
+    dec a
+    ld [_a], a
+    jr .loop
+.less
+    inc a
+    ld [_a], a
+    jr .loop
+.exit
+  POP_VAR _b
+  POP_VAR _a
+  ret
+
 SetHPBarTiles::;de = player, hl = address
   push hl;address
   ld h, d
   ld l, e
   call GetHealthPct
   pop hl;address
+  ;fall through
+SetHPBarTilesFromPct::;hl = address, de = health pct
   ld a, 128
   ld [hli], a
 

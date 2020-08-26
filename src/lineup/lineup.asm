@@ -850,7 +850,6 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld [rWX], a
   xor a
   ld [rWY], a
-  call HideSpritesBehindTextBox
 
   ld a, [item_data.type]
   cp a, ITEM_TYPE_STATS
@@ -863,6 +862,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jp .exit
   ret
 .tryToLearnMove
+  call HideSpritesBehindTextBox
   call CheckCanLearnMove
   jp z, .unable
 .able
@@ -1085,12 +1085,36 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   cp a, STAT_REVIVE
   jr nz, .tryChangeAll
 .healPlayer
+  pop hl;player
+  push hl;player
+  push bc;amount
+  call GetHealthPct
+  pop bc;amount
+  pop hl;player
+  push hl;player
+  push de;health pct
   call HealPlayer;bc = amount healed
   and a
   jp z, .noEffect
-  ;TODO: animate health bar
-  ld h, b
-  ld l, c;amount
+.animateHealth
+  pop de;start health pct
+  pop hl;player
+  push hl;player
+  push bc;amount healed
+  push de;start health
+  call GetHealthPct
+  pop bc;start health pct
+  ld b, c;start health pct
+  ld c, e;end health pct
+  ld a, DRAW_FLAGS_WIN
+  call AnimateHealth
+  pop bc;amount
+  pop hl;player
+  push hl;player
+  push bc;amount
+  ld b, 0
+  call DrawLineupPlayer
+  pop hl;amount
   ld de, name_buffer
   call str_Number
   ld hl, PlayerRecoveredByNumberText
@@ -1103,6 +1127,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld hl, str_buffer
   ld de, name_buffer;this works because str_buffer is later in memory than name_buffer
   call str_Append
+  call HideSpritesBehindTextBox
   ld hl, name_buffer
   call RevealTextForPlayer
   
@@ -1215,11 +1240,18 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call ClearPlayerStatus
   and a
   jp z, .noEffect
+  pop hl;player
+  push hl;player
+  ld b, 0
+  call DrawLineupPlayer
+  call CopyBkgToWin
+  call HideSpritesBehindTextBox
   ld hl, StatusClearedText
   call RevealTextForPlayer
   jp .used 
 
 .noEffect
+  call HideSpritesBehindTextBox
   ld hl, ItWontHaveAnyEffectText
   call RevealTextForPlayer
 .unused
@@ -1232,8 +1264,6 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld a, [item_data.id]
   ld b, a
   push bc;item id, used
-  ld b, 0
-  call DrawLineupPlayer
   call ShowSpritesHiddenByTextBox
   pop bc;item id, used
   ret

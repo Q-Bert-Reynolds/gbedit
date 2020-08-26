@@ -946,7 +946,6 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ret
 
 .forgetMove
-  ld [_breakpoint], a
   ld hl, WhichMoveShouldBeForgottenText
   call DisplayTextForPlayer
 
@@ -1095,10 +1094,10 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   push hl;player
   push de;health pct
   call HealPlayer;bc = amount healed
+  pop de;start health pct
   and a
   jp z, .noEffect
 .animateHealth
-  pop de;start health pct
   pop hl;player
   push hl;player
   push bc;amount healed

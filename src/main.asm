@@ -99,6 +99,11 @@ Main::
   call sgb_Init
   SET_DEFAULT_PALETTE
 
+.seed ;load temp data
+  ld a, TEMP_BANK
+  call SetBank
+  call Seed
+  
 .loadGame
   call CheckSave
   jr z, .start
@@ -119,8 +124,6 @@ Main::
   ld a, NEW_GAME_BANK
   call SetBank
   call NewGame
-
-.seed ;load temp data
   ld a, TEMP_BANK
   call SetBank
   call Seed

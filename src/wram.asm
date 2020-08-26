@@ -19,6 +19,8 @@ minutes:: DB
 seconds:: DB
 inventory:: DS MAX_ITEMS*BYTES_PER_ITEM;each item is 2 bytes
 money:: DS 3;max ~$17m, probably should be 32bit so we can store ~$4b
+players_seen:: DS 151/8+1
+players_sign:: DS 151/8+1
 
 ;drawing
 sprite_props:: DB
@@ -154,7 +156,3 @@ pitch_target_y::
 ball_vel_y:: DB
 ball_vel_z:: DB
 ball_state:: DB; // 7 = stopped, 6 = hitGround, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
-
-;roledex
-players_seen:: DS 151/8+1
-players_sign:: DS 151/8+1

@@ -2074,28 +2074,34 @@ UIDrawSaveStats::;a = draw flags, de = xy
   call SetTiles
 
 .drawSignedCount
+  call GetSeenSignedCounts
+  ld h, 0
+  ld l, e;signed
+  ld de, name_buffer
+  call str_Number
+
+  ld hl, name_buffer
+  call str_Length
+  ld h, e;width
+  ld l, 1;height
+  ld a, 3
+  sub a, h
+  ld b, a;x offset
+
   pop af;draw flags
   pop de;xy
   push de;xy
   push af;draw flags
+
   ld a, 12
-  add a, d
-  ld d, a;x+12
+  add a, d;x+12
+  add a, b;x+12+offset
+  ld d, a;x = x+12+offset
+  ld a, b
   ld a, 6
   add a, e
   ld e, a;y+6
-  ld h, 3
-  ld l, 1
-  ld bc, str_buffer
-  ld a, "1"
-  ld [bc], a
-  inc bc
-  inc bc
-  ld [bc], a
-  dec bc
-  ld a, "5"
-  ld [bc], a
-  dec bc
+  ld bc, name_buffer
   pop af;draw flags
   push af
   call SetTiles

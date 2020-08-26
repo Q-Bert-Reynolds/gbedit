@@ -1,6 +1,8 @@
 Items
 
 - use drugs
+- add music/text when playing harmonica in overworld
+- wake player when playing harmonica in game
 - learning moves should also set PP
 - make offer to unsigned players (use baseball)
 - use select to swap items in list

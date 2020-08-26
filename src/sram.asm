@@ -9,6 +9,8 @@ sram_minutes:: DB
 sram_seconds:: DB
 sram_inventory:: DS MAX_ITEMS*BYTES_PER_ITEM
 sram_money:: DS 3
+sram_players_seen:: DS 151/8+1
+sram_players_sign:: DS 151/8+1
 sram_main_save_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]

@@ -3,7 +3,8 @@ Items
 - use drugs
 - add music/text when playing harmonica in overworld
 - wake player when playing harmonica in game
-- learning moves should also set PP
+- after 1,2,POOF text plays, change move text in list
+- learning moves should set that move's PP to full
 - make offer to unsigned players (use baseball)
 - use select to swap items in list
 - add town names and cursor to town map

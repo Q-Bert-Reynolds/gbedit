@@ -920,9 +920,9 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call RevealTextForPlayer
   call AskYesNoForPlayer
   cp a, 1
-  push af
+  push af;results
   call CopyBkgToWin
-  pop af
+  pop af;results
   jp nz, .able
 .didNotLearn
   pop hl;player
@@ -946,6 +946,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ret
 
 .forgetMove
+  ld [_breakpoint], a
   ld hl, WhichMoveShouldBeForgottenText
   call DisplayTextForPlayer
 
@@ -1418,7 +1419,6 @@ DisplayTextForPlayer:;[_j] = selected player, hl = text
   ld bc, 12
 .draw
   pop hl;text
-  push bc;xy
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   call DisplayTextAtPos
   ret

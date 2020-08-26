@@ -70,6 +70,9 @@ GetTypeString:: ;a = type, string in name_buffer
   ret
 
 GetStatusString:: ;a = status mask, string in name_buffer
+  ld bc, 0
+  and a
+  jr z, .exit
   ld bc, 8
 .loop
   cp a, %10000000

@@ -33,8 +33,9 @@ WhichMoveShouldBeForgottenText: DB "Which move should\nbe forgotten?",0
 OneTwoAndPoofText:              DB "1, 2 and... Poof!"
 PlayerForgotMoveText:           DB " forgot\n%s!",0
 AndElipsisText:                 DB "And...",0
-PlayerLearnedMoveText:          DB " learned\n%s!",0;exit to inventory
-ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0;exit to inventory
+PlayerLearnedMoveText:          DB " learned\n%s!",0
+ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0
+StatusClearedText:              DB "Status cleared.",0
 PlayerRecoveredByNumberText:    DB "\nrecovered by %s!",0
 FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL",0
 FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL",0
@@ -433,12 +434,8 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   jr .draw
 
 .showStatus; poison, sleep, burn, etc. 
-  ld b, 0
-  ld c, a
-  ld hl, StatusStrings
-  call str_FromArray
-  ld b, h
-  ld c, l
+  call GetStatusString
+  ld bc, name_buffer
 
 .draw
   ld d, 15
@@ -1078,7 +1075,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 ;a = stat type, bc = amount, d = dead, hl = player
 .tryChangeHP
   cp a, STAT_HP
-  jr z, .tryChangeRevive
+  jr nz, .tryChangeRevive
   ld a, d
   and a;if 0, dead
   jp z, .noEffect
@@ -1086,7 +1083,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   
 .tryChangeRevive
   cp a, STAT_REVIVE
-  jr z, .tryChangeAll
+  jr nz, .tryChangeAll
 .healPlayer
   call HealPlayer;bc = amount healed
   and a
@@ -1113,98 +1110,115 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   
 .tryChangeAll
   cp a, STAT_ALL
-  jr z, .tryChangeEvolve
+  jr nz, .tryChangeEvolve
   jp .unused
   
 .tryChangeEvolve
   cp a, STAT_EVOLVE
-  jr z, .tryChangeMaxPP
+  jr nz, .tryChangeMaxPP
   jp .unused
   
 .tryChangeMaxPP
   cp a, STAT_MAXPP
-  jr z, .tryChangeThrow
+  jr nz, .tryChangeThrow
   jp .unused
   
 .tryChangeThrow
   cp a, STAT_THROW
-  jr z, .tryChangeSpeed
+  jr nz, .tryChangeSpeed
   jp .unused
   
 .tryChangeSpeed
   cp a, STAT_SPEED
-  jr z, .tryChangeField
+  jr nz, .tryChangeField
   jp .unused
   
 .tryChangeField
   cp a, STAT_FIELD
-  jr z, .tryChangeBat
+  jr nz, .tryChangeBat
   jp .unused
   
 .tryChangeBat
   cp a, STAT_BAT
-  jr z, .tryChangeMaxHP
+  jr nz, .tryChangeMaxHP
   jp .unused
   
 .tryChangeMaxHP
   cp a, STAT_MAXHP
-  jr z, .tryChangeAge
+  jr nz, .tryChangeAge
   jp .unused
   
 .tryChangeAge
   cp a, STAT_AGE
-  jr z, .tryChangeCrit
+  jr nz, .tryChangeCrit
   jp .unused
   
 .tryChangeCrit
   cp a, STAT_CRIT
-  jr z, .tryChangeContact
+  jr nz, .tryChangeContact
   jp .unused
   
 .tryChangeContact
   cp a, STAT_CONTACT
-  jr z, .tryChangeAccuracy
+  jr nz, .tryChangeAccuracy
   jp .unused
   
 .tryChangeAccuracy
   cp a, STAT_ACCURACY
-  jr z, .tryChangeSpecial
+  jr nz, .tryChangeSpecial
   jp .unused
   
 .tryChangeSpecial
   cp a, STAT_SPECIAL
-  jr z, .tryChangeStatusBurn
+  jr nz, .tryChangeStatusBurn
   jp .unused
   
 .tryChangeStatusBurn
   cp a, STAT_STATUS_BRN
-  jr z, .tryChangeStatusFreeze
-  jp .unused
+  jr nz, .tryChangeStatusFreeze
+  ld a, STATUS_MASK_BRN
+  jp .clearStatus
   
 .tryChangeStatusFreeze
   cp a, STAT_STATUS_FRZ
-  jr z, .tryChangeStatusParalyze
-  jp .unused
+  jr nz, .tryChangeStatusParalyze
+  ld a, STATUS_MASK_FRZ
+  jp .clearStatus
   
 .tryChangeStatusParalyze
   cp a, STAT_STATUS_PAR
-  jr z, .tryChangeStatusPoison
-  jp .unused
+  jr nz, .tryChangeStatusPoison
+  ld a, STATUS_MASK_PAR
+  jp .clearStatus
   
 .tryChangeStatusPoison
   cp a, STAT_STATUS_PSN
-  jr z, .tryChangeStatusSleep
-  jp .unused
+  jr nz, .tryChangeStatusSleep
+  ld a, STATUS_MASK_PSN
+  jp .clearStatus
   
 .tryChangeStatusSleep
   cp a, STAT_STATUS_SLP
-  jr z, .tryChangeStatusAll
-  jp .unused
+  jr nz, .tryChangeStatusAll
+  ld a, STATUS_MASK_SLP
+  jp .clearStatus
   
 .tryChangeStatusAll
   cp a, STAT_STATUS_ALL
-  jr nz, .unused
-  
+  jr z, .unused
+  ld a, STATUS_MASK_ALL
+  jp .clearStatus
+
+.clearStatus 
+  pop hl;player
+  push hl;player
+  call ClearPlayerStatus
+  and a
+  jp z, .noEffect
+  ld hl, StatusClearedText
+  call RevealTextForPlayer
+  jp .used 
+
 .noEffect
   ld hl, ItWontHaveAnyEffectText
   call RevealTextForPlayer

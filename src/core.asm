@@ -1,7 +1,7 @@
 SECTION "Core", ROM0
 
 ; GetTypeString                   a = type, string in name_buffer
-; GetStatusString                 a = status, string in name_buffer
+; GetStatusString                 a = status mask, string in name_buffer
 ; SetBank                         a = bank ;TODO: handle more than 255 banks
 ; Trampoline                      b = bank, hl = address, can only use de and RAM for args, can't return anything in a
 ; UpdateInput
@@ -69,9 +69,15 @@ GetTypeString:: ;a = type, string in name_buffer
   call str_Copy
   ret
 
-GetStatusString:: ;a = status, string in name_buffer
-  ld b, 0
-  ld c, a
+GetStatusString:: ;a = status mask, string in name_buffer
+  ld bc, 8
+.loop
+  cp a, %10000000
+  jr z, .exit
+  sla a
+  dec bc
+  jr nz, .loop
+.exit
   ld hl, StatusStrings
   ld de, name_buffer
   call str_FromArray

@@ -1,6 +1,7 @@
 Items
 
 - use drugs
+- learning moves should also set PP
 - make offer to unsigned players (use baseball)
 - use select to swap items in list
 - add town names and cursor to town map

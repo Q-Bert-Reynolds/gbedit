@@ -137,7 +137,9 @@ SECTION "Player Utils", ROM0
 ;GetPlayerAge                 - hl = player, returns age in a, age in hl
 ;GetPlayerPosition            - hl = player, returns position in a, position in hl
 ;GetPlayerHandedness          - hl = player, returns handedness in a, handedness in hl
+;ClearPlayerStatus            - hl = player, a = status mask, returns effect in a(0=no effect)
 ;GetPlayerStatus              - hl = player, returns status in a, status in hl
+;HealPlayer                   - hl = player, bc = amount, returns effect in a(0=no effect), amount healed in bc
 ;GetPlayerHP                  - hl = player, returns hp in hl
 ;GetPlayerMaxHP               - hl = player, returns max hp in hl
 ;GetPlayerBat                 - hl = player, returns bat in hl
@@ -316,7 +318,22 @@ GetPlayerHandedness:: ;hl = player, returns handedness in a, address of handedne
   ld a, [hl]
   ret
 
-GetPlayerStatus:: ;hl = player, returns status in a, address of status in hl
+ClearPlayerStatus:: ;hl = player, a = statuses to clear, returns effect in a(0=no effect)
+  cpl;invert status mask
+  ld b, a;inverted status mask
+  ld bc, UserLineupPlayer1.status - UserLineupPlayer1
+  add hl, bc
+  ld a, [hl]
+  ld c, a
+  and a, b;clear statuses in b
+  ld [hl], a
+  cp a, c;check change
+  ld a, 0
+  ret z;no change, return a = 0
+  ld a, 1
+  ret
+
+GetPlayerStatus:: ;hl = player, returns status_mask in a, address of status in hl
   push bc
   ld bc, UserLineupPlayer1.status - UserLineupPlayer1
   add hl, bc

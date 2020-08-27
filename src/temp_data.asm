@@ -487,92 +487,128 @@ Seed::
   ld de, UserLineupPlayer1
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer1
+  call SetStatsFromAge
 
   ld hl, MyZaphData
   ld de, UserLineupPlayer2
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer2
+  call SetStatsFromAge
 
   ld hl, MyGioData
   ld de, UserLineupPlayer3
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer3
+  call SetStatsFromAge
 
   ld hl, MyBearData
   ld de, UserLineupPlayer4
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer4
+  call SetStatsFromAge
 
   ld hl, MyStarchildData
   ld de, UserLineupPlayer5
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer5
+  call SetStatsFromAge
 
   ld hl, MyMetaData
   ld de, UserLineupPlayer6
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer6
+  call SetStatsFromAge
 
   ld hl, MyChuData
   ld de, UserLineupPlayer7
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer7
+  call SetStatsFromAge
 
   ld hl, MyBubbiData
   ld de, UserLineupPlayer8
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer8
+  call SetStatsFromAge
 
   ld hl, MyBigRedData
   ld de, UserLineupPlayer9
   ld bc, MyBubbiDataEnd - MyBubbiData
   call mem_Copy
+  ld hl, UserLineupPlayer9
+  call SetStatsFromAge
 
 .opposingLineup
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer1
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer1
+  call SetStatsFromAge
 
   ld hl, OpponentBigRedData
   ld de, OpponentLineupPlayer2
   ld bc, OpponentBigRedDataEnd - OpponentBigRedData
   call mem_Copy
+  ld hl, OpponentLineupPlayer2
+  call SetStatsFromAge
 
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer3
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer3
+  call SetStatsFromAge
 
   ld hl, OpponentBearData
   ld de, OpponentLineupPlayer4
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer4
+  call SetStatsFromAge
 
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer5
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer5
+  call SetStatsFromAge
 
   ld hl, OpponentBearData
   ld de, OpponentLineupPlayer6
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer6
+  call SetStatsFromAge
 
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer7
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer7
+  call SetStatsFromAge
 
   ld hl, OpponentBearData
   ld de, OpponentLineupPlayer8
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer8
+  call SetStatsFromAge
 
   ld hl, OpponentBubbiData
   ld de, OpponentLineupPlayer9
   ld bc, OpponentBubbiDataEnd - OpponentBubbiData
   call mem_Copy
+  ld hl, OpponentLineupPlayer9
+  call SetStatsFromAge
 
 .seenSigned
   ld hl, 2020

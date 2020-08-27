@@ -135,6 +135,7 @@ SECTION "Player Utils", ROM0
 ;GetPlayerMovePP              - hl = player, d = move mask, a = player move num, returns pp in a
 ;GetPlayerNumber              - hl = player, returns number in a, number in hl
 ;GetPlayerAge                 - hl = player, returns age in a, age in hl
+;SetPlayerAge                 - hl = player, a = age
 ;GetPlayerPosition            - hl = player, returns position in a, position in hl
 ;GetPlayerHandedness          - hl = player, returns handedness in a, handedness in hl
 ;ClearPlayerStatus            - hl = player, a = status mask, returns effect in a(0=no effect)
@@ -302,6 +303,78 @@ GetPlayerAge:: ;hl = player, returns age in a, address of age in hl
   ld a, [hl]
   ret
 
+SetPlayerAge:: ;hl = player, a = age
+  push bc
+  ld bc, UserLineupPlayer1.age - UserLineupPlayer1
+  add hl, bc
+  ld [hl], a
+  call SetStatsFromAge
+  pop bc
+  ld a, [hl]
+  ret
+
+SetStatsFromAge:: ;hl = player
+  ld a, [hl];player.number
+  push hl;player
+  call LoadPlayerBaseData
+  pop hl;player
+  push hl;player
+  call GetPlayerAge
+  push af;age
+  add a, a;age*2
+  ld d, 0
+  ld e, a;age*2
+  ld a, [player_base.hp]
+  call math_Multiply;base_hp * 2 * age
+  ld c, 100
+  call math_Divide;(base_hp * 2 * age)/100
+  pop af;age
+  push af;age
+  add a, 10;age+10
+  ld d, 0
+  ld e, a;age+10
+  add hl, de;(base_hp * 2 * age)/100 + (age+10)
+  ld d, h
+  ld e, l;de = HP for age
+
+  pop af;age
+  pop hl;player
+  push af;age
+  ld bc, UserLineupPlayer1.max_hp - UserLineupPlayer1
+  add hl, bc
+  ld a, e
+  ld [hli], a
+  ld a, d
+  ld [hli], a
+
+  ld bc, player_base.bat
+REPT 4;bat, field, speed, throw - order should be same on player_base and lineup data
+  pop af;age
+  push af;age
+  add a, a;age*2
+  ld d, 0
+  ld e, a
+  ld a, [bc];base stat
+  push bc;base stat address
+  push hl;lineup stat address
+  call math_Multiply;base * 2 * age
+  ld c, 100
+  call math_Divide;(base_hp * 2 * age)/100
+  ld de, 5
+  add hl, de
+  ld d, h
+  ld e, l;stat = (base * 2 * age)/100 + 5
+  pop hl;lineup stat address
+  ld a, e
+  ld [hli], a
+  ld a, d
+  ld [hli], a
+  pop bc;base stat address
+  inc bc
+ENDR
+  pop af;age
+  ret 
+  
 GetPlayerPosition:: ;hl = player, returns position in a, address of position in hl
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1

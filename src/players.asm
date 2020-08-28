@@ -160,6 +160,43 @@ SECTION "Player Utils", ROM0
 ;GetOpposingPlayerByPosition  - a = position(1-9), returns player in hl
 ;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
 
+CreateLineup:: ;hl = src lineup data, de = destination lineup address, bc = player size
+  xor a
+.loop
+    push af;player index
+    push bc;player size
+    push hl;src
+    push de;dest
+    ld [_i], a
+    ld a, [hli];num
+    push af;num
+    ld a, [hli];age
+    ld b, a
+    ld a, [hli];pos
+    ld c, a
+    ld a, [hli];hand
+    ld d, a
+    pop af;num
+    pop hl;dest
+    push hl;dest
+    call CreatePlayer
+    pop hl;dest
+    pop de;src
+    pop bc;player size
+    add hl, bc;next dest
+.swapHLDE
+    push hl;dest
+    push de;src
+    pop hl;src
+    ld de, 4
+    add hl, de
+    pop de;dest
+    pop af;player index
+    inc a
+    cp a, 9
+    jr c, .loop
+  ret
+
 CreatePlayer:: ;a = num, b = age, c = pos, d = handedness, hl = address to write player, all registers restored
   push hl;player address
   
@@ -194,7 +231,6 @@ CreatePlayer:: ;a = num, b = age, c = pos, d = handedness, hl = address to write
   ret
 
 SetPlayerMove:: ;hl = player, a = move num, b = new move id
-  inc a
   ld de, UserLineupPlayer1.moves - UserLineupPlayer1
   add hl, de;player.moves
   ld d,0

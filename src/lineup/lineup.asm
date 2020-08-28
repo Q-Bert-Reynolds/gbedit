@@ -868,6 +868,16 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 .able
   pop hl;player
   push hl;player
+  ld d, ALL_MOVES
+  call GetPlayerMoveCount
+  cp a, 4
+  jr z, .alreadyKnowsFour
+  inc a
+  push af;move num
+  jp .learnMove
+.alreadyKnowsFour
+  pop hl;player
+  push hl;player
   call GetUserPlayerName
   ld hl, name_buffer
   ld de, str_buffer
@@ -989,8 +999,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 .learnMove
   ld a, [item_data.extra]
   ld b, a
-  pop af;move num to forget
-  dec a
+  pop af;move num
   pop hl;player
   push hl;player
   call SetPlayerMove

@@ -17,8 +17,31 @@ TempItems:
 EndTempItems:
   DS MAX_ITEMS*BYTES_PER_ITEM - (EndTempItems-TempItems)
 
-TempUserName: DB "NOLAN",0
-TempRivalName: DB "CALVIN",0
+TempUserName: DB "Nolan",0
+TempRivalName: DB "Calvin",0
+
+TempUserLineup:
+  DB NUM_YOGI,      45, CATCHER,        THROW_RIGHT | BAT_RIGHT
+  DB NUM_BUBBI,      8, SHORTSTOP,      THROW_RIGHT | BAT_SWITCH
+  DB NUM_ZAPH,      65, RIGHT_FIELDER,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_BEAR,      28, FIRST_BASEMAN,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_GIO,       27, LEFT_FIELDER,   THROW_RIGHT | BAT_RIGHT
+  DB NUM_STARCHILD, 15, THIRD_BASEMAN,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_META,       8, SECOND_BASEMAN, THROW_RIGHT | BAT_LEFT
+  DB NUM_CHU,       23, CENTER_FIELDER, THROW_RIGHT | BAT_RIGHT
+  DB NUM_BIG_RED,   33, PITCHER,        THROW_LEFT  | BAT_RIGHT
+  
+TempOpponentLineup:
+  DB NUM_ASH,       45, CATCHER,        THROW_RIGHT | BAT_RIGHT
+  DB NUM_SQUIRT,     8, SHORTSTOP,      THROW_RIGHT | BAT_SWITCH
+  DB NUM_MORTY,     65, RIGHT_FIELDER,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_MACOBB,    28, FIRST_BASEMAN,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_RAT_TAIL,  27, LEFT_FIELDER,   THROW_RIGHT | BAT_RIGHT
+  DB NUM_STARMAN,   15, THIRD_BASEMAN,  THROW_RIGHT | BAT_RIGHT
+  DB NUM_BUTTERFLY,  8, SECOND_BASEMAN, THROW_RIGHT | BAT_LEFT
+  DB NUM_EVIE,      23, CENTER_FIELDER, THROW_RIGHT | BAT_RIGHT
+  DB NUM_RAI,       33, PITCHER,        THROW_LEFT  | BAT_RIGHT
+
 Seed::
   ld hl, TempUserName
   ld de, user_name
@@ -28,36 +51,28 @@ Seed::
   ld de, rival_name
   call str_Copy
 
-.userLineup
-  CREATE_PLAYER        UserLineupPlayer1, 9,   45, CATCHER,        THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer1, "", 4200
-  CREATE_PLAYER        UserLineupPlayer2, 1,   8,  SHORTSTOP,      THROW_RIGHT | BAT_SWITCH
-  ADD_USER_PLAYER_DATA UserLineupPlayer2, "BUTTERCUP", 69
-  CREATE_PLAYER        UserLineupPlayer3, 145, 65, RIGHT_FIELDER,  THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer3, "ZAPH", 8000
-  CREATE_PLAYER        UserLineupPlayer4, 143, 28, FIRST_BASEMAN,  THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer4, "", 42
-  CREATE_PLAYER        UserLineupPlayer5, 17,  27, LEFT_FIELDER,   THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer5, "", 35
-  CREATE_PLAYER        UserLineupPlayer6, 120, 15, THIRD_BASEMAN,  THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer6, "", 420
-  CREATE_PLAYER        UserLineupPlayer7, 11,  8,  SECOND_BASEMAN, THROW_RIGHT | BAT_LEFT
-  ADD_USER_PLAYER_DATA UserLineupPlayer7, "", 20
-  CREATE_PLAYER        UserLineupPlayer8, 25,  23, CENTER_FIELDER, THROW_RIGHT | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer8, "", 75
-  CREATE_PLAYER        UserLineupPlayer9, 6,   33, PITCHER,        THROW_LEFT  | BAT_RIGHT
-  ADD_USER_PLAYER_DATA UserLineupPlayer9, "Ruby", 16777215
+.userLineup 
+
+  ld hl, TempUserLineup
+  ld de, UserLineup
+  ld bc, UserLineupPlayer2-UserLineupPlayer1
+  call CreateLineup
+                      ;lineup address     name             pay
+  ADD_USER_PLAYER_DATA UserLineupPlayer1, "",             4200
+  ADD_USER_PLAYER_DATA UserLineupPlayer2, "Buttercup",      69
+  ADD_USER_PLAYER_DATA UserLineupPlayer3, "Zaphod",       8000
+  ADD_USER_PLAYER_DATA UserLineupPlayer4, "",               42
+  ADD_USER_PLAYER_DATA UserLineupPlayer5, "",               35
+  ADD_USER_PLAYER_DATA UserLineupPlayer6, "",              420
+  ADD_USER_PLAYER_DATA UserLineupPlayer7, "",               20
+  ADD_USER_PLAYER_DATA UserLineupPlayer8, "",               75
+  ADD_USER_PLAYER_DATA UserLineupPlayer9, "Ruby",     16777215
 
 .opposingLineup
-  CREATE_PLAYER OpponentLineupPlayer1, 9,   45, CATCHER,        THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer2, 1,   8,  SHORTSTOP,      THROW_RIGHT | BAT_SWITCH
-  CREATE_PLAYER OpponentLineupPlayer3, 145, 65, RIGHT_FIELDER,  THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer4, 143, 28, FIRST_BASEMAN,  THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer5, 17,  27, LEFT_FIELDER,   THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer6, 120, 15, THIRD_BASEMAN,  THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer7, 11,  8,  SECOND_BASEMAN, THROW_RIGHT | BAT_LEFT
-  CREATE_PLAYER OpponentLineupPlayer8, 25,  23, CENTER_FIELDER, THROW_RIGHT | BAT_RIGHT
-  CREATE_PLAYER OpponentLineupPlayer9, 6,   33, PITCHER,        THROW_LEFT  | BAT_RIGHT
+  ld hl, TempOpponentLineup
+  ld de, OpponentLineup
+  ld bc, OpponentLineupPlayer2-OpponentLineupPlayer1
+  call CreateLineup
 
 .seenSigned
   ld hl, 2020

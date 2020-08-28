@@ -3,15 +3,6 @@ NICKNAME: MACRO ;\1 = nickname
   DS NICKNAME_LENGTH - STRLEN(\1)
 ENDM
 
-CREATE_PLAYER: MACRO ;\1 = player address, \2 = number, \3 = age, \4 = position, \5 = handedness
-  ld hl, \1;player address
-  ld a, \2;number
-  ld b, \3;age
-  ld c, \4;position
-  ld d, \5;handedness
-  call CreatePlayer
-ENDM
-
 ADD_USER_PLAYER_DATA: MACRO ;\1 = player address, \2 = nickname, \3 = pay 
   jr .copyNickname\@
 .nickname\@ 

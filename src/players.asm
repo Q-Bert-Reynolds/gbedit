@@ -128,6 +128,7 @@ Runners:
 
 SECTION "Player Utils", ROM0
 
+;CreatePlayer                 - a = player number, l = level, returns player data in hl
 ;SetPlayerMove                - hl = player, a = move num, b = new move id
 ;GetPlayerMoveName            - hl = player, d = move mask, a = move num, returns move name in name_buffer
 ;GetPlayerMoveCount           - hl = player, d = move mask, returns move count in a
@@ -149,14 +150,49 @@ SECTION "Player Utils", ROM0
 ;GetPlayerThrow               - hl = player, returns throw in hl
 ;GetUserPlayerXP              - hl = player, returns xp in ehl
 ;GetUserPlayerXPToNextAge     - hl = player, returns xp in ehl
+;GetXPForAge                  - a = age, returns xp in cde 
+;SetUserPlayerPay             - hl = player, bcd = pay
 ;GetUserPlayerPay             - hl = player, returns pay in ehl
+;SetUserPlayerName            - hl = player, de = name address
 ;GetUserPlayerName            - hl = user player, returns name in name_buffer
 ;GetOpposingPlayerInLineup    - a = lineup index(0-8), returns player in hl
 ;GetUserPlayerInLineup        - a = lineup index(0-8), returns player in hl
 ;GetOpposingPlayerByPosition  - a = position(1-9), returns player in hl
 ;GetUserPlayerByPosition      - a = position(1-9), returns player in hl
 
-NoMove: DB "--------", 0
+CreatePlayer:: ;a = num, b = age, c = pos, d = handedness, hl = address to write player, all registers restored
+  push hl;player address
+  
+  ld [hli], a;num
+  ld a, b
+  ld [hli], a;age
+  ld a, c
+  ld [hli], a;position
+
+  pop hl;player address
+  push hl;player address
+  ld bc, UserLineupPlayer1.hand - UserLineupPlayer1
+  add hl, bc
+  ld a, d;handedness
+  ld [hli], a
+
+  pop hl;player address
+  push hl;player address
+  call SetMovesFromAge
+
+  pop hl;player address
+  push hl;player address
+  call SetStatsFromAge
+
+  pop hl;player address
+  push hl;player address
+  call GetPlayerMaxHP
+  ld d, h
+  ld e, l;hp
+  pop hl;player address
+  call SetPlayerHP
+  ret
+
 SetPlayerMove:: ;hl = player, a = move num, b = new move id
   inc a
   ld de, UserLineupPlayer1.moves - UserLineupPlayer1
@@ -166,8 +202,16 @@ SetPlayerMove:: ;hl = player, a = move num, b = new move id
   add hl, de;move #a
   ld a, b
   ld [hl], a;set new move
+  ld de, 4
+  add hl, de
+  push hl;move pp address
+  call GetMove
+  ld a, [move_data.pp]
+  pop hl;move pp address
+  ld [hl], a;new move pp to max
   ret
 
+NoMove: DB "--------", 0
 GetPlayerMoveName:: ;hl = player, a = move num, d = move mask, returns move name in name_buffer
   push bc
   push de
@@ -373,8 +417,54 @@ REPT 4;bat, field, speed, throw - order should be same on player_base and lineup
   inc bc
 ENDR
   pop af;age
-  ret 
-  
+  ret
+
+SetMovesFromAge:: ;hl = player
+  PUSH_VAR _i
+  ld a, [hl];player.number
+  push hl;player
+  call LoadPlayerBaseData
+  pop hl;player
+  push hl;player
+  ld d, ALL_MOVES
+  call GetPlayerMoveCount
+  and a, 3;move count % 4
+  ld [_i], a
+  pop hl;player
+  push hl;player
+  inc hl
+  ld a, [hl];age
+  ld c, a;age
+  ld de, player_base.learnset
+.learnLoop
+    ld a, [de];move id
+    inc de
+    and a
+    jr z, .exit
+    ld b, a
+    ld a, [de];age learned
+    inc de
+    cp a, c
+    jr z, .learn
+    jr nc, .exit;if age learned > curent age
+.learn;if age learned <= current age
+    pop hl;player
+    push hl;player
+    ld a, [_i]
+    push af;move num
+    push de;learnset
+    call SetPlayerMove;hl = player, a = move num, b = new move id
+    pop de;learnset
+    pop af;move num
+    inc a
+    and a, 3;move count % 4
+    ld [_i], a
+    jr .learnLoop
+.exit
+  pop hl;player
+  POP_VAR _i
+  ret
+
 GetPlayerPosition:: ;hl = player, returns position in a, address of position in hl
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1
@@ -486,6 +576,15 @@ GetPlayerHP:: ;hl = player, returns hp in hl
   pop bc
   ret
 
+SetPlayerHP:: ;hl = player, de = hp
+  ld bc, UserLineupPlayer1.hp - UserLineupPlayer1
+  add hl, bc
+  ld a,e
+  ld [hli],a
+  ld a,d
+  ld [hl],a
+  ret
+
 GetPlayerMaxHP:: ;hl = player, returns max hp in hl
   push bc
   ld bc, UserLineupPlayer1.max_hp - UserLineupPlayer1
@@ -571,24 +670,40 @@ GetUserPlayerXPToNextAge:: ;hl = player, returns xp in ehl
   push de
   call GetPlayerAge  
   inc a
-  push af;next age
-  ld d, 0
-  ld e, a
-  call math_Multiply; hl = de * a
-  pop af;next age
-  ld d, 0
-  ld e, a
-  call math_Multiply16;bcde = de * hl
+  call GetXPForAge
   ld a, c;next age xp in ahl
   ld h, d
   ld l, e
-  pop de;current age in bcd
+  pop de;current age xp in bcd
   pop bc
   ld e, a;next age xp in ehl
   call math_Sub24;ehl = ehl - bcd
   ret
 
-; TODO: pay should be 24 bit number
+GetXPForAge:: ;a = age, returns experience needed in cde 
+  push af;age
+  ld d, 0
+  ld e, a
+  call math_Multiply; hl = de * a = age^2
+  pop af;age
+  ld d, 0
+  ld e, a
+  call math_Multiply16;bcde = de * hl = age^3
+  ret
+
+SetUserPlayerPay:: ;hl = player, bcd = pay
+  ld a, d;lowest byte of pay
+  ld de, UserLineupPlayer1.pay - UserLineupPlayer1
+  add hl, de
+  ld d, a;lowest byte of pay
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hli], a
+  ld a, d
+  ld [hl], a
+  ret
+
 GetUserPlayerPay:: ;hl = player, returns pay in ehl
   push bc
   ld bc, UserLineupPlayer1.pay - UserLineupPlayer1
@@ -601,6 +716,16 @@ GetUserPlayerPay:: ;hl = player, returns pay in ehl
   ld h, b
   ld l, a
   pop bc
+  ret
+
+SetUserPlayerName::;hl = player, de = name address
+  ld bc, UserLineupPlayer1.nickname - UserLineupPlayer1
+  add hl, bc
+  push hl;player name
+  push de;name address
+  pop hl;name address
+  pop de;player name
+  call str_Copy
   ret
 
 GetUserPlayerName::;hl = user player, returns name in name_buffer

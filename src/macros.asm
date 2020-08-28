@@ -3,6 +3,39 @@ NICKNAME: MACRO ;\1 = nickname
   DS NICKNAME_LENGTH - STRLEN(\1)
 ENDM
 
+CREATE_PLAYER: MACRO ;\1 = player address, \2 = number, \3 = age, \4 = position, \5 = handedness
+  ld hl, \1;player address
+  ld a, \2;number
+  ld b, \3;age
+  ld c, \4;position
+  ld d, \5;handedness
+  call CreatePlayer
+ENDM
+
+ADD_USER_PLAYER_DATA: MACRO ;\1 = player address, \2 = nickname, \3 = pay 
+  jr .copyNickname\@
+.nickname\@ 
+  NICKNAME \2
+.copyNickname\@
+  ld hl, \1
+  ld de, .nickname\@
+  call SetUserPlayerName
+  ld b, (\3 & $FF0000) >> 16
+  ld c, (\3 & $00FF00) >> 8
+  ld d, (\3 & $0000FF)
+  ld hl, \1
+  call SetUserPlayerPay
+  ld a, [\1.age]
+  call GetXPForAge
+  ld hl, \1.xp
+  ld a, c
+  ld [hli], a
+  ld a, d
+  ld [hli], a
+  ld a, e
+  ld [hli], a
+ENDM
+
 TRAMPOLINE: MACRO ;\1 = jump address
   ld b, BANK(\1)
   ld hl, \1

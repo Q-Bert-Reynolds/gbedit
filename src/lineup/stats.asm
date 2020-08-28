@@ -444,6 +444,7 @@ DrawPageOne:
   pop hl;player
   push hl
   call GetUserPlayerPay
+  ld [_breakpoint], a
   ld bc, name_buffer+1
   call str_Number24
 

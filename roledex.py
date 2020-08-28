@@ -257,7 +257,8 @@ def generate_player_data(roledex, learned_moves, taught_moves):
       asm_file.write(";learnset\n")
       for move in learned_moves[player["Nickname"]]:
         move_const = move[1].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
-        asm_file.write("DB " + move[0] + ", " + move_const + "\n")
+        asm_file.write("DB " + move_const + ", " + move[0] + "\n")
+      asm_file.write("DB 0\n")
       
     asm_file.write("\nRoledex:\n"+var_names)
 

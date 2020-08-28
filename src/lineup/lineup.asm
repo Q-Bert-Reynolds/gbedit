@@ -1125,7 +1125,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   push hl;player
   call GetUserPlayerName
   ld hl, str_buffer
-  ld de, name_buffer;this works because str_buffer is later in memory than name_buffer
+  ld de, name_buffer
   call str_Append
   call HideSpritesBehindTextBox
   ld hl, name_buffer

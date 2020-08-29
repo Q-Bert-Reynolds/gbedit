@@ -1042,7 +1042,6 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld de, tile_buffer
   ld bc, name_buffer
   call str_Replace
-  call HideSpritesBehindTextBox
   ld hl, tile_buffer
   call RevealTextForPlayer
   ld hl, TheyCantLearnText

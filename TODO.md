@@ -80,6 +80,7 @@ Simulation
 
 Team Menu
 
+- pressing left and right cycles between stats
 - missing moves in stat page move list should show "-"
 - stat page should be accessible from PC
 - show pitch or bat icon next to move PP
@@ -128,13 +129,19 @@ Super GameBoy
 
 Design Notes
 
+- Ghost runners appear when an unrecruited player gets on base
+- you can only see/sign Ghost runners after you've bought a ticket to the Field of Dreams
+- player stats should peak at their prime age (~25)
+- after prime age, speed and throw stats begin to decline (bat and field don't)
+- when a player dies (~75), their second type becomes Ghost
+- steroids move a player's age toward their prime age
+- steroids stop working half way between prime and death (~50)
 - rather than selecting a player, you're selecting one of Doc Hicory's three teams - you get to name it
 - play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to
 - pitch speed should be a relative speed so that pitches appear faster when the pitcher's Throw stat is higher than the batter's Bat stat
-- after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
 - trash cans at your rival's house "look like they've taken a beating"
 - each town should have an age limits for their league, you should be able to replay home teams as many times as you want
+- Bill (of Bill's PC fame) is Bill James.
 - teammates in their 20s and 30s have a small chance of producing a child
-- players should have an age peak, after which speed and throw stats begin to decline (bat and field don't)
-- players should have a retirement age
 - A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.
+- after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower

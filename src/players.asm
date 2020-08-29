@@ -460,11 +460,7 @@ SetMovesFromAge:: ;hl = player
   ld a, [hl];player.number
   push hl;player
   call LoadPlayerBaseData
-  pop hl;player
-  push hl;player
-  ld d, ALL_MOVES
-  call GetPlayerMoveCount
-  and a, 3;move count % 4
+  xor a
   ld [_i], a
   pop hl;player
   push hl;player
@@ -487,11 +483,10 @@ SetMovesFromAge:: ;hl = player
     pop hl;player
     push hl;player
     ld a, [_i]
-    push af;move num
     push de;learnset
     call SetPlayerMove;hl = player, a = move num, b = new move id
     pop de;learnset
-    pop af;move num
+    ld a, [_i]
     inc a
     and a, 3;move count % 4
     ld [_i], a

@@ -25,6 +25,20 @@ ADD_USER_PLAYER_DATA: MACRO ;\1 = player address, \2 = nickname, \3 = pay
   ld [hli], a
   ld a, e
   ld [hli], a
+  ld hl, \1
+  call GetPlayerMaxHP
+  push hl;max hp
+  call gbdk_Random
+  pop hl;max hp
+  ld a, d
+  and a, h
+  ld d, a
+  ld a, e
+  and a, l
+  or a, 1
+  ld e, a
+  ld hl, \1
+  call SetPlayerHP
 ENDM
 
 TRAMPOLINE: MACRO ;\1 = jump address

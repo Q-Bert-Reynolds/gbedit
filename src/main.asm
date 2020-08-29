@@ -104,26 +104,26 @@ Main::
   call SetBank
   call Seed
   
-; .loadGame
-;   call CheckSave
-;   jr z, .start
-;   call LoadGame
+.loadGame
+  call CheckSave
+  jr z, .start
+  call LoadGame
 
-; .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+.start ;show intro credits, batting animation
+  ld a, START_BANK
+  call SetBank
+  call Start
 
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;sets a to 0 if new game pressed
-;   jr nz, .startClock
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;sets a to 0 if new game pressed
+  jr nz, .startClock
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
   ld a, TEMP_BANK
   call SetBank
   call Seed

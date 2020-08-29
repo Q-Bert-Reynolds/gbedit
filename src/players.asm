@@ -456,6 +456,13 @@ ENDR
   ret
 
 SetMovesFromAge:: ;hl = player
+  push hl;player
+  xor a
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
+  add hl, bc;player.moves
+  ld bc, 8
+  call mem_Set
+  pop hl;player
   PUSH_VAR _i
   ld a, [hl];player.number
   push hl;player

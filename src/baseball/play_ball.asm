@@ -1045,6 +1045,9 @@ StartGame::
     cp 2
     jr nz, .runMenuItemSelected
     call ShowInventory
+    call SetupGameUI
+    call ShowPitcher
+    call ShowBatter
     jr .playBallLoop
 .runMenuItemSelected
     cp 3

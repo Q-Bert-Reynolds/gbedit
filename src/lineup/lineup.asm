@@ -874,7 +874,6 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call GetPlayerMoveCount
   cp a, 4
   jr z, .alreadyKnowsFour
-  inc a
   push af;move num
   jp .learnMove
 .alreadyKnowsFour

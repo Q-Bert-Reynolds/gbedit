@@ -747,6 +747,8 @@ ShowPlayerMenu:
   ld e, a
 
 .showList
+  xor a
+  ld [list_selection], a
   ld b, 8
   ld a, 18
   sub a, c
@@ -1352,6 +1354,7 @@ SelectMoveToForget:;[_j] = selected player, hl = player, returns selection in a 
     jr nz, .loopMoves
   dec de
   xor a
+  ld [list_selection], a
   ld [name_buffer], a
   ld [de], a
   ld b, 4;x

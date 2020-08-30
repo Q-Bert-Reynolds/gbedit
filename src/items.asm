@@ -337,6 +337,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   call str_Copy
   xor a
   ld [name_buffer], a
+  ld [list_selection], a
   ld a, DRAW_FLAGS_WIN
   ld b, 13
   ld c, 10

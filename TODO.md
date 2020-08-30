@@ -20,6 +20,7 @@ Items
 
 Optimization
 
+- move most used subroutines to HRAM
 - replace long chains of compares and jumps with jump tables
 - remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB

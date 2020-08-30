@@ -11,7 +11,7 @@ SECTION "UI Bank 0", ROM0
 ; DisplayText         a = draw flags, hl = text
 ; DrawListMenuArrow   a = draw flags, de = xy, _j = current index, _c = count
 ; MoveListMenuArrow   a = draw flags, de = xy, _j = current index, _c = count, must call UpdateInput first, returns direction in a
-; ShowListMenu        a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
+; ShowListMenu        a = draw flags, bc = xy, de = wh, [list_selection] = initial selection, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
 ; AskYesNo            a = draw flags, bc = xy, returns choice in a (0 = cancel, 1 = yes, 2 = no)
 ; ShowTextEntry       bc = title, de = str, l = max_len -> puts text in name_buffer
 ; ShowOptions
@@ -347,6 +347,7 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   call gbdk_WaitVBL
   ld a, [_j]
   dec a
+  ld [list_selection], a
   ld [_j], a ;--j
   pop af;draw flags
   push af
@@ -369,6 +370,7 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   call gbdk_WaitVBL
   ld a, [_j]
   inc a
+  ld [list_selection], a
   ld [_j], a ;++j
   pop af;draw flags
   push af
@@ -383,7 +385,7 @@ MoveListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count, mu
   xor a;0
   ret
 
-ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
+ShowListMenu:: ;a = draw flags, bc = xy, de = wh, [list_selection] = initial selection, [str_buffer] = text, [name_buffer] = title, returns choice in a (0 = cancel)
   ld h, a;draw flags
   ld a, [loaded_bank]
   push af;bank
@@ -409,6 +411,7 @@ AskYesNo::;a = draw flags, bc = xy, returns choice in a (0 = cancel, 1 = yes, 2 
   call str_Copy
   xor a
   ld [name_buffer], a
+  ld [list_selection], a
   pop bc;xy
   ld d, 6
   ld e, 5
@@ -1757,8 +1760,9 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   push de ;wh
 
   push af ;draw flags
-  xor a
+  ld a, [list_selection]
   ld [_j], a
+  
   ld d, b
   inc d
   ld e, c
@@ -1812,7 +1816,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
   push bc ;xy
   push af;draw flags
   WAITPAD_UP;update_waitpadup();
-  xor a
+  ld a, [list_selection]
   ld [_j], a ;j = 0;
 .moveMenuArrowLoop ;while (1) {
     call UpdateInput

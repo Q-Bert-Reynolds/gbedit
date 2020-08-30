@@ -377,7 +377,9 @@ ShowPauseMenu::
   ld e, 16;h
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call ShowListMenu ;returns choice in a
-
+  ld b, a;choice
+  PUSH_VAR list_selection
+  ld a, b;choice
   and a
   jp z, .exit
 .roledex
@@ -432,12 +434,13 @@ ShowPauseMenu::
   call LoadOverworldTiles
   call ShowPlayerAvatar
   call SetMapTiles
+  POP_VAR list_selection
   jp ShowPauseMenu
 .exit
   HIDE_WIN
   call SetMapTiles
   WAITPAD_UP
-
+  POP_VAR list_selection
   ret
 
 CheckActions:
@@ -495,6 +498,7 @@ Overworld::
   
   ;TODO: load initial map position
   xor a
+  ld [list_selection], a
   ld [rSCX], a
   ld [rSCY], a
   ld [map_x], a

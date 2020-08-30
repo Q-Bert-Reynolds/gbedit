@@ -482,7 +482,8 @@ Title:: ; puts (c-d-1) in a
   and a
   jr nz, .checkOptions
   call ShowTitle
-
+  xor a
+  ld [list_selection], a
   jr .showStartMenu
 .checkOptions
   ld a, [_d]

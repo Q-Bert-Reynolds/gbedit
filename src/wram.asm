@@ -8,6 +8,9 @@ sys_info:: DB
 ;game state
 game_state:: DB
 
+;UI
+list_selection:: DB
+
 ;main save data
 text_speed:: DB
 animation_style:: DB

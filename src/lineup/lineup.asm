@@ -1277,16 +1277,16 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   pop bc;item id, used
   ret
 
-ShowOneTwoPoofForPlayer:;[_j] = selected player
+ShowOneTwoPoofForPlayer:;a = selected move, [_j] = selected player
+  push af;selected move
   ld a, [_j]
   cp a, 6
-  jr c, .bottom
-  
-.top
+  jr c, .clearBottom
+.clearTop
   CLEAR_WIN_AREA 1, 1, 18, 4, " "
   ld e, 2
   jr .ask
-.bottom
+.clearBottom
   CLEAR_WIN_AREA 1, 13, 18, 4, " "
   ld e, 14
 .ask
@@ -1321,7 +1321,30 @@ ShowOneTwoPoofForPlayer:;[_j] = selected player
   ld bc, OneTwoAndPoofText;"1, 2 and... Poof!"
   pop de;xy
   call gbdk_SetWinTiles
-  
+
+.changeMoveName
+  pop af;selected move
+  ld de, $0607
+  ld h, 0
+  ld l, a;y offset
+  add hl, de
+  push hl;xy
+
+  xor a
+  ld bc, 12
+  ld hl, name_buffer
+  call mem_Set
+
+  ld a, [item_data.extra]
+  call GetMoveName
+  ld hl, name_buffer
+  call str_Length
+  ld h, 12
+  ld l, 1
+  pop de;xy
+  ld bc, name_buffer
+  call gbdk_SetWinTiles
+
   ld de, 1000
   call gbdk_Delay
   

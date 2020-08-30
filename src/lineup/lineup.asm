@@ -36,6 +36,7 @@ AndElipsisText:                 DB "And...",0
 PlayerLearnedMoveText:          DB " learned\n%s!",0
 ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0
 StatusClearedText:              DB "Status cleared.",0
+PlayerUsedItemText:             DB " used\n%s.",0
 PlayerRecoveredByNumberText:    DB "\nrecovered by %s!",0
 FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL",0
 FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL",0
@@ -1182,10 +1183,57 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jr nz, .tryChangeAge
   jp .unused
   
-.tryChangeAge
+.tryChangeAge;TODO: should do nothing if in prime or too old, drop age after prime
   cp a, STAT_AGE
   jr nz, .tryChangeCrit
-  jp .unused
+  pop hl;player
+  push hl;player
+  call GetPlayerAge
+  cp a, 30
+  jp z, .noEffect
+  jr nc, .getYounger
+  inc a
+  jr .setAge
+.getYounger
+  dec a
+.setAge
+  ld [hl], a
+  call GetXPForAge
+  pop hl;player
+  push hl;player
+  call SetUserPlayerXP
+  pop hl;player
+  push hl;player
+  call SetStatsFromAge
+
+.showUsedText
+  pop hl;player
+  push hl;player
+  ld b, 0
+  call DrawLineupPlayer
+  call CopyBkgToWin
+  call HideSpritesBehindTextBox
+
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld de, str_buffer
+  ld hl, PlayerUsedItemText
+  call str_Append
+
+  ld a, [item_data.id]
+  call GetItemName
+
+  ld hl, str_buffer
+  ld bc, name_buffer
+  ld de, tile_buffer
+  call str_Replace
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+  jp .used
   
 .tryChangeCrit
   cp a, STAT_CRIT

@@ -683,6 +683,19 @@ GetPlayerThrow:: ;hl = player, returns throw in hl
   pop bc
   ret
 
+SetUserPlayerXP:: ;hl = player, cde = xp
+  push bc;upper byte of xp
+  ld bc, UserLineupPlayer1.xp - UserLineupPlayer1
+  add hl, bc
+  pop bc;upper byte of xp 
+  ld a,c
+  ld [hli],a
+  ld a,d
+  ld [hli],a
+  ld b,e
+  ld [hl],a
+  ret
+
 GetUserPlayerXP:: ;hl = player, returns xp in ehl
   push bc
   ld bc, UserLineupPlayer1.xp - UserLineupPlayer1

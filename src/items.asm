@@ -72,6 +72,25 @@ GetItemData::;a = item id, returns [item data]
   pop de
   ret
 
+GetItemName::;a = item id, returns item name in [name_buffer]
+  dec a
+  ld b, 0
+  ld c, a
+
+  ld a, [loaded_bank]
+  push af;bank
+  ld a, ITEM_BANK
+  call SetBank
+
+  ld hl, ItemNames
+  call str_FromArray
+  ld de, name_buffer
+  call str_Copy
+
+  pop af;bank
+  call SetBank
+  ret 
+
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
 
 UseTossText:          db "USE\nTOSS",0

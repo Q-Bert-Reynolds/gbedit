@@ -1,6 +1,10 @@
+Priority
+
+- make play ball actuall work
+
 Items
 
-- use drugs
+- use protein, carbos, etc.
 - add music/text when playing harmonica in overworld
 - wake player when playing harmonica in game
 - make offer to unsigned players (use baseball)
@@ -140,3 +144,6 @@ Design Notes
 - teammates in their 20s and 30s have a small chance of producing a child
 - A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
+- You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make two mound visits in a row.
+- Announce "Squirt looks done for out there." when out of HP. 
+- No HP means more errors and bad pitches.

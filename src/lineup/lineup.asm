@@ -1210,6 +1210,9 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   pop hl;player
   push hl;player
   call ShowPlayerUsedItemText
+
+  ;TODO: learn moves here!!!
+
   pop hl;player
   push hl;player
   call GetEvolutionForAge
@@ -1311,13 +1314,13 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ret
 
 ShowPlayerUsedItemText:;hl = player
+  push hl;player
   ld b, 0
   call DrawLineupPlayer
   call CopyBkgToWin
   call HideSpritesBehindTextBox
 
   pop hl;player
-  push hl;player
   call GetUserPlayerName
   ld hl, name_buffer
   ld de, str_buffer
@@ -1336,13 +1339,21 @@ ShowPlayerUsedItemText:;hl = player
   call str_Replace
   ld hl, tile_buffer
   call RevealTextForPlayer
+
   ret
 
 Evolve:;hl = player, a = player num to evolve to
   push af;num to evolve to
   push hl;player
 
+  DISPLAY_OFF
+  HIDE_SPRITES
+
   ;load evolves to tiles
+  pop hl;player
+  pop af;num to evolve
+  push af
+  push hl
   ld de, _UI_FONT_TILE_COUNT+64
   call LoadPlayerBkgData
 
@@ -1353,15 +1364,24 @@ Evolve:;hl = player, a = player num to evolve to
   ld de, _UI_FONT_TILE_COUNT
   call LoadPlayerBkgData
 
-  CLEAR_WIN_AREA 0, 0, 20, 18, " "
+  CLEAR_BKG_AREA 0, 0, 32, 18, " "
   
-  ;draw player in center
+  ;draw player on left
   pop hl;player
   push hl;player
   ld a, [hl]
-  ld b, 13
+  ld b, 6
   ld c, 4
   ld de, _UI_FONT_TILE_COUNT
+  call SetPlayerBkgTiles
+
+  pop hl;player
+  pop af;num
+  push af;num
+  push hl;player
+  ld b, 20
+  ld c, 4
+  ld de, _UI_FONT_TILE_COUNT+64
   call SetPlayerBkgTiles
 
   pop hl;player
@@ -1373,22 +1393,94 @@ Evolve:;hl = player, a = player num to evolve to
   call str_Replace
 
   ld hl, str_buffer
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DisplayText
 
+  ld a, 7
+  ld [rWX], a
+  ld a, 96
+  ld [rWY], a; move_win(7,96);
+  DISPLAY_ON
+  
   ;darken palette
-  ;loop image swap
+
+  xor a
+  ld [rSCX], a
+  ld de, 2000
+  call gbdk_Delay
+
+  ld c, 4
+.loop1
+    push bc
+
+    call gbdk_WaitVBL
+    ld a, 128
+    ld [rSCX], a
+    ld de, 50
+    call gbdk_Delay
+
+    call gbdk_WaitVBL
+    xor a
+    ld [rSCX], a
+    ld de, 500
+    call gbdk_Delay
+
+    pop bc
+    dec c
+    jr nz, .loop1
+
+  ld de, 31
+.loop2
+    call gbdk_WaitVBL
+    call gbdk_WaitVBL
+    ld a, [rSCX]
+    add a, 128
+    ld [rSCX], a
+
+    dec de
+    xor a
+    cp a, d
+    jr nz, .loop2
+    cp a, e
+    jr nz, .loop2
+
   ;restore palette
 
-  pop hl;payer
-  call GetUserPlayerName
+  ld de, 500
+  call gbdk_Delay
 
-  ld hl, PlayerEvolvedIntoText
+  
+
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, name_buffer
   ld de, str_buffer
   call str_Copy
 
+  ld hl, PlayerEvolvedIntoText
   ld de, str_buffer
   call str_Append
-  call RevealText
+
+  pop hl;player
+  pop af;num
+  push af;num
+  push hl;player
+  call GetPlayerName
+
+  ld hl, str_buffer
+  ld de, tile_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+  pop hl;player
+  pop af;num
+  ld [hl], a;set new player num
+  call SetStatsFromAge
+
+  ld hl, tile_buffer
+  call RevealTextAndWait
+
   ret
 
 ShowOneTwoPoofForPlayer:;a = selected move, [_j] = selected player

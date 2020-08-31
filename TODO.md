@@ -1,6 +1,6 @@
 Priority
 
-- players should evolve at certain levels
+- players should learn moves at certain levels
 - make announcer actually work
 
 Items

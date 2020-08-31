@@ -464,6 +464,7 @@ GetEvolutions:: ;hl = player, returns start address of evolution list in hl
     inc hl
     and a
     jr nz, .loopLearnset
+  dec hl
   ret
 
 GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
@@ -472,7 +473,6 @@ GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
   pop hl;player
   push af;age
   call GetEvolutions
-  pop af;age
   ld b, 0;player num to evolve to
 .loop
     ld a, [hli];ev type
@@ -483,21 +483,19 @@ GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
     ld c, a;extra data (age, item, etc.)
     
     ld a, e;ev type
-    cp a, EV_TYPE_NONE
+    and a;EV_TYPE_NONE
     jr z, .exit
 
     cp a, EV_TYPE_AGE
     jr nz, .loop
-    
     pop af;player age
     push af;player age
     cp a, c
     jr nz, .loop
-    
     ld b, d;player num
 .exit
   pop af;age
-  ld b, a;player num
+  ld a, b;player num
   ret
 
 SetMovesFromAge:: ;hl = player

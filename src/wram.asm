@@ -92,7 +92,6 @@ player_base::
 .num::       DB
 .type1::     DB
 .type2::     DB
-.ev_age::    DB
 .height::    DB
 .weight::    DW
 .hp::        DB

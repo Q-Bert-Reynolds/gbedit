@@ -38,6 +38,8 @@ ItWontHaveAnyEffectText:        DB "It won't have any\neffect.",0
 StatusClearedText:              DB "Status cleared.",0
 PlayerUsedItemText:             DB " used\n%s.",0
 PlayerRecoveredByNumberText:    DB "\nrecovered by %s!",0
+WhatPlayerIsEvolvingText:       DB "What? %s\nis changing!",0
+PlayerEvolvedIntoText:          DB " is\nnow %s!",0
 FromWorldMenuText:              DB "STATS\nBAT ORDER\nPOSITION\nCANCEL",0
 FromGameMenuText:               DB "STATS\nPOSITION\nCANCEL",0
 
@@ -1189,7 +1191,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   pop hl;player
   push hl;player
   call GetPlayerAge
-  cp a, 30
+  cp a, 25
   jp z, .noEffect
   jr nc, .getYounger
   inc a
@@ -1205,34 +1207,17 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   pop hl;player
   push hl;player
   call SetStatsFromAge
-
-.showUsedText
   pop hl;player
   push hl;player
-  ld b, 0
-  call DrawLineupPlayer
-  call CopyBkgToWin
-  call HideSpritesBehindTextBox
-
+  call ShowPlayerUsedItemText
   pop hl;player
   push hl;player
-  call GetUserPlayerName
-  ld hl, name_buffer
-  ld de, str_buffer
-  call str_Copy
-  ld de, str_buffer
-  ld hl, PlayerUsedItemText
-  call str_Append
-
-  ld a, [item_data.id]
-  call GetItemName
-
-  ld hl, str_buffer
-  ld bc, name_buffer
-  ld de, tile_buffer
-  call str_Replace
-  ld hl, tile_buffer
-  call RevealTextForPlayer
+  call GetEvolutionForAge
+  and a
+  jp z, .used
+  pop hl;player
+  push hl;player
+  call Evolve
   jp .used
   
 .tryChangeCrit
@@ -1323,6 +1308,87 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   push bc;item id, used
   call ShowSpritesHiddenByTextBox
   pop bc;item id, used
+  ret
+
+ShowPlayerUsedItemText:;hl = player
+  ld b, 0
+  call DrawLineupPlayer
+  call CopyBkgToWin
+  call HideSpritesBehindTextBox
+
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Copy
+  ld de, str_buffer
+  
+  ld hl, PlayerUsedItemText
+  call str_Append
+
+  ld a, [item_data.id]
+  call GetItemName
+
+  ld hl, str_buffer
+  ld bc, name_buffer
+  ld de, tile_buffer
+  call str_Replace
+  ld hl, tile_buffer
+  call RevealTextForPlayer
+  ret
+
+Evolve:;hl = player, a = player num to evolve to
+  push af;num to evolve to
+  push hl;player
+
+  ;load evolves to tiles
+  ld de, _UI_FONT_TILE_COUNT+64
+  call LoadPlayerBkgData
+
+  ;load player tiles
+  pop hl;player
+  push hl;player
+  ld a, [hl]
+  ld de, _UI_FONT_TILE_COUNT
+  call LoadPlayerBkgData
+
+  CLEAR_WIN_AREA 0, 0, 20, 18, " "
+  
+  ;draw player in center
+  pop hl;player
+  push hl;player
+  ld a, [hl]
+  ld b, 13
+  ld c, 4
+  ld de, _UI_FONT_TILE_COUNT
+  call SetPlayerBkgTiles
+
+  pop hl;player
+  push hl;player
+  call GetUserPlayerName
+  ld hl, WhatPlayerIsEvolvingText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  call DisplayText
+
+  ;darken palette
+  ;loop image swap
+  ;restore palette
+
+  pop hl;payer
+  call GetUserPlayerName
+
+  ld hl, PlayerEvolvedIntoText
+  ld de, str_buffer
+  call str_Copy
+
+  ld de, str_buffer
+  call str_Append
+  call RevealText
   ret
 
 ShowOneTwoPoofForPlayer:;a = selected move, [_j] = selected player

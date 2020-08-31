@@ -1,6 +1,7 @@
 Priority
 
-- make play ball actuall work
+- players should evolve at certain levels
+- make announcer actually work
 
 Items
 
@@ -87,7 +88,6 @@ Team Menu
 
 Overworld
 
-- pause menu should remember last selection
 - replace map system, should be sparse objects in 32x32 tile regions
   - different building sizes
   - patches of trees, grass, water
@@ -146,4 +146,5 @@ Design Notes
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
 - You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make two mound visits in a row.
 - Announce "Squirt looks done for out there." when out of HP. 
+- Announce "Ghost runners on first and third." when playing against an unsigned player
 - No HP means more errors and bad pitches.

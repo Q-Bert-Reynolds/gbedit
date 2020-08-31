@@ -455,6 +455,51 @@ ENDR
   pop af;age
   ret
 
+GetEvolutions:: ;hl = player, returns start address of evolution list in hl
+  ld a, [hl];num
+  call LoadPlayerBaseData
+  ld hl, player_base.level_up;learnset
+.loopLearnset
+    ld a, [hli]
+    inc hl
+    and a
+    jr nz, .loopLearnset
+  ret
+
+GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
+  push hl;player
+  call GetPlayerAge
+  pop hl;player
+  push af;age
+  call GetEvolutions
+  pop af;age
+  ld b, 0;player num to evolve to
+.loop
+    ld a, [hli];ev type
+    ld e, a;ev type
+    ld a, [hli];player num
+    ld d, a;player num
+    ld a, [hli]
+    ld c, a;extra data (age, item, etc.)
+    
+    ld a, e;ev type
+    cp a, EV_TYPE_NONE
+    jr z, .exit
+
+    cp a, EV_TYPE_AGE
+    jr nz, .loop
+    
+    pop af;player age
+    push af;player age
+    cp a, c
+    jr nz, .loop
+    
+    ld b, d;player num
+.exit
+  pop af;age
+  ld b, a;player num
+  ret
+
 SetMovesFromAge:: ;hl = player
   push hl;player
   xor a
@@ -474,7 +519,7 @@ SetMovesFromAge:: ;hl = player
   inc hl
   ld a, [hl];age
   ld c, a;age
-  ld de, player_base.learnset
+  ld de, player_base.level_up;learnset
 .learnLoop
     ld a, [de];move id
     inc de

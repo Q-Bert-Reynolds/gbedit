@@ -92,8 +92,6 @@ player_base::
 .num::       DB
 .type1::     DB
 .type2::     DB
-.ev_to::     DB
-.ev_type::   DB
 .ev_age::    DB
 .height::    DB
 .weight::    DW
@@ -109,7 +107,7 @@ player_base::
 .sgb_pal::   DW
 .anim::      DS 32
 .tm_hm::     DS 7;ceiling((5 HMs + 50 TMs) / 8)
-.learnset::  DS 22;largest learnset is 11 moves
+.level_up::  DS 23;learn set (2B * max 11 moves) and evolutions (3B * max 3 evolutions)
 .end::
 
 ; move data struct

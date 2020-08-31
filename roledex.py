@@ -156,46 +156,47 @@ def player_type_string(player):
     s += "DB NONE\n"
   return s
 
+ev_items = {
+  "Fire":    "FIRE_GLOVE_ITEM",
+  "Thunder": "SPARK_GLOVE_ITEM",
+  "Water":   "WATER_GLOVE_ITEM",
+  "Leaf":    "LEAF_GLOVE_ITEM",
+  "Moon":    "MOON_GLOVE_ITEM"
+}
 def evolves_to_string(roledex, player):
-  s = ""
-  num = 0
-  try:
-    int(player["EVTo"])
-  except:
-    pass
+  s = ";evolution\n"
+  if not player["EVTo"]:
+    s += "DB EV_TYPE_NONE\n"
+    return s
 
-  if num > 0:
-    num = int(player["EVTo"])
-    s += player["EVTo"]
-    s += " ;" + roledex[num]["Nickname"]
-  else:
-    s += "0"
-  return "DB " + s + "\n"
-
-evolution_types = ["None", "Age", "Trade", "Fire", "Water", "Thunder", "Leaf", "Moon"]
-def evolution_type_string(player):
-  evType = ""
-  evAge = ""
-  age = 0
+  ages = []
+  player_nums = []
+  types = []
   try:
-    age = int(player["EVType"])
+    player_nums = [player["EVTo"]]
+    ages = [int(player["EVType"])]
+    types = ["EV_TYPE_AGE"]
   except:
-    pass
+    player_nums = player["EVTo"].split(" ")
+    types = player["EVType"].split(" ")
+    ages = [0] * len(types)
   
-  if age > 0:
-    evType += "1 ;evolves at Age:"
-    evAge += player["EVType"]
-  elif player["EVType"] in evolution_types:
-    evType += str(evolution_types.index(player["EVType"])) +  " ;"
-    if player["EVType"] == "Trade":
-      evType += "evolves when Traded"
+  for i in range(len(player_nums)):
+    num = str(int(player_nums[i]))
+    t = types[i]
+    extra = "0"
+    if (ages[i] > 0):
+      t = "EV_TYPE_AGE"
+      extra = str(ages[i])
+    elif types[i] == "Trade":
+      t = "EV_TYPE_TRADE"
     else:
-      evType += "evolves when given " + player["EVType"] + " Ball"
-    evAge += "0"
-  else:
-    evType += "0"
-    evAge += "0"
-  return "DB " + evType + "\nDB " + evAge + "\n"
+      extra = ev_items[t]
+      t = "EV_TYPE_ITEM"
+    s += "DB " + t + ", " + num + ", " + extra + "\n"
+
+  s += "DB 0\n"
+  return s
 
 def height_string(player):
   h = float(player["Height"])
@@ -226,8 +227,6 @@ def generate_player_data(roledex, learned_moves, taught_moves):
       asm_file.write("\n" + var_name + ":\n")
       asm_file.write("DB " + str(int(player["#"])) + "\n")
       asm_file.write(player_type_string(player))
-      asm_file.write(evolves_to_string(roledex, player))
-      asm_file.write(evolution_type_string(player))
       asm_file.write(height_string(player))
       asm_file.write(weight_string(player))
       asm_file.write("DB " + str(player["HP"]) + " ;HP\n")
@@ -262,6 +261,8 @@ def generate_player_data(roledex, learned_moves, taught_moves):
         move_const = move[1].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
         asm_file.write("DB " + move_const + ", " + move[0] + "\n")
       asm_file.write("DB 0\n")
+
+      asm_file.write(evolves_to_string(roledex, player))
       
     asm_file.write("\nRoledex:\n"+var_names)
 

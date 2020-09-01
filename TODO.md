@@ -1,6 +1,5 @@
 Priority
 
-- fix issue where Beanball is only move learned by aging
 - remember last item selected
 - shouldn't be possible to learn moves you already know
 - make announcer actually work

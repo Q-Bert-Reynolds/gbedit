@@ -547,7 +547,6 @@ GetMoveForAge:: ;hl = player, returns move in a (0 = no move)
     cp a, c;compare age
     jr nz, .loop
   ld a, b;move id
-  ld [_breakpoint], a
 .exit
   ret
 

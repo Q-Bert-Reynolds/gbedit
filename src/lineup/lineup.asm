@@ -977,14 +977,14 @@ LearnMove:;hl = player, a = move id, returns exit code in c
   call RevealTextForPlayer
 
 .learnMove
-  ld a, [item_data.extra]
+  ld a, [_b]
   ld b, a
   pop af;move num
   pop hl;player
   push hl;player
   call SetPlayerMove
 
-  ld a, [item_data.extra]
+  ld a, [_b]
   call GetMoveName
   pop hl;player
   push hl;player

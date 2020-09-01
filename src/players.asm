@@ -388,6 +388,7 @@ SetPlayerAge:: ;hl = player, a = age
   ret
 
 SetStatsFromAge:: ;hl = player
+  PUSH_VAR _i
   ld a, [hl];player.number
   push hl;player
   call LoadPlayerBaseData
@@ -414,39 +415,76 @@ SetStatsFromAge:: ;hl = player
   pop af;age
   pop hl;player
   push af;age
-  ld bc, UserLineupPlayer1.max_hp - UserLineupPlayer1
+  push de;new max hp
+  ld bc, UserLineupPlayer1.hp - UserLineupPlayer1
   add hl, bc
+  push hl;player.hp address
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a;bc = health
+  ld a, [hli]
+  ld e, a
+  ld a, [hl]
+  ld d, a;de = max health
+  ld h, d
+  ld l, e
+  call math_Sub16;hl = max_hp - hp
+  ld b, h
+  ld c, l;bc = hp diff
+  pop hl;player.hp address
+  pop de;new max hp
+  push de;new max hp
+  push hl;player.hp address
+  ld h, d
+  ld l, e;hl = new max hp
+  call math_Sub16;hl = new hp = hp + new max - old max
+  ld d, h
+  ld e, l;bc = new hp
+  pop hl;player.hp address
+  ld a, e
+  ld [hli], a
+  ld a, d
+  ld [hli], a
+
+  pop de;new max hp
   ld a, e
   ld [hli], a
   ld a, d
   ld [hli], a
 
   ld bc, player_base.bat
-REPT 4;bat, field, speed, throw - order should be same on player_base and lineup data
+  ld a, 4
+  ld [_i], a
+.loop;bat, field, speed, throw - order should be same on player_base and lineup data
+    pop af;age
+    push af;age
+    add a, a;age*2
+    ld d, 0
+    ld e, a
+    ld a, [bc];base stat
+    push bc;base stat address
+    push hl;lineup stat address
+    call math_Multiply;base * 2 * age
+    ld c, 100
+    call math_Divide;(base_hp * 2 * age)/100
+    ld de, 5
+    add hl, de
+    ld d, h
+    ld e, l;stat = (base * 2 * age)/100 + 5
+    pop hl;lineup stat address
+    ld a, e
+    ld [hli], a
+    ld a, d
+    ld [hli], a
+    pop bc;base stat address
+    inc bc
+    ld a, [_i]
+    dec a
+    ld [_i], a
+    jr nz, .loop
   pop af;age
-  push af;age
-  add a, a;age*2
-  ld d, 0
-  ld e, a
-  ld a, [bc];base stat
-  push bc;base stat address
-  push hl;lineup stat address
-  call math_Multiply;base * 2 * age
-  ld c, 100
-  call math_Divide;(base_hp * 2 * age)/100
-  ld de, 5
-  add hl, de
-  ld d, h
-  ld e, l;stat = (base * 2 * age)/100 + 5
-  pop hl;lineup stat address
-  ld a, e
-  ld [hli], a
-  ld a, d
-  ld [hli], a
-  pop bc;base stat address
-  inc bc
-ENDR
-  pop af;age
+  POP_VAR _i
   ret
 
 GetEvolutions:: ;hl = player, returns start address of evolution list in hl

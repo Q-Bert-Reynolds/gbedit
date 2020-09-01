@@ -492,26 +492,24 @@ GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
   ld a, b;player num
   ret
 
-GetMoveForAge:: ;hl = player
-  ld a, [hl];player.number
-  push hl;player
+GetMoveForAge:: ;hl = player, returns move in a (0 = no move)
+  ld a, [hli];player.number
+  push hl;player.age
   call LoadPlayerBaseData
-  pop hl;player
-  inc hl
+  pop hl;player.age
   ld a, [hl];player.age
-  call GetPlayerAge
   ld c, a;age
   ld hl, player_base.level_up;learnset
-  ld b, 0;move id
-.loopLearnset
+.loop
     ld a, [hli];move id
     and a
     jr z, .exit
-    ld d, a;;move id
+    ld b, a;move id
     ld a, [hli];age learned
     cp a, c;compare age
-    jr nz, .loopLearnset
-  ld b, d
+    jr nz, .loop
+  ld a, b;move id
+  ld [_breakpoint], a
 .exit
   ret
 

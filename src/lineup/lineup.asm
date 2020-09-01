@@ -841,38 +841,13 @@ CheckCanLearnMove:;[item data], [player_base], returns z if unable
   call math_TestBit
   ret 
 
-UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
-  ld a, b
-  call GetItemData
-  ld a, [_j]
-  call GetUserPlayerInLineup
-  ld a, [hl]
+LearnMove:;hl = player, a = move id, returns exit code in c
+  ld b, a;move id
+  PUSH_VAR _b
+  ld a, b;move id
+  ld [_b], a;move id
   push hl;player
-  call LoadPlayerBaseData
-
-  call CopyBkgToWin
-  ld a, 7
-  ld [rWX], a
-  xor a
-  ld [rWY], a
-
-  ld a, [item_data.type]
-  cp a, ITEM_TYPE_STATS
-  jp z, .tryChangeStat
-  
-  cp a, ITEM_TYPE_GAME
-  jp z, .tryChangeStat
-  cp a, ITEM_TYPE_MOVE
-  jr z, .tryToLearnMove
-  jp .exit
-  ret
-.tryToLearnMove
-  call HideSpritesBehindTextBox
-  call CheckCanLearnMove
-  jp z, .unable
-.able
-  pop hl;player
-  push hl;player
+.start
   ld d, ALL_MOVES
   call GetPlayerMoveCount
   cp a, 4
@@ -889,7 +864,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld hl, TryingToLearnText
   ld de, str_buffer
   call str_Append
-  ld a, [item_data.extra]
+  ld a, [_b];move id
   call GetMoveName
   ld hl, str_buffer
   ld de, tile_buffer
@@ -909,7 +884,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld hl, str_buffer
   call RevealTextForPlayer
 
-  ld a, [item_data.extra]
+  ld a, [_b]
   call GetMoveName
   ld hl, ForgetAMoveText
   ld de, str_buffer
@@ -924,7 +899,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 .cancel
   call gbdk_WaitVBL
   call CopyBkgToWin
-  ld a, [item_data.extra]
+  ld a, [_b]
   call GetMoveName
   ld hl, AbandonLearningText
   ld de, str_buffer
@@ -937,7 +912,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   push af;results
   call CopyBkgToWin
   pop af;results
-  jp nz, .able
+  jp nz, .start
 .didNotLearn
   pop hl;player
   call GetUserPlayerName
@@ -947,7 +922,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld hl, DidNotLearnText
   ld de, str_buffer
   call str_Append
-  ld a, [item_data.extra]
+  ld a, [_b]
   call GetMoveName
   ld hl, str_buffer
   ld de, tile_buffer
@@ -957,6 +932,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call RevealTextForPlayer
   call ShowSpritesHiddenByTextBox
   ld c, 0
+  POP_VAR _b
   ret
 
 .forgetMove
@@ -1029,8 +1005,43 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
 
   call ShowSpritesHiddenByTextBox
   ld c, 1
+  POP_VAR _b
   ret
+
+UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
+  ld a, b
+  call GetItemData
+  ld a, [_j]
+  call GetUserPlayerInLineup
+  ld a, [hl]
+  push hl;player
+  call LoadPlayerBaseData
+
+  call CopyBkgToWin
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+
+  ld a, [item_data.type]
+  cp a, ITEM_TYPE_STATS
+  jp z, .tryChangeStat
   
+  cp a, ITEM_TYPE_GAME
+  jp z, .tryChangeStat
+  cp a, ITEM_TYPE_MOVE
+  jr z, .tryToLearnMove
+  jp .exit
+  ret
+.tryToLearnMove
+  call HideSpritesBehindTextBox
+  call CheckCanLearnMove
+  jp z, .unable
+.able
+  pop hl;player
+  ld a, [item_data.extra]
+  call LearnMove
+  ret
 .unable
   pop hl;player
   call GetUserPlayerName
@@ -1185,7 +1196,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jr nz, .tryChangeAge
   jp .unused
   
-.tryChangeAge;TODO: should do nothing if in prime or too old, drop age after prime
+.tryChangeAge;TODO: should do nothing if too old
   cp a, STAT_AGE
   jr nz, .tryChangeCrit
   pop hl;player
@@ -1217,8 +1228,9 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   call GetMoveForAge
   and a
   jr z, .checkEvolution
-
-  ;LEARN MOVE
+  pop hl;player
+  push hl;player
+  call LearnMove
 
 .checkEvolution
   pop hl;player

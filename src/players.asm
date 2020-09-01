@@ -137,6 +137,11 @@ SECTION "Player Utils", ROM0
 ;GetPlayerNumber              - hl = player, returns number in a, number in hl
 ;GetPlayerAge                 - hl = player, returns age in a, age in hl
 ;SetPlayerAge                 - hl = player, a = age
+;SetStatsFromAge              - hl = player
+;GetEvolutions                - hl = player, returns start address of evolution list in hl
+;GetEvolutionForAge           - hl = player, returns a player num in a (0 = no evolution)
+;GetMoveForAge                - hl = player, returns move id (0 = no moves)
+;SetMovesFromAge              - hl = player
 ;GetPlayerPosition            - hl = player, returns position in a, position in hl
 ;GetPlayerHandedness          - hl = player, returns handedness in a, handedness in hl
 ;ClearPlayerStatus            - hl = player, a = status mask, returns effect in a(0=no effect)
@@ -368,29 +373,18 @@ GetPlayerMovePP:: ;hl = player, a = player move num, d = move mask, returns pp i
   ret 
 
 GetPlayerNumber:: ;hl = player, returns number in a, address of number in hl
-  push bc
-  ld bc, UserLineupPlayer1.number - UserLineupPlayer1
-  add hl, bc
-  pop bc
   ld a, [hl]
   ret
   
 GetPlayerAge:: ;hl = player, returns age in a, address of age in hl
-  push bc
-  ld bc, UserLineupPlayer1.age - UserLineupPlayer1
-  add hl, bc
-  pop bc
+  inc hl
   ld a, [hl]
   ret
 
 SetPlayerAge:: ;hl = player, a = age
-  push bc
-  ld bc, UserLineupPlayer1.age - UserLineupPlayer1
-  add hl, bc
-  ld [hl], a
+  inc hl
+  ld [hld], a
   call SetStatsFromAge
-  pop bc
-  ld a, [hl]
   ret
 
 SetStatsFromAge:: ;hl = player
@@ -496,6 +490,29 @@ GetEvolutionForAge:: ;hl = player, returns a player num in a (0 = no evolution)
 .exit
   pop af;age
   ld a, b;player num
+  ret
+
+GetMoveForAge:: ;hl = player
+  ld a, [hl];player.number
+  push hl;player
+  call LoadPlayerBaseData
+  pop hl;player
+  inc hl
+  ld a, [hl];player.age
+  call GetPlayerAge
+  ld c, a;age
+  ld hl, player_base.level_up;learnset
+  ld b, 0;move id
+.loopLearnset
+    ld a, [hli];move id
+    and a
+    jr z, .exit
+    ld d, a;;move id
+    ld a, [hli];age learned
+    cp a, c;compare age
+    jr nz, .loopLearnset
+  ld b, d
+.exit
   ret
 
 SetMovesFromAge:: ;hl = player

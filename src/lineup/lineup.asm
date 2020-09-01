@@ -1211,8 +1211,16 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   push hl;player
   call ShowPlayerUsedItemText
 
-  ;TODO: learn moves here!!!
+.checkMoves
+  pop hl;player
+  push hl;player
+  call GetMoveForAge
+  and a
+  jr z, .checkEvolution
 
+  ;LEARN MOVE
+
+.checkEvolution
   pop hl;player
   push hl;player
   call GetEvolutionForAge

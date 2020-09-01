@@ -38,7 +38,7 @@ def main():
       player_moves = []
       for i in range(1, len(row)):
         if (row[i]):
-          player_moves.append((row[i], moves[i]))
+          player_moves.append((int(row[i]), moves[i]))
       if len(player_moves) > max_learnset:
         max_learnset = len(player_moves)
         player_with_largest = player
@@ -259,7 +259,7 @@ def generate_player_data(roledex, learned_moves, taught_moves):
       asm_file.write(";learnset\n")
       for move in learned_moves[player["Nickname"]]:
         move_const = move[1].upper().replace(" ","_").replace(".","").replace("-","_") + "_MOVE"
-        asm_file.write("DB " + move_const + ", " + move[0] + "\n")
+        asm_file.write("DB " + move_const + ", " + str(move[0]) + "\n")
       asm_file.write("DB 0\n")
 
       asm_file.write(evolves_to_string(roledex, player))

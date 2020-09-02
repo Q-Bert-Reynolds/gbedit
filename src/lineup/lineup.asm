@@ -847,6 +847,10 @@ LearnMove:;hl = player, a = move id, returns exit code in c
   ld a, b;move id
   ld [_b], a;move id
   push hl;player
+  call CheckPlayerKnowsMove
+  jp z, .noEffect
+  pop hl;player
+  push hl;player
 .start
   ld d, ALL_MOVES
   call GetPlayerMoveCount
@@ -931,6 +935,7 @@ LearnMove:;hl = player, a = move id, returns exit code in c
   ld hl, tile_buffer
   call RevealTextForPlayer
   call ShowSpritesHiddenByTextBox
+.noEffect
   ld c, 0
   POP_VAR _b
   ret
@@ -1031,9 +1036,14 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   jp z, .tryChangeStat
   cp a, ITEM_TYPE_MOVE
   jr z, .tryToLearnMove
-  jp .exit
+  jp .unused
   ret
 .tryToLearnMove
+  pop hl;player
+  push hl;player
+  ld a, [item_data.extra]
+  call CheckPlayerKnowsMove
+  jp z, .noEffect
   call HideSpritesBehindTextBox
   call CheckCanLearnMove
   jp z, .unable
@@ -1069,7 +1079,7 @@ UseItemOnPlayer:;b = item id, returns item used in c (0 = not used, 1 = used)
   ld a, [item_data.id]
   ld b, a
   ld c, 0
-  ret 
+  ret
 
 .tryChangeStat
   pop hl;player

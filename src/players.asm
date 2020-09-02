@@ -598,6 +598,21 @@ SetMovesFromAge:: ;hl = player
   POP_VAR _i
   ret
 
+CheckPlayerKnowsMove:: ;hl = player, a = move id, returns z if player knows move
+  ld bc, UserLineupPlayer1.moves - UserLineupPlayer1
+  add hl, bc
+  ld b, a;move id
+  ld c, MAX_MOVES
+.loop
+    ld a, [hli]
+    cp a, b
+    ret z
+    dec c
+    jr nz, .loop
+  ld a, 1
+  or a
+  ret
+
 GetPlayerPosition:: ;hl = player, returns position in a, address of position in hl
   push bc
   ld bc, UserLineupPlayer1.position - UserLineupPlayer1

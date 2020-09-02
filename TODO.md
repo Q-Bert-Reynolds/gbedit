@@ -1,7 +1,6 @@
 Priority
 
-- remember last item selected
-- shouldn't be possible to learn moves you already know
+- update seen/signed after games, evolutions, and signings
 - make announcer actually work
 
 Items

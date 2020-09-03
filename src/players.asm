@@ -438,10 +438,13 @@ SetStatsFromAge:: ;hl = player
   push hl;player.hp address
   ld h, d
   ld l, e;hl = new max hp
-  call math_Sub16;hl = new hp = hp + new max - old max
+  call math_Sub16;hl = new hp = new max - (max_hp - hp)
   ld d, h
   ld e, l;bc = new hp
   pop hl;player.hp address
+  jr nc, .noUnderflow
+  ld de, 1
+.noUnderflow
   ld a, e
   ld [hli], a
   ld a, d

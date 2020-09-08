@@ -93,15 +93,16 @@ GetItemName::;a = item id, returns item name in [name_buffer]
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
 
-UseTossText:          db "USE\nTOSS",0
-TooImportantText:     db "That's too impor-\ntant to toss!",0
-NoCyclingText:        db "No cycling\nallowed here.",0
-IsItOkToTossItemText: db "Is it OK to toss\n%s?",0
-ThrewAwayItemText:    db "Threw away\n%s.",0
-NowIsNotTheTimeText:  db "Doc: %s!\nThis isn't the\ntime to use that!",0
-BootedUpTMText:       db "Booted up a TM!",0
-ItContainedMoveText:  db "It contained\n%s!",0
-TeachMoveText:        db "Teach %s\nto a PLAYER?",0
+UseTossText:               DB "USE\nTOSS",0
+TooImportantText:          DB "That's too impor-\ntant to toss!",0
+NoCyclingText:             DB "No cycling\nallowed here.",0
+IsItOkToTossItemText:      DB "Is it OK to toss\n%s?",0
+ThrewAwayItemText:         DB "Threw away\n%s.",0
+NowIsNotTheTimeText:       DB "Doc: %s!\nThis isn't the\ntime to use that!",0
+BootedUpTMText:            DB "Booted up a TM!",0
+ItContainedMoveText:       DB "It contained\n%s!",0
+TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
+WriteAnOfferForPlayerText: DB "Write an offer\nfor %s.",0
 
 _ShowInventory:
   ld bc, $0402
@@ -414,6 +415,19 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, d;exit code
   ret
 
+MakeOffer:;returns z if offer cancelled
+  ld hl, WriteAnOfferForPlayerText
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  ld bc, 12
+  call DisplayTextAtPos
+.loop
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_B | PADF_START
+  jr .loop
+.exit
+  ld [_breakpoint], a
+  xor a
+  ret
+
 UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   push af;index
   ld a, [game_state]
@@ -425,6 +439,12 @@ UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   jr nz, .checkGameItem
   pop af;play ball flag
   jr z, .notTheTime
+  ld a, [game_state]
+  and a , GAME_STATE_UNSIGNED_PLAYER
+  jr z, .notTheTime;TODO: handle making offers to signed players
+  call MakeOffer
+  jp nz, .used
+  jp .exit
     
 .checkGameItem
   cp ITEM_TYPE_GAME

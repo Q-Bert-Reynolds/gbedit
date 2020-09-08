@@ -1012,7 +1012,12 @@ StartGame::
   call GetCurrentOpponentPlayer
   call GetPlayerNumber
   ld [_a], a; player num
-  ld a, 1; TODO: replace with team/random encounter
+
+  ld a, [game_state]
+  and a, ~GAME_STATE_UNSIGNED_PLAYER
+  or a, GAME_STATE_UNSIGNED_PLAYER; TODO: replace with team/random encounter
+  ld [game_state], a
+
   call ShowPlayBallIntro
   call SetupGameUI
   TRAMPOLINE AnnounceBeginningOfFrame

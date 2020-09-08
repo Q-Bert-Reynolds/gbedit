@@ -1,5 +1,6 @@
 Priority
 
+- make offer to unsigned players (use baseball)
 - update seen/signed after games, evolutions, and signings
 - make announcer actually work
 
@@ -8,7 +9,6 @@ Items
 - use protein, carbos, etc.
 - add music/text when playing harmonica in overworld
 - wake player when playing harmonica in game
-- make offer to unsigned players (use baseball)
 - use select to swap items in list
 - add town names and cursor to town map
 - status clearing items should have more specific messages (ie. "Chu is no longer paralyzed.")

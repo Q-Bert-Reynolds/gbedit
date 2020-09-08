@@ -28,9 +28,7 @@ SGBPlayBallIntroAttrBlk:
   ATTR_BLK_PACKET %001, 0,0,0, 0,12, 20,6 ;bottom UI
   ATTR_BLK_PACKET %001, 1,1,1, 0,0, 20,12 ;upper Dark
 
-PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
-  push af;player or team
-
+PlayBallIntro: ;[_a] = player num or coach id
   ld hl, SGBPlayBallIntroAttrBlk
   call sgb_PacketTransfer
 
@@ -54,10 +52,9 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld hl, _CalvinBack2xTiles
   call SetBkgDataDoubled
 
-  pop af;player or team
-  push af;player or team
-  and a
-  jr nz, .loadOpposingCoach
+  ld a, [game_state]
+  and a, GAME_STATE_UNSIGNED_PLAYER
+  jr z, .loadOpposingCoach
 
 .loadUnsignedPlayer
   ld a, [_a];player num
@@ -123,10 +120,9 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
   ld a, _UI_FONT_TILE_COUNT
   call SetBkgTilesWithOffset
 
-  pop af;player or team
-  push af;player or team
-  and a
-  jr nz, .showOpposingCoach
+  ld a, [game_state]
+  and a, GAME_STATE_UNSIGNED_PLAYER
+  jr z, .showOpposingCoach
 
 .showUnsignedPlayer
   ld a, [_a];player num
@@ -218,9 +214,9 @@ PlayBallIntro: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
     cp c
     jr nz, .setCalvinSpriteColorsLoop
 
-  pop af;player or team
-  and a
-  jr nz, .showTeamText
+  ld a, [game_state]
+  and a, GAME_STATE_UNSIGNED_PLAYER
+  jr z, .showTeamText
 
 .showUnsignedText
   ld a, [_a];player num

@@ -338,12 +338,10 @@ LoadSimulation::;a = ball speed b = spray angle c = launch angle
   call SetBank
   ret
 
-ShowPlayBallIntro:: ;a - 0 = unsigned player, 1 = team, [_a] = player num or coach id
-  push af;team or player
+ShowPlayBallIntro:: ;[_a] = player num or coach id
   ld a, PLAY_BALL_INTRO_BANK
   call SetBank
 
-  pop af;team or player
   call PlayBallIntro
 
   ld a, PLAY_BALL_BANK

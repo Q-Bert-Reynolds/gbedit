@@ -102,7 +102,7 @@ NowIsNotTheTimeText:       DB "Doc: %s!\nThis isn't the\ntime to use that!",0
 BootedUpTMText:            DB "Booted up a TM!",0
 ItContainedMoveText:       DB "It contained\n%s!",0
 TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
-WriteAnOfferForPlayerText: DB "Write an offer\nfor %s.",0
+WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
 
 _ShowInventory:
   ld bc, $0402
@@ -416,7 +416,15 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ret
 
 MakeOffer:;returns z if offer cancelled
-  ld hl, WriteAnOfferForPlayerText
+  TRAMPOLINE GetCurrentOpponentPlayer
+  ld a, [hl]
+  call GetPlayerName
+  ld bc, name_buffer
+  ld hl, WriteAnOfferToPlayerText
+  ld de, str_buffer
+  call str_Replace
+
+  ld hl, str_buffer
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   ld bc, 12
   call DisplayTextAtPos

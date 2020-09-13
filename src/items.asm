@@ -103,7 +103,7 @@ BootedUpTMText:            DB "Booted up a TM!",0
 ItContainedMoveText:       DB "It contained\n%s!",0
 TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
 WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
-BaseOfferText:             DB "$00000000/wk"
+BaseOfferText:             DB "$000000/game"
 
 _ShowInventory:
   ld bc, $0402
@@ -416,37 +416,30 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, d;exit code
   ret
 
-TensTable:
-  DB $98, $96, $80;10000000 = $989680
-  DB $0f, $42, $40; 1000000 = $0f4240
-  DB $01, $86, $a0;  100000 = $0186a0
-  DB $00, $27, $10;   10000 = $002710
-  DB $00, $03, $e8;    1000 = $0003e8
-  DB $00, $00, 100
-  DB $00, $00, 10
-  DB $00, $00, 1 
-
-GetTenFromTable:;_x = 7-place, returns 10^(7-_x) in bcd, [_a_b_c] in ehl
-  ld hl, TensTable
+IncDecDigit: ;a = dir
+  push af;dir
   ld a, [_x]
-  ld b, a
-  add a, a
-  add a, b;a*3
+  ld hl, str_buffer+1
   ld b, 0
   ld c, a
   add hl, bc
-  ld a, [hli]
+  ld a, [hl]
   ld b, a
-  ld a, [hli]
-  ld c, a
-  ld a, [hli]
-  ld d, a
-  ld a, [_a]
-  ld e, a
-  ld a, [_b]
-  ld h, a
-  ld a, [_c]
-  ld l, a
+  pop af;dir
+  add a, b
+  ld [hl], a
+  cp a, "0"
+  jr c, .under
+  cp a, "9"+1
+  jr z, .over
+  ret
+.under
+  ld a, "9"
+  ld [hl], a
+  ret
+.over
+  ld a, "0"
+  ld [hl], a
   ret
 
 UpdateOffer:
@@ -454,34 +447,6 @@ UpdateOffer:
   ld de, $0e05
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call DrawUIBox
-
-  ld a, [_a]
-  ld e, a
-  ld a, [_b]
-  ld h, a
-  ld a, [_c]
-  ld l, a
-  ld bc, name_buffer
-  call str_Number24
-
-  ld hl, BaseOfferText
-  ld de, str_buffer
-  ld bc, 12
-  call mem_Copy
-
-  ld hl, name_buffer
-  call str_Length
-  push de;len
-  ld a, 9
-  sub a, e
-  ld e, a
-  ld hl, str_buffer
-  add hl, de
-  ld d, h
-  ld e, l
-  ld hl, name_buffer
-  pop bc;len
-  call mem_Copy
 
   ld de, $0709
   ld hl, $0c01
@@ -524,11 +489,12 @@ MakeOffer:;returns z if offer cancelled
   ld bc, 12
   call DisplayTextAtPos
 
-  xor a
-  ld [_a], a
-  ld [_b], a
-  ld [_c], a
-  ld a, 7
+  ld hl, BaseOfferText
+  ld de, str_buffer
+  ld bc, 12
+  call mem_Copy
+
+  ld a, 5
   ld [_x], a
   call UpdateOffer
 .loop
@@ -558,7 +524,7 @@ MakeOffer:;returns z if offer cancelled
     cp a, PADF_RIGHT
     jr nz, .checkUp
     ld a, [_x]
-    cp a, 7
+    cp a, 5
     jr z, .loop
     inc a
     ld [_x], a
@@ -569,14 +535,8 @@ MakeOffer:;returns z if offer cancelled
     ld a, [button_state]
     cp a, PADF_UP
     jr nz, .checkDown
-    call GetTenFromTable
-    call math_Add24
-    ld a, e
-    ld [_a], a
-    ld a, h
-    ld [_b], a
-    ld a, l
-    ld [_c], a
+    ld a, 1
+    call IncDecDigit
     call UpdateOffer
     jr .loop
 
@@ -584,14 +544,8 @@ MakeOffer:;returns z if offer cancelled
     ld a, [button_state]
     cp a, PADF_DOWN
     jr nz, .loop
-    call GetTenFromTable
-    call math_Sub24
-    ld a, e
-    ld [_a], a
-    ld a, h
-    ld [_b], a
-    ld a, l
-    ld [_c], a
+    ld a, -1
+    call IncDecDigit
     call UpdateOffer
     jp .loop
 

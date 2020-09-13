@@ -259,7 +259,7 @@ WAITPAD_UP: MACRO
 .loop\@
   call gbdk_WaitVBL
   call UpdateInput
-  ld a, [button_state]
+  ld a, [last_button_state]
   and a
   jr nz, .loop\@
 ENDM
@@ -270,7 +270,7 @@ WAITPAD_UP_OR_FRAMES: MACRO ; \1=frames
     push af;frames
     call gbdk_WaitVBL
     call UpdateInput
-    ld a, [button_state]
+    ld a, [last_button_state]
     and a
     jr z, .exit\@
     pop af;frames

@@ -6,6 +6,8 @@ Priority
 
 Items
 
+- change select arrow to empty after selecting item
+- hide play/item/team/run when item menu selected
 - use protein, carbos, etc.
 - add music/text when playing harmonica in overworld
 - wake player when playing harmonica in game

@@ -103,6 +103,7 @@ BootedUpTMText:            DB "Booted up a TM!",0
 ItContainedMoveText:       DB "It contained\n%s!",0
 TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
 WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
+BaseOfferText:             DB "$00000000/wk"
 
 _ShowInventory:
   ld bc, $0402
@@ -415,6 +416,100 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, d;exit code
   ret
 
+TensTable:
+  DB $98, $96, $80;10000000 = $989680
+  DB $0f, $42, $40; 1000000 = $0f4240
+  DB $01, $86, $a0;  100000 = $0186a0
+  DB $00, $27, $10;   10000 = $002710
+  DB $00, $03, $e8;    1000 = $0003e8
+  DB $00, $00, 100
+  DB $00, $00, 10
+  DB $00, $00, 1 
+
+GetTenFromTable:;_x = 7-place, returns 10^(7-_x) in bcd, [_a_b_c] in ehl
+  ld hl, TensTable
+  ld a, [_x]
+  ld b, a
+  add a, a
+  add a, b;a*3
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld d, a
+  ld a, [_a]
+  ld e, a
+  ld a, [_b]
+  ld h, a
+  ld a, [_c]
+  ld l, a
+  ret
+
+UpdateOffer:
+  ld bc, $0607
+  ld de, $0e05
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  call DrawUIBox
+
+  ld a, [_a]
+  ld e, a
+  ld a, [_b]
+  ld h, a
+  ld a, [_c]
+  ld l, a
+  ld bc, name_buffer
+  call str_Number24
+
+  ld hl, BaseOfferText
+  ld de, str_buffer
+  ld bc, 12
+  call mem_Copy
+
+  ld hl, name_buffer
+  call str_Length
+  push de;len
+  ld a, 9
+  sub a, e
+  ld e, a
+  ld hl, str_buffer
+  add hl, de
+  ld d, h
+  ld e, l
+  ld hl, name_buffer
+  pop bc;len
+  call mem_Copy
+
+  ld de, $0709
+  ld hl, $0c01
+  ld bc, str_buffer
+  call gbdk_SetWinTiles
+
+  ld a, ARROW_UP
+  ld [name_buffer], a
+  ld a, [_x]
+  add a, 8
+  ld d, a
+  ld e, 8
+  ld bc, name_buffer
+  ld hl, $0101
+  call gbdk_SetWinTiles
+
+  ld a, ARROW_DOWN
+  ld [name_buffer], a
+  ld a, [_x]
+  add a, 8
+  ld d, a
+  ld e, 10
+  ld bc, name_buffer
+  ld hl, $0101
+  call gbdk_SetWinTiles
+
+  ret
+
 MakeOffer:;returns z if offer cancelled
   TRAMPOLINE GetCurrentOpponentPlayer
   ld a, [hl]
@@ -428,11 +523,84 @@ MakeOffer:;returns z if offer cancelled
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   ld bc, 12
   call DisplayTextAtPos
+
+  xor a
+  ld [_a], a
+  ld [_b], a
+  ld [_c], a
+  ld a, 7
+  ld [_x], a
+  call UpdateOffer
 .loop
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_B | PADF_START
-  jr .loop
-.exit
-  ld [_breakpoint], a
+    WAITPAD_UP_OR_FRAMES 20
+    call gbdk_WaitVBL
+    call UpdateInput
+    ld a, [button_state]
+    cp a, PADF_B
+    jr z, .cancel
+    and a, PADF_A | PADF_START
+    jr nz, .makeOffer
+
+.checkLeft
+    ld a, [button_state]
+    cp a, PADF_LEFT
+    jr nz, .checkRight
+    ld a, [_x]
+    cp a, 0
+    jr z, .loop
+    dec a
+    ld [_x], a
+    call UpdateOffer
+    jr .loop
+
+.checkRight
+    ld a, [button_state]
+    cp a, PADF_RIGHT
+    jr nz, .checkUp
+    ld a, [_x]
+    cp a, 7
+    jr z, .loop
+    inc a
+    ld [_x], a
+    call UpdateOffer
+    jr .loop
+
+.checkUp
+    ld a, [button_state]
+    cp a, PADF_UP
+    jr nz, .checkDown
+    call GetTenFromTable
+    call math_Add24
+    ld a, e
+    ld [_a], a
+    ld a, h
+    ld [_b], a
+    ld a, l
+    ld [_c], a
+    call UpdateOffer
+    jr .loop
+
+.checkDown
+    ld a, [button_state]
+    cp a, PADF_DOWN
+    jr nz, .loop
+    call GetTenFromTable
+    call math_Sub24
+    ld a, e
+    ld [_a], a
+    ld a, h
+    ld [_b], a
+    ld a, l
+    ld [_c], a
+    call UpdateOffer
+    jp .loop
+
+.makeOffer
+  ld a, 1
+  or a
+  ret
+  
+.cancel
   xor a
   ret
 

@@ -185,6 +185,19 @@ math_Divide24:: ; ehl (remainder a) = ehl / d
     jr nz, .loop
   ret
 
+math_Add24:: ;ehl = ehl + bcd
+  ld a, l
+  add a, d
+  ld l, a
+  ld a, h
+  adc a, c
+  ld h, a
+  ld a, e
+  adc a, b
+  ld e, a
+  ld [_breakpoint], a
+  ret
+
 math_Sub24:: ;ehl = ehl - bcd
   ld a, l
   sub a, d

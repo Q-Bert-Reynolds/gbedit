@@ -1,20 +1,9 @@
 Priority
 
 - make offer to unsigned players (use baseball)
-- update seen/signed after games, evolutions, and signings
 - make announcer actually work
+- return to previous world position
 
-Items
-
-- change select arrow to empty after selecting item
-- hide play/item/team/run when item menu selected
-- use protein, carbos, etc.
-- add music/text when playing harmonica in overworld
-- wake player when playing harmonica in game
-- use select to swap items in list
-- add town names and cursor to town map
-- status clearing items should have more specific messages (ie. "Chu is no longer paralyzed.")
- 
  General
 
 - link cable support!
@@ -103,8 +92,21 @@ Overworld
 - enter/exit buildings
 - read signs
 
+Items
+
+- change select arrow to empty after selecting item
+- hide play/item/team/run when item menu selected
+- max offer should depend on ball (baseball = $100, game ball = $1000, etc.)
+- use protein, carbos, etc.
+- add music/text when playing harmonica in overworld
+- wake player when playing harmonica in game
+- use select to swap items in list
+- add town names and cursor to town map
+- status clearing items should have more specific messages (ie. "Chu is no longer paralyzed.")
+ 
 Rolédex
 
+- update seen/signed after games, evolutions, and signings
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
 - if player descriptions only span 1 page, garbage text is drawn on the next

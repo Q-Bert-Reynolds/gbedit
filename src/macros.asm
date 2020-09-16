@@ -291,8 +291,14 @@ SET_DEFAULT_PALETTE: MACRO
 ENDM
 
 RGB: MACRO ;\1 = red, \2 = green, \3 = blue
-  dw (\3 << 10 | \2 << 5 | \1)
-ENDM 
+  DB (\3 << 10 | \2 << 5 | \1)
+ENDM
+
+D24: MACRO ;\1 = 24 bit number 
+  DB (\1 & $FF0000) >> 16
+  DB (\1 & $00FF00) >> 8
+  DB (\1 & $0000FF)
+ENDM
 
 BETWEEN: MACRO; if \1 <= a < \2
 IF \1 > \2

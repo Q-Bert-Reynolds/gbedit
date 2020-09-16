@@ -195,7 +195,6 @@ math_Add24:: ;ehl = ehl + bcd
   ld a, e
   adc a, b
   ld e, a
-  ld [_breakpoint], a
   ret
 
 math_Sub24:: ;ehl = ehl - bcd

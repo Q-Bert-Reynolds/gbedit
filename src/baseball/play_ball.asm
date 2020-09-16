@@ -1057,10 +1057,10 @@ StartGame::
 .runMenuItemSelected
     cp 3
     jr nz, .playBallLoop
-    ld hl, QuittingIsNotAnOptionText
-    call RevealTextAndWait
-    HIDE_WIN
-    jp .playBallLoop
+    ; ld hl, QuittingIsNotAnOptionText
+    ; call RevealTextAndWait
+    ; HIDE_WIN
+    ; jp .playBallLoop
 .exitPlayBallLoop
   call sgb_SetDefaultBorder
   ret

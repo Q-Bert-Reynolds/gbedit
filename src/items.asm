@@ -104,6 +104,7 @@ ItContainedMoveText:       DB "It contained\n%s!",0
 TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
 WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
 BaseOfferText:             DB "$000000/game"
+OfferPlayerMoneyText:      DB "Offer %s\n%s?",0
 
 _ShowInventory:
   ld bc, $0402
@@ -475,6 +476,68 @@ UpdateOffer:
 
   ret
 
+TensTable:
+  D24 100000
+  D24 10000
+  D24 1000
+  D24 100
+  D24 10
+  D24 1 
+
+GetPowerOfTen:; digit in a, returns 10^(5-a) in bcd, won't change ehl
+  push hl
+  push de
+  ld hl, TensTable
+  ld b, 0
+  ld c, a
+  add a, a
+  add a, c
+  ld c, a
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld c, a
+  pop de
+  ld a, [hl]
+  ld d, a
+  pop hl
+  ret
+
+GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
+  PUSH_VAR _i
+  PUSH_VAR _j
+  xor a
+  ld [_i], a
+  ld de, 0
+  ld hl, 0
+  ld bc, str_buffer+1
+.loopDigits
+    ld a, [bc]
+    ld [_j], a
+    inc bc
+    and a
+    jr z, .skip
+    push bc;character
+    ld a, [_i]
+    call GetPowerOfTen
+.loopPowersOfTen
+      call math_Add24
+      ld a, [_j]
+      dec a
+      ld [_j], a
+      jr nz, .loopPowersOfTen
+    pop bc
+.skip
+    ld a, [_i]
+    dec a
+    ld [_i], a
+    cp a, 6
+    jr nz, .loopDigits
+  POP_VAR _j
+  POP_VAR _i
+  ret
+
 MakeOffer:;returns z if offer cancelled
   TRAMPOLINE GetCurrentOpponentPlayer
   ld a, [hl]
@@ -503,7 +566,7 @@ MakeOffer:;returns z if offer cancelled
     call UpdateInput
     ld a, [button_state]
     cp a, PADF_B
-    jr z, .cancel
+    jp z, .cancel
     and a, PADF_A | PADF_START
     jr nz, .makeOffer
 
@@ -550,6 +613,35 @@ MakeOffer:;returns z if offer cancelled
     jp .loop
 
 .makeOffer
+  call GetOfferFromText
+  push de;offer num
+  push hl
+
+  TRAMPOLINE GetCurrentOpponentPlayer
+  ld a, [hl]
+  call GetPlayerName
+  ld bc, name_buffer
+  ld hl, OfferPlayerMoneyText
+  ld de, str_buffer
+  call str_Replace
+
+  pop hl;offer num
+  pop de;
+  ld bc, name_buffer
+  call str_Number24
+  ld hl, str_buffer
+  ld de, tile_buffer
+  call str_Replace
+
+  ld hl, tile_buffer
+  ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
+  ld de, 12
+  call RevealText
+
+.LOOP
+  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .cancel, PADF_A | PADF_B | PADF_START
+  jr .LOOP
+
   ld a, 1
   or a
   ret

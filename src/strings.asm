@@ -30,8 +30,8 @@
 ;     Converts number hl to string de
 ;     Entry: hl = 16 bit number, de = dest string
 ;   str_Number24
-;     Converts number ehl to string de
-;     Entry: ehl = 24 bit number, de = dest string
+;     Converts number ehl to string bc
+;     Entry: ehl = 24 bit number, bc = dest string
 
 
 IF !DEF(STRINGS_ASM)
@@ -255,7 +255,7 @@ str_Number::
 
 ;***************************************************************************
 ;
-; str_Number24 - converts number ehl to string de
+; str_Number24 - converts number ehl to string bc
 ;
 ; input:
 ;   ehl - number

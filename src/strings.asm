@@ -186,7 +186,6 @@ str_Replace::
   inc bc
   inc de
   jr .stringReplace
-  jr str_Copy
 .done
   ld [de], a
   ret

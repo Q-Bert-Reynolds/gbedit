@@ -181,12 +181,12 @@ str_Replace::
 .stringReplace
   ld a, [bc]
   and a
-  jr z, str_Replace
+  jr z, str_Copy
   ld [de], a
   inc bc
   inc de
   jr .stringReplace
-  jr str_Replace
+  jr str_Copy
 .done
   ld [de], a
   ret

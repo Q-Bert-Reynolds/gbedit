@@ -77,11 +77,11 @@ str_Copy::
 str_Length::
   ld de, 0
 .loop
-  ld a, [hli]
-  and a
-  ret z
-  inc de
-  jr .loop
+    ld a, [hli]
+    and a
+    ret z
+    inc de
+    jr .loop
 
 ;***************************************************************************
 ;
@@ -101,7 +101,7 @@ str_FromArray::
     ld a, [hli]
     and a
     jr nz, .loop
-.test; check bc == 0
+  .test; check bc == 0
     xor a
     dec bc
     cp b
@@ -125,15 +125,15 @@ str_FromArray::
 str_CopyLine::
   ld bc, 0
 .loop
-  ld a, [hli]
-  cp 128;"\n"
-  ret z
-  and a
-  ret z
-  ld [de], a
-  inc de
-  inc bc
-  jr .loop
+    ld a, [hli]
+    cp 128;"\n"
+    ret z
+    and a
+    ret z
+    ld [de], a
+    inc de
+    inc bc
+    jr .loop
 
 ;***************************************************************************
 ;
@@ -179,13 +179,13 @@ str_Replace::
   inc de
   jr str_Replace
 .stringReplace
-  ld a, [bc]
-  and a
-  jr z, str_Copy
-  ld [de], a
-  inc bc
-  inc de
-  jr .stringReplace
+    ld a, [bc]
+    and a
+    jr z, str_Copy
+    ld [de], a
+    inc bc
+    inc de
+    jr .stringReplace
 .done
   ld [de], a
   ret
@@ -319,15 +319,15 @@ str_Number24::
   srl d;num digits / 2
   dec bc
 .swapLoop
-  ld a, [hl]
-  ld e, a
-  ld a, [bc]
-  ld [hli], a
-  ld a, e
-  ld [bc], a
-  dec bc
-  dec d
-  jr nz, .swapLoop
+    ld a, [hl]
+    ld e, a
+    ld a, [bc]
+    ld [hli], a
+    ld a, e
+    ld [bc], a
+    dec bc
+    dec d
+    jr nz, .swapLoop
   ret
 
 ENDC ;STRINGS_ASM

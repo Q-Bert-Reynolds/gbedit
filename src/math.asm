@@ -153,7 +153,7 @@ math_Divide:: ; hl (remainder a) = hl / c
     jr c, .skip
     sub c
     inc l
-.skip
+  .skip
     dec b
     jr nz, .loop
   ret
@@ -180,7 +180,7 @@ math_Divide24:: ; ehl (remainder a) = ehl / d
     jr c, .skip
     sub d
     inc l
-.skip
+  .skip
     dec b
     jr nz, .loop
   ret

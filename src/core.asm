@@ -75,11 +75,11 @@ GetStatusString:: ;a = status mask, string in name_buffer
   jr z, .exit
   ld bc, 8
 .loop
-  cp a, %10000000
-  jr z, .exit
-  sla a
-  dec bc
-  jr nz, .loop
+    cp a, %10000000
+    jr z, .exit
+    sla a
+    dec bc
+    jr nz, .loop
 .exit
   ld hl, StatusStrings
   ld de, name_buffer
@@ -419,7 +419,7 @@ MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
 .rowLoop ;for (j = 0; j < h; j++)
     xor a
     ld [_i], a
-.columnLoop ;for (i = 0; i < w; i++)
+  .columnLoop ;for (i = 0; i < w; i++)
       ld a, [_i]
       add a ;i*2
       add a ;i*4
@@ -472,7 +472,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
 .rowLoop ;for (j = 0; j < h; j++)
     xor a
     ld [_i], a
-.columnLoop ;for (i = 0; i < w; i++)
+  .columnLoop ;for (i = 0; i < w; i++)
       push bc;xy
       push hl;wh
 
@@ -484,7 +484,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
       ld a, [de]
       cp h;skip me
       jr z, .skip
-.noSkip
+    .noSkip
       push de;tilemap
       
       ld a, [_a]
@@ -521,7 +521,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
       ld a, [sprite_props]
       ld [hli], a
 
-.skip
+    .skip
       inc de;tile index
       pop hl;wh
       pop bc;xy
@@ -582,7 +582,7 @@ FlipTileMapX:;hl=wh; bc=in_tiles, de=out_tiles
     dec hl
     add hl, bc
     pop de;out_tiles
-.columnLoop
+  .columnLoop
       ld a, [hld]
       ld [de], a
       inc de
@@ -668,11 +668,11 @@ AnimateHealth::;[_j] = selected player, b=start pct, c=end pct
     cp a, b
     jr z, .exit
     jr c, .less
-.greater
+  .greater
     dec a
     ld [_a], a
     jr .loop
-.less
+  .less
     inc a
     ld [_a], a
     jr .loop
@@ -701,7 +701,7 @@ SetHPBarTilesFromPct::;hl = address, de = health pct
     ld a, 129
     ld [hli], a
     jr .next
-.drawPartial;c-e < 16
+  .drawPartial;c-e < 16
     cp 16
     jr nc, .drawEmpty
     srl a;(c-e)/2 < 8
@@ -710,10 +710,10 @@ SetHPBarTilesFromPct::;hl = address, de = health pct
     add a, d
     ld [hli], a
     jr .next
-.drawEmpty
+  .drawEmpty
     ld a, 137
     ld [hli], a
-.next
+  .next
     ld a, c
     add a, 16
     ld c, a
@@ -859,129 +859,127 @@ CopyBkgToWin::
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jr z, .notGBC
-    ld a, 1
-    ld [rVBK], a
-    pop de;xy
-    pop hl;wh
-    push hl;wh
-    push de;xy
-    ld bc, bkg_buffer
-    call gbdk_GetBkgTiles
+  ld a, 1
+  ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+  push hl;wh
+  push de;xy
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
 
-    pop de;xy
-    pop hl;wh
-    push hl;wh
-    push de;xy
-    ld de, 0
-    ld bc, bkg_buffer
-    call gbdk_SetWinTiles
-    xor a
-    ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+  push hl;wh
+  push de;xy
+  ld de, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+  xor a
+  ld [rVBK], a
 .notGBC
-
   pop de;xy
   pop hl;wh
   push hl
   push de
 
-    ld a, 32-20
-    cp d
-    jp nc, .skipRight
-    ld d, h;x = left width
-    ld a, 20
-    sub a, h
-    ld h, a; right width
+  ld a, 32-20
+  cp d
+  jp nc, .skipRight
+  ld d, h;x = left width
+  ld a, 20
+  sub a, h
+  ld h, a; right width
 
-    ;tiles
-    push hl;wh
-    push de;xy
-    ld d, 0
-    ld bc, bkg_buffer
-    call gbdk_GetBkgTiles
+  ;tiles
+  push hl;wh
+  push de;xy
+  ld d, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
 
-    pop de;xy
-    pop hl;wh
-    push hl
-    push de
-    ld e, 0
-    ld bc, bkg_buffer
-    call gbdk_SetWinTiles
+  pop de;xy
+  pop hl;wh
+  push hl
+  push de
+  ld e, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
 
-    ;colors
-    ld a, [sys_info]
-    and a, SYS_INFO_GBC
-    jr z, .skip
-      ld a, 1
-      ld [rVBK], a
-      pop de;xy
-      pop hl;wh
-      push hl;wh
-      push de;xy
-      ld d, 0
-      ld bc, bkg_buffer
-      call gbdk_GetBkgTiles
+  ;colors
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .skip
+  ld a, 1
+  ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+  push hl;wh
+  push de;xy
+  ld d, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
 
-      pop de;xy
-      pop hl;wh
-      push hl;wh
-      push de;xy
-      ld e, 0
-      ld bc, bkg_buffer
-      call gbdk_SetWinTiles
-      xor a
-      ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+  push hl;wh
+  push de;xy
+  ld e, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+  xor a
+  ld [rVBK], a
+
 .skip
+  pop de;xy
+  pop hl;wh
+  
+  ld a, 32-18
+  cp e
+  jr nc, .skipRight;skip bottom right
+  ld e, l;y = upper height
+  ld a, 18
+  sub a, l
+  ld l, a; bottom right height
 
-    pop de;xy
-    pop hl;wh
+  ;tiles
+  push hl;wh
+  push de;xy
+  ld de, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
+
+  pop de;xy
+  pop hl;wh
+  push hl;wh
+  push de;xy
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+
+  pop de;xy
+  pop hl;wh
     
-    ld a, 32-18
-    cp e
-    jr nc, .skipRight;skip bottom right
-    ld e, l;y = upper height
-    ld a, 18
-    sub a, l
-    ld l, a; bottom right height
+  ;colors
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .skipRight
+  ld a, 1
+  ld [rVBK], a
+  push hl;wh
+  push de;xy
+  ld d, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
 
-    ;tiles
-    push hl;wh
-    push de;xy
-    ld de, 0
-    ld bc, bkg_buffer
-    call gbdk_GetBkgTiles
-
-    pop de;xy
-    pop hl;wh
-    push hl;wh
-    push de;xy
-    ld bc, bkg_buffer
-    call gbdk_SetWinTiles
-
-    pop de;xy
-    pop hl;wh
-      
-    ;colors
-    ld a, [sys_info]
-    and a, SYS_INFO_GBC
-    jr z, .skipRight
-      ld a, 1
-      ld [rVBK], a
-      push hl;wh
-      push de;xy
-      ld d, 0
-      ld bc, bkg_buffer
-      call gbdk_GetBkgTiles
-
-      pop de;xy
-      pop hl;wh
-      ld e, 0
-      ld bc, bkg_buffer
-      call gbdk_SetWinTiles
-      xor a
-      ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+  ld e, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+  xor a
+  ld [rVBK], a
 
 .skipRight
-
   pop de;xy
   pop hl;wh
   ld a, 32-18
@@ -1013,23 +1011,22 @@ CopyBkgToWin::
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jr z, .skipBottom
-    ld a, 1
-    ld [rVBK], a
-    push hl;wh
-    push de;xy
-    ld d, 0
-    ld bc, bkg_buffer
-    call gbdk_GetBkgTiles
+  ld a, 1
+  ld [rVBK], a
+  push hl;wh
+  push de;xy
+  ld d, 0
+  ld bc, bkg_buffer
+  call gbdk_GetBkgTiles
 
-    pop de;xy
-    pop hl;wh
-    ld e, 0
-    ld bc, bkg_buffer
-    call gbdk_SetWinTiles
-    xor a
-    ld [rVBK], a  
+  pop de;xy
+  pop hl;wh
+  ld e, 0
+  ld bc, bkg_buffer
+  call gbdk_SetWinTiles
+  xor a
+  ld [rVBK], a  
 .skipBottom
-  
   ret
 
 ShowSaveGame::
@@ -1232,7 +1229,7 @@ GBCSetPalette::;a = palette id, hl = colors
   ld a, 8;4 colors, 2 bytes each
 .loopColors
     push af
-.wait
+  .wait
       ldh a,[rSTAT]
       and STATF_BUSY
       jr nz, .wait

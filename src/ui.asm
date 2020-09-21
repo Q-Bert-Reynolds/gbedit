@@ -122,73 +122,73 @@ GetUIBoxTiles: ;Entry: de = wh, Affects: hl
   xor a
   ld [_j], a
 .rowLoop ;for (j = 0; j < h; ++j) {
-  xor a
-  ld [_i], a
-.columnLoop ;for (i = 0; i < w; ++i) {
-.testTop ;if (j == 0) {
-  ld a, [_j] 
-  and a
-  jr nz, .testBottom
-.testUpperLeft ;if (i == 0) k = BOX_UPPER_LEFT;
-  ld a, [_i]
-  and a
-  jr nz, .testUpperRight
-  ld a, BOX_UPPER_LEFT
-  jp .setTile
-.testUpperRight ;else if (i == w-1) k = BOX_UPPER_RIGHT;
-  ld a, [_i]
-  sub a, d
-  inc a
-  jr nz, .setHorizontal
-  ld a, BOX_UPPER_RIGHT
-  jp .setTile
-.testBottom ;else if (j == h-1) {
-  ld a, [_j] 
-  sub a, e
-  inc a
-  jr nz, .testSides
-.testLowerLeft ;if (i == 0) k = BOX_LOWER_LEFT;
-  ld a, [_i]
-  and a
-  jr nz, .testLowerRight
-  ld a, BOX_LOWER_LEFT
-  jp .setTile
-.testLowerRight ;else if (i == w-1) k = BOX_LOWER_RIGHT;
-  ld a, [_i]
-  sub a, d
-  inc a
-  jr nz, .setHorizontal
-  ld a, BOX_LOWER_RIGHT
-  jp .setTile
-.testSides ;else if (i == 0 || i == w-1) k = BOX_VERTICAL;
-  ld a, [_i]
-  and a
-  jr z, .setVertical
-  sub d
-  inc a
-  jr z, .setVertical
-.setNone
-  xor a
-  jr .setTile
-.setVertical
-  ld a, BOX_VERTICAL
-  jr .setTile
-.setHorizontal
-  ld a, BOX_HORIZONTAL
-.setTile
-  ld [hli], a ;tiles[j*w+i] = k;
+    xor a
+    ld [_i], a
+  .columnLoop ;for (i = 0; i < w; ++i) {
+    .testTop ;if (j == 0) {
+      ld a, [_j] 
+      and a
+      jr nz, .testBottom
+    .testUpperLeft ;if (i == 0) k = BOX_UPPER_LEFT;
+      ld a, [_i]
+      and a
+      jr nz, .testUpperRight
+      ld a, BOX_UPPER_LEFT
+      jp .setTile
+    .testUpperRight ;else if (i == w-1) k = BOX_UPPER_RIGHT;
+      ld a, [_i]
+      sub a, d
+      inc a
+      jr nz, .setHorizontal
+      ld a, BOX_UPPER_RIGHT
+      jp .setTile
+    .testBottom ;else if (j == h-1) {
+      ld a, [_j] 
+      sub a, e
+      inc a
+      jr nz, .testSides
+    .testLowerLeft ;if (i == 0) k = BOX_LOWER_LEFT;
+      ld a, [_i]
+      and a
+      jr nz, .testLowerRight
+      ld a, BOX_LOWER_LEFT
+      jp .setTile
+    .testLowerRight ;else if (i == w-1) k = BOX_LOWER_RIGHT;
+      ld a, [_i]
+      sub a, d
+      inc a
+      jr nz, .setHorizontal
+      ld a, BOX_LOWER_RIGHT
+      jp .setTile
+    .testSides ;else if (i == 0 || i == w-1) k = BOX_VERTICAL;
+      ld a, [_i]
+      and a
+      jr z, .setVertical
+      sub d
+      inc a
+      jr z, .setVertical
+    .setNone
+      xor a
+      jr .setTile
+    .setVertical
+      ld a, BOX_VERTICAL
+      jr .setTile
+    .setHorizontal
+      ld a, BOX_HORIZONTAL
+    .setTile
+      ld [hli], a ;tiles[j*w+i] = k;
 
-  ld a, [_i]
-  inc a
-  ld [_i], a
-  sub a, d
-  jr nz, .columnLoop
+      ld a, [_i]
+      inc a
+      ld [_i], a
+      sub a, d
+      jr nz, .columnLoop
 
-  ld a, [_j]
-  inc a
-  ld [_j], a
-  sub a, e
-  jr nz, .rowLoop
+    ld a, [_j]
+    inc a
+    ld [_j], a
+    sub a, e
+    jr nz, .rowLoop
 
   POP_VAR _j
   POP_VAR _i
@@ -605,7 +605,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy
     pop hl;text
     push hl;text
     push de;xy
-.testNewLine;   if (text[i] == '\n') {
+  .testNewLine;   if (text[i] == '\n') {
     xor a
     ld b, a
     ld a, [_i]
@@ -615,113 +615,112 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy
     cp "\n"
     jp nz, .drawCharacter
 
-      ld a, [_y]
-      inc a
-      ld [_y], a
-      sub a, 2
-      jp nz, .skipFlash ;if (y == 2) {
-        pop de;xy
-        pop hl;text
-        pop af;draw flags
-        push af;draw flags
-        push hl;text
-        push de;xy
-        push af;draw flags
-        ld a, d
-        add a, 18
-        ld d, a
-        ld a, e
-        add a, 4
-        ld e, a
-        pop af;draw flags
-        call FlashNextArrow ;flash_next_arrow(18,4);
+    ld a, [_y]
+    inc a
+    ld [_y], a
+    sub a, 2
+    jp nz, .skipFlash ;if (y == 2) {
+    pop de;xy
+    pop hl;text
+    pop af;draw flags
+    push af;draw flags
+    push hl;text
+    push de;xy
+    push af;draw flags
+    ld a, d
+    add a, 18
+    ld d, a
+    ld a, e
+    add a, 4
+    ld e, a
+    pop af;draw flags
+    call FlashNextArrow ;flash_next_arrow(18,4);
 
-        ld a, 1
-        ld [_y], a
+    ld a, 1
+    ld [_y], a
 
-        pop de;xy
-        pop hl;text
-        push hl;text
-        push de;xy
-        xor a
-        ld b, a
-        ld a, [_w]
-        ld c, a
-        add hl, bc;text+w
-        ld de, str_buffer
-        ld a, [_i]
-        sub a, c
-        ld c, a;i-w
-        call mem_Copy ;memcpy(str_buff,text+w,i-w);
+    pop de;xy
+    pop hl;text
+    push hl;text
+    push de;xy
+    xor a
+    ld b, a
+    ld a, [_w]
+    ld c, a
+    add hl, bc;text+w
+    ld de, str_buffer
+    ld a, [_i]
+    sub a, c
+    ld c, a;i-w
+    call mem_Copy ;memcpy(str_buff,text+w,i-w);
 
-        ld a, [_x]
-        and a
-        jr z, .skipWhiteSpace
-        ld bc, 17
-        ld hl, str_buffer
-.whiteSpaceLoop
-          dec bc
-          inc hl
-          dec a
-          jr nz, .whiteSpaceLoop
-        ld a, " "
-        call mem_Set
-.skipWhiteSpace
+    ld a, [_x]
+    and a
+    jr z, .skipWhiteSpace
+    ld bc, 17
+    ld hl, str_buffer
+  .whiteSpaceLoop
+      dec bc
+      inc hl
+      dec a
+      jr nz, .whiteSpaceLoop
+    ld a, " "
+    call mem_Set
+  .skipWhiteSpace
+    pop de;xy
+    pop hl;text
+    pop af;draw flags
+    push af;draw flags
+    push hl;text
+    push de;xy
+    push af;draw flags
+    and a, DRAW_FLAGS_PAD_TOP
+    rr a
+    add a, e
+    add a, 1
+    ld e, a;y
+    ld a, d
+    add a, 1
+    ld d, a;x
+    ld h, 17 ;w
+    ld l, 1 ;h
+    ld bc, str_buffer
+    pop af
+    call SetTiles
 
-        pop de;xy
-        pop hl;text
-        pop af;draw flags
-        push af;draw flags
-        push hl;text
-        push de;xy
-        push af;draw flags
-        and a, DRAW_FLAGS_PAD_TOP
-        rr a
-        add a, e
-        add a, 1
-        ld e, a;y
-        ld a, d
-        add a, 1
-        ld d, a;x
-        ld h, 17 ;w
-        ld l, 1 ;h
-        ld bc, str_buffer
-        pop af
-        call SetTiles
+    ld bc, 17
+    ld hl, str_buffer
+    ld a, " "
+    call mem_Set
+    pop de;xy
+    pop hl;text
+    pop af;draw flags
+    push af;draw flags
+    push hl;text
+    push de;xy
+    push af;draw flags
+    and a, DRAW_FLAGS_PAD_TOP
+    rr a
+    add a, e
+    add a, 3
+    ld e, a;y
+    ld a, d
+    add a, 1
+    ld d, a;x
+    ld h, 17 ;w
+    ld l, 1 ;h
+    ld bc, str_buffer
+    pop af
+    call SetTiles
 
-        ld bc, 17
-        ld hl, str_buffer
-        ld a, " "
-        call mem_Set
-        pop de;xy
-        pop hl;text
-        pop af;draw flags
-        push af;draw flags
-        push hl;text
-        push de;xy
-        push af;draw flags
-        and a, DRAW_FLAGS_PAD_TOP
-        rr a
-        add a, e
-        add a, 3
-        ld e, a;y
-        ld a, d
-        add a, 1
-        ld d, a;x
-        ld h, 17 ;w
-        ld l, 1 ;h
-        ld bc, str_buffer
-        pop af
-        call SetTiles
-
-.skipFlash
-      xor a
-      ld [_x], a
-      ld a, [_i]
-      inc a
-      ld [_w], a
-      jr .getTextSpeed
-.drawCharacter ;else {
+  .skipFlash
+    xor a
+    ld [_x], a
+    ld a, [_i]
+    inc a
+    ld [_w], a
+    jr .getTextSpeed
+  .drawCharacter ;else {
     pop de;xy
     pop hl;text
     pop af;draw flags
@@ -765,7 +764,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy
     pop af;draw flags
     call SetTiles
 
-.getTextSpeed
+  .getTextSpeed
     ld a, [text_speed]
     cp a, 2
     ld de, 100
@@ -774,7 +773,7 @@ UIRevealText:: ;a = draw flags, hl = text, de = xy
     ld de, 50
     jr z, .delay
     ld de, 10
-.delay
+  .delay
     call gbdk_Delay
 
     ld a, [_i]
@@ -1327,16 +1326,16 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
     ld a, [_c]
     and a
     jp nz, .shouldUseUpper
-.shouldUseLower;   if (c == 0) {
+  .shouldUseLower;   if (c == 0) {
     ld hl, UpperCase
     call mem_Copy;     memcpy(str_buff, upper_case, 46);
     ld bc, LowerCaseTitle;set_win_tiles(2,15,10,1,"lower case");
     jr .setCaseTiles
-.shouldUseUpper;   else {
+  .shouldUseUpper;   else {
     ld hl, LowerCase
     call mem_Copy;     memcpy(str_buff, lower_case, 46);
     ld bc, UpperCaseTitle;set_win_tiles(2,15,10,1,"UPPER CASE");
-.setCaseTiles
+  .setCaseTiles
     ld d, 2
     ld e, 15
     ld h, 10
@@ -1344,7 +1343,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
     call gbdk_SetWinTiles
     xor a
     ld [_j], a
-.rowLoop;   for (j = 0; j < 5; ++j) {
+  .rowLoop;   for (j = 0; j < 5; ++j) {
       xor a
       ld [_i], a
       ld a, [_j]
@@ -1369,7 +1368,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld d, h
       ld e, l
       pop hl ;tiles[j*2*18]
-.collumnLoop1;     for (i = 0; i < 9; ++i) {
+    .collumnLoop1;     for (i = 0; i < 9; ++i) {
         ld a, [_x]
         ld b, a
         ld a, [_i]
@@ -1383,18 +1382,18 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
         ld a, ARROW_RIGHT
         ld [hli], a;tiles[j*2*18+i*2] = ARROW_RIGHT
         jr .setCharTile
-.notArrowTile
+      .notArrowTile
         xor a
         ld [hli], a;tiles[j*2*18+i*2] = 0
-.setCharTile
+      .setCharTile
         ld a, [de]
         ld [hli], a ;tiles[j*2*18+i*2+1] = str_buff[j*9+i];
         inc de
-      ld a, [_i]
-      inc a
-      ld [_i], a
-      sub 9
-      jr nz, .collumnLoop1
+        ld a, [_i]
+        inc a
+        ld [_i], a
+        sub 9
+        jr nz, .collumnLoop1
 
       xor a
       ld [_i], a
@@ -1407,7 +1406,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld c, l ;bc = (j*2+1)*18
       ld hl, tile_buffer
       add hl, bc ;tiles[(j*2+1)*18]
-.collumnLoop2 ;for (i = 0; i < 9; ++i) {
+    .collumnLoop2 ;for (i = 0; i < 9; ++i) {
         xor a
         ld [hli], a ;tiles[(j*2+1)*18+i*2]   = 0;
         ld [hli], a ;tiles[(j*2+1)*18+i*2+1] = 0;
@@ -1431,7 +1430,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
     call gbdk_SetWinTiles;set_win_tiles(1,5,18,9,tile_buffer);
 
     WAITPAD_UP
-.moveArrowLoop;   while (1) {
+  .moveArrowLoop;   while (1) {
       call UpdateInput;k = joypad();
       ld a, [_x]
       ld b, a
@@ -1439,7 +1438,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, [_y]
       ld c, a
       ld e, a
-.moveUp;if (button_state & PADF_UP && y > 0) {
+    .moveUp;if (button_state & PADF_UP && y > 0) {
       ld a, [button_state]
       and PADF_UP
       jr z, .moveDown
@@ -1451,7 +1450,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld [_y], a;--y;
       call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x,y-1);
       jp .startOrAPressed
-.moveDown;else if (button_state & PADF_DOWN && y < 5) {
+    .moveDown;else if (button_state & PADF_DOWN && y < 5) {
       ld a, [button_state]
       and PADF_DOWN
       jr z, .moveLeft
@@ -1463,7 +1462,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld [_y], a;++y;
       call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x,y+1);
       jp .startOrAPressed
-.moveLeft;else if (button_state & PADF_LEFT && x > 0 && y < 5) {
+    .moveLeft;else if (button_state & PADF_LEFT && x > 0 && y < 5) {
       ld a, [button_state]
       and PADF_LEFT
       jr z, .moveRight
@@ -1478,7 +1477,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld [_x], a;  --x;
       call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x-1,y);
       jp .startOrAPressed
-.moveRight;else if (button_state & PADF_RIGHT && x < 8 && y < 5) {
+    .moveRight;else if (button_state & PADF_RIGHT && x < 8 && y < 5) {
       ld a, [button_state]
       and PADF_RIGHT
       jr z, .startOrAPressed
@@ -1492,21 +1491,21 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld a, d
       ld [_x], a;  ++x;
       call MoveTextEntryArrow;  move_text_entry_arrow(x,y,x+1,y);
-.startOrAPressed ;if (button_state & (PADF_START | PADF_A)) {
+    .startOrAPressed ;if (button_state & (PADF_START | PADF_A)) {
       ld a, [button_state]
       and PADF_START | PADF_A
       jp z, .bPressed
       ld a, [_y]
       sub a, 5
       jr nz, .testEnd;       if (y == 5) {
-        PLAY_SFX SelectSound
+      PLAY_SFX SelectSound
       ld a, [_c]
       ld b, a
       ld a, 1
       sub a, b
       ld [_c], a ;c = 1-c;
       jp .exitMoveArrowLoop ;break;
-.testEnd ; else if (str_buff[y*9+x] == '\x1E') {
+    .testEnd ; else if (str_buff[y*9+x] == '\x1E') {
       ld hl, str_buffer
       xor a
       ld b, a
@@ -1529,7 +1528,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       and a
       jp nz, .exitTextEntryLoop ; if (l > 0) return;
       jp .waitVBL
-.testLength;else if (l < max_len) {
+    .testLength;else if (l < max_len) {
       ld a, [_l]
       pop hl ;str
       pop de ;e = max_len
@@ -1579,7 +1578,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       PLAY_SFX SelectSound
       WAITPAD_UP
       jr .waitVBL
-.bPressed;     else if (button_state & PADF_B && l > 0) {
+    .bPressed;     else if (button_state & PADF_B && l > 0) {
       ld a, [button_state]
       and PADF_B
       jr z, .waitVBL
@@ -1604,10 +1603,10 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       push hl;str
       call UpdateTextEntryDisplay ;update_text_entry_display(str, max_len);
       WAITPAD_UP
-.waitVBL
-    call gbdk_WaitVBL
-    jp .moveArrowLoop
-.exitMoveArrowLoop
+    .waitVBL
+      call gbdk_WaitVBL
+      jp .moveArrowLoop
+  .exitMoveArrowLoop
     jp .drawTextBoxLoop
 .exitTextEntryLoop
   PLAY_SFX SelectSound
@@ -1691,7 +1690,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     push de ;wh
     push hl ;text
     push af ;draw flags
-.testNewLine; if (text[k] == '\n') {
+  .testNewLine; if (text[k] == '\n') {
     ld a, [hl] ;text
     cp "\n"
     jr nz, .testStringEnd
@@ -1706,7 +1705,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     and a, DRAW_FLAGS_NO_SPACE
     jr z, .incrementY
     ld c, 1
-.incrementY
+  .incrementY
     ld a, [_j]
     add a, c;spacing
     ld [_j], a
@@ -1718,7 +1717,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     push af
     push hl
     jr .nextCharacter
-.testStringEnd; else if (text[k] == '\0') {
+  .testStringEnd; else if (text[k] == '\0') {
     and a
     jr nz, .copyCharacterToTiles
     pop af ;draw flags
@@ -1732,7 +1731,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     pop de ;wh
     pop bc ;xy
     jr .exitDrawListEntriesLoop ;break;
-.copyCharacterToTiles; else tiles[++l] = text[k];
+  .copyCharacterToTiles; else tiles[++l] = text[k];
     ld hl, tile_buffer
     xor a
     ld b, a
@@ -1747,7 +1746,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     ld a, [bc]
     ld [hl], a
     push bc ;text
-.nextCharacter
+  .nextCharacter
     pop hl ;text
     pop af ;draw flags
     inc hl
@@ -1827,7 +1826,7 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     inc e
     push af;draw flags
     call MoveListMenuArrow
-.selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
+  .selectMenuItem ;if (button_state & (PADF_START | PADF_A)) 
     ld a, [button_state]
     and a, PADF_START | PADF_A
     jr z, .back
@@ -1835,13 +1834,13 @@ UIShowListMenu::; a = draw flags, bc = xy, de = wh, text = [str_buffer], title =
     ld a, [_j]
     inc a ;return j+1;
     jr .exitMenu
-.back ;else if (button_state & PADF_B) 
+  .back ;else if (button_state & PADF_B) 
     ld a, [button_state]
     and a, PADF_B
     jr z, .waitVBLThenLoop
     xor a ;return 0;
     jr .exitMenu
-.waitVBLThenLoop
+  .waitVBLThenLoop
     call gbdk_WaitVBL ;update_vbl();
     jp .moveMenuArrowLoop
 .exitMenu
@@ -1899,7 +1898,7 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
     ld a, "0"
     ld [hl], a
 
-.drawDigits
+  .drawDigits
     pop bc;max/current nums
     pop de;xy
     pop af;draw flags
@@ -1910,14 +1909,14 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
     ld hl, $0201
     call SetTiles
 
-.inputLoop
+  .inputLoop
       call gbdk_WaitVBL
       call UpdateInput
-.wait
+    .wait
       ld a, [last_button_state]
       and a
       jr nz, .inputLoop
-.checkUp
+    .checkUp
       ld a, [button_state]
       and a, PADF_UP
       jr z, .checkDown
@@ -1926,12 +1925,12 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
       cp a, b
       jr c, .currentLessThanMax
       ld c, 0;wrap around
-.currentLessThanMax
+    .currentLessThanMax
       inc c
       push bc;max/current nums
       jr .finishInput
 
-.checkDown
+    .checkDown
       ld a, [button_state]
       and a, PADF_DOWN
       jr z, .checkStartA
@@ -1939,11 +1938,11 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
       dec c
       jr nz, .currentGreaterThanZero
       ld c, b;wrap around
-.currentGreaterThanZero
+    .currentGreaterThanZero
       push bc;max/current nums
       jr .finishInput
 
-.checkStartA
+    .checkStartA
       ld a, [button_state]
       and a, PADF_A | PADF_START
       jr z, .checkB
@@ -1953,7 +1952,7 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
       pop hl;draw flags
       ld a, c;selected num
       ret
-.checkB
+    .checkB
       ld a, [button_state]
       and a, PADF_B
       jr z, .inputLoop
@@ -1963,7 +1962,7 @@ UIShowNumberPicker::; a = draw flags, bc = xy, de = wh, hl = max/start nums, ret
       xor a
       ret
 
-.finishInput
+  .finishInput
     pop bc;max/current nums
     pop de;xy
     pop hl;draw flags

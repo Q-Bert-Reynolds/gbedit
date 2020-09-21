@@ -521,14 +521,14 @@ GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
     push bc;character
     ld a, [_i]
     call GetPowerOfTen
-.loopPowersOfTen
+  .loopPowersOfTen
       call math_Add24
       ld a, [_j]
       dec a
       ld [_j], a
       jr nz, .loopPowersOfTen
     pop bc
-.skip
+  .skip
     ld a, [_i]
     dec a
     ld [_i], a
@@ -629,6 +629,7 @@ MakeOffer:;returns z if offer cancelled
   pop de;
   ld bc, name_buffer
   call str_Number24
+  ld bc, name_buffer
   ld hl, str_buffer
   ld de, tile_buffer
   call str_Replace

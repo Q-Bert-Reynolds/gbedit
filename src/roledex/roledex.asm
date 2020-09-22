@@ -106,7 +106,7 @@ GetPlayerName:: ; a = number, returns name in name_buffer
   dec a
   ld c, a;number
   ld a, [loaded_bank]
-  ld [temp_bank], a
+  push af;bank
   ld a, PLAYER_STRINGS_BANK
   call SetBank
 
@@ -120,7 +120,7 @@ GetPlayerName:: ; a = number, returns name in name_buffer
   ld de, name_buffer
   call str_Copy
 
-  ld a, [temp_bank]
+  pop af;bank
   call SetBank
   ret
 

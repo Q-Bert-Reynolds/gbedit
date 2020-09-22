@@ -132,7 +132,8 @@ Main::
   ld a, GAME_STATE_CLOCK_STARTED
   ld [game_state], a
 
-.overworld; walk around, find a game, repeat
+.mainLoop
+  .overworld; walk around, find a game, repeat
     ld a, [game_state]
     and a, ~GAME_STATE_PLAY_BALL
     ld [game_state], a
@@ -143,7 +144,7 @@ Main::
     ;TODO: black out tiles one by one
     PLAY_SONG tessie_data, 1
 
-.startGame
+  .baseball
     ld a, [game_state]
     or a, GAME_STATE_PLAY_BALL
     ld [game_state], a
@@ -151,7 +152,7 @@ Main::
     call SetBank
     call StartGame
 
-    jr .overworld; TODO: if game finished, exit
+    jr .mainLoop; TODO: if game finished, exit
 
   xor a
   call SetBank

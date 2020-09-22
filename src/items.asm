@@ -104,7 +104,7 @@ ItContainedMoveText:       DB "It contained\n%s!",0
 TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
 WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
 BaseOfferText:             DB "$000000/game"
-OfferPlayerMoneyText:      DB "Offer %s\n%s?",0
+OfferPlayerMoneyText:      DB "Offer %s\n$%s/game?",0
 
 _ShowInventory:
   ld bc, $0402
@@ -514,10 +514,10 @@ GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
   ld bc, str_buffer+1
 .loopDigits
     ld a, [bc]
-    ld [_j], a
     inc bc
-    and a
+    sub a, "0"
     jr z, .skip
+    ld [_j], a
     push bc;character
     ld a, [_i]
     call GetPowerOfTen
@@ -530,7 +530,7 @@ GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
     pop bc
   .skip
     ld a, [_i]
-    dec a
+    inc a
     ld [_i], a
     cp a, 6
     jr nz, .loopDigits
@@ -570,7 +570,7 @@ MakeOffer:;returns z if offer cancelled
     and a, PADF_A | PADF_START
     jr nz, .makeOffer
 
-.checkLeft
+  .checkLeft
     ld a, [button_state]
     cp a, PADF_LEFT
     jr nz, .checkRight
@@ -582,7 +582,7 @@ MakeOffer:;returns z if offer cancelled
     call UpdateOffer
     jr .loop
 
-.checkRight
+  .checkRight
     ld a, [button_state]
     cp a, PADF_RIGHT
     jr nz, .checkUp
@@ -594,7 +594,7 @@ MakeOffer:;returns z if offer cancelled
     call UpdateOffer
     jr .loop
 
-.checkUp
+  .checkUp
     ld a, [button_state]
     cp a, PADF_UP
     jr nz, .checkDown
@@ -603,7 +603,7 @@ MakeOffer:;returns z if offer cancelled
     call UpdateOffer
     jr .loop
 
-.checkDown
+  .checkDown
     ld a, [button_state]
     cp a, PADF_DOWN
     jr nz, .loop

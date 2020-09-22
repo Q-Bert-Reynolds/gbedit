@@ -287,7 +287,7 @@ str_Number24::
 .divLoop
     ld d, 10
     call math_Divide24
-    add a, 48;convert num to string
+    add a, "0";convert num to string
 
     pop bc;dest string
     ld [bc], a
@@ -312,9 +312,9 @@ str_Number24::
   ld [bc], a;terminate string
   pop af;num digits
   cp 1
-  ret z ;no need to swap if only one digit
-
   pop hl ;dest string start
+  ret z ;no need to swap if only one digit
+  
   ld d, a;num digits
   srl d;num digits / 2
   dec bc

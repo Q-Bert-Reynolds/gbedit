@@ -105,6 +105,10 @@ TeachMoveText:             DB "Teach %s\nto a PLAYER?",0
 WriteAnOfferToPlayerText:  DB "Write an offer\nto %s.",0
 BaseOfferText:             DB "$000000/game"
 OfferPlayerMoneyText:      DB "Offer %s\n$%s/game?",0
+PlayerRejectsOfferText:    DB "%s is\nnot interested.",0
+PlayerAcceptsOfferText:    DB "%s\naccepts!",0
+GivePlayerANicknameText:   DB "Give %s\na nickname?",0
+
 
 _ShowInventory:
   ld bc, $0402
@@ -538,7 +542,7 @@ GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
   POP_VAR _i
   ret
 
-MakeOffer:;returns z if offer cancelled
+MakeOffer:;returns z if offer cancelled, result of offer in a (1 = accepted)
   TRAMPOLINE GetCurrentOpponentPlayer
   ld a, [hl]
   call GetPlayerName
@@ -639,11 +643,44 @@ MakeOffer:;returns z if offer cancelled
   ld de, 12
   call RevealText
 
-.LOOP
-  UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .cancel, PADF_A | PADF_B | PADF_START
-  jr .LOOP
+  WAITPAD_UP
+  ld b, 14
+  ld c, 7
+  ld a, DRAW_FLAGS_WIN
+  call AskYesNo
 
-  ld a, 1
+  cp a, 1
+  jr nz, .cancel
+
+.confirmOffer
+  TRAMPOLINE GetCurrentOpponentPlayer
+  ld a, [hl]
+  call GetPlayerName
+
+  call gbdk_Random 
+  ld a, e
+  cp a, d
+  ld de, str_buffer
+  ld bc, name_buffer
+  jr c, .offerRejected
+
+.offerAccepted
+  ld hl, PlayerAcceptsOfferText
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  HIDE_WIN
+  ld a, 1;nz=used item, a==1 means accepted
+  or a
+  ret
+
+.offerRejected
+  ld hl, PlayerRejectsOfferText
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  HIDE_WIN
+  ld a, 2;nz=used item, a!=1 means rejected
   or a
   ret
   

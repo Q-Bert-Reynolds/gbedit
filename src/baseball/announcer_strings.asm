@@ -29,7 +29,7 @@ BaseTexts::                   DB "first",0
                               DB "home plate",0
 
 ;beginning of frame
-TakesTheMoundText::           DB "%s\ntakes the mound.",0;also used for relievers
+TakesTheMoundText::           DB "%s takes\nthe mound.",0;also used for relievers
 WalksToThePlateText::         DB "%s walks\nup to the plate.",0
 
 ;move selected

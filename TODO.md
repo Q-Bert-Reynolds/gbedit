@@ -1,6 +1,6 @@
 Priority
 
-- make offer to unsigned players (use baseball)
+- offers accepted by unsigned players should end game
 - make announcer actually work
 - return to previous world position
 

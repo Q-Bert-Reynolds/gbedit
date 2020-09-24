@@ -542,7 +542,7 @@ GetOfferFromText:;"$000000/week" in str_buffer, returns number in ehl
   POP_VAR _i
   ret
 
-MakeOffer:;returns z if offer cancelled, result of offer in a (1 = accepted)
+MakeOffer:;returns z if offer cancelled, result of offer in a (1 = accepted), exit code in b (-1 = exit inventory)
   TRAMPOLINE GetCurrentOpponentPlayer
   ld a, [hl]
   call GetPlayerName
@@ -669,9 +669,9 @@ MakeOffer:;returns z if offer cancelled, result of offer in a (1 = accepted)
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-  HIDE_WIN
   ld a, 1;nz=used item, a==1 means accepted
   or a
+  ld b, -1
   ret
 
 .offerRejected
@@ -679,9 +679,9 @@ MakeOffer:;returns z if offer cancelled, result of offer in a (1 = accepted)
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-  HIDE_WIN
   ld a, 2;nz=used item, a!=1 means rejected
   or a
+  ld b, -1
   ret
   
 .cancel

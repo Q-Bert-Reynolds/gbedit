@@ -291,7 +291,7 @@ SET_DEFAULT_PALETTE: MACRO
 ENDM
 
 RGB: MACRO ;\1 = red, \2 = green, \3 = blue
-  DB (\3 << 10 | \2 << 5 | \1)
+  DW (\3 << 10 | \2 << 5 | \1)
 ENDM
 
 D24: MACRO ;\1 = 24 bit number 

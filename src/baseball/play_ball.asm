@@ -966,6 +966,7 @@ SetupGameUI:
   call SetPlayBallTiles
   call DrawPlayBallUI
   HIDE_WIN
+  SHOW_SPRITES
   
   CLEAR_BKG_AREA 12, 0, 7, 7, " "
   ret

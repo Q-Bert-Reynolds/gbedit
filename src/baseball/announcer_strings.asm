@@ -119,7 +119,7 @@ WalkText::                    DB "%s on base\nwith a walk.",0
 PassedBallText::              DB "Wild pitch!",0
 WildPitchText::               DB "Passed ball!",0
 HitByPitchText::              DB "That hit 'em, so\n%s is on 𝟙.",0
-BenchesClear::                DB "And the benches clear.",0
+BenchesClearText::            DB "And the benches clear.",0
 
 ;runners on
 RunnersOnBaseTexts::          DB "Nobody on base.",0              ;000

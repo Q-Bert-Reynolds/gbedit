@@ -849,7 +849,7 @@ HitBall:
   ld a, [swing_diff_z]
   ld d, a
   ld a, 255;full power, TODO: replace with swing power and player bat stat
-  sub a, d;reduce power by swing diff
+  ; sub a, d;reduce power by swing diff
 
   push af;exit velocity
   ld a, 0;TODO:read animation on/off from save ram 

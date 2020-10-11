@@ -21,7 +21,9 @@ SECTION "Baseball Utils Bank 0", ROM0
 ; IncrementOuts                   returns outs in a
 ; CheckStrike                     returns ball (z) or strike (nz)
 ; GetPositionPlayerName           a = position number (1-9), returns the name of position player in [name_buffer]
-; DistanceFromSpeedLaunchAngle    a = speed, b = launch angle, returns distance in a
+; DistanceFromSpeedLaunchAngle    a = speed, c = launch angle, returns distance in a
+; HeightFromSpeedLaunchAngle      a = speed, c = launch angle, returns height in a
+; HangTimeFromSpeedLaunchAngle    a = speed, c = launch angle, returns hang time in a
 ; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
 ; GetClosestFielderByLocation     de = xy, returns position number in a
 ; IsUserFielding                  nz = user is fielding, z = user is batting
@@ -154,7 +156,7 @@ GetPositionPlayerName::
 DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in a
   push af;speed
   ld a, c
-  cp a, 128
+  cp a, 128;if 0<c<128, .inAir
   jr c, .inAir
 
 .onGround
@@ -176,6 +178,85 @@ DistanceFromSpeedLaunchAngle::;a = speed, c = launch angle, returns distance in 
   ld e, b
   call math_Multiply16;v^2 * sin(2*ang)*255
   ld a, c;v^2 * sin(2*ang)/g... bcde -> a, assumes b == 0, drops lower word
+  ret
+
+;----------------------------------------------------------------------
+;
+; HeightFromSpeedLaunchAngle
+;   input:
+;     a = speed
+;     c = launch angle
+;   returns:
+;     a = height
+;
+;----------------------------------------------------------------------
+HeightFromSpeedLaunchAngle::;a = speed, c = launch angle, returns height in a
+  push af;speed
+  ld a, c
+  cp a, 128;if 0<c<128, .inAir
+  jr c, .inAir
+
+.onGround
+  pop af;speed
+  xor a
+  ret
+
+.inAir ;h = v^2 * sin(ang)^2 / 2*g
+  call math_Sin255
+  ld d, 0
+  ld e, a;sin(ang)*255
+  call math_Multiply;65025*sin(ang)^2
+  pop af;speed
+  push hl
+  ld d, 0
+  ld e, a
+  call math_Multiply;v^2
+  pop bc;b = 255 * sin(ang)^2
+
+  ld d, 0
+  ld e, b
+  call math_Multiply16;v^2 * 255 * sin(ang)^2
+  ld a, c;v^2 * sin(ang)^2/2*g... bcde -> a, assumes b == 0, drops lower word
+  ret
+
+;----------------------------------------------------------------------
+;
+; HangTimeFromSpeedLaunchAngle
+;   input:
+;     a = speed
+;     c = launch angle
+;   returns:
+;     a = hang time (255 = 10 sec)
+;
+;----------------------------------------------------------------------
+HangTimeFromSpeedLaunchAngle::
+  push af;speed
+  ld a, c
+  cp a, 128;if 0<c<128, .inAir
+  jr c, .inAir
+
+.onGround
+  pop af;speed
+  xor a
+  ret
+
+.inAir ; t = 2 * v * sin(ang) / g
+  call math_Sin255
+  ld b, a;sin(ang)*255
+  pop af;v
+  push bc
+  ld h, 0
+  ld l, a;v
+  add hl, hl;2*v
+  pop bc
+  ld d, 0
+  ld e, b
+  call math_Multiply16;2 * v * sin(ang)*255
+  ld a, c;2 * v * sin(ang) / g... bcde -> a, 255 if c > 0, else d
+  and a
+  ld a, 255
+  ret nz
+  ld a, d
   ret
 
 ;----------------------------------------------------------------------

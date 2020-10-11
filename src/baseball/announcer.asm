@@ -306,12 +306,11 @@ AnnounceNoSwing::
 
 .hitByPitch
   ; HitByPitchText
-  ; BenchesClear
+  ; BenchesClearText
   TRAMPOLINE NextBatter
   call AnnounceBatter
 
 .updateBaseRunners
-  ; update runners on base
   call AnnounceRunnersOn
 
   ret
@@ -388,13 +387,13 @@ _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
   push bc;b=sparay angle, c=launch angle
   call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
 .checkOutfield;wall at 240
-  cp 96;bases at 90
+  cp a, 96;bases at 90
   jr c, .checkInfield 
   pop bc;b=sparay angle, c=launch angle
   call AnnounceHitToOutfield
   jr .finish
 .checkInfield
-  cp 64;pitcher's mound at 60
+  cp a, 64;pitcher's mound at 60
   jr c, .checkBunt
   pop bc;b=sparay angle, c=launch angle
   call AnnounceHitToInfield

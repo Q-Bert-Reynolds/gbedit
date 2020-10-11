@@ -1,6 +1,6 @@
 Priority
 
-- offers accepted by unsigned players should end game
+- results from hitting to the field
 - make announcer actually work
 - return to previous world position
 
@@ -42,7 +42,7 @@ Start
 
 Play Ball
 
-- results from hitting to the field
+- offers accepted by unsigned players should end game
 - set contact power from move, player, and barrel
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes
 - pitches in the dirt should bounce

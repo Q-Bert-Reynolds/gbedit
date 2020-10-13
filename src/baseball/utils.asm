@@ -368,7 +368,7 @@ XLocationsOfPositions::
   DB  82,  36, 128, 164,  63, 92, 88, 193, 216
 YLocationsOfPositions::
   DB 174, 219, 199, 159, 119, 92, 38,  67, 191
-GetClosestFielderByLocation::;de = xy, returns position number in a
+GetClosestFielderByLocation::;de = xy, returns position number in a, distance in b
   ld a, 255
   ld [_t], a;min dist
   xor a
@@ -406,8 +406,10 @@ GetClosestFielderByLocation::;de = xy, returns position number in a
     ld [_i], a
     cp a, 9
     jr nz, .loop
+  ld a, [_t]
+  ld b, a;distance
   ld a, [_c]
-  inc a
+  inc a;position
   ret
 
 IsUserFielding::;nz = user is fielding, z = user is batting

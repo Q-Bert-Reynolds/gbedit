@@ -384,36 +384,47 @@ AnnounceSwingMiss::
 
 ;cannot use Trampoline, too many inputs
 _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
-  push bc;b=sparay angle, c=launch angle
-  call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
-.checkOutfield;wall at 240
-  cp a, 96;bases at 90
-  jr c, .checkInfield 
-  pop bc;b=sparay angle, c=launch angle
-  call AnnounceHitToOutfield
-  jr .finish
-.checkInfield
-  cp a, 64;pitcher's mound at 60
-  jr c, .checkBunt
-  pop bc;b=sparay angle, c=launch angle
-  call AnnounceHitToInfield
-  jr .finish
-.checkBunt
-  cp a, 0
-  jr c, .tipped
-  pop bc;b=sparay angle, c=launch angle
-  call AnnounceBuntText
-  jr .finish
-.tipped
-  pop bc;b=sparay angle, c=launch angle
-  ld hl, HitFoulTipText
-  call RevealTextAndWait
+  push af;speed
+  ld a, c
+  cp a, 128;if 0<c<128, .inAir
+  jr c, .inAir
+
+.onGround
+  pop af;speed
+  ret
+
+.inAir
+  pop af;speed
+  call AnnounceHitInAir
+
+; .checkBunt
+;   cp a, 0
+;   jr c, .tipped
+;   pop bc;b=sparay angle, c=launch angle
+;   call AnnounceBuntText
+;   jr .finish
+; .tipped
+;   pop bc;b=sparay angle, c=launch angle
+;   ld hl, HitFoulTipText
+;   call RevealTextAndWait
 .finish
   ret 
 
-AnnounceHitInAir:;de = ball xy, a = hang time
+AnnounceHitInAir:;a = speed, b = spray angle, c = launch angle
+  push bc;spray, launch
+  call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
+.outfield;wall at 240
+  cp a, 96;bases at 90
+  jr c, .infield 
+  pop bc;b=sparay angle, c=launch angle
+  call AnnounceHitInAirToOutfield
+  ret
+.infield
+  pop bc;b=sparay angle, c=launch angle
+  call AnnounceHitInAirToInfield
+  ret
 
-AnnounceHitToOutfield:;a = distance, b = spray angle
+AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
 .deepFly
   cp 200
   jr c, .flyBall
@@ -435,20 +446,37 @@ AnnounceHitToOutfield:;a = distance, b = spray angle
   ld de, str_buffer
   call str_Copy
 
-  ld hl, OutfieldLocationTexts
-  ld de, str_buffer
-  call str_Append
-
+  call AppendOutfieldLocationTextByAngle
   ld hl, str_buffer
   call RevealTextAndWait
 
   call AnnounceFieldingText
   ret
 
-AnnounceHitToInfield:;a = distance, b = spray angle, c = launch angle  
-  ; HitPopUpText
-  ; InfieldLocationTexts
-  ; ToThePositionText
+AppendOutfieldLocationTextByAngle;b = spray angle, appends text to str_buffer
+  ld a, b
+  cp a, 40
+  jr c, .outfieldLocation
+  cp a, -40
+  jr nc, .outfieldLocation
+  ld hl, InFoulTerritoryText
+  jr .append
+.outfieldLocation
+  add a, 40
+  ld h, 0
+  ld l, a
+  ld c, 13
+  call math_Divide
+  ld b, h
+  ld c, l
+  ld hl, OutfieldLocationTexts;7 locations
+  call str_FromArray
+.append
+  ld de, str_buffer
+  call str_Append
+  ret
+
+AnnounceHitInAirToInfield:;a = distance, b = spray angle, c = launch angle  
 .lineDrive
   cp 200
   jr c, .grounder
@@ -470,9 +498,7 @@ AnnounceHitToInfield:;a = distance, b = spray angle, c = launch angle
   ld de, str_buffer
   call str_Copy
 
-  ld hl, InfieldLocationTexts
-  ld de, str_buffer
-  call str_Append
+  call AppendInfieldLocationTextByAngle
 
   ld hl, str_buffer
   call RevealTextAndWait
@@ -480,6 +506,29 @@ AnnounceHitToInfield:;a = distance, b = spray angle, c = launch angle
   ld a, LEFT_FIELDER
   call AnnounceFieldingText
   ret 
+
+AppendInfieldLocationTextByAngle;b = spray angle, appends text to str_buffer
+  ld a, b
+  cp a, 40
+  jr c, .infieldLocation
+  cp a, -40
+  jr nc, .infieldLocation
+  ld hl, InFoulTerritoryText
+  jr .append
+.infieldLocation
+  add a, 40
+  ld h, 0
+  ld l, a
+  ld c, 10
+  call math_Divide
+  ld b, h
+  ld c, l
+  ld hl, InfieldLocationTexts;9 locations
+  call str_FromArray
+.append
+  ld de, str_buffer
+  call str_Append
+  ret
 
 AnnounceBuntText:;a = launch angle, b = spray angle
   ld hl, HitBuntText
@@ -507,7 +556,7 @@ AnnounceBuntText:;a = launch angle, b = spray angle
   call RevealTextAndWait
   ret
 
-AnnounceFieldingText:;a = position fielding the ball
+AnnounceFieldingText:;a = position fielding the ball, b = dist from player
   call GetPositionPlayerName
   
   ; caught 

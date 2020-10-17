@@ -380,9 +380,9 @@ SGBStartMenuAttrBlk:
   ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;UI
 
 NewGameOptionMenuText:
-  db "NEW GAME\nOPTION", 0
+  db "NEW GAME\nOPTIONS", 0
 NewGameContinueOptionMenuText:
-  db "CONTINUE\nNEW GAME\nOPTION", 0
+  db "CONTINUE\nNEW GAME\nOPTIONS", 0
 ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF

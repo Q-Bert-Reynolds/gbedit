@@ -852,7 +852,7 @@ HitBall:
   ; sub a, d;reduce power by swing diff
 
   push af;exit velocity
-  ld a, 0;TODO:read animation on/off from save ram 
+  ld a, [animation_style]
   and a
   jr z, .announceContact
 .loadSimulation

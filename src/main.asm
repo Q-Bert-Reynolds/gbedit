@@ -1,5 +1,34 @@
 INCLUDE "src/beisbol.inc"
 
+RUN_TESTS: MACRO
+  call LoadFontTiles
+  DISPLAY_ON
+  ld a, ANNOUNCER_BANK
+  call SetBank
+
+  TEST -55
+  TEST -45
+  TEST -35
+  TEST -25
+  TEST -15
+  TEST 0
+  TEST 15
+  TEST 25
+  TEST 35
+  TEST 45
+  TEST 55
+ENDM
+
+TEST: MACRO
+  ld hl, str_buffer
+  xor a
+  ld [hl], a
+  ld b, \1
+  call AppendOutfieldLocationTextByAngle
+  ld hl, str_buffer
+  call RevealTextAndWait
+ENDM
+
 SECTION "Header", ROM0[$100]
 Entry:
   nop
@@ -106,27 +135,29 @@ Main::
   
 .loadGame
   call CheckSave
-  jr z, .start
+  jp z, .start
   call LoadGame
 
+  RUN_TESTS
+
 .start ;show intro credits, batting animation
-;   ld a, START_BANK
-;   call SetBank
-;   call Start
+  ld a, START_BANK
+  call SetBank
+  call Start
 
-; .title ;show title drop, version slide, cycle of players, new game/continue screen
-;   ld a, TITLE_BANK
-;   call SetBank
-;   call Title ;sets a to 0 if new game pressed
-;   jr nz, .startClock
+.title ;show title drop, version slide, cycle of players, new game/continue screen
+  ld a, TITLE_BANK
+  call SetBank
+  call Title ;sets a to 0 if new game pressed
+  jr nz, .startClock
 
-; .newGame
-;   ld a, NEW_GAME_BANK
-;   call SetBank
-;   call NewGame
-;   ld a, TEMP_BANK
-;   call SetBank
-;   call Seed
+.newGame
+  ld a, NEW_GAME_BANK
+  call SetBank
+  call NewGame
+  ld a, TEMP_BANK
+  call SetBank
+  call Seed
 
 .startClock
   ld a, GAME_STATE_CLOCK_STARTED
@@ -134,12 +165,12 @@ Main::
 
 .mainLoop
   .overworld; walk around, find a game, repeat
-    ; ld a, [game_state]
-    ; and a, ~GAME_STATE_PLAY_BALL
-    ; ld [game_state], a
-    ; ld a, OVERWORLD_BANK
-    ; call SetBank
-    ; call Overworld
+    ld a, [game_state]
+    and a, ~GAME_STATE_PLAY_BALL
+    ld [game_state], a
+    ld a, OVERWORLD_BANK
+    call SetBank
+    call Overworld
 
     ;TODO: black out tiles one by one
     PLAY_SONG tessie_data, 1

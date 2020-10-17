@@ -453,19 +453,19 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   call AnnounceFieldingText
   ret
 
-AppendOutfieldLocationTextByAngle;b = spray angle, appends text to str_buffer
+AppendOutfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
   ld a, b
-  cp a, 40
+  cp a, 45
   jr c, .outfieldLocation
-  cp a, -40
+  cp a, -46
   jr nc, .outfieldLocation
   ld hl, InFoulTerritoryText
   jr .append
 .outfieldLocation
-  add a, 40
+  add a, 46
   ld h, 0
   ld l, a
-  ld c, 13
+  ld c, 15
   call math_Divide
   ld b, h
   ld c, l
@@ -507,7 +507,7 @@ AnnounceHitInAirToInfield:;a = distance, b = spray angle, c = launch angle
   call AnnounceFieldingText
   ret 
 
-AppendInfieldLocationTextByAngle;b = spray angle, appends text to str_buffer
+AppendInfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
   ld a, b
   cp a, 40
   jr c, .infieldLocation

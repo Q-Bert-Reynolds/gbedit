@@ -337,29 +337,16 @@ MoveRight:
     jr nz, .loop
   ret
 
-UpperStartMenuText:
-  DB "ROLéDEX\nLINEUP\nITEM\n", 0
-LowerStartMenuText:
-  DB "\nSAVE\nOPTION\nEXIT", 0
+StartMenuText:
+  DB "ROLéDEX\nLINEUP\nITEM\n%s\nSAVE\nOPTIONS\nEXIT", 0
 
 ShowPauseMenu::
   call CopyBkgToWin
 
-  ld hl, UpperStartMenuText
+  ld hl, StartMenuText
   ld de, str_buffer
-  call str_Copy
-
-  ld hl, user_name
-  ld de, name_buffer
-  call str_Copy
-
-  ld hl, name_buffer
-  ld de, str_buffer
-  call str_Append
-
-  ld hl, LowerStartMenuText
-  ld de, str_buffer
-  call str_Append;text
+  ld bc, user_name
+  call str_Replace
 
   ld hl, name_buffer
   xor a

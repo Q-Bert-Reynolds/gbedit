@@ -208,3 +208,10 @@ PaletteMuchacho::
   COLOR_PURPLE_GREY
   COLOR_BLACK
 PALETTE_MUCHACHO EQU (PaletteMuchacho-DefaultPalettes)/8
+
+PaletteElectric::
+  COLOR_ALMOST_WHITE
+  COLOR_YELLOW
+  COLOR_PURPLE_GREY
+  COLOR_DEEP_PURPLE
+PALETTE_ELECTRIC EQU (PaletteElectric-DefaultPalettes)/8

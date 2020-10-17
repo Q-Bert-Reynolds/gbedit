@@ -278,7 +278,6 @@ DisplayText:: ;a = draw flags, hl = text
   ld a, 96
   ld [rWY], a
   SHOW_WIN
-  WAITPAD_UP
   ret
 
 DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count

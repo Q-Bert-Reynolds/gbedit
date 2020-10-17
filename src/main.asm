@@ -138,7 +138,7 @@ Main::
   jp z, .start
   call LoadGame
 
-  RUN_TESTS
+  ; RUN_TESTS
 
 .start ;show intro credits, batting animation
   ld a, START_BANK

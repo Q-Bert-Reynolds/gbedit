@@ -141,9 +141,9 @@ move_choice:: DB
 pitch_move_id:: DB
 swing_move_id:: DB
 play_menu_selection:: DB
-aim_x::
+aim_x:: DB
+aim_y:: DB
 swing_diff_x:: DB
-aim_y::
 swing_diff_y:: DB
 swing_diff_z:: DB
 ball_pos_x:: DW ;used for pitch and sim

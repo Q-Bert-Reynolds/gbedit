@@ -510,9 +510,9 @@ Pitch:
   TRAMPOLINE AnnounceNoSwing
   jp FinishPitch
 
-Swing:; xy = de, z = a, returns contact made in a
-  push af;z
-  push de;xy
+Swing:; aim xy = de, pitch z = a, returns contact made in a
+  push af;pitch z
+  push de;aim xy
 
   call HideAimCircle  
   call HideStrikeZone
@@ -523,9 +523,9 @@ Swing:; xy = de, z = a, returns contact made in a
   ld b, a
   ld a, [pitch_target_y]
   add a, e
-  ld c, a
+  ld c, a;bc = pitch xy
 
-  pop de;xy
+  pop de;aim xy
   ld a, d
   sub a, b
   ld [swing_diff_x], a
@@ -854,11 +854,13 @@ HitBall:
   push af;exit velocity
   ld a, [animation_style]
   and a
-  jr z, .announceContact
+  jr nz, .announceContact
 .loadSimulation
   pop af;exit velocity
   call LoadSimulation;a = exit velocity b = spray angle c = launch angle
   call SetupGameUI
+  call ShowPitcher
+  call ShowBatter
   jr FinishPitch
 .announceContact
   pop af;exit velocity

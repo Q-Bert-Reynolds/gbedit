@@ -42,6 +42,7 @@ Start
 
 Play Ball
 
+- fix UI palette on GBC
 - offers accepted by unsigned players should end game
 - set contact power from move, player, and barrel
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes
@@ -71,6 +72,7 @@ Simulation
 
 Team Menu
 
+- fix player palette on GBC
 - pressing left and right cycles between stats
 - missing moves in stat page move list should show "-"
 - stat page should be accessible from PC

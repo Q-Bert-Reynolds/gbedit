@@ -1,6 +1,6 @@
 Priority
 
-- set field color
+- set field palette in simulation
 - calculate initial velocity from ball speed, spray angle, and launch angle
 - results from hitting to the field
 - make announcer actually work

@@ -448,12 +448,46 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld [ball_vel_z], a
 
   ret
+
+SGBSimulationAttrBlk:
+  ATTR_BLK 1
+  ATTR_BLK_PACKET %001, 3,3,3, 0,0, 20,18
   
 RunSimulation::;a = ball speed b = spray angle c = launch angle
+
   push af;ball speed
   push bc;spray/launch angle
+  
   HIDE_WIN
   HIDE_ALL_SPRITES
+
+.setPalettes
+  ld bc, PaletteHomeAwayCalvin
+  ld de, PaletteField
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+
+.setSGB
+  ld hl, SGBPlayBallAttrBlk
+  call sgb_PacketTransfer
+
+.setGBC  
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .endSetPalettes
+  
+  ld hl, tile_buffer
+  ld bc, 32*32
+  ld a, 3
+  call mem_Set
+  ld d, 0;x
+  ld e, 0;y
+  ld h, 32;w
+  ld l, 32;h
+  ld bc, tile_buffer
+  call GBCSetBkgPaletteMap
+.endSetPalettes
+  
   call ShowField
 
   pop bc;spray/launch angle

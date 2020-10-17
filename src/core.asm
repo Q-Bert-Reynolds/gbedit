@@ -1264,7 +1264,7 @@ SetColorBlocks::
   and a, SYS_INFO_SGB
   ret z
 .setColorBlocksSGB
-  jp sgb_PacketTransfer
+  jp _sgb_PacketTransfer
 
 ;assumes no window offset, only handles inside blocks
 GBCSetColorBlocks::;b = draw flags, hl = SGB ATTR_BLK address

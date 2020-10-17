@@ -68,6 +68,13 @@ PaletteBaseball::
   COLOR_DARK_RED 
 PALETTE_BASEBALL EQU (PaletteBaseball-DefaultPalettes)/8
 
+PaletteField::
+  COLOR_ALMOST_WHITE
+  COLOR_BROWN    
+  COLOR_GREEN     
+  COLOR_DARK_BROWN
+PALETTE_FIELD EQU (PaletteField-DefaultPalettes)/8
+
 PaletteDark::
   COLOR_ALMOST_WHITE
   COLOR_DARKER_GREY

@@ -160,12 +160,6 @@ UpdateBall:
     ld [ball_pos_z], a
     jr .skip
 .bounce
-    ld a, [ball_pos_x]
-    ld d, a
-    ld a, [ball_pos_y]
-    ld e, a
-    ld [_breakpoint], a
-
     xor a
     ld [ball_pos_z], a
     ld [ball_pos_z+1], a
@@ -424,16 +418,11 @@ DrawFielders:
   ret
 
 InitBall:;a = ball speed b = spray angle c = launch angle
-  ;TODO:initial velocity should be calculated from ball speed, spray angle, and launch angle
-  ld a, [swing_diff_x]
-  add a, -64
-  ld [ball_vel_y], a
-  ld a, [swing_diff_x]
-  add a, 64
-  ld [ball_vel_x], a
-  ld a, [swing_diff_y]
-  srl a
-  ld [ball_vel_z], a
+  
+  ;z = a * sin(c)
+  ;forward = a * cos(c)
+  ;x = forward * sin(45-b)
+  ;y = forward * cos(45-b)
 
   ; put ball in front of home plate
   ld a, HOME_PLATE_X+4
@@ -451,6 +440,13 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld [ball_vel_y+1], a
   ld [ball_vel_z+1], a
 
+  ld a, -20
+  ld [ball_vel_y], a
+  ld a, 30
+  ld [ball_vel_x], a
+  ld a, 127
+  ld [ball_vel_z], a
+
   ret
   
 RunSimulation::;a = ball speed b = spray angle c = launch angle
@@ -463,7 +459,7 @@ RunSimulation::;a = ball speed b = spray angle c = launch angle
   pop bc;spray/launch angle
   pop af;ball speed
   call InitBall
-  call InitFielders
+  ; call InitFielders
 
 .loop
     call UpdateBall
@@ -482,8 +478,6 @@ RunSimulation::;a = ball speed b = spray angle c = launch angle
     ld a, [ball_pos_z]
     or a, b
     jr nz, .loop
-
-    ; jr .loop
 
   DISPLAY_OFF
   xor a

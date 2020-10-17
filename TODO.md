@@ -1,5 +1,7 @@
 Priority
 
+- set field color
+- calculate initial velocity from ball speed, spray angle, and launch angle
 - results from hitting to the field
 - make announcer actually work
 - return to previous world position

@@ -993,6 +993,10 @@ StartGame::
   
   call SetPlayBallTiles
 
+  
+  call LoadSimulation;TEST;a = exit velocity b = spray angle c = launch angle
+
+
   ld a, 0;(3 << 4) | (2 << 2) | 1; 3 balls, 2 strikes, 1 out
   ld [balls_strikes_outs], a
   

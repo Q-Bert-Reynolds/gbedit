@@ -23,8 +23,8 @@
 022,Crow,,,,"With their huge and magnificent swings, they hit fly balls that seem to disappear.",5.00,170,Normal,Flying,65,90,65,100,61,,,2,3,2,0,PaletteSepia
 023,Snake,,,,"Runs silently and stealthily. Runs on pitchers, such as PIDGE and STOOP, any time they're on base.",5.00,90,Poison,,35,60,44,55,40,024,22,1,0,2,0,PaletteSepia
 024,Cobra,,,,It is rumored that the scarry looking tattoos on their faces show their neighborhood affiliation,5.00,234,Poison,,60,85,69,80,65,,,7,3,2,0,PaletteSepia
-025,Chu,,,,"When several of these PLAYERS play inflied, their electricity turns lightning fast double plays.",5.00,46,Electric,,35,55,30,90,50,026,Thunder,0,3,2,0,PaletteSepia
-026,Rai,,,,Their long stride covers a lot of ground to protect from high fly balls.,5.00,184,Electric,,60,90,55,100,90,,,4,3,2,0,PaletteSepia
+025,Chu,,,,"When several of these PLAYERS play inflied, their electricity turns lightning fast double plays.",5.00,46,Electric,,35,55,30,90,50,026,Thunder,0,3,2,0,PaletteElectric
+026,Rai,,,,Their long stride covers a lot of ground to protect from high fly balls.,5.00,184,Electric,,60,90,55,100,90,,,4,3,2,0,PaletteElectric
 027,Shrew,,,,Digs deep in the box. It only swings at the right pitch.,5.00,50,Ground,,50,75,85,40,30,028,22,0,0,2,0,PaletteSepia
 028,Sandy,,,,Sits back on spinning balls. Attacks when threatened inside. They can roll a bunt up the line.,5.00,120,Ground,,75,100,110,65,55,,,4,0,2,0,PaletteSepia
 029,Chica,,,,"Although small, their venomous bunts render this PLAYER dangerous. This girl has speed.",5.00,100,Poison,,55,47,52,41,40,030,16,0,0,2,0,PaletteSepia

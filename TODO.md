@@ -59,8 +59,15 @@ Play Ball
 - bunting
 
 Game Results
+
 - Show box score
 - Learn moves at certain ages. (sepatrate learn move logic from UseItemOnPlayer subroutine)
+
+Announcer
+
+- Announce "Squirt looks done for out there." when out of HP. 
+- Announce things like "Ghost runners on first and third." when playing against an unsigned player
+
 
 Simulation
 
@@ -153,6 +160,4 @@ Design Notes
 - A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
 - You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make two mound visits in a row.
-- Announce "Squirt looks done for out there." when out of HP. 
-- Announce "Ghost runners on first and third." when playing against an unsigned player
-- No HP means more errors and bad pitches.
+- No HP means more errors and bad pitches, slower movement.

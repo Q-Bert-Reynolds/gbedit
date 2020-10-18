@@ -176,20 +176,7 @@ PlayBallIntro: ;[_a] = player num or coach id
   call gbdk_WaitVBL
   DISABLE_LCD_INTERRUPT
 
-  ld hl, SGBPlayBallAttrBlk
-  call sgb_PacketTransfer
-
-  ld a, 3
-  ld hl, tile_buffer
-  ld bc, 56
-  call mem_Set
-
-  ld d, 12
-  ld e, 0
-  ld h, 8
-  ld l, 7
-  ld bc, tile_buffer
-  call GBCSetBkgPaletteMap
+  TRAMPOLINE SetPlayerColors
 
   ld a, 2
   ld hl, tile_buffer

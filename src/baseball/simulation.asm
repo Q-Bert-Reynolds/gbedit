@@ -263,7 +263,7 @@ UpdateBall:
   swap a
   and %00001111
   ld [hli], a;tile
-  xor a
+  ld a, OAMF_PAL1
   ld [hli], a;prop
 
 .drawShadow
@@ -418,7 +418,7 @@ DrawFielders:
   ret
 
 InitBall:;a = ball speed b = spray angle c = launch angle
-  
+
   ;z = a * sin(c)
   ;forward = a * cos(c)
   ;x = forward * sin(45-b)
@@ -447,13 +447,16 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld a, 127
   ld [ball_vel_z], a
 
+.setPal
+  ld hl, rOBP1
+  ld [hl], DMG_PAL_BDWW
   ret
 
 SGBSimulationAttrBlk:
   ATTR_BLK 1
   ATTR_BLK_PACKET %001, 3,3,3, 0,0, 20,18
   
-RunSimulation::;a = ball speed b = spray angle c = launch angle
+RunSimulation::;a = ball speed, b = spray angle, c = launch angle
 
   push af;ball speed
   push bc;spray/launch angle
@@ -468,7 +471,7 @@ RunSimulation::;a = ball speed b = spray angle c = launch angle
   call SetPalettesDirect
 
 .setSGB
-  ld hl, SGBPlayBallAttrBlk
+  ld hl, SGBSimulationAttrBlk
   call sgb_PacketTransfer
 
 .setGBC  
@@ -493,7 +496,7 @@ RunSimulation::;a = ball speed b = spray angle c = launch angle
   pop bc;spray/launch angle
   pop af;ball speed
   call InitBall
-  ; call InitFielders
+  call InitFielders
 
 .loop
     call UpdateBall

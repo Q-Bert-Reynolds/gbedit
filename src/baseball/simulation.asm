@@ -545,6 +545,7 @@ InitBall:;a = ball speed b = spray angle c = launch angle
 
 .calcForwardVelocity;forward = a * cos(c)
   pop bc; angles
+  pop af; speed
   push bc; angles
   push af;speed
 

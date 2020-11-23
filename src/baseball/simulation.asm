@@ -10,6 +10,9 @@ INCLUDE "img/simulation.asm"
 ;26 to 36 - dust particles for running
 ;37,38,39 - bounce fx, ball, shadow
 
+SIM_HEAD_TILE_ID EQU $33
+SIM_BODY_TILE_ID EQU $64
+
 PHYS_POS_STEPS EQU 5
 
 ShowField:
@@ -287,8 +290,96 @@ UpdateBall:
   ret
 
 ;sprites 
-UpdateBaseRunners:
-  ret 
+UpdateRunners:
+  call DrawRunners
+  ret
+
+InitRunners:
+  ;TODO: set palettebased on player data
+  ;batter
+  ld a, HOME_PLATE_X+8;TODO: place based on handedness
+  ld [SimulationRunners0.pos_x], a
+  ld a, HOME_PLATE_Y+16
+  ld [SimulationRunners0.pos_y], a
+
+  ;runner on first
+  ld a, FIRST_BASE_X+8
+  ld [SimulationRunners1.pos_x], a
+  ld a, FIRST_BASE_Y
+  ld [SimulationRunners1.pos_y], a
+
+  ;runner on second
+  ld a, SECOND_BASE_X-8
+  ld [SimulationRunners2.pos_x], a
+  ld a, SECOND_BASE_Y
+  ld [SimulationRunners2.pos_y], a
+
+  ;runner on third
+  ld a, THIRD_BASE_X-8
+  ld [SimulationRunners3.pos_x], a
+  ld a, THIRD_BASE_Y+16
+  ld [SimulationRunners3.pos_y], a
+
+  call DrawRunners
+
+  ret
+
+DrawRunners:
+  ld de, oam_buffer+9*2*4
+  ld hl, SimulationRunners0.pos_y
+
+  ld a, 4
+.loop
+    push af;players left
+
+    ld a, [rSCY]
+    ld b, a
+    ld a, [hli];y
+    sub a, b
+    ld [de], a
+    inc de
+    inc hl
+    ld a, [rSCX]
+    ld b, a
+    ld a, [hld];x
+    sub a, b
+    ld [de], a
+    inc de
+    dec hl
+    ld a, SIM_BODY_TILE_ID
+    ld [de], a;tile
+    inc de
+    ld a, OAMF_PAL1
+    ld [de], a;prop
+    inc de
+    ld a, [rSCY]
+    ld b, a
+    ld a, [hli];y
+    sub a, b
+    sub a, 8
+    ld [de], a
+    inc de
+    inc hl
+    ld a, [rSCX]
+    ld b, a
+    ld a, [hli];x
+    sub a, b
+    ld [de], a
+    inc de
+    ld bc, SimulationRunners1.anim_state - SimulationRunners0.pos_x
+    add hl, bc
+    ld a, SIM_HEAD_TILE_ID
+    ld [de], a;tile
+    inc de
+    xor a
+    ld [de], a;prop
+    inc de
+
+    pop af;players left
+    dec a
+    jr nz, .loop
+  ret
+
 
 UpdateFielders:
   call DrawFielders
@@ -383,7 +474,7 @@ DrawFielders:
     ld [de], a
     inc de
     dec hl
-    ld a, $64;body
+    ld a, SIM_BODY_TILE_ID
     ld [de], a;tile
     inc de
     xor a
@@ -405,7 +496,7 @@ DrawFielders:
     inc de
     ld bc, SimulationFielders2.anim_state - SimulationFielders1.pos_x
     add hl, bc
-    ld a, $33;head
+    ld a, SIM_HEAD_TILE_ID
     ld [de], a;tile
     inc de
     xor a
@@ -418,11 +509,8 @@ DrawFielders:
   ret
 
 InitBall:;a = ball speed b = spray angle c = launch angle
-
-  ;z = a * sin(c)
-  ;forward = a * cos(c)
-  ;x = forward * sin(45-b)
-  ;y = forward * cos(45-b)
+  push af;speed
+  push bc;angles
 
   ; put ball in front of home plate
   ld a, HOME_PLATE_X+4
@@ -436,9 +524,45 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld [ball_pos_x+1], a
   ld [ball_pos_y+1], a
   ld [ball_pos_z+1], a
-  ld [ball_vel_x+1], a
-  ld [ball_vel_y+1], a
+
+.calcZVelocity;z = a * sin(c)
+  pop bc; angles
+  pop af; speed
+  push af; speed
+  push bc; angles
+  push af;speed
+
+  ld a, c
+  call math_Sin255
+  ld d, 0
+  ld e, a;sin(ang)*255
+  pop af;speed
+  call math_Multiply;v * sin(ang)*255
+  ld a, h
+  ld [ball_vel_z], a
+  ld a, l
   ld [ball_vel_z+1], a
+
+.calcForwardVelocity;forward = a * cos(c)
+  pop bc; angles
+  push bc; angles
+  push af;speed
+
+  ld a, c
+  call math_Cos255
+  ld d, 0
+  ld e, a;cos(ang)*255
+  pop af;speed
+  call math_Multiply;hl = speed * cos(ang)*255
+  
+.calcXVelocity;TODO: x = forward * sin(45-b)
+  pop bc;angles
+  push bc;angles
+  push hl;forward
+  
+.calcYVelocity;TODO: y = forward * cos(45-b)
+  pop hl;forward
+  pop bc;angles
 
   ld a, -20
   ld [ball_vel_y], a
@@ -446,10 +570,6 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld [ball_vel_x], a
   ld a, 127
   ld [ball_vel_z], a
-
-.setPal
-  ld hl, rOBP1
-  ld [hl], DMG_PAL_BDWW
   ret
 
 SGBSimulationAttrBlk:
@@ -465,6 +585,11 @@ RunSimulation::;a = ball speed, b = spray angle, c = launch angle
   HIDE_ALL_SPRITES
 
 .setPalettes
+  ld hl, rOBP0
+  ld [hl], DMG_PAL_BLBW
+  ld hl, rOBP1
+  ld [hl], DMG_PAL_BLWW
+
   ld bc, PaletteHomeAwayCalvin
   ld de, PaletteField
   ld a, [sgb_Pal23]
@@ -496,11 +621,12 @@ RunSimulation::;a = ball speed, b = spray angle, c = launch angle
   pop bc;spray/launch angle
   pop af;ball speed
   call InitBall
+  call InitRunners
   call InitFielders
 
 .loop
     call UpdateBall
-    call UpdateBaseRunners
+    call UpdateRunners
     call UpdateFielders
     call gbdk_WaitVBL
 

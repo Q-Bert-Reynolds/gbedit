@@ -4,6 +4,7 @@ DMG_PAL_BDLL EQU %11100101 ;good for testing palettes
 DMG_PAL_DLWW EQU %10010000 ;dark,  light, white, white/transparent
 DMG_PAL_BDWW EQU %11100000 ;black, dark,  white, white/transparent
 DMG_PAL_BLWW EQU %11010000 ;black, light, white, white/transparent
+DMG_PAL_BLBW EQU %11011100 ;black, light, black, white/transparent
 
 ;CGB/SGB
 COLOR_WHITE       : MACRO RGB 31, 31, 31 ENDM

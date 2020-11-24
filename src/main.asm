@@ -1,22 +1,32 @@
+TESTS_ENABLED EQU 1
+INTRO_ENABLED EQU 0
+TITLE_ENABLED EQU 0
+WORLD_ENABLED EQU 0
+PLAY_ENABLED  EQU 1
+
 INCLUDE "src/beisbol.inc"
 
 RUN_TESTS: MACRO
-  call LoadFontTiles
-  DISPLAY_ON
-  ld a, ANNOUNCER_BANK
-  call SetBank
+  ; call LoadFontTiles
 
-  TEST -55
-  TEST -45
-  TEST -35
-  TEST -25
-  TEST -15
-  TEST 0
-  TEST 15
-  TEST 25
-  TEST 35
-  TEST 45
-  TEST 55
+  ld a, SIM_BANK
+  call SetBank
+  call RunSimulation;a = exit velocity b = spray angle c = launch angle
+
+  ; ld a, ANNOUNCER_BANK
+  ; call SetBank
+
+  ; TEST -55
+  ; TEST -45
+  ; TEST -35
+  ; TEST -25
+  ; TEST -15
+  ; TEST 0
+  ; TEST 15
+  ; TEST 25
+  ; TEST 35
+  ; TEST 45
+  ; TEST 55
 ENDM
 
 TEST: MACRO
@@ -36,8 +46,10 @@ Entry:
   NINTENDO_LOGO
 IF DEF(_HOME)
   DB "BEISBOL HOME",0,0,0    ;Cart name - 15bytes
-ELSE
+ELIF DEF(_AWAY)
   DB "BEISBOL AWAY",0,0,0    ;Cart name - 15bytes
+ELSE
+  DB "BEISBOL DEMO",0,0,0    ;Cart name - 15bytes
 ENDC
   DB CART_COMPATIBLE_DMG_GBC ;$143
   DB 0,0                     ;$144 - Licensee code (not important)
@@ -138,13 +150,18 @@ Main::
   jp z, .start
   call LoadGame
 
-  ;RUN_TESTS
+IF TESTS_ENABLED == 1
+  RUN_TESTS
+ENDC
 
 .start ;show intro credits, batting animation
+IF INTRO_ENABLED == 1
   ld a, START_BANK
   call SetBank
   call Start
+ENDC
 
+IF TITLE_ENABLED == 1
 .title ;show title drop, version slide, cycle of players, new game/continue screen
   ld a, TITLE_BANK
   call SetBank
@@ -158,12 +175,14 @@ Main::
   ld a, TEMP_BANK
   call SetBank
   call Seed
+ENDC
 
 .startClock
   ld a, GAME_STATE_CLOCK_STARTED
   ld [game_state], a
 
 .mainLoop
+IF WORLD_ENABLED == 1
   .overworld; walk around, find a game, repeat
     ld a, [game_state]
     and a, ~GAME_STATE_PLAY_BALL
@@ -171,7 +190,9 @@ Main::
     ld a, OVERWORLD_BANK
     call SetBank
     call Overworld
+ENDC
 
+IF PLAY_ENABLED == 1
     ;TODO: black out tiles one by one
     PLAY_SONG tessie_data, 1
 
@@ -182,7 +203,7 @@ Main::
     ld a, PLAY_BALL_BANK
     call SetBank
     call StartGame
-
+ENDC
     jr .mainLoop; TODO: if game finished, exit
 
   xor a

@@ -129,7 +129,7 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
   if len(tileset) == 0:
     return
   
-  name = name.replace("home_", "").replace("away_", "")
+  name = name.replace("demo_", "").replace("home_", "").replace("away_", "")
   tilesPath = pathlib.PurePath(root, name + ".tiles").as_posix()
   if len(tileset) > 256:
     print("Error: " + tilesPath + " has " + str(len(tileset)) + " tiles.")

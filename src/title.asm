@@ -9,10 +9,14 @@ IF DEF(_HOME)
 INCLUDE "img/home_version/version.asm"
 IntroPlayerNums: 
   DB 4, 7, 1, 13, 32, 123, 25, 35, 112, 63, 92, 132, 17, 95, 77, 129
-ELSE
+ELIF DEF(_AWAY)
 INCLUDE "img/away_version/version.asm"
 IntroPlayerNums: 
   DB 7, 4, 1, 56, 106, 37, 113, 142, 135, 143, 44, 60, 84, 137, 94, 26
+ELSE
+INCLUDE "img/demo_version/version.asm"
+IntroPlayerNums: 
+  DB 1, 4, 7, 25, 106, 37, 113, 142, 135, 143, 44, 60, 84, 137, 94, 26
 ENDC
 
 PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT

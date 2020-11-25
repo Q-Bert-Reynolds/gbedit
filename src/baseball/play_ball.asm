@@ -841,7 +841,7 @@ HitBall:
   call gbdk_Delay
 
   ld a, [swing_diff_x]
-  ld b, 0;degrees left or right
+  ld b, a;degrees left or right
 
   ld a, [swing_diff_y]
   ld c, a; degrees up or down

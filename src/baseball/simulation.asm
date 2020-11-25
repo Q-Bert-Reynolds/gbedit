@@ -515,7 +515,7 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ; put ball in front of home plate
   ld a, HOME_PLATE_X+4
   ld [ball_pos_x], a
-  ld a, HOME_PLATE_Y-4
+  ld a, HOME_PLATE_Y+12
   ld [ball_pos_y], a
   ld a, 1
   ld [ball_pos_z], a
@@ -554,23 +554,47 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld d, 0
   ld e, a;cos(ang)*255
   pop af;speed
-  call math_Multiply;hl = speed * cos(ang)*255
+  call math_Multiply;hl = forward = speed * cos(ang)*255
   
 .calcXVelocity;TODO: x = forward * sin(45-b)
   pop bc;angles
   push bc;angles
   push hl;forward
+
+  ld a, 45
+  sub a, b
+  call math_Sin255
+  pop de;forward
+  push de;forward
+  call math_Multiply;hl = x speed * 255
+  ld a, h
+  ld [ball_vel_x], a
+  ld a, l
+  ld [ball_vel_x+1], a
   
 .calcYVelocity;TODO: y = forward * cos(45-b)
   pop hl;forward
   pop bc;angles
+  push hl;forward
 
-  ld a, -20
+  ld a, 45
+  sub a, b
+  call math_Cos255
+  pop de;forward
+  call math_Multiply;hl = y speed * 255
+  ld a, h
+  cpl
   ld [ball_vel_y], a
-  ld a, 30
-  ld [ball_vel_x], a
-  ld a, 127
-  ld [ball_vel_z], a
+  cpl
+  ld a, l
+  ld [ball_vel_y+1], a
+
+  ; ld a, -20
+  ; ld [ball_vel_y], a
+  ; ld a, 30
+  ; ld [ball_vel_x], a
+  ; ld a, 127
+  ; ld [ball_vel_z], a
   ret
 
 SGBSimulationAttrBlk:

@@ -11,6 +11,9 @@ RUN_TESTS: MACRO
 
   ld a, SIM_BANK
   call SetBank
+  ld b, 0;degrees left or right
+  ld c, 45; degrees up or down
+  ld a, 255
   call RunSimulation;a = exit velocity b = spray angle c = launch angle
 
   ; ld a, ANNOUNCER_BANK

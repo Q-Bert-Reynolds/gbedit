@@ -1,40 +1,44 @@
-TESTS_ENABLED EQU 1
-INTRO_ENABLED EQU 0
-TITLE_ENABLED EQU 0
-WORLD_ENABLED EQU 0
+TESTS_ENABLED EQU 1        
+INTRO_ENABLED EQU 1
+TITLE_ENABLED EQU 1
+WORLD_ENABLED EQU 1
 PLAY_ENABLED  EQU 1
 
 INCLUDE "src/beisbol.inc"
 
-ANG = 10
 RUN_TESTS: MACRO
+  call LoadFontTiles
+
+SPRAY = -45
+REPT 6
+
+LAUNCH = 30
+REPT 3
+
+POWER = 50
+REPT 2
 
   ld a, SIM_BANK
   call SetBank
-REPT 9
-  TEST_SIM 50, 0, ANG
-ANG = ANG+10
-ENDR
+  TEST_SIM POWER, SPRAY, LAUNCH
 
-  ; call LoadFontTiles
   ; ld a, ANNOUNCER_BANK
   ; call SetBank
+  ; TEST_ANNOUNCER SPRAY
 
-  ; TEST_ANNOUNCER -55
-  ; TEST_ANNOUNCER -45
-  ; TEST_ANNOUNCER -35
-  ; TEST_ANNOUNCER -25
-  ; TEST_ANNOUNCER -15
-  ; TEST_ANNOUNCER 0
-  ; TEST_ANNOUNCER 15
-  ; TEST_ANNOUNCER 25
-  ; TEST_ANNOUNCER 35
-  ; TEST_ANNOUNCER 45
-  ; TEST_ANNOUNCER 55
+POWER = POWER+40
+ENDR;POWER loop
+
+LAUNCH = LAUNCH+30
+ENDR;LAUNCH loop
+
+SPRAY = SPRAY+15
+ENDR;SPRAY loop
+
 ENDM
 
 TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down
-  ld de, \1
+  ld a, \1
   ld b, \2
   ld c, \3
   call RunSimulation;a = exit velocity b = spray angle c = launch angle

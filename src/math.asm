@@ -94,33 +94,11 @@ math_Multiply:: ; hl = de * a where 0 <= a <= 255
   ret
 
 math_SignedMultiply:: ; hl = de * a where -127 <= a <= 127, -32385 <= de <= 32385
-  ld b, a
-  xor a, d
-  and a, %10000000
-  ld c, a;sign in highest bit of c
-  ld a, b
-.testSignA
   cp a, 128
-  jr c, .testSignDE
+  jr c, math_Multiply
   cpl
   inc a
-.testSignDE
-  ld b, a;save a
-  ld a, d
-  cp a, 128
-  jr c, .multiply
-  cpl
-  ld d, a
-  ld a, e
-  cpl
-  ld e, a
-  inc de
-.multiply
-  ld a, b;restore a
   call math_Multiply
-  ld a, c
-  cp a, %10000000
-  ret nz
   ld a, h
   cpl
   ld h, a
@@ -129,6 +107,41 @@ math_SignedMultiply:: ; hl = de * a where -127 <= a <= 127, -32385 <= de <= 3238
   ld l, a
   inc hl
   ret
+;   ld b, a
+;   xor a, d
+;   and a, %10000000
+;   ld c, a;sign in highest bit of c
+;   ld a, b
+; .testSignA
+;   cp a, 128
+;   jr c, .testSignDE
+;   cpl
+;   inc a
+; .testSignDE
+;   ld b, a;save a
+;   ld a, d
+;   cp a, 128
+;   jr c, .multiply
+;   cpl
+;   ld d, a
+;   ld a, e
+;   cpl
+;   ld e, a
+;   inc de
+; .multiply
+;   ld a, b;restore a
+;   call math_Multiply
+;   ld a, c
+;   cp a, %10000000
+;   ret nz
+;   ld a, h
+;   cpl
+;   ld h, a
+;   ld a, l
+;   cpl
+;   ld l, a
+;   inc hl
+;   ret
 
 ; math_Multiply16 by Jon Tara
 math_Multiply16:: ;bcde = de * hl

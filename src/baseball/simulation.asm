@@ -441,15 +441,6 @@ InitFielders:
   ld [SimulationFielders9.pos_y], a
 
   call DrawFielders
-
-  call CalculateLandingSpot
-  push de
-  call CalculateLandingSpot2
-  pop bc
-  ld [_breakpoint], a
-
-.findClosest
-
   ret
 
 DrawFielders:
@@ -508,7 +499,9 @@ DrawFielders:
     jr nz, .loop
   ret
 
-InitBall:;de = ball speed b = spray angle c = launch angle
+InitBall:;a = ball speed b = spray angle c = launch angle
+  ld d, 0
+  ld e, a
   push de;speed
   push bc;angles
 
@@ -534,7 +527,10 @@ InitBall:;de = ball speed b = spray angle c = launch angle
 
   ld a, c
   call math_Sin127
-  pop de;speed
+  pop hl;speed
+  add hl, hl
+  ld d, h
+  ld e, l
   call math_SignedMultiply;v * sin(ang)*127
   ld a, h
   ld [ball_vel_z], a
@@ -547,16 +543,16 @@ InitBall:;de = ball speed b = spray angle c = launch angle
 
   ld a, c
   call math_Cos127
-  pop de;speed
-  call math_Multiply;hl = forward = speed * cos(ang)*127
-  
+  pop hl;de;speed
+  ; call math_SignedMultiply;hl = forward = speed*cos(launch)*127 = de*cos(c)*127
+
 .calcXVelocity;TODO: x = forward * sin(45-b)
   pop bc;angles
   push bc;angles
   push hl;forward
 
   ld a, 45
-  sub a, b
+  add a, b
   call math_Sin127
   pop de;forward
   push de;forward
@@ -570,7 +566,7 @@ InitBall:;de = ball speed b = spray angle c = launch angle
   push hl;forward
 
   ld a, 45
-  sub a, b
+  add a, b
   call math_Cos127
   pop de;forward
   call math_SignedMultiply;hl = y speed * 127
@@ -585,7 +581,6 @@ SGBSimulationAttrBlk:
   ATTR_BLK_PACKET %001, 3,3,3, 0,0, 20,18
   
 RunSimulation::;a = ball speed, b = spray angle, c = launch angle
-
   push af;ball speed
   push bc;spray/launch angle
   

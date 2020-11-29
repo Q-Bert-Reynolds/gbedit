@@ -6,33 +6,41 @@ PLAY_ENABLED  EQU 1
 
 INCLUDE "src/beisbol.inc"
 
+ANG = 10
 RUN_TESTS: MACRO
-  ; call LoadFontTiles
 
   ld a, SIM_BANK
   call SetBank
-  ld b, 0;degrees left or right
-  ld c, 45; degrees up or down
-  ld a, 255
-  call RunSimulation;a = exit velocity b = spray angle c = launch angle
+REPT 9
+  TEST_SIM 50, 0, ANG
+ANG = ANG+10
+ENDR
 
+  ; call LoadFontTiles
   ; ld a, ANNOUNCER_BANK
   ; call SetBank
 
-  ; TEST -55
-  ; TEST -45
-  ; TEST -35
-  ; TEST -25
-  ; TEST -15
-  ; TEST 0
-  ; TEST 15
-  ; TEST 25
-  ; TEST 35
-  ; TEST 45
-  ; TEST 55
+  ; TEST_ANNOUNCER -55
+  ; TEST_ANNOUNCER -45
+  ; TEST_ANNOUNCER -35
+  ; TEST_ANNOUNCER -25
+  ; TEST_ANNOUNCER -15
+  ; TEST_ANNOUNCER 0
+  ; TEST_ANNOUNCER 15
+  ; TEST_ANNOUNCER 25
+  ; TEST_ANNOUNCER 35
+  ; TEST_ANNOUNCER 45
+  ; TEST_ANNOUNCER 55
 ENDM
 
-TEST: MACRO
+TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down
+  ld de, \1
+  ld b, \2
+  ld c, \3
+  call RunSimulation;a = exit velocity b = spray angle c = launch angle
+ENDM
+
+TEST_ANNOUNCER: MACRO ;\1 = angle left or right
   ld hl, str_buffer
   xor a
   ld [hl], a

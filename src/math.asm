@@ -83,7 +83,7 @@ ADD_HL_DE_ADC_REG: MACRO ;\1 = register
 ENDM
 
 SECTION "Math Code", ROM0
-math_Multiply:: ; hl = de * a
+math_Multiply:: ; hl = de * a where 0 <= a <= 255
   ld hl, 0
   and a
   ret z
@@ -91,6 +91,43 @@ math_Multiply:: ; hl = de * a
     add hl, de
     dec a
     jr nz, .loop
+  ret
+
+math_SignedMultiply:: ; hl = de * a where -127 <= a <= 127, -32385 <= de <= 32385
+  ld b, a
+  xor a, d
+  and a, %10000000
+  ld c, a;sign in highest bit of c
+  ld a, b
+.testSignA
+  cp a, 128
+  jr c, .testSignDE
+  cpl
+  inc a
+.testSignDE
+  ld b, a;save a
+  ld a, d
+  cp a, 128
+  jr c, .multiply
+  cpl
+  ld d, a
+  ld a, e
+  cpl
+  ld e, a
+  inc de
+.multiply
+  ld a, b;restore a
+  call math_Multiply
+  ld a, c
+  cp a, %10000000
+  ret nz
+  ld a, h
+  cpl
+  ld h, a
+  ld a, l
+  cpl
+  ld l, a
+  inc hl
   ret
 
 ; math_Multiply16 by Jon Tara
@@ -442,17 +479,18 @@ math_Abs:: ;a = |a|
   ret
 
 
-math_Cos255:: ;a = cos(a) * 255 where a in degrees <= 180
+math_Cos255:: ;a = cos(a) * 255 where 0 <= a <= 180 deg
   ld b, a;deg
   ld a, 90
   sub a, b
+  ret z
   jr nc, math_Sin255
   ld b, a
   ld a, 255
   sub a, b
   ;fall through to sin
   
-math_Sin255:: ;a = sin(a) * 255 where a in degrees <= 180
+math_Sin255:: ;a = sin(a) * 255 where 0 <= a <= 180 deg
   cp a, 91
   jr c, .lookup
   ld b, a
@@ -464,6 +502,46 @@ math_Sin255:: ;a = sin(a) * 255 where a in degrees <= 180
   ld c, a
   add hl, bc
   ld a, [hl]
+  ret
+
+math_Cos127:: ;a = cos(a) * 127 where -127 <= a <= 127 deg
+  cp a, 91
+  jr c, .positive
+  cp a, -90
+  jr c, .negative
+  cpl
+  inc a
+  jr .positive
+.negative
+  cp 128
+  jr c, .solve
+  cpl
+  inc a
+.solve
+  call math_Cos255
+  srl a
+  cpl
+  inc a
+  ret
+.positive
+  call math_Cos255
+  srl a
+  ret
+
+math_Sin127:: ;a = sin(a) * 127 where -127 <= a <= 127 deg
+  cp a, 128
+  jr c, .positive
+.negative
+  cpl
+  inc a
+  call math_Sin255
+  srl a
+  cpl
+  inc a
+  ret
+.positive
+  call math_Sin255
+  srl a
   ret
   
 Sin255Table:;0 to 90 degrees (also 180 to 90, 0 to -90, and -180 to -90)

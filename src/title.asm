@@ -16,7 +16,7 @@ IntroPlayerNums:
 ELSE
 INCLUDE "img/demo_version/version.asm"
 IntroPlayerNums: 
-  DB 1, 4, 7, 25, 106, 37, 113, 142, 135, 143, 44, 60, 84, 137, 94, 26
+  DB 1, 4, 7, 25, 129, 150, 54, 65, 35, 143, 19, 95, 84, 137, 47, 151
 ENDC
 
 PLAYER_INDEX EQU _TITLE_TILE_COUNT+_VERSION_TILE_COUNT

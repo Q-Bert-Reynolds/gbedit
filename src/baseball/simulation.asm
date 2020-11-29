@@ -508,8 +508,8 @@ DrawFielders:
     jr nz, .loop
   ret
 
-InitBall:;a = ball speed b = spray angle c = launch angle
-  push af;speed
+InitBall:;de = ball speed b = spray angle c = launch angle
+  push de;speed
   push bc;angles
 
   ; put ball in front of home plate
@@ -526,35 +526,29 @@ InitBall:;a = ball speed b = spray angle c = launch angle
   ld [ball_pos_z+1], a
 
 .calcZVelocity;z = a * sin(c)
-  pop bc; angles
-  pop af; speed
-  push af; speed
-  push bc; angles
-  push af;speed
+  pop bc;spray,launch
+  pop de;speed
+  push de;speed
+  push bc;spray,launch
+  push de;speed
 
   ld a, c
-  call math_Sin255
-  ld d, 0
-  ld e, a;sin(ang)*255
-  pop af;speed
-  call math_Multiply;v * sin(ang)*255
+  call math_Sin127
+  pop de;speed
+  call math_SignedMultiply;v * sin(ang)*127
   ld a, h
   ld [ball_vel_z], a
-  ld a, l
-  ld [ball_vel_z+1], a
 
 .calcForwardVelocity;forward = a * cos(c)
-  pop bc; angles
-  pop af; speed
-  push bc; angles
-  push af;speed
+  pop bc;spray,launch
+  pop de;speed
+  push bc;spray,launch
+  push de;speed
 
   ld a, c
-  call math_Cos255
-  ld d, 0
-  ld e, a;cos(ang)*255
-  pop af;speed
-  call math_Multiply;hl = forward = speed * cos(ang)*255
+  call math_Cos127
+  pop de;speed
+  call math_Multiply;hl = forward = speed * cos(ang)*127
   
 .calcXVelocity;TODO: x = forward * sin(45-b)
   pop bc;angles
@@ -563,14 +557,12 @@ InitBall:;a = ball speed b = spray angle c = launch angle
 
   ld a, 45
   sub a, b
-  call math_Sin255
+  call math_Sin127
   pop de;forward
   push de;forward
-  call math_Multiply;hl = x speed * 255
+  call math_SignedMultiply;hl = x speed * 127
   ld a, h
   ld [ball_vel_x], a
-  ld a, l
-  ld [ball_vel_x+1], a
   
 .calcYVelocity;TODO: y = forward * cos(45-b)
   pop hl;forward
@@ -579,22 +571,13 @@ InitBall:;a = ball speed b = spray angle c = launch angle
 
   ld a, 45
   sub a, b
-  call math_Cos255
+  call math_Cos127
   pop de;forward
-  call math_Multiply;hl = y speed * 255
+  call math_SignedMultiply;hl = y speed * 127
   ld a, h
   cpl
+  inc a
   ld [ball_vel_y], a
-  cpl
-  ld a, l
-  ld [ball_vel_y+1], a
-
-  ; ld a, -20
-  ; ld [ball_vel_y], a
-  ; ld a, 30
-  ; ld [ball_vel_x], a
-  ; ld a, 127
-  ; ld [ball_vel_z], a
   ret
 
 SGBSimulationAttrBlk:

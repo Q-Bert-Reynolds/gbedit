@@ -216,6 +216,10 @@ Start::
   ld b, DRAW_FLAGS_BKG
   call SetColorBlocks
 
+  ld hl, PaletteBaseball
+  ld a, 4
+  call GBCSetPalette
+
   ld hl, rBGP
   ld [hl], $E0
 
@@ -266,6 +270,14 @@ Start::
   EXITABLE_DELAY .pitchSequence, (PADF_START | PADF_A), 60
 
   PLAY_SONG intro_lights_data, 0
+
+  ld hl, PaletteBaseball
+  ld a, 4
+  call GBCSetPalette
+
+  ld c, 0
+  ld d, OAMF_PAL1 | 4
+  call gbdk_SetSpriteProp
 
   ld a, -8
   ld [_y], a
@@ -485,7 +497,7 @@ Start::
     ld [hli], a;x
     xor a
     ld [hli], a;tile
-    ld a, OAMF_PRI | OAMF_PAL1
+    ld a, OAMF_PRI | OAMF_PAL1 | 4
     ld [hl], a;props
     
 .slidePitcher

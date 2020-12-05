@@ -162,7 +162,7 @@ AnimateAvatar:;hl = animation
 
   pop af;flip
   and a
-  jr z, .noFlip
+  jr z, .setColorProps
 
   ld a, 4
   ld bc, tile_buffer
@@ -194,11 +194,26 @@ AnimateAvatar:;hl = animation
     dec c
     jr nz, .swapLoop
 
+.setColorProps
+  ld a, 4
+  ld bc, tile_buffer
+.setColorPropsLoop
+    push af
+    ld a, [de]
+    or a, 7
+    ld [bc], a
+    inc de
+    inc bc
+
+    pop af
+    dec a
+    jr nz, .setColorPropsLoop
+  ld de, tile_buffer+4
+  ld bc, 4
+  call mem_Copy
+
   ld de, tile_buffer
   ld hl, tile_buffer+4
-
-.noFlip
-
   ld b, 0
   ld c, 4
   call SetSpriteTilesProps ;bc = offset\count, hl = tilemap, de = propmap
@@ -451,6 +466,10 @@ LoadAvatarSprites:
   ld de, $8000
   ld bc, _AVATARS_TILE_COUNT*16
   call mem_CopyVRAM
+
+  ld hl, PaletteHomeAwayCalvin
+  ld a, 7
+  call GBCSetPalette
   ret
 
 LoadOverworldTiles:

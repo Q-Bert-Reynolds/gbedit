@@ -1,6 +1,5 @@
 Priority
 
-- calculate initial velocity from ball speed, spray angle, and launch angle
 - results from hitting to the field
 - make announcer actually work
 - return to previous world position
@@ -70,7 +69,6 @@ Announcer
 
 Simulation
 
-- initial velocity should be calculated from ball speed, spray angle, and launch angle
 - ball should bounce off fences
 - running
 - catching throwing

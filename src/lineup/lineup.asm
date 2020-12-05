@@ -552,11 +552,11 @@ DrawLineupPlayerSprites:;hl = player, [_u] = x offset
   and a
   cp 1
   jr z, .pal1
-  ld a, OAMF_PAL0
+  ld a, OAMF_PAL0 | 4
   ld [_s], a
   jr .drawBody
 .pal1
-  ld a, OAMF_PAL1
+  ld a, OAMF_PAL1 | 5
   ld [_s], a
 
 .drawBody
@@ -1727,6 +1727,13 @@ _ShowLineup:;b = item id (0 = no item), returns item used in c (0 = not used, 1 
   call GetHPBarColors
   ld b, DRAW_FLAGS_BKG
   call SetColorBlocks
+
+  ld hl, PaletteLineupA
+  ld a, 4
+  call GBCSetPalette
+  ld hl, PaletteLineupB
+  ld a, 5
+  call GBCSetPalette
 
   ld hl, _LineupSpritesTiles
   ld de, $8000

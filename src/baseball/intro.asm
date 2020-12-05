@@ -215,7 +215,7 @@ PlayBallIntro: ;[_a] = player num or coach id
   ld e, a
   ld a, [hli]
   ld d, a
-  ld bc, PaletteHomeAwayCalvin
+  ld bc, PaletteCalvin
   ld a, [sgb_Pal23]
   call SetPalettesDirect
 
@@ -228,8 +228,8 @@ PlayBallIntro: ;[_a] = player num or coach id
   jr .revealText
 
 .showTeamText
-  ld bc, PaletteHomeAwayCalvin
-  ld de, PaletteHomeAwayNolan
+  ld bc, PaletteCalvin
+  ld de, PaletteNolan
   ld a, [sgb_Pal23]
   call SetPalettesDirect
 

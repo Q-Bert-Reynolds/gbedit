@@ -593,7 +593,7 @@ RunSimulation::;a = ball speed, b = spray angle, c = launch angle
   ld hl, rOBP1
   ld [hl], DMG_PAL_BLWW
 
-  ld bc, PaletteHomeAwayCalvin
+  ld bc, PaletteCalvin
   ld de, PaletteField
   ld a, [sgb_Pal23]
   call SetPalettesDirect

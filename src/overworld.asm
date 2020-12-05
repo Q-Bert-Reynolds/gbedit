@@ -467,7 +467,7 @@ LoadAvatarSprites:
   ld bc, _AVATARS_TILE_COUNT*16
   call mem_CopyVRAM
 
-  ld hl, PaletteHomeAwayCalvin
+  ld hl, PaletteCalvin
   ld a, 7
   call GBCSetPalette
   ret

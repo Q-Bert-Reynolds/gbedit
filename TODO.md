@@ -66,7 +66,6 @@ Announcer
 - Announce "Squirt looks done for out there." when out of HP. 
 - Announce things like "Ghost runners on first and third." when playing against an unsigned player
 
-
 Simulation
 
 - ball should bounce off fences
@@ -78,7 +77,7 @@ Simulation
 
 Team Menu
 
-- fix player palette on GBC
+- add hair/skin palette data
 - pressing left and right cycles between stats
 - missing moves in stat page move list should show "-"
 - stat page should be accessible from PC
@@ -129,7 +128,6 @@ Audio
 
 Super GameBoy
 
-- use second controller 
 - use color palette data
 - use additional sprites
 - borders for each city when walking
@@ -137,6 +135,7 @@ Super GameBoy
 - crowd SFX
 - extra music voices
 - fix LCD interrupt flickering when sending packets
+- use second controller?
 
 Design Notes
 

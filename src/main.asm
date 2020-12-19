@@ -161,6 +161,7 @@ Main::
   call Seed
   
 .loadGame
+  call LoadOptions
   call CheckSave
   jp z, .start
   call LoadGame

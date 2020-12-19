@@ -131,6 +131,7 @@ GetPositionPlayerName::
 .opponentIsFielding
   pop af;position number
   call GetOpposingPlayerByPosition
+  ld a, [hl]
   call GetPlayerName
   jr .exit
 .userIsFielding
@@ -361,7 +362,6 @@ LocationFromDistSprayAngle::;a = distance, b = spray angle, returns xy in de
   ld e, a
   ret nc
   ld e, 255
-  ret
   ret
 
 XLocationsOfPositions::

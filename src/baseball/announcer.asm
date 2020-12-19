@@ -391,6 +391,7 @@ _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
 
 .onGround
   pop af;speed
+  call AnnounceHitOnGround
   ret
 
 .inAir
@@ -410,6 +411,8 @@ _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
 .finish
   ret 
 
+AnnounceHitOnGround:;a = speed, b = spray angle
+
 AnnounceHitInAir:;a = speed, b = spray angle, c = launch angle
   push bc;spray, launch
   call DistanceFromSpeedLaunchAngle;a = speed, c = launch angle, returns distance in a
@@ -425,18 +428,20 @@ AnnounceHitInAir:;a = speed, b = spray angle, c = launch angle
   ret
 
 AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
+  push bc;spray,launch
+  push af;distance
 .deepFly
-  cp 200
+  cp 220
   jr c, .flyBall
   ld hl, HitDeepFlyBallText
   jr .copyString
 .flyBall
-  cp 140
+  cp 180
   jr c, .shallowFly
   ld hl, HitFlyBallText
   jr .copyString
 .shallowFly
-  cp 100
+  cp 140
   jr c, .popFly
   ld hl, HitShallowFlyBallText
   jr .copyString
@@ -450,8 +455,23 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   ld hl, str_buffer
   call RevealTextAndWait
 
-  call AnnounceFieldingText
-  ret
+  pop af;distance
+  pop bc;spray,launch
+  cp a, 240
+  jr c, .fieldBall
+  ld a, b
+  BETWEEN -45, 45
+  jr nz, .foulBall
+.homeRun
+  ld hl, HitHomeRunText
+  jp RevealTextAndWait
+.foulBall
+  ld hl, HitFoulBallText
+  jp RevealTextAndWait
+.fieldBall
+  call LocationFromDistSprayAngle
+  call GetClosestFielderByLocation
+  jp AnnounceFieldingText
 
 AppendOutfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
   ld a, b
@@ -477,6 +497,8 @@ AppendOutfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
   ret
 
 AnnounceHitInAirToInfield:;a = distance, b = spray angle, c = launch angle  
+  push bc;spray,launch
+  push af;distance
 .lineDrive
   cp 200
   jr c, .grounder
@@ -499,13 +521,14 @@ AnnounceHitInAirToInfield:;a = distance, b = spray angle, c = launch angle
   call str_Copy
 
   call AppendInfieldLocationTextByAngle
-
   ld hl, str_buffer
   call RevealTextAndWait
 
-  ld a, LEFT_FIELDER
-  call AnnounceFieldingText
-  ret 
+  pop af;distance
+  pop bc;spray,launch
+  call LocationFromDistSprayAngle
+  call GetClosestFielderByLocation
+  jp AnnounceFieldingText
 
 AppendInfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
   ld a, b
@@ -557,6 +580,7 @@ AnnounceBuntText:;a = launch angle, b = spray angle
   ret
 
 AnnounceFieldingText:;a = position fielding the ball, b = dist from player
+  ld [_breakpoint], a
   call GetPositionPlayerName
   
   ; caught 

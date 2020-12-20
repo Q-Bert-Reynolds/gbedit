@@ -195,6 +195,13 @@ AnnouncePitchName::
   call DisplayText
   ret
 
+AnnounceNextBatter
+  xor a
+  call SetBalls
+  xor a
+  call SetStrikes
+  TRAMPOLINE NextBatter
+
 AnnounceBatter::
   TRAMPOLINE DrawCountOutsInning
   TRAMPOLINE ShowBatter
@@ -292,23 +299,19 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-
   call AnnounceRunScored
-
-  xor a
-  call SetBalls
-  xor a
-  call SetStrikes
-  TRAMPOLINE DrawCountOutsInning
-  TRAMPOLINE NextBatter
-  call AnnounceBatter
-  ret
+  jp AnnounceNextBatter
 
 .hitByPitch
-  ; HitByPitchText
-  ; BenchesClearText
-  TRAMPOLINE NextBatter
-  call AnnounceBatter
+  TRAMPOLINE PutBatterOnFirst
+  TRAMPOLINE GetCurrentBatterName
+  ld hl, HitByPitchText;BenchesClearText
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+  jp AnnounceNextBatter
 
 .updateBaseRunners
   call AnnounceRunnersOn
@@ -461,13 +464,32 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   jr c, .fieldBall
   ld a, b
   BETWEEN -45, 45
-  jr nz, .foulBall
+  jr z, .foulBall
 .homeRun
+  call CurrentOrderInLineup
+  inc a;current batter is 0 to 8, needs to be 1 to 9
+  ld c, a
+  ld b, 4
+  call AdvanceRunners
+  cp a, 4
+  jr z, .grandSlam
   ld hl, HitHomeRunText
-  jp RevealTextAndWait
+  call RevealTextAndWait
+  TRAMPOLINE DrawScore
+  call AnnounceNextBatter
+  ret
+.grandSlam
+  ld hl, HitGrandSlamText
+  call RevealTextAndWait
+  TRAMPOLINE DrawScore
+  call AnnounceNextBatter
+  ret
 .foulBall
+  call FoulBall
   ld hl, HitFoulBallText
-  jp RevealTextAndWait
+  call RevealTextAndWait
+  TRAMPOLINE DrawCountOutsInning
+  ret
 .fieldBall
   call LocationFromDistSprayAngle
   call GetClosestFielderByLocation
@@ -627,8 +649,6 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player
   ; HitBaseHitText
   ; HitDoubleText
   ; HitTripleText
-  ; HitHomeRunText
-  ; HitGrandSlamText
   ; CriticalHitText
   ret
 

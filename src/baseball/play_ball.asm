@@ -843,13 +843,14 @@ HitBall:
   ld a, [swing_diff_x]
   ld b, a;degrees left or right
 
-  ld a, [swing_diff_y]
-  ld c, a; degrees up or down
+  ; ld a, [swing_diff_y]
+  ; ld c, a; degrees up or down
+  ld c, 45
 
-  ld a, [swing_diff_z]
-  ld d, a
-  ld a, 255;full power, TODO: replace with swing power and player bat stat
+  ; ld a, [swing_diff_z]
+  ; ld d, a
   ; sub a, d;reduce power by swing diff
+  ld a, 255;full power, TODO: replace with swing power and player bat stat
 
   push af;exit velocity
   ld a, [animation_style]

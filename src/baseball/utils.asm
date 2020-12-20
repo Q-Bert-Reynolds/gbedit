@@ -16,6 +16,8 @@ SECTION "Baseball Utils Bank 0", ROM0
 ; SetBalls                        a = balls
 ; GetStrikes                      returns (balls_strikes_outs & STRIKES_MASK) >> 2 in a
 ; SetStrikes                      a = strikes
+; FoulBall                        increments strikes if less than 2
+; AdvanceRunners                  b = bases to advance, c = runner to put on first, returns runs sored in a
 ; GetOuts                         returns balls_strikes_outs & OUTS_MASK in a
 ; SetOuts                         a = outs
 ; IncrementOuts                   returns outs in a
@@ -27,6 +29,7 @@ SECTION "Baseball Utils Bank 0", ROM0
 ; LocationFromDistSprayAngle      a = distance, b = spray angle, returns xy in de
 ; GetClosestFielderByLocation     de = xy, returns position number in a
 ; IsUserFielding                  nz = user is fielding, z = user is batting
+; CurrentOrderInLineup            returns order in a
 ; GetPitchBreak                   b = path, c = z, returns xy offset in de
 
 GetBalls::; returns (balls_strikes_outs & BALLS_MASK) >> 4 in a
@@ -61,6 +64,79 @@ SetStrikes::; a = strikes
   and ~STRIKES_MASK
   or a, b
   ld [balls_strikes_outs], a
+  ret
+
+FoulBall::
+  call GetStrikes
+  cp a, 2
+  ret nc 
+  inc a
+  call SetStrikes
+  ret
+
+; b = bases to advance, c = batter (1-9) to put on first or 0
+; returns runs scored in a, last scoring runner in upper nibble of runners_on_base
+AdvanceRunners::
+  xor a
+  ld e, a;runs scored
+.loop
+  .clearHome
+    ld a, [runners_on_base]
+    and a, %00001111;clear run 
+    ld [runners_on_base], a
+  .firstToSecond
+    ld a, [runners_on_base+1]
+    swap a;first base runner moved to second
+    ld d, a;second base runner in lower nibble
+    and a, %11110000;clear first base
+    or a, c;put batter (or nothing) on first
+    ld c, 0;clear batter after first use
+    ld [runners_on_base+1], a
+    ld a, d;second base runner in lower nibble
+    and %00001111;second base runner
+  .secondToThird
+    ld d, a;second base runner
+    ld a, [runners_on_base]
+    swap a;third base runner (if any) scores
+    or a, d;second base runner moved to third
+    ld [runners_on_base], a;store scoring runner (if any) and new runner on third
+    and a, %11110000
+    jr z, .checkDone
+  .runScores
+    inc e;score  
+    ; TODO: add to runner stats
+  .checkDone
+    dec b;bases
+    jr nz, .loop
+.done
+  ld a, e;runs scored
+  and a
+  ret z;done if no runs scored
+  ;otherwise fall through to ScoreRuns
+
+ScoreRuns::; a = runs, returns runs in a
+  ld b, a
+  call IsUserFielding
+  ld a, [home_team]
+  jr z, .userIsBatting
+.opponentIsBatting
+  and a
+  jr z, .homeScored
+  jr .awayScored
+.userIsBatting
+  and a
+  jr nz, .homeScored
+.awayScored
+  ld a, [away_score]
+  add a, b;add runs
+  ld [away_score], a
+  ld b, a;runs
+  ret
+.homeScored
+  ld a, [home_score]
+  add a, b;add runs
+  ld [home_score], a
+  ld a, b;runs
   ret
 
 GetOuts::; returns balls_strikes_outs & OUTS_MASK in a
@@ -422,6 +498,15 @@ IsUserFielding::;nz = user is fielding, z = user is batting
   pop bc
   ret
 
+CurrentOrderInLineup::;returns order in a
+  call IsUserFielding
+  ld a, [current_batter]
+  jr z, .skip
+  swap a;opponent is in upper nibble
+.skip
+  and a, %00001111;zero out other team
+  ret
+
 GetPitchBreak:: ;b = path, c = z, returns xy offset in de
   ld a, [loaded_bank]
   push af
@@ -438,7 +523,6 @@ SECTION "Baseball Utils Bank X", ROMX, BANK[PLAY_BALL_BANK]
 ; HealthPctToString - a = health_pct, returns str_buff
 ; BattingAvgToString - de = batting average*1000, returns str_buff
 ; EarnedRunAvgToString - hl = ERA*100, returns str_buff
-; CurrentOrderInLineup - returns order in a
 ; NextFrame
 ; NextBatter
 ; ShowBatter
@@ -864,18 +948,6 @@ EarnedRunAvgToString:: ;hl = ERA*100, returns str_buff
   ld de, str_buffer
   ld hl, name_buffer
   call str_Append
-  ret
-
-CurrentOrderInLineup::;returns order in a
-  call IsUserFielding
-  ld a, [current_batter]
-  jr nz, .opponentBatting
-  and a, %00001111
-  ret
-.opponentBatting
-  ld a, [current_batter]
-  swap a
-  and a, %00001111
   ret
 
 ;Show Player utils

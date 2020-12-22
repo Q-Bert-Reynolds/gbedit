@@ -840,18 +840,8 @@ HitBall:
   ld de, 100
   call gbdk_Delay
 
-  ld a, [swing_diff_x]
-  ld b, a;degrees left or right
-
-  ; ld a, [swing_diff_y]
-  ; ld c, a; degrees up or down
-  ld c, 45
-
-  ; ld a, [swing_diff_z]
-  ; ld d, a
-  ; sub a, d;reduce power by swing diff
-  ld a, 255;full power, TODO: replace with swing power and player bat stat
-
+  call GetVelocityAndAngle
+  
   push af;exit velocity
   ld a, [animation_style]
   and a
@@ -883,6 +873,46 @@ FinishPitch:
   
   ld de, 100
   call gbdk_Delay
+  ret
+
+GetVelocityAndAngle:;returns velocity in a, spray in b, launch in c  
+  ld a, [swing_move_id]
+  call GetMove
+
+  ld a, [move_data.accuracy]
+  ld b, a
+  ld a, 110
+  sub a, b
+  ld d, 0
+  ld e, a
+  ; push de
+
+  ld a, [swing_diff_x]
+  ld b, a;degrees left or right
+  ;TODO: multiply by move_data.spray_angle, divide by max x diff
+  ;TODO: offset by move_data.pull * 45 * handedness
+
+  ld a, [swing_diff_y]
+  ld c, a; degrees up or down
+  ld a, [move_data.launch_angle]
+  add a, c
+  ld c, a;launch angle
+
+  push bc;spray,launch
+
+  call GetCurrentBatter
+  call GetPlayerBat
+  ld d, h
+  ld e, l
+  ld a, [move_data.power]
+  call math_Multiply;hl =power * bat
+  ld a, [swing_diff_z]
+  ld d, a
+  ld a, h;discard lower byte
+  add a, 64
+  sub a, d;reduce power by swing diff
+
+  pop bc;spray,launch
   ret
 
 PlayBall:; a = selected move

@@ -85,7 +85,7 @@ InfieldLocationTexts::        DB "down\nthe 𝟛 line",0
 ToThePositionText::           DB "to the\n%s.",0 
 
 ;fielded, replace %s with player name
-CaughtByText::                DB "%s\n makes the catch.",0
+CaughtByText::                DB "%s makes\nthe catch.",0
 LeapingCatchByText::          DB "%s leaps\n and snags it.",0
 DivingCatchByText::           DB "%s with\nthe diving grab.",0
 FieldedByText::               DB "Fielded by\n%s.",0

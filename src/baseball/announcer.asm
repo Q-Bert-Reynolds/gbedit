@@ -383,6 +383,7 @@ AnnounceSwingMiss::
   call IncrementOuts
   cp 3
   jp nz, AnnounceBatter
+  TRAMPOLINE DrawCountOutsInning
   ret
 
 ;cannot use Trampoline, too many inputs
@@ -433,6 +434,11 @@ AnnounceHitInAir:;a = speed, b = spray angle, c = launch angle
 AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   push bc;spray,launch
   push af;distance
+  call HangTimeFromSpeedLaunchAngle
+  ld e, a;hang time
+  pop af;dist
+  push af;dist
+  push de;e = hang time
 .deepFly
   cp 220
   jr c, .flyBall
@@ -457,9 +463,11 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   call AppendOutfieldLocationTextByAngle
   ld hl, str_buffer
   call RevealTextAndWait
-
+  
+  pop de;e= hang time
   pop af;distance
   pop bc;spray,launch
+  push de;hang time
   cp a, 240
   jr c, .fieldBall
   ld a, b
@@ -493,6 +501,7 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
 .fieldBall
   call LocationFromDistSprayAngle
   call GetClosestFielderByLocation
+  pop bc;c = hang time
   jp AnnounceFieldingText
 
 AppendOutfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
@@ -601,17 +610,18 @@ AnnounceBuntText:;a = launch angle, b = spray angle
   call RevealTextAndWait
   ret
 
-AnnounceFieldingText:;a = position fielding the ball, b = dist from player
+AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = hang time
   ld [_breakpoint], a
   call GetPositionPlayerName
   
-  ; caught 
-  ; CaughtByText
+  ;if player speed * hang time > dist from player, caught
+  ld hl, CaughtByText
+
   ; LeapingCatchByText
   ; DivingCatchByText
 
   ;fielded
-  ld hl, FieldedByText
+  ; ld hl, FieldedByText
 
 .showFieldingText
   ld bc, name_buffer
@@ -621,6 +631,12 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player
   ld hl, str_buffer
   call RevealTextAndWait
 
+  call IncrementOuts
+  cp 3
+  jp nz, AnnounceBatter
+  TRAMPOLINE DrawCountOutsInning
+  ret
+  
   ; ;errors
   ; OffTheGloveOfText
   ; BobbledByText

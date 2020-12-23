@@ -532,6 +532,10 @@ SECTION "Baseball Utils Bank X", ROMX, BANK[PLAY_BALL_BANK]
 ; ShowPitcher
 ; ShowUserPlayer
 ; ShowOpposingPlayer
+; HideBatter
+; HidePitcher
+; HideUserPlayer
+; HideOpposingPlayer
 ; GetUserPitcher - puts user pitcher's player data in hl
 ; GetUserBatter - puts user batter's player data in hl
 ; GetOpponentPitcher - puts opposing pitcher's player data in hl
@@ -958,6 +962,8 @@ EarnedRunAvgToString:: ;hl = ERA*100, returns str_buff
 
 ;Show Player utils
 NextFrame::
+  call HideBatter
+  call HidePitcher
   ld a, [frame]
   inc a
   ld [frame], a
@@ -1024,6 +1030,26 @@ ShowOpposingPlayer::
   call LoadOpposingPlayerBkgTiles
   xor a
   call SetOpposingPlayerBkgTiles
+  ret
+
+HideBatter::
+  call IsUserFielding
+  jp z, HideUserPlayer
+  jp HideOpposingPlayer
+
+HidePitcher::
+  call IsUserFielding
+  jp z, HideOpposingPlayer
+  jp HideUserPlayer
+
+HideUserPlayer::
+  CLEAR_BKG_AREA 8, 10, 12, 2, " "
+  CLEAR_BKG_AREA 0, 5, 8, 7, " "
+  ret
+
+HideOpposingPlayer::
+  CLEAR_BKG_AREA 0, 2, 12, 2, " "
+  CLEAR_BKG_AREA 12, 0, 8, 7, " "
   ret
 
 ; Get Player Data

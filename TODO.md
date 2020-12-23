@@ -1,6 +1,6 @@
 Priority
 
-- hide player after contact, walk, frame, etc.
+- announce pitching change
 - overworld to play ball transition
 - fix overworld animation regression
 - imporve range calculation in AnnounceFieldingText subroutine
@@ -53,10 +53,10 @@ Play Ball
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes
 - pitches in the dirt should bounce
 - hide strikezone after pitcher sets
-- players should disappear immediately after plate appearance or end of inning
 - reduce pitching frames to 3, batting to 2, make trail fx a sprite
 - ball should go behind lefty user batter, righty opposing batter
 - ball should fly off screen after contact
+- slide batter across screen right after contact, walk, etc.
 - more pitching/batting animations
 - change color of move info based on type
 - bunting

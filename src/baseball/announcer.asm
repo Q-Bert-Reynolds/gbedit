@@ -289,6 +289,7 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+  TRAMPOLINE HideBatter
   call IncrementOuts
   cp 3
   jp nz, AnnounceNextBatter
@@ -324,6 +325,7 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+  TRAMPOLINE HideBatter
   call AnnounceRunScored
   jp AnnounceNextBatter
 
@@ -336,6 +338,7 @@ AnnounceNoSwing::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+  TRAMPOLINE HideBatter
   jp AnnounceNextBatter
 
 .updateBaseRunners
@@ -405,6 +408,7 @@ AnnounceSwingMiss::
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
+  TRAMPOLINE HideBatter
   call IncrementOuts
   cp 3
   jp nz, AnnounceNextBatter
@@ -515,7 +519,7 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
 
   ld a, [ball_state]
   and a, BALL_STATE_FAIR
-  jr z, .foulBall
+  jp z, AnnounceFoulBall
 .homeRun
   ;TODO: LeapingCatchByText
   call CurrentOrderInLineup
@@ -536,12 +540,7 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   TRAMPOLINE DrawScore
   call AnnounceNextBatter
   ret
-.foulBall
-  call FoulBall
-  ld hl, HitFoulBallText
-  call RevealTextAndWait
-  TRAMPOLINE DrawCountOutsInning
-  ret
+
 .fieldBall
   push de;hang time
   call LocationFromDistSprayAngle
@@ -686,6 +685,7 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
   ld hl, str_buffer
   call RevealTextAndWait
 
+  TRAMPOLINE HideBatter
   ld hl, OutText
   call RevealTextAndWait
 
@@ -697,6 +697,10 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
 .landed
   ld a, [ball_state]
   or a, BALL_STATE_LANDED
+  ld [ball_state], a
+  and a, BALL_STATE_FAIR
+  jp z, AnnounceFoulBall
+
   ld hl, FieldedByText
   
   ld bc, name_buffer
@@ -706,7 +710,7 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
   ld hl, str_buffer
   call RevealTextAndWait
   jp nz, AnnounceNextBatter
-
+  
 
   ; ;errors
   ; OffTheGloveOfText
@@ -727,12 +731,15 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
   ; OutText
   ; DoublePlayText
   ; TriplePlayText
+  ret
 
-  
-.foulBall
-  ; HitFoulBackText
-  ; HitFoulBallText
-
+AnnounceFoulBall:
+  call FoulBall
+  ld hl, HitFoulBallText
+  ;TODO: HitFoulBackText
+  call RevealTextAndWait
+  TRAMPOLINE ShowBatter
+  TRAMPOLINE DrawCountOutsInning
   ret
 
 AnnounceAdvanceRunners:

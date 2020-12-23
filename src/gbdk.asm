@@ -345,13 +345,13 @@ setTiles:
   or e
   jr z,.skip
 
-  ld bc,$20 ; one line is 20 tiles
+  ld bc, 32 ; one line is 32 tiles
 .rowLoop
   add hl,bc ; y coordinate
   dec e
   jr nz, .rowLoop
 .skip
-  ld b,$00 ; x coordinate
+  ld b,0 ; x coordinate
   ld c,d
   add hl,bc
 
@@ -376,7 +376,7 @@ setTiles:
   jr z,.exit
 
   push bc ; next line
-  ld bc, $20 ; one line is 20 tiles
+  ld bc, 32 ; one line is 32 tiles
   add hl,bc
   pop bc
 

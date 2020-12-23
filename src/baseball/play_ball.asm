@@ -885,15 +885,24 @@ GetVelocityAndAngle:;returns velocity in a, spray in b, launch in c
   sub a, b
   ld d, 0
   ld e, a
-  ; push de
+  push de;110-accuracy
 
   ld a, [swing_diff_x]
-  ld b, a;degrees left or right
+  call math_SignedMultiply
+  ld a, h
+  and a, %10000000
+  or a, l
+  ld b, a;degrees left or right, discards upper byte, keeps sign
   ;TODO: multiply by move_data.spray_angle, divide by max x diff
   ;TODO: offset by move_data.pull * 45 * handedness
 
+  pop de;110-accuracy
   ld a, [swing_diff_y]
-  ld c, a; degrees up or down
+  call math_SignedMultiply
+  ld a, h
+  and a, %10000000
+  or a, l
+  ld c, a;degrees up or down, discards upper byte, keeps sign
   ld a, [move_data.launch_angle]
   add a, c
   ld c, a;launch angle
@@ -906,7 +915,13 @@ GetVelocityAndAngle:;returns velocity in a, spray in b, launch in c
   ld e, l
   ld a, [move_data.power]
   call math_Multiply;hl =power * bat
+  sla h
+  jr nc, .skip
+  ld h, 255
+.skip
   ld a, [swing_diff_z]
+  call math_Abs
+  srl a
   ld d, a
   ld a, h;discard lower byte
   add a, 64

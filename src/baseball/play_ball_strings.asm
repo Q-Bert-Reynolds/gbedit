@@ -1,6 +1,6 @@
 ;menu
 PlayMenuString::              DB "PLAY  TEAM"
-                              DS 10
+                              DB "          "
                               DB "ITEM  RUN "
 
 ;run selected

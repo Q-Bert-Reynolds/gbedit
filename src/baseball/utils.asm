@@ -951,6 +951,9 @@ EarnedRunAvgToString:: ;hl = ERA*100, returns str_buff
   ld de, str_buffer
   ld hl, name_buffer
   call str_Append
+  dec de
+  ld a, " "
+  ld [de], a
   ret
 
 ;Show Player utils

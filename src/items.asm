@@ -154,7 +154,7 @@ _ShowInventory:
 .flashDownArrow
     ld a, [vbl_timer]
     cp a, 30
-    ld a, 0
+    ld a, " "
     jr c, .drawDown
 .drawDownArrow
     ld a, ARROW_DOWN
@@ -198,7 +198,7 @@ _ShowInventory:
   ret
 
 DrawItems::
-  CLEAR_WIN_AREA 6,3,13,9,0
+  CLEAR_WIN_AREA 6,3,13,9," "
   ld a, [_b]
   ld b, a
   dec b

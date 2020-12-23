@@ -38,9 +38,9 @@ DrawPlayerUI:: ;a = team (0 = user, 1 = opponent)
   ld [_b], a;team is batting
 .teamIsPitching ;b = (team == home_team) != (frame % 2);
 
-  xor a
+  ld a, " "
   ld hl, tile_buffer
-  ld [hli], a;tiles[0] = 0;
+  ld [hli], a;tiles[0] = " ";
   inc hl
 
   xor a
@@ -100,25 +100,25 @@ DrawPlayerUI:: ;a = team (0 = user, 1 = opponent)
   ld a, [_b]
   and a
   jr z, .isPitcher ;if (b) {
-    ld hl, tile_buffer+1
-    call CurrentOrderInLineup
-    add a, "1"
-    ld [hl], a ;tiles[1] = NUMBERS + p->batting_order;
-    ld hl, tile_buffer+15
-    ld a, BATTING_AVG
-    ld [hl], a ;tiles[15] = BATTING_AVG;
-    jr .doneWithPlayerStats
+  ld hl, tile_buffer+1
+  call CurrentOrderInLineup
+  add a, "1"
+  ld [hl], a ;tiles[1] = NUMBERS + p->batting_order;
+  ld hl, tile_buffer+15
+  ld a, BATTING_AVG
+  ld [hl], a ;tiles[15] = BATTING_AVG;
+  jr .doneWithPlayerStats
 .isPitcher ;else {
-    ld hl, tile_buffer+1
-    ld a, "ℙ"
-    ld [hl], a ;tiles[1] = p->position;
-    ld hl, tile_buffer+15
-    ld a, EARNED_RUN_AVG
-    ld [hl], a ;tiles[15] = EARNED_RUN_AVG;
-.doneWithPlayerStats
+  ld hl, tile_buffer+1
+  ld a, "ℙ"
+  ld [hl], a ;tiles[1] = p->position;
+  ld hl, tile_buffer+15
+  ld a, EARNED_RUN_AVG
+  ld [hl], a ;tiles[15] = EARNED_RUN_AVG;
 
-  xor a
-  ld hl, tile_buffer+20 ;tiles[20] = 0;
+.doneWithPlayerStats
+  ld a, " "
+  ld hl, tile_buffer+20 ;tiles[20] = " ";
   
   ld a, [_x]
   ld d, a
@@ -189,7 +189,7 @@ DrawPlayerUI:: ;a = team (0 = user, 1 = opponent)
   ret
 
 DrawBases::
-  xor a;for (i = 0; i < 5; i+=2) tiles[i] = 0;
+  ld a, " ";for (i = 0; i < 5; i+=2) tiles[i] = " ";
   ld hl, tile_buffer
   ld [hl], a
   ld hl, tile_buffer+2
@@ -292,7 +292,7 @@ DrawCountOutsInning::
     jr nc, .skipBall
     ld a, BASEBALL
     ld [hl], a
-.skipBall
+  .skipBall
     ld a, [_i]
     inc a
     inc hl
@@ -312,7 +312,7 @@ DrawCountOutsInning::
     jr nc, .skipStrike
     ld a, BASEBALL
     ld [hl], a
-.skipStrike
+  .skipStrike
     ld a, [_i]
     inc a
     inc hl
@@ -320,8 +320,8 @@ DrawCountOutsInning::
     cp 2
     jr nz, .setStrikesLoop
   
-  xor a
-  ld [hli], a;tiles[7] = 0;
+  ld a, " "
+  ld [hli], a;tiles[7] = " ";
 
   xor a
   ld [_i], a
@@ -335,7 +335,7 @@ DrawCountOutsInning::
     jr nc, .skipOut
     ld a, BASEBALL
     ld [hl], a
-.skipOut
+  .skipOut
     ld a, [_i]
     inc a
     inc hl
@@ -343,8 +343,8 @@ DrawCountOutsInning::
     cp 2
     jr nz, .setOutsLoop
 
-  xor a
-  ld [hl], a;tiles[11] = 0;
+  ld a, " "
+  ld [hl], a;tiles[11] = " ";
 
   ld d, 2;x
   ld e, 14;y
@@ -457,9 +457,9 @@ MovePlayMenuArrow:
 .columnLoop ;for (i = 0; i < 2; i++) {
     xor a
     ld [_j], a
-.rowLoop ;for (j = 0; j < 2; j++) {
+  .rowLoop ;for (j = 0; j < 2; j++) {
       ld hl, tile_buffer
-      xor a
+      ld a, " "
       ld [hl], a
       ld a, [_x]
       ld b, a
@@ -473,7 +473,7 @@ MovePlayMenuArrow:
       jr nz, .notArrow
       ld a, ARROW_RIGHT
       ld [hl], a
-.notArrow ;tiles[0] = (x==i && y==j) ? ARROW_RIGHT : 0;
+    .notArrow ;tiles[0] = (x==i && y==j) ? ARROW_RIGHT : " ";
       ld a, [_i]
       add a, a;i*2
       add a, a;i*4
@@ -586,7 +586,7 @@ MoveMoveMenuArrow:
     ld a, [move_choice]
     cp b
     jr z, .setArrow
-    xor a
+    ld a, " "
     jr .setTile
 .setArrow
     ld a, ARROW_RIGHT

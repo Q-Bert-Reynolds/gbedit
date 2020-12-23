@@ -126,7 +126,7 @@ DrawRoledexListEntry:;a = number, de = xy
 
   pop de;xy
   push de;xy
-  ld h, 4
+  ld h, 3
   ld l, 1
   ld bc, str_buffer
   ld a, DRAW_FLAGS_BKG

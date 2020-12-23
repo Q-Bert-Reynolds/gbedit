@@ -238,6 +238,7 @@ str_Number::
   cp 1
   ret z ;no need to swap if only one digit
 
+  push de
   srl c;num digits / 2
   dec de
 .swapLoop
@@ -250,6 +251,7 @@ str_Number::
     dec de
     dec c
     jr nz, .swapLoop
+  pop de
   ret
 
 ;***************************************************************************

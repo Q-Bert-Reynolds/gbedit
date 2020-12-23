@@ -340,7 +340,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   push bc;b = item id
   push hl;player
   ld hl, tile_buffer
-  xor a
+  ld a, " "
   ld bc, 40
   call mem_Set
 
@@ -356,6 +356,9 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
   ld hl, name_buffer
   ld de, tile_buffer+4
   call str_Copy
+  dec de
+  ld a, " "
+  ld [de], a
 
   pop de;player
   push de
@@ -431,7 +434,7 @@ DrawLineupPlayer: ;hl = player, b = item id, _j is order on screen
 .showNothing
   ld hl, name_buffer
   ld bc, 3
-  xor a
+  ld a, " "
   call mem_Set
   ld bc, name_buffer
   jr .draw

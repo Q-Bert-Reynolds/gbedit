@@ -88,7 +88,7 @@ FlashNextArrow:: ;a = draw flags, de = xy
     jp nz, .loop1
 
   ld bc, tile_buffer
-  xor a
+  ld a, " "
   ld [bc], a
   ld hl, $0101
   pop af;draw flags
@@ -168,7 +168,7 @@ GetUIBoxTiles: ;Entry: de = wh, Affects: hl
       inc a
       jr z, .setVertical
     .setNone
-      xor a
+      ld a, " "
       jr .setTile
     .setVertical
       ld a, BOX_VERTICAL
@@ -291,7 +291,7 @@ DrawListMenuArrow:: ;a = draw flags, de = xy, _j = current index, _c = count
   ld b, 0
   ld c, a
   ld hl, tile_buffer
-  xor a
+  ld a, " "
   call mem_Set
 
   pop af;draw flags
@@ -812,7 +812,7 @@ UIRevealTextAndWait::
   ret
 
 SET_MOVE_OPTIONS_ARROW_TILE: MACRO ;var, row, column
-  xor a
+  ld a, " "
   ld bc, tile_buffer
   ld [bc], a
   ld a, [\1]
@@ -1143,8 +1143,8 @@ MoveTextEntryArrow: ; bc = from xy, de = to xy
   push de ;to xy
   call gbdk_WaitVBL
   ld hl, tile_buffer
-  xor a
-  ld [hl], a; tiles[0] = 0;
+  ld a, " "
+  ld [hl], a; tiles[0] = " ";
   ld a, c
   cp 5; if (from_y == 5) {
   jr nz, .notFromLineFive
@@ -1213,15 +1213,29 @@ UpdateTextEntryDisplay: ; hl = str, d = max_len
   push de; d = max_len
   push hl; str
 
+  ld a, " "
+  ld hl, _SCRN1 + 2 * 32 + 10
+  ld b, 0
+  ld c, d
+  call mem_SetVRAM
+
+  pop hl;str
+  push hl;str
+  call str_Length
+  ld a, e
+  and a
+  jr z, .printCaret
+
+.printText
+  ld h, a;width
+  ld l, 1;height
   ld d, 10;x
   ld e, 2;y
   pop bc ;str
-  pop hl; h = max_len = width
-  push hl
   push bc ;str
-  ld l, 1; l = height
-  call gbdk_SetWinTiles; set_win_tiles(10,2,max_len,1,str);
+  call gbdk_SetWinTiles
 
+.printCaret
   pop bc ;str
   pop de ;d =max_len
   push de
@@ -1264,10 +1278,10 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
   push de;title
   DISPLAY_OFF
 
-  xor a
-  ld b, a;b = 0, c = max_len
+  ld a, " "
+  ld b, 0;b = 0, c = max_len
   call mem_Set; for (i = 0; i != max_len; ++i) str[i] = 0;
-  CLEAR_WIN_AREA 0,0,20,4," "
+  CLEAR_WIN_AREA 0,0,20,18," "
   ld a, 7
   ld [rWX], a
   xor a
@@ -1383,7 +1397,7 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
         ld [hli], a;tiles[j*2*18+i*2] = ARROW_RIGHT
         jr .setCharTile
       .notArrowTile
-        xor a
+        ld a, " "
         ld [hli], a;tiles[j*2*18+i*2] = 0
       .setCharTile
         ld a, [de]
@@ -1407,20 +1421,20 @@ UIShowTextEntry:: ; de = title, hl = str, c = max_len
       ld hl, tile_buffer
       add hl, bc ;tiles[(j*2+1)*18]
     .collumnLoop2 ;for (i = 0; i < 9; ++i) {
-        xor a
-        ld [hli], a ;tiles[(j*2+1)*18+i*2]   = 0;
-        ld [hli], a ;tiles[(j*2+1)*18+i*2+1] = 0;
+        ld a, " "
+        ld [hli], a ;tiles[(j*2+1)*18+i*2]   = " ";
+        ld [hli], a ;tiles[(j*2+1)*18+i*2+1] = " ";
       ld a, [_i]
       inc a
       ld [_i], a
       sub 9
-      jr nz, .collumnLoop2
+      jp nz, .collumnLoop2
 
     ld a, [_j]
     inc a
     ld [_j], a
     sub a, 5
-    jr nz, .rowLoop
+    jp nz, .rowLoop
 
     ld d, 1
     ld e, 5

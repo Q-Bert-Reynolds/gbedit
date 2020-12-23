@@ -1,5 +1,7 @@
 Priority
 
+- overworld to play ball transition
+- fix overworld animation regression
 - imporve range calculation in AnnounceFieldingText subroutine
 - finish announcer mode baseball logic
 
@@ -38,6 +40,9 @@ Start
 - make intro ball movement smooth
 - randomize(ish) scrolling players on title screen
 - load bedroom map after new game scene ends
+- fix fade out on GBC
+- set image colors
+
 
 Play Ball
 
@@ -125,7 +130,6 @@ Audio
 
 - fix title screen SFX and music switching
 - pitch, hit, wiff, catch SFX
-- utilize SGB sound capabilities
 
 Super GameBoy
 

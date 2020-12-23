@@ -148,7 +148,7 @@ NewGame::
 
 ;set image to Muchacho
   DISPLAY_OFF
-  CLEAR_SCREEN 0
+  CLEAR_SCREEN " "
     
   ld a, 33
   ld de, _UI_FONT_TILE_COUNT

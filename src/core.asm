@@ -744,6 +744,8 @@ SetAgeTiles::;de = player, hl = address
   inc de
 .age100
   call str_Number
+  ld a, " "
+  ld [de], a
   ret
 
 SetMovePPTiles::;a = move, b = move mask, de = player, hl = tile address

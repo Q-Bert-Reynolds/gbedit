@@ -158,9 +158,8 @@ TwoPlayersScoreText::         DB " and\n%s score.",0
 BasesClearedScoreText::       DB "And that clears\nthe bases.",0
 
 ;end of frame
-ThatBringsUsToTheFrameText::  DB "That brings us to the\n",0
-BottomOfTheText::             DB "bottom of the %s.",0
-TopOfTheText::                DB "top of the %s.",0
+BottomOfTheText::             DB "Bottom of\nthe %s.",0
+TopOfTheText::                DB "Top of\nthe %s.",0
 
 ;end of game
 AndThatsTheBallGameText::     DB "And that's the\nball game.",0

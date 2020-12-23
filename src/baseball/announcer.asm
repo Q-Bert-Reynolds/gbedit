@@ -134,16 +134,42 @@ INCLUDE "src/baseball/announcer_strings.asm"
 
 ;----------------------------------------------------------------------
 ; AnnounceBeginningOfFrame - called at beginning of each frame
+;  
+;   returns exit code in a (0 = continue, 1 = win, -1 = lose)
 ;
 ;   "GINGER steps on the mound."
 ;   "BUBBI walks up to the plate."
 ; 
 ;----------------------------------------------------------------------
 AnnounceBeginningOfFrame::
+  ld hl, TopOfTheText
+  ld a, [frame]
+  bit 0, a
+  jr z, .skip
+  ld hl, BottomOfTheText
+.skip
+  push hl;top/bottom text
+
+  srl a;frame/2
+  ld c, a
+  xor a
+  ld b, a
+  ld hl, InningTexts
+  call str_FromArray  
+  ld de, name_buffer
+  call str_Copy
+  pop hl;top/bottom text
+  ld de, str_buffer
+  ld bc, name_buffer
+  call str_Replace
+  ld hl, str_buffer
+  call RevealTextAndWait
+
   call AnnouncePitcher
   call AnnounceBatter
   TRAMPOLINE DrawBases
   HIDE_WIN
+  xor a
   ret
 
 AnnouncePitcher::
@@ -783,11 +809,6 @@ AnnounceRunScored: ;if upper nibble of [runners_on_base] non-zero, announces run
   ret
 
 AnnounceEndOfGame::
-  ; ;end of frame
-  ; ThatBringsUsToTheFrameText
-  ; BottomOfTheText
-  ; TopOfTheText
-
   ; ;end of game
   ; AndThatsTheBallGameText
   ret

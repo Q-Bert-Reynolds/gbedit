@@ -840,7 +840,7 @@ HitBall:
   ld de, 100
   call gbdk_Delay
 
-  call GetVelocityAndAngle
+  call GetExitVelocityAndAngle
   
   push af;exit velocity
   ld a, [animation_style]
@@ -875,7 +875,7 @@ FinishPitch:
   call gbdk_Delay
   ret
 
-GetVelocityAndAngle:;returns velocity in a, spray in b, launch in c  
+GetExitVelocityAndAngle:;returns velocity in a, spray in b, launch in c  
   ld a, [swing_move_id]
   call GetMove
 
@@ -887,25 +887,31 @@ GetVelocityAndAngle:;returns velocity in a, spray in b, launch in c
   ld e, a
   push de;110-accuracy
 
+.xAccuracy
   ld a, [swing_diff_x]
   call math_SignedMultiply
   ld a, h
-  and a, %10000000
-  or a, l
+  and a, %10000000;discard everything but sign from upper byte
+  srl l;discard lowest bit from lower byte
+  or a, l;combine sign with lower byte
   ld b, a;degrees left or right, discards upper byte, keeps sign
   ;TODO: multiply by move_data.spray_angle, divide by max x diff
   ;TODO: offset by move_data.pull * 45 * handedness
 
+.yAccuracy
   pop de;110-accuracy
   ld a, [swing_diff_y]
   call math_SignedMultiply
   ld a, h
-  and a, %10000000
-  or a, l
+  and a, %10000000;discard everything but sign from upper byte
+  srl l;discard lowest bit from lower byte
+  or a, l;combine sign with lower byte
   ld c, a;degrees up or down, discards upper byte, keeps sign
-  ld a, [move_data.launch_angle]
-  add a, c
-  ld c, a;launch angle
+  
+  ;.addMoveLaunchAngle
+  ; ld a, [move_data.launch_angle]
+  ; add a, c
+  ; ld c, a;launch angle
 
   push bc;spray,launch
 

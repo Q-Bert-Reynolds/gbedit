@@ -1,5 +1,6 @@
 Priority
 
+- hide player after contact, walk, frame, etc.
 - overworld to play ball transition
 - fix overworld animation regression
 - imporve range calculation in AnnounceFieldingText subroutine

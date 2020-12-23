@@ -209,25 +209,6 @@ IF WORLD_ENABLED == 1
 ENDC
 
 IF PLAY_ENABLED == 1
-    PLAY_SONG tessie_data, 1
-    ;TODO: black out tiles one by one
-    ; call CopyBkgToWin
-
-    ld de, 32*32
-    ld hl, _SCRN0
-  .loopTiles
-      xor a
-      ld bc, 1
-      push de;count
-      push hl;win location
-      call mem_SetVRAM
-      call gbdk_WaitVBL
-      pop hl;win location
-      inc hl
-      pop de
-      dec de
-      jr nz, .loopTiles
-
   .baseball
     ld a, [game_state]
     or a, GAME_STATE_PLAY_BALL

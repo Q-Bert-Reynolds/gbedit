@@ -1019,7 +1019,65 @@ SetupGameUI:
   CLEAR_BKG_AREA 12, 0, 7, 7, " "
   ret
 
+Transition:
+  call CopyBkgToWin
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  SHOW_WIN
+  ld hl, tile_buffer
+  xor a
+  ld [hli], a
+  ld a, OCCUPIED_BASE
+  ld [hli], a
+  xor a
+  ld [hli], a
+  ld [hl], a
+  ld de, 0
+.rowLoop
+  .columnLoop
+      push de
+      ld hl, $0201
+      ld bc, tile_buffer
+      call gbdk_SetWinTiles
+
+      pop de
+      push de
+      ld a, 17
+      sub a, e
+      ld e, a
+      ld a, 19
+      sub a, d
+      ld d, a
+      
+      ld hl, $0201
+      ld bc, tile_buffer+2
+      jr z, .skip
+      dec bc
+    .skip
+      call gbdk_SetWinTiles
+
+      ld de, 10
+      call gbdk_Delay
+      pop de
+      inc d
+      ld a, 20
+      cp a, d
+      jr nz, .columnLoop
+    ld d, 0
+    inc e
+    ld a, 9
+    cp a, e
+    jr nz, .rowLoop
+  ret 
+
 StartGame::
+  PLAY_SONG tessie_data, 1
+  call LoadFontTiles
+  call Transition
+
+.loadBaseball
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
 
@@ -1034,7 +1092,6 @@ StartGame::
   xor a
   ld [rSCX], a
   ld [rSCY], a
-  call LoadFontTiles
   CLEAR_SCREEN " "
   
   call SetPlayBallTiles

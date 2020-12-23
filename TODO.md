@@ -1,8 +1,7 @@
 Priority
 
-- results from hitting to the field
-- make announcer actually work
-- return to previous world position
+- imporve range calculation in AnnounceFieldingText subroutine
+- finish announcer mode baseball logic
 
  General
 
@@ -55,6 +54,7 @@ Play Ball
 - more pitching/batting animations
 - change color of move info based on type
 - bunting
+- update user player stats
 
 Game Results
 
@@ -86,6 +86,7 @@ Team Menu
 
 Overworld
 
+- return to previous world position
 - replace map system, should be sparse objects in 32x32 tile regions
   - different building sizes
   - patches of trees, grass, water

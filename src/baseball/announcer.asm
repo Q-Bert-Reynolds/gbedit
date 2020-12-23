@@ -1,6 +1,6 @@
 SECTION "Announcer Bank 0", ROM0
 
-AnnounceSwingTiming:: ;hl = text address
+AnnounceDisplayText:: ;hl = text address
   ld a, ANNOUNCER_BANK
   call SetBank
   
@@ -265,8 +265,7 @@ AnnounceNoSwing::
   call RevealTextAndWait
   call IncrementOuts
   cp 3
-  jp nz, AnnounceBatter
-  TRAMPOLINE DrawCountOutsInning
+  jp nz, AnnounceNextBatter
   ret
 
 .ball
@@ -382,18 +381,36 @@ AnnounceSwingMiss::
   call RevealTextAndWait
   call IncrementOuts
   cp 3
-  jp nz, AnnounceBatter
-  TRAMPOLINE DrawCountOutsInning
+  jp nz, AnnounceNextBatter
   ret
 
 ;cannot use Trampoline, too many inputs
 _AnnounceSwingContact:;a = speed, b = spray angle, c = launch angle
   push af;speed
+  ld a, BALL_STATE_IN_PLAY
+  ld [ball_state], a;reset ball state
+  push bc;spray,launch
+
+.checkFair
+  ld a, b
+  BETWEEN -45, 45
+  jr z, .checkLaunch
+
+.fairBall
+  ld a, [ball_state]
+  or a, BALL_STATE_FAIR
+  ld [ball_state], a
+
+.checkLaunch
+  pop bc;spray,launch
   ld a, c
   cp a, 128;if 0<c<128, .inAir
   jr c, .inAir
 
 .onGround
+  ld a, [ball_state]
+  or a, BALL_STATE_LANDED
+  ld [ball_state], a
   pop af;speed
   call AnnounceHitOnGround
   ret
@@ -467,13 +484,14 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   pop de;e= hang time
   pop af;distance
   pop bc;spray,launch
-  push de;hang time
   cp a, 240
   jr c, .fieldBall
-  ld a, b
-  BETWEEN -45, 45
+
+  ld a, [ball_state]
+  and a, BALL_STATE_FAIR
   jr z, .foulBall
 .homeRun
+  ;TODO: LeapingCatchByText
   call CurrentOrderInLineup
   inc a;current batter is 0 to 8, needs to be 1 to 9
   ld c, a
@@ -499,9 +517,17 @@ AnnounceHitInAirToOutfield:;a=distance, b=sparay angle, c=launch angle
   TRAMPOLINE DrawCountOutsInning
   ret
 .fieldBall
+  push de;hang time
   call LocationFromDistSprayAngle
   call GetClosestFielderByLocation
-  pop bc;c = hang time
+  and a, BALL_STATE_FIELDER;sanitize fielder
+  ld e, a;fielder
+  ld a, [ball_state]
+  or a, e
+  ld [ball_state], a
+  ld a, e;fielder
+  pop de;e = hang time
+  ld c, e;c = hang time
   jp AnnounceFieldingText
 
 AppendOutfieldLocationTextByAngle:;b = spray angle, appends text to str_buffer
@@ -611,19 +637,22 @@ AnnounceBuntText:;a = launch angle, b = spray angle
   ret
 
 AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = hang time
+  push bc;dist, hang time
+  call GetPositionPlayerAndName;player in hl, name in name_buffer
+  call GetPlayerSpeed
+  ld d, h
+  ld e, l
+  pop bc;dist, hang time
+  ld a, c;hang time
+  call math_Multiply;dist covered = player speed * hang time, doesn't affect bc
   ld [_breakpoint], a
-  call GetPositionPlayerName
-  
-  ;if player speed * hang time > dist from player, caught
+  ld a, h;discard lower byte of range
+  sub a, b;if player speed * hang time > dist from player, caught
+  jr c, .landed
+
+.caught 
   ld hl, CaughtByText
-
-  ; LeapingCatchByText
-  ; DivingCatchByText
-
-  ;fielded
-  ; ld hl, FieldedByText
-
-.showFieldingText
+  ;TODO: DivingCatchByText
   ld bc, name_buffer
   ld de, str_buffer
   call str_Replace
@@ -631,12 +660,28 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
   ld hl, str_buffer
   call RevealTextAndWait
 
+  ld hl, OutText
+  call RevealTextAndWait
+
   call IncrementOuts
   cp 3
-  jp nz, AnnounceBatter
-  TRAMPOLINE DrawCountOutsInning
+  jp nz, AnnounceNextBatter
   ret
+
+.landed
+  ld a, [ball_state]
+  or a, BALL_STATE_LANDED
+  ld hl, FieldedByText
   
+  ld bc, name_buffer
+  ld de, str_buffer
+  call str_Replace
+
+  ld hl, str_buffer
+  call RevealTextAndWait
+  jp nz, AnnounceNextBatter
+
+
   ; ;errors
   ; OffTheGloveOfText
   ; BobbledByText
@@ -657,15 +702,11 @@ AnnounceFieldingText:;a = position fielding the ball, b = dist from player, c = 
   ; DoublePlayText
   ; TriplePlayText
 
-  ; ;foul
+  
+.foulBall
   ; HitFoulBackText
   ; HitFoulBallText
 
-  ; ;hit
-  ; HitBaseHitText
-  ; HitDoubleText
-  ; HitTripleText
-  ; CriticalHitText
   ret
 
 AnnounceAdvanceRunners:

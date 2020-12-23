@@ -155,4 +155,4 @@ ball_vel_x:: DB;same location used for velocity in simulation
 pitch_target_y::
 ball_vel_y:: DB
 ball_vel_z:: DB
-ball_state:: DB; // 7 = stopped, 6 = hitGround, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
+ball_state:: DB; // 7 = caught, 6 = landed, 5 = fair, 4 = inPlay, 3..0 = position player holding ball

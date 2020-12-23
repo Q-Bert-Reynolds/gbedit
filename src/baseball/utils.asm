@@ -22,7 +22,7 @@ SECTION "Baseball Utils Bank 0", ROM0
 ; SetOuts                         a = outs
 ; IncrementOuts                   returns outs in a
 ; CheckStrike                     returns ball (z) or strike (nz)
-; GetPositionPlayerName           a = position number (1-9), returns the name of position player in [name_buffer]
+; GetPositionPlayerAndName        a = position number (1-9), returns position player in hl, name in [name_buffer]
 ; DistanceFromSpeedLaunchAngle    a = speed, c = launch angle, returns distance in a
 ; HeightFromSpeedLaunchAngle      a = speed, c = launch angle, returns height in a
 ; HangTimeFromSpeedLaunchAngle    a = speed, c = launch angle, returns hang time in a
@@ -153,14 +153,12 @@ SetOuts::; a = outs
   ld [balls_strikes_outs], a
   ret
 
-IncrementOuts::;returns outs in a
-  TRAMPOLINE NextBatter
-  ld a, [balls_strikes_outs]
-  and OUTS_MASK
+IncrementOuts::;increments outs, returns outs in a
+  call GetOuts
   inc a
   cp 3
   jp z, .threeOuts
-  ld [balls_strikes_outs], a
+  call SetOuts
   ret
 .threeOuts
   xor a
@@ -168,6 +166,7 @@ IncrementOuts::;returns outs in a
   ld [runners_on_base], a
   ld [runners_on_base+1], a
   TRAMPOLINE NextFrame
+  TRAMPOLINE DrawCountOutsInning
   ld a, 3
   ret
 
@@ -189,13 +188,14 @@ CheckStrike:: ;returns ball (z) or strike (nz)
 
 ;----------------------------------------------------------------------
 ;
-; GetPositionPlayerName - returns the name of position player 
+; GetPositionPlayerAndName - returns current player/name at position 
 ;
 ;   input: a = position number (1-9)
 ;   returns: name_buffer = position player's name
+;            hl = position player address
 ;
 ;----------------------------------------------------------------------
-GetPositionPlayerName::
+GetPositionPlayerAndName::
   ld b, a;position number
   ld a, [loaded_bank]
   push af;bank
@@ -207,14 +207,17 @@ GetPositionPlayerName::
 .opponentIsFielding
   pop af;position number
   call GetOpposingPlayerByPosition
+  push hl;player
   ld a, [hl]
   call GetPlayerName
   jr .exit
 .userIsFielding
   pop af;position number
   call GetUserPlayerByPosition
+  push hl;player
   call GetUserPlayerName
 .exit
+  pop hl;player
   pop af;bank
   call SetBank
   ret

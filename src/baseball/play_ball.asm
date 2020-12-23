@@ -544,12 +544,12 @@ Swing:; aim xy = de, pitch z = a, returns contact made in a
   jr c, .late
 .early
   ld hl, EarlySwingText
-  call AnnounceSwingTiming
+  call AnnounceDisplayText
   xor a
   ret
 .late
   ld hl, LateSwingText
-  call AnnounceSwingTiming
+  call AnnounceDisplayText
   xor a
   ret
 .checkHit;TODO: replace 12 with swing data
@@ -572,12 +572,12 @@ Swing:; aim xy = de, pitch z = a, returns contact made in a
   ret
 .barrel
   ld hl, HitBarrelText
-  call AnnounceSwingTiming
+  call AnnounceDisplayText
   ld a, 1
   ret
 .miss
   ld hl, SwingAndMissText
-  call AnnounceSwingTiming
+  call AnnounceDisplayText
   xor a
   ret
 

@@ -162,7 +162,7 @@ AnimateAvatar:;hl = animation
 
   pop af;flip
   and a
-  jr z, .setColorProps
+  jr z, .noFlip
 
   ld a, 4
   ld bc, tile_buffer
@@ -194,29 +194,27 @@ AnimateAvatar:;hl = animation
     dec c
     jr nz, .swapLoop
 
-.setColorProps
-  ld a, 4
-  ld bc, tile_buffer
-.setColorPropsLoop
-    push af
-    ld a, [de]
-    or a, 7
-    ld [bc], a
-    inc de
-    inc bc
-
-    pop af
-    dec a
-    jr nz, .setColorPropsLoop
-  ld de, tile_buffer+4
-  ld bc, 4
-  call mem_Copy
-
   ld de, tile_buffer
   ld hl, tile_buffer+4
+
+.noFlip
   ld b, 0
   ld c, 4
   call SetSpriteTilesProps ;bc = offset\count, hl = tilemap, de = propmap
+  
+  ld a, 4
+  ld hl, oam_buffer+3
+  ld de, 4
+.colorProps
+    push af
+    ld a, [hl]
+    or a, 7
+    ld [hl], a
+    add hl, de
+
+    pop af
+    dec a
+    jr nz, .colorProps
 
   ld a, [anim_frame]
   inc a
@@ -544,5 +542,6 @@ Overworld::
     ld a, [button_state]
     call Move
     call CheckRandomAppearance
-    jr z, .moveLoop
+    ; jr z, .moveLoop
+    jr .moveLoop
   ret

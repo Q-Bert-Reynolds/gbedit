@@ -536,6 +536,7 @@ SECTION "Baseball Utils Bank X", ROMX, BANK[PLAY_BALL_BANK]
 ; HidePitcher
 ; HideUserPlayer
 ; HideOpposingPlayer
+; GetUserPitcherOrder - returns user pitcher's batting order in b
 ; GetUserPitcher - puts user pitcher's player data in hl
 ; GetUserBatter - puts user batter's player data in hl
 ; GetOpponentPitcher - puts opposing pitcher's player data in hl
@@ -1053,6 +1054,21 @@ HideOpposingPlayer::
   ret
 
 ; Get Player Data
+GetUserPitcherOrder::;returns user pitcher's batting order in b
+  ld hl, UserLineupPlayer1.position
+  ld de, UserLineupPlayer2-UserLineupPlayer1
+  ld b, 0
+.loop
+    ld a, [hl]
+    add hl, de
+    cp a, PITCHER
+    ld a, b
+    ret z
+    inc b
+    cp a, 8
+    jr c, .loop
+  ret
+
 GetUserPitcher::;puts user pitcher's player data in hl
   ld a, 1
   call GetUserPlayerByPosition

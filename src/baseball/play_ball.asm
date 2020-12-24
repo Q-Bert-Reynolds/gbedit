@@ -1152,11 +1152,24 @@ StartGame::
 .teamMenuItemSelected
     cp 1
     jr nz, .itemMenuItemSelected
+    call GetUserPitcherOrder
+    push af
     ld b, 0
     call ShowLineup
+    call GetUserPitcherOrder
+    push af;current pitcher
     call SetupGameUI
-    call ShowPitcher
     call ShowBatter
+    pop af;current pitcher
+    pop bc;previous pitcher
+    cp a, b
+    jr z, .skip
+    call IsUserFielding
+    jr z, .skip
+    TRAMPOLINE AnnouncePitcher
+    HIDE_WIN
+.skip
+    call ShowPitcher
     jr .playBallLoop
 .itemMenuItemSelected
     cp 2

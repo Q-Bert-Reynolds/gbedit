@@ -1,7 +1,5 @@
 Priority
 
-- announce pitching change
-- overworld to play ball transition
 - fix overworld animation regression
 - imporve range calculation in AnnounceFieldingText subroutine
 - finish announcer mode baseball logic

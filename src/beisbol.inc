@@ -25,7 +25,8 @@ INCLUDE "src/players.asm"
 INCLUDE "src/coaches.asm"
 INCLUDE "src/map_loader.asm"
 
-;TODO: Remove temp data
+;TODO: Remove temp data and tests
+INCLUDE "src/map_test.asm"
 INCLUDE "src/temp_data.asm"
 
 INCLUDE "src/start.asm"

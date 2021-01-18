@@ -526,8 +526,8 @@ Swing:; aim xy = de, pitch z = a, returns contact made in a
   ld c, a;bc = pitch xy
 
   pop de;aim xy
-  ld a, d
-  sub a, b
+  ld a, b
+  sub a, d
   ld [swing_diff_x], a
   ld a, e
   sub a, c
@@ -883,6 +883,7 @@ GetExitVelocityAndAngle:;returns velocity in a, spray in b, launch in c
   ld b, a
   ld a, 110
   sub a, b
+  srl a
   ld d, 0
   ld e, a
   push de;110-accuracy
@@ -930,7 +931,7 @@ GetExitVelocityAndAngle:;returns velocity in a, spray in b, launch in c
   srl a
   ld d, a
   ld a, h;discard lower byte
-  add a, 64
+  add a, 127
   sub a, d;reduce power by swing diff
 
   pop bc;spray,launch

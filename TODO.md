@@ -1,8 +1,6 @@
 Priority
 
-- fix overworld animation regression
-- imporve range calculation in AnnounceFieldingText subroutine
-- finish announcer mode baseball logic
+- make results random so we can move on to FX
 
  General
 
@@ -35,6 +33,7 @@ Python scripts
 
 Start
 
+- color of version name incorrect after returning from new game/continue/options screen
 - intro home version batter has too many tiles
 - make intro ball movement smooth
 - randomize(ish) scrolling players on title screen
@@ -67,6 +66,8 @@ Game Results
 
 Announcer
 
+- finish (deterministic) announcer mode baseball logic
+- fix range calculation in AnnounceFieldingText subroutine
 - Announce "Squirt looks done for out there." when out of HP. 
 - Announce things like "Ghost runners on first and third." when playing against an unsigned player
 

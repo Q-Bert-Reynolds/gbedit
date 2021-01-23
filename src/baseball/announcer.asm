@@ -221,7 +221,7 @@ AnnouncePitchName::
   call DisplayText
   ret
 
-AnnounceNextBatter
+AnnounceNextBatter:
   xor a
   call SetBalls
   xor a

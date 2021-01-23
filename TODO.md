@@ -1,5 +1,9 @@
 Priority
 
+- replace map system, should be sparse objects in 32x32 tile regions
+  - add diagonal fills
+  - each 32x32 region should have the addresses of adjacent regions
+  - reorder map object data so that xy come first (for culling)
 - make results random so we can move on to FX
 
  General
@@ -92,10 +96,6 @@ Team Menu
 Overworld
 
 - return to previous world position
-- replace map system, should be sparse objects in 32x32 tile regions
-  - different building sizes
-  - patches of trees, grass, water
-  - paths, fences
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - collisions

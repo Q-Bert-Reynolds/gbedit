@@ -5,6 +5,7 @@ SECTION "Map Test", ROMX, BANK[OVERWORLD_BANK]
 INCLUDE "maps/unity_test_map.gbmap"
 
 DrawSparseMap:
+  CLEAR_BKG_AREA 0,0,32,32,255
   ld hl, UnityTestMap
 .loop
     ld a, [hli]
@@ -24,14 +25,30 @@ DrawSparseMap:
     ld e, a
     push hl;next map object
     ld hl, $0101
-    jr .setTiles
+    jp .setTiles
   .stamp
     ld a, [hli];stamp lower address
     ld e, a
     ld a, [hli];stamp upper address
     ld d, a
     push hl
-    call LoadStamp
+    ld a, [de];width
+    inc de
+    ld b, a
+    ld a, [de];height
+    ld c, a
+    push bc;w,h
+    inc de
+    push de;tiles
+    ld d, 0
+    ld e, b
+    call math_Multiply
+    ld b, h
+    ld c, l
+    pop hl;tiles
+    ld de, tile_buffer
+    call mem_Copy
+    pop hl;w,h
     pop bc
     ld a, [bc]
     inc bc
@@ -41,38 +58,39 @@ DrawSparseMap:
     ld e, a;y
     push bc;
     ld bc, tile_buffer
-    jr .setTiles
-  .fill;TODO
+    jp .setTiles
+  .fill
     ld a, [hli];tile
+    push af;tile
     ld a, [hli];x
+    ld d, a
     ld a, [hli];y
+    ld e, a;de = xy
     ld a, [hli];w
+    ld b, a
     ld a, [hli];h
-    jr .loop
+    ld c, a;bc = wh
+    pop af;tile
+    push hl;next map object
+    push de;xy
+    push bc;wh
+    push af;tile
+    ld d, 0
+    ld e, b
+    ld a, c
+    call math_Multiply;hl = de * a = width * height
+    ld b, h
+    ld c, l
+    pop af;tile
+    ld hl, tile_buffer
+    call mem_Set
+    pop hl;wh
+    pop de;xy
+    ld bc, tile_buffer
   .setTiles
     call gbdk_SetBkgTiles
-    pop hl
-    jr .loop
-  ret
-
-LoadStamp:;de = stamp address, returns w,h in hl, tiles in tile_buffer
-  ld a, [de];width
-  inc de
-  ld b, a
-  ld a, [de];height
-  ld c, a
-  push bc;w,h
-  inc de
-  push de;tiles
-  ld d, 0
-  ld e, b
-  call math_Multiply
-  ld b, h
-  ld c, l
-  pop hl;tiles
-  ld de, tile_buffer
-  call mem_Copy
-  pop hl;w,h
+    pop hl;next map object
+    jp .loop
   ret
 
 TestMap::
@@ -82,6 +100,8 @@ TestMap::
   call LoadFontTiles
   call LoadOverworldTiles
   call DrawSparseMap
+
+  DISPLAY_ON
 
 .loop
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START

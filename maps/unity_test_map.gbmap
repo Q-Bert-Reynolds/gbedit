@@ -2,18 +2,10 @@
 TreeStamp::
 DB 4;width
 DB 4;height
-DB 131, 132, 133, 134
-DB 147, 148, 149, 150
-DB 163, 164, 165, 166
-DB 179, 180, 181, 182
-
-HouseStamp::
-DB 6;width
-DB 4;height
-DB 192, 193, 194, 195, 193, 198
-DB 208, 209, 210, 211, 213, 214
-DB 224, 225, 226, 226, 229, 230
-DB 240, 241, 242, 242, 245, 246
+DB 195, 196, 197, 198
+DB 211, 212, 213, 214
+DB 227, 228, 229, 230
+DB 243, 244, 245, 246
 
 SignStamp::
 DB 2;width
@@ -21,65 +13,83 @@ DB 2;height
 DB 183, 184
 DB 199, 200
 
-;Objects, 55 bytes
+HouseStamp::
+DB 6;width
+DB 4;height
+DB 128, 129, 130, 130, 133, 134
+DB 144, 145, 146, 146, 149, 150
+DB 160, 161, 162, 163, 165, 166
+DB 176, 177, 178, 179, 177, 182
+
+;Objects, 66 bytes
 UnityTestMap::
 DB MAP_STAMP
 DW TreeStamp
 DB 7;x
-DB 11;y
-
-DB MAP_STAMP
-DW TreeStamp
-DB 20;x
-DB 9;y
-
-DB MAP_STAMP
-DW TreeStamp
-DB 11;x
-DB 28;y
+DB 8;y
 
 DB MAP_STAMP
 DW TreeStamp
 DB 1;x
-DB 24;y
+DB 21;y
 
 DB MAP_STAMP
 DW TreeStamp
 DB 24;x
-DB 9;y
-
-DB MAP_STAMP
-DW HouseStamp
-DB 15;x
-DB 18;y
+DB 6;y
 
 DB MAP_STAMP
 DW SignStamp
 DB 13;x
-DB 18;y
+DB 17;y
 
 DB MAP_FILL
-DB 215;tile
-DB 17;x
-DB 27;y
-DB 2;width
-DB 9;height
-
-DB MAP_FILL
-DB 215;tile
+DB 167;tile
 DB 18;x
-DB 28;y
+DB 27;y
 DB 14;width
 DB 2;height
 
 DB MAP_TILE
-DB 231;tile
-DB 19;x
-DB 24;y
-
-DB MAP_TILE
-DB 231;tile
+DB 151;tile
 DB 16;x
 DB 21;y
+
+DB MAP_STAMP
+DW HouseStamp
+DB 20;x
+DB 13;y
+
+DB MAP_STAMP
+DW HouseStamp
+DB 15;x
+DB 2;y
+
+DB MAP_STAMP
+DW HouseStamp
+DB 7;x
+DB 23;y
+
+DB MAP_STAMP
+DW TreeStamp
+DB 11;x
+DB 8;y
+
+DB MAP_STAMP
+DW TreeStamp
+DB 1;x
+DB 1;y
+
+DB MAP_STAMP
+DW TreeStamp
+DB 5;x
+DB 2;y
+
+DB MAP_FILL
+DB 167;tile
+DB 18;x
+DB 19;y
+DB 10;width
+DB 7;height
 
 DB 0

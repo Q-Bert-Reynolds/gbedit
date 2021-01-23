@@ -11,33 +11,33 @@ RUN_TESTS: MACRO
   call SetBank
   call TestMap
 
-  call LoadFontTiles
+;   call LoadFontTiles
 
-POWER = 50
-REPT 2
+; POWER = 50
+; REPT 2
 
-LAUNCH = 30
-REPT 3
+; LAUNCH = 30
+; REPT 3
 
-SPRAY = -45
-REPT 18
+; SPRAY = -45
+; REPT 18
 
-  ld a, SIM_BANK
-  call SetBank
-  TEST_SIM POWER, SPRAY, LAUNCH
+;   ld a, SIM_BANK
+;   call SetBank
+;   TEST_SIM POWER, SPRAY, LAUNCH
 
-  ; ld a, ANNOUNCER_BANK
-  ; call SetBank
-  ; TEST_ANNOUNCER SPRAY
+;   ; ld a, ANNOUNCER_BANK
+;   ; call SetBank
+;   ; TEST_ANNOUNCER SPRAY
 
-SPRAY = SPRAY+5
-ENDR;SPRAY loop
+; SPRAY = SPRAY+5
+; ENDR;SPRAY loop
 
-LAUNCH = LAUNCH+30
-ENDR;LAUNCH loop
+; LAUNCH = LAUNCH+30
+; ENDR;LAUNCH loop
 
-POWER = POWER+40
-ENDR;POWER loop
+; POWER = POWER+40
+; ENDR;POWER loop
 
 ENDM
 

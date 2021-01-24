@@ -65,7 +65,7 @@ Simulation\1\2:
 .dest_y     DB
 ENDM
 
-SECTION "Player RAM", WRAM0[$c700]
+SECTION "Player RAM", WRAM0
 ;Lineups
 UserLineup::
   PLAYER_DATA UserLineup, 1

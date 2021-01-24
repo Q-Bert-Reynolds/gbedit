@@ -1,4 +1,4 @@
-SECTION "Gloval Vars", WRAM0[_RAM]
+SECTION "Gloval Vars", WRAM0
 ;debug
 _breakpoint:: DB
 
@@ -79,14 +79,6 @@ rLCDInterrupt:: DW
 last_button_state:: DB
 button_state:: DB
 
-;buffers
-tile_buffer:: DS BUFFER_SIZE
-bkg_buffer:: DS BUFFER_SIZE
-bkg_buffer2:: DS BUFFER_SIZE
-cmd_buffer:: DS BUFFER_SIZE/2
-str_buffer:: DS 64
-name_buffer:: DS 16
-
 ;player base data struct
 player_base::
 .num::       DB
@@ -156,3 +148,12 @@ pitch_target_y::
 ball_vel_y:: DB
 ball_vel_z:: DB
 ball_state:: DB; // 7 = caught, 6 = landed, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
+
+SECTION "Buffers", WRAM0
+;buffers
+tile_buffer:: DS BUFFER_SIZE
+bkg_buffer:: DS BUFFER_SIZE
+bkg_buffer2:: DS BUFFER_SIZE
+cmd_buffer:: DS BUFFER_SIZE/2
+str_buffer:: DS 64
+name_buffer:: DS 16

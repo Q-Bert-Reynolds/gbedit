@@ -1,95 +1,179 @@
-;Stamps, 50 bytes
-TreeStamp::
-DB 4;width
-DB 4;height
-DB 195, 196, 197, 198
-DB 211, 212, 213, 214
-DB 227, 228, 229, 230
-DB 243, 244, 245, 246
-
-SignStamp::
-DB 2;width
-DB 2;height
-DB 183, 184
-DB 199, 200
-
-HouseStamp::
+;Stamps, 94 total bytes
+HouseStamp:: ;50 bytes
 DB 6;width
 DB 4;height
+.tiles:
 DB 128, 129, 130, 130, 133, 134
 DB 144, 145, 146, 146, 149, 150
 DB 160, 161, 162, 163, 165, 166
 DB 176, 177, 178, 179, 177, 182
+.palettes:
+DB 0, 1, 2, 2, 5, 6
+DB 16, 17, 18, 18, 21, 22
+DB 32, 33, 34, 35, 37, 38
+DB 48, 49, 50, 51, 49, 54
 
-;Objects, 66 bytes
-UnityTestMap::
-DB MAP_STAMP
-DW TreeStamp
-DB 7;x
-DB 8;y
-
-DB MAP_STAMP
-DW TreeStamp
-DB 1;x
-DB 21;y
-
-DB MAP_STAMP
-DW TreeStamp
-DB 24;x
-DB 6;y
-
-DB MAP_STAMP
-DW SignStamp
-DB 13;x
-DB 17;y
-
-DB MAP_FILL
-DB 167;tile
-DB 18;x
-DB 27;y
-DB 14;width
+SignStamp:: ;10 bytes
+DB 2;width
 DB 2;height
+.tiles:
+DB 183, 184
+DB 199, 200
+.palettes:
+DB 55, 56
+DB 71, 72
 
+TreeStamp:: ;34 bytes
+DB 4;width
+DB 4;height
+.tiles:
+DB 195, 196, 197, 198
+DB 211, 212, 213, 214
+DB 227, 228, 229, 230
+DB 243, 244, 245, 246
+.palettes:
+DB 67, 68, 69, 70
+DB 83, 84, 85, 86
+DB 99, 100, 101, 102
+DB 115, 116, 117, 118
+
+;Map, 134 total bytes
+ChunkA1::
+.north: DW -1
+.east:  DW -1
+.south: DW -1
+.west:  DW ChunkA
+
+DB 2;x
+DB 7;y
+DB MAP_STAMP
+DW HouseStamp
+
+DB 17;x
+DB 9;y
 DB MAP_TILE
 DB 151;tile
-DB 16;x
-DB 21;y
+DB 1;palette
 
+DB 14;x
+DB 14;y
+DB MAP_TILE
+DB 151;tile
+DB 1;palette
+
+DB 8;x
+DB 9;y
+DB MAP_STAMP
+DW SignStamp
+
+DB 22;x
+DB 20;y
 DB MAP_STAMP
 DW HouseStamp
-DB 20;x
-DB 13;y
 
-DB MAP_STAMP
-DW HouseStamp
-DB 15;x
-DB 2;y
-
-DB MAP_STAMP
-DW HouseStamp
-DB 7;x
-DB 23;y
-
+DB 23;x
+DB 6;y
 DB MAP_STAMP
 DW TreeStamp
-DB 11;x
+
+DB 19;x
 DB 8;y
-
 DB MAP_STAMP
 DW TreeStamp
-DB 1;x
-DB 1;y
 
-DB MAP_STAMP
-DW TreeStamp
-DB 5;x
-DB 2;y
-
+DB 3;x
+DB 11;y
 DB MAP_FILL
 DB 167;tile
-DB 18;x
-DB 19;y
-DB 10;width
-DB 7;height
+DB 2;palette
+DB 7;width
+DB 5;height
 
-DB 0
+DB 3;x
+DB 20;y
+DB MAP_FILL
+DB 167;tile
+DB 2;palette
+DB 7;width
+DB 3;height
+
+DB -13;x
+DB 9;y
+DB MAP_STAMP
+DW HouseStamp
+
+DB 0;END ChunkA1, 63 bytes
+
+ChunkA::
+.north: DW -1
+.east:  DW ChunkA1
+.south: DW -1
+.west:  DW -1
+
+DB 25;x
+DB 11;y
+DB MAP_STAMP
+DW SignStamp
+
+DB 6;x
+DB 22;y
+DB MAP_STAMP
+DW HouseStamp
+
+DB 23;x
+DB 16;y
+DB MAP_TILE
+DB 151;tile
+DB 1;palette
+
+DB 20;x
+DB 21;y
+DB MAP_TILE
+DB 151;tile
+DB 1;palette
+
+DB 21;x
+DB 13;y
+DB MAP_FILL
+DB 167;tile
+DB 2;palette
+DB 2;width
+DB 19;height
+
+DB 14;x
+DB 22;y
+DB MAP_STAMP
+DW TreeStamp
+
+DB 2;x
+DB 2;y
+DB MAP_STAMP
+DW TreeStamp
+
+DB 6;x
+DB 7;y
+DB MAP_STAMP
+DW HouseStamp
+
+DB 4;x
+DB 24;y
+DB MAP_STAMP
+DW SignStamp
+
+DB 12;x
+DB 9;y
+DB MAP_STAMP
+DW SignStamp
+
+DB 6;x
+DB 1;y
+DB MAP_STAMP
+DW TreeStamp
+
+DB 18;x
+DB 3;y
+DB MAP_STAMP
+DW TreeStamp
+
+DB 0;END ChunkA, 71 bytes
+

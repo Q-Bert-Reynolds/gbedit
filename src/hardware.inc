@@ -40,6 +40,8 @@ _SCRN0       EQU $9800 ; $9800->$9BFF
 _SCRN1       EQU $9C00 ; $9C00->$9FFF
 _SRAM        EQU $A000 ; $A000->$BFFF
 _RAM         EQU $C000 ; $C000->$DFFF
+_WRAM0       EQU _RAM  ; $C000->$CFFF unswitchable WRAM bank 0
+_WRAMX       EQU $D000 ; $D000->$DFFF 7 switchable WRAM banks on GBC (fixed on DMG)
 _OAMRAM      EQU $FE00 ; $FE00->$FE9F
 _AUD3WAVERAM EQU $FF30 ; $FF30->$FF3F
 _HRAM        EQU $FF80 ; $FF80->$FFFE

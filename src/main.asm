@@ -128,9 +128,13 @@ Main::
   
   SETUP_DMA_TRANSFER
 
-.clearRAM
-  ld hl, sys_info+1;don't clear breakpoint or sys_info
-  ld bc, $2000-(1+sys_info-_RAM)
+.clearRAM;don't clear breakpoint or sys_info
+  ld hl, _RAM
+  ld bc, _breakpoint-_RAM
+  xor a
+  call mem_Set
+  ld hl, sys_info+1
+  ld bc, (_RAM+$2000)-sys_info
   xor a
   call mem_Set
 

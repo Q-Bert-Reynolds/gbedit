@@ -2,7 +2,6 @@ Priority
 
 - replace map system, should be sparse objects in 32x32 tile regions
   - add diagonal fills
-  - each 32x32 region should have the addresses of adjacent regions
   - reorder map object data so that xy come first (for culling)
 - make results random so we can move on to FX
 

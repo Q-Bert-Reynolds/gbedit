@@ -6,8 +6,13 @@ INCLUDE "maps/unity_test_map.gbmap"
 
 DrawSparseMap:
   CLEAR_BKG_AREA 0,0,32,32,255
-  ld hl, UnityTestMap
+  ld hl, ChunkA+8
 .loop
+    ld a, [hli];x
+    ld d, a
+    ld a, [hli];y
+    ld e, a
+    push de;xy
     ld a, [hli]
     and a
     ret z
@@ -19,10 +24,6 @@ DrawSparseMap:
     ld a, [hli];tile
     ld bc, tile_buffer
     ld [bc], a
-    ld a, [hli];x
-    ld d, a
-    ld a, [hli];y
-    ld e, a
     push hl;next map object
     ld hl, $0101
     jp .setTiles
@@ -88,6 +89,7 @@ DrawSparseMap:
     pop de;xy
     ld bc, tile_buffer
   .setTiles
+    pop de;xy
     call gbdk_SetBkgTiles
     pop hl;next map object
     jp .loop

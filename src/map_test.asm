@@ -20,7 +20,7 @@ DrawSparseMap:
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jr z, .skipGBC
-  ld a, 1
+  ld a, 2
   ld [rVBK], a
   CLEAR_BKG_AREA 0,0,32,32,0
   xor a
@@ -50,7 +50,20 @@ DrawSparseMap:
     ld a, [hli];tile
     ld bc, tile_buffer
     ld [bc], a
-    ld a, [hli];palette, TODO
+    ld a, [hli];palette
+    ld d, a;palette
+
+    ld a, [sys_info]
+    and a, SYS_INFO_GBC
+    jr z, .skipTilePal
+    ld a, 2
+    ld [rSVBK], a
+    ld a, d;palette
+    ld [bc], a
+    xor a
+    ld [rSVBK], a
+  .skipTilePal
+
     pop de;xy
     push hl;next map object
     ld hl, $0101
@@ -76,7 +89,22 @@ DrawSparseMap:
     ld c, l
     pop hl;tiles
     ld de, tile_buffer
+    push bc;w*h
     call mem_Copy
+    pop bc;w*h
+
+    ld a, [sys_info]
+    and a, SYS_INFO_GBC
+    jr z, .skipStampPal
+    ld a, 2
+    ld [rSVBK], a
+    ld de, tile_buffer
+    call mem_Copy
+    xor a
+    ld [rSVBK], a
+  .skipStampPal
+
+
     pop hl;w,h
     pop bc;next map object
     pop de;xy
@@ -109,12 +137,12 @@ DrawSparseMap:
     and a, SYS_INFO_GBC
     jr z, .fillTileBuffer
     push bc;w*h
-    ld a, 1
+    ld a, 2
     ld [rSVBK], a
     ld a, e;palette
     ld hl, tile_buffer
     call mem_Set
-    ld a, 0
+    xor a
     ld [rSVBK], a
 
     pop bc;w*h
@@ -139,8 +167,9 @@ DrawSparseMap:
     and a, SYS_INFO_GBC
     jr z, .nextMapObject
     ld a, 1
-    ld [rSVBK], a
     ld [rVBK], a
+    inc a
+    ld [rSVBK], a
     ld bc, tile_buffer
     call gbdk_SetBkgTiles
     xor a

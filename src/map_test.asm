@@ -17,18 +17,35 @@ SetupMapPalettes:
   ret
 
 DrawSparseMap:
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jr z, .skipGBC
-  ld a, 2
-  ld [rVBK], a
-  CLEAR_BKG_AREA 0,0,32,32,0
   xor a
   ld [rVBK], a
-.skipGBC
-  CLEAR_BKG_AREA 0,0,32,32,255
+  ld hl, InfieldChunk
+.setChunkTile
+  ld a, [hli];tile
+  push hl
+  ld bc, 32*32
+  ld hl, _SCRN0
+  call mem_Set
+  pop hl
 
-  ld hl, ChunkA1+8
+.setChunkPalette
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .drawMapObjects
+  ld a, 1
+  ld [rVBK], a
+  ld a, [hl];tile
+  push hl
+  ld bc, 32*32
+  ld hl, _SCRN0
+  call mem_Set
+  pop hl
+  xor a
+  ld [rVBK], a
+
+.drawMapObjects
+  ld bc, 9
+  add hl, bc;skip neighboring chunks
 .loop
     ld a, [hli];map object type
     and a
@@ -98,12 +115,21 @@ DrawSparseMap:
     jr z, .skipStampPal
     ld a, 2
     ld [rSVBK], a
+    ld a, [hl]
+    bit 7, a
+    jr z, .nonUniformPal
+  .uniformPal
+    and a, %01111111
+    ld hl, tile_buffer
+    call mem_Set
+    jr .finishStampPal
+  .nonUniformPal
     ld de, tile_buffer
     call mem_Copy
+  .finishStampPal
     xor a
     ld [rSVBK], a
   .skipStampPal
-
 
     pop hl;w,h
     pop bc;next map object

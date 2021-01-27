@@ -22,18 +22,22 @@
 ;   CGB_COMPATIBILITY
 ;
 ; Library Subroutines:
-;   gbdk_MoveSprite - Move sprite number C to XY = DE
-;   gbdk_SetSpriteTile - Set sprite number C to tile D
-;   gbdk_SetSpriteProp - Set properties of sprite number C to D
-;   gbdk_DisplayOff
-;   gbdk_WaitVBL
-;   gbdk_SetWinTiles
-;   gbdk_SetBkgTiles
-;   gbdk_Delay
-;   gbdk_CPUSlow
-;   gbdk_CPUFast
-;   gbdk_Random - returns a random value to DE
-;   gbdk_Seed - seeds Random function
+;   gbdk_MoveSprite    - moves sprite c, de=xy
+;   gbdk_SetSpriteTile - set sprite c to tile d
+;   gbdk_SetSpriteProp - Set properties of sprite c to d
+;   gbdk_DisplayOff    - turns off screen
+;   gbdk_WaitVBL       - halts until v-blank
+;   gbdk_SetWinTiles   - sets window tiles, hl=wh, de=xy, bc=source
+;   gbdk_SetBkgTiles   - sets background tiles, hl=wh, de=xy, bc=source
+;   gbdk_SetTiles      - jump only, stack=(return,wh), bc=src, hl=dst, de=xy
+;   gbdk_GetWinTiles   - gets window tiles, hl=wh, de=xy, bc=source
+;   gbdk_GetBkgTiles   - gets background tiles, hl=wh, de=xy, bc=source
+;   gbdk_GetTiles      - jump only, stack=(return,wh), bc=dest, hl=src, de=xy
+;   gbdk_Delay         - pauses for de miliseconds
+;   gbdk_CPUSlow       - sets GBC CPU speed to DMG 
+;   gbdk_CPUFast       - sets GBC CPU speed to 2x
+;   gbdk_Random        - returns a random value to DE
+;   gbdk_Seed          - seeds Random function
 ;
 
 IF !DEF(GBDK_ASM)
@@ -311,11 +315,11 @@ gbdk_SetWinTiles::
   ldh  a,[rLCDC]
   bit  6, a
   jr  nz,.innerLoop
-  ld  hl,$9800  ; hl = origin
-  jr  setTiles
+  ld  hl, _SCRN0  ; hl = origin
+  jr  gbdk_SetTiles
 .innerLoop:
-  ld  hl,$9c00  ; hl = origin
-  jr  setTiles
+  ld  hl,_SCRN1  ; hl = origin
+  jr  gbdk_SetTiles
 
 
 ;***************************************************************************
@@ -334,12 +338,27 @@ gbdk_SetBkgTiles::
   ldh a,[rLCDC]
   bit 3, a
   jr nz, .skip
-  ld hl, $9800 ; hl = origin
-  jr setTiles
+  ld hl, _SCRN0 ; hl = origin
+  jr gbdk_SetTiles
 .skip
-  ld hl, $9c00 ; hl = origin
+  ld hl, _SCRN1 ; hl = origin
+  ;falls through to gbdk_SetTiles
 
-setTiles:
+;***************************************************************************
+;
+; gbdk_SetTiles - Sets tiles to address
+;   Cannot be called. Must be jumped to.
+;
+; input:
+;   stack:
+;     return address
+;     width, height
+;   hl - 32x32 tile destination (usually _SCRN0 or _SCRN1)
+;   de - x pos, y pos
+;   bc - source
+;
+;***************************************************************************
+gbdk_SetTiles::
   push bc ; store source
   xor a
   or e
@@ -347,42 +366,42 @@ setTiles:
 
   ld bc, 32 ; one line is 32 tiles
 .rowLoop
-  add hl,bc ; y coordinate
-  dec e
-  jr nz, .rowLoop
-.skip
-  ld b,0 ; x coordinate
-  ld c,d
-  add hl,bc
+    add hl,bc ; y coordinate
+    dec e
+    jr nz, .rowLoop
+  .skip
+    ld b,0 ; x coordinate
+    ld c,d
+    add hl,bc
 
-  pop bc ; bc = source
-  pop de ; de = wh
-  push hl ; store origin
-  push de ; store wh
-.columnLoop
-  ldh a,[rSTAT]
-  and STATF_BUSY
-  jr nz, .columnLoop
+    pop bc ; bc = source
+    pop de ; de = wh
+    push hl ; store origin
+    push de ; store wh
+  .columnLoop
+      ldh a,[rSTAT]
+      and STATF_BUSY
+      jr nz, .columnLoop
 
-  ld a,[bc] ; copy w tiles
-  ld [hl+], a
-  inc bc
-  dec d
-  jr nz, .columnLoop
-  pop hl ; hl = wh
-  ld d,h ; restore d = w
-  pop hl ; hl = origin
-  dec e
-  jr z,.exit
+      ld a,[bc] ; copy w tiles from source
+      ld [hli], a ;to destination
+      inc bc
+      dec d
+      jr nz, .columnLoop
+      pop hl ; hl = wh
+      ld d,h ; restore d = w
+      pop hl ; hl = origin
+      dec e
+      jr z,.exit
 
-  push bc ; next line
-  ld bc, 32 ; one line is 32 tiles
-  add hl,bc
-  pop bc
+      push bc ; next line
+      ld bc, 32 ; one line is 32 tiles
+      add hl,bc
+      pop bc
 
-  push hl ; store current origin
-  push de ; store wh
-  jr .columnLoop
+      push hl ; store current origin
+      push de ; store wh
+      jr .columnLoop
 .exit
   ret
 
@@ -398,16 +417,15 @@ setTiles:
 ;
 ;***************************************************************************
 gbdk_GetWinTiles::
-
   push hl ; store wh
-  ldh a,[rLCDC]
-  bit 6,a
+  ldh a, [rLCDC]
+  bit 6, a
   jr nz, .skip
-  ld hl, $9800 ; hl = origin
-  jr getTiles
+  ld hl, _SCRN0 ; hl = origin
+  jr gbdk_GetTiles
 .skip
-  ld hl, $9c00 ; hl = origin
-  jr getTiles
+  ld hl, _SCRN1 ; hl = origin
+  jr gbdk_GetTiles
 
 ;***************************************************************************
 ;
@@ -425,55 +443,70 @@ gbdk_GetBkgTiles::
   ldh a, [rLCDC]
   bit 3, a
   jr nz, .skip
-  ld hl, $9800 ; hl = origin
-  jr getTiles
+  ld hl, _SCRN0 ; hl = origin
+  jr gbdk_GetTiles
 .skip
-  ld hl, $9c00 ; hl = origin
+  ld hl, _SCRN1 ; hl = origin
+  ;falls through to gbdk_GetTiles
 
-getTiles:
+;***************************************************************************
+;
+; gbdk_GetTiles - Gets tiles from address
+;   Cannot be called. Must be jumped to.
+;
+; input:
+;   stack:
+;     return address
+;     width, height
+;   hl - 32x32 tile source (usually _SCRN0 or _SCRN1)
+;   de - x pos, y pos
+;   bc - destination
+;
+;***************************************************************************
+gbdk_GetTiles::
   push bc  ; store source
   xor a
   or e
   jr z, .skip
 
-  ld bc, $20 ; one line is 20 tiles
+  ld bc, 32 ; one line is 32 tiles
 .rowLoop
-  add hl,bc  ; y coordinate
-  dec e
-  jr nz, .rowLoop
-.skip
-  ld b, $00  ; x coordinate
-  ld c,d
-  add hl,bc
+    add hl, bc  ; y coordinate
+    dec e
+    jr nz, .rowLoop
+  .skip
+    ld b, $00  ; x coordinate
+    ld c, d
+    add hl, bc
 
-  pop bc ; bc = source
-  pop de ; de = wh
-  push hl ; store origin
-  push de ; store wh
-.columnLoop
-  ldh a, [rSTAT]
-  and $02
-  jr nz, .columnLoop
+    pop bc ; bc = source
+    pop de ; de = wh
+    push hl ; store origin
+    push de ; store wh
+  .columnLoop
+      ldh a, [rSTAT]
+      and $02
+      jr nz, .columnLoop
 
-  ld a, [hli] ; copy w tiles
-  ld [bc], a
-  inc bc
-  dec d
-  jr nz, .columnLoop
-  pop hl ; hl = wh
-  ld d,h ; restore d = w
-  pop hl ; hl = origin
-  dec e
-  jr z, .exit
+      ld a, [hli] ; copy w tiles from source
+      ld [bc], a ; to destination
+      inc bc
+      dec d
+      jr nz, .columnLoop
+      pop hl ; hl = wh
+      ld d, h ; restore d = w
+      pop hl ; hl = origin
+      dec e
+      jr z, .exit
 
-  push bc ; next line
-  ld bc, $20 ; one line is 20 tiles
-  add hl,bc
-  pop bc
+      push bc ; next line
+      ld bc, 32 ; one line is 32 tiles
+      add hl,bc
+      pop bc
 
-  push hl ; store current origin
-  push de ; store wh
-  jr .columnLoop
+      push hl ; store current origin
+      push de ; store wh
+      jr .columnLoop
 .exit
   ret
 

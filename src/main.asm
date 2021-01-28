@@ -1,4 +1,4 @@
-TESTS_ENABLED EQU 1  
+TESTS_ENABLED EQU 0  
 INTRO_ENABLED EQU 1
 TITLE_ENABLED EQU 1
 WORLD_ENABLED EQU 1
@@ -171,8 +171,9 @@ Main::
 .loadGame
   call LoadOptions
   call CheckSave
-  jp z, .start
+  jp z, .finishLoading
   call LoadGame
+.finishLoading
 
 IF TESTS_ENABLED == 1
   RUN_TESTS
@@ -183,6 +184,7 @@ IF INTRO_ENABLED == 1
   ld a, START_BANK
   call SetBank
   call Start
+  HIDE_ALL_SPRITES
 ENDC
 
 IF TITLE_ENABLED == 1

@@ -51,11 +51,6 @@ LoadGame::
   ld bc, sram_main_save_end - sram_user_name
   call mem_Copy
 
-  ld hl, name_buffer
-  call str_Length
-  ld a, d
-  and a
-
   ;load user's lineup
   SWITCH_RAM_MBC5 TEAM_SRAM_BANK
   ld hl, sram_UserLineup

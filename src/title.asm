@@ -156,7 +156,7 @@ ShowTitle:
   ld hl, rOBP1
   ld [hl], $E0
 .setColors
-  ld hl, TitlePalSet               
+  ld hl, TitlePalSet
   call SetPalettesIndirect
   ld b, DRAW_FLAGS_BKG
   ld hl, SGBTitleAttrBlk

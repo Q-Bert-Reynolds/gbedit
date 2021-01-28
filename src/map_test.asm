@@ -16,16 +16,15 @@ SetupMapPalettes:
     jr nz, .loop
   ret
 
-DrawSparseMap:
+DrawSparseMap:; hl = chunk address
   xor a
   ld [rVBK], a
-  ld hl, InfieldChunk
 .setChunkTile
   ld a, [hli];tile
   push hl
   ld bc, 32*32
   ld hl, _SCRN0
-  call mem_Set
+  call mem_SetVRAM
   pop hl
 
 .setChunkPalette
@@ -213,13 +212,19 @@ TestMap::
   call LoadFontTiles
   call LoadOverworldTiles
   call SetupMapPalettes
+  ld hl, InfieldChunk
   call DrawSparseMap
 
   DISPLAY_ON
 
+  ld hl, InfieldChunk
 .loop
+    push hl;chunk
+    call DrawSparseMap
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START
     call gbdk_WaitVBL
+    pop hl;chunk
     jr .loop
 .exit
+  pop hl;chunk
   ret

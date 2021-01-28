@@ -1,8 +1,6 @@
 Priority
 
 - replace map system, should be sparse objects in 32x32 tile regions
-  - add diagonal fills
-  - reorder map object data so that xy come first (for culling)
 - make results random so we can move on to FX
 
  General
@@ -94,6 +92,7 @@ Team Menu
 
 Overworld
 
+- add diagonal lines to map system, (already implemented in editor)
 - return to previous world position
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things

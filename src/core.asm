@@ -7,7 +7,9 @@ SECTION "Core", ROM0
 ; UpdateInput
 ; DrawStateMap
 ; SetTiles                        a = draw flags, hl=wh, de=xy, bc=firstTile
+; SetBufferTiles                  hl=wh, de=xy, bc=firstTile
 ; SetBkgTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
+; SetWinTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
 ; DrawSaveStats                   draw flags, de = xy
 ; ShowRoledex
 ; LoadSimulation                  a = ball speed b = spray angle c = launch angle
@@ -244,7 +246,12 @@ SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
   call gbdk_SetBkgTiles
   ret
 
-SetTileBufferWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
+SetBufferTiles::;hl=wh, de=xy, bc=firstTile
+  push hl;wh
+  ld hl, tile_buffer;destination
+  jp gbdk_CopyTilesTo
+
+CopyToTileBufferWithOffset: ;hl=wh, de=xy, bc=in_tiles, a=offset
   push de ;xy
   push hl ;wh
   push af ;offset
@@ -288,13 +295,13 @@ SetTileBufferWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   ret
 
 SetBkgTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
-  call SetTileBufferWithOffset
+  call CopyToTileBufferWithOffset
   ld bc, tile_buffer
   call gbdk_SetBkgTiles
   ret
   
 SetWinTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
-  call SetTileBufferWithOffset
+  call CopyToTileBufferWithOffset
   ld bc, tile_buffer
   call gbdk_SetWinTiles
   ret

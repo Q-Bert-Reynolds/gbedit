@@ -20,6 +20,7 @@
 ;   ENABLE_RAM_MBC5
 ;   DISABLE_RAM_MBC5
 ;   CGB_COMPATIBILITY
+;   SET_TILES
 ;
 ; Library Subroutines:
 ;   gbdk_MoveSprite    - moves sprite c, de=xy
@@ -29,10 +30,10 @@
 ;   gbdk_WaitVBL       - halts until v-blank
 ;   gbdk_SetWinTiles   - sets window tiles, hl=wh, de=xy, bc=source
 ;   gbdk_SetBkgTiles   - sets background tiles, hl=wh, de=xy, bc=source
-;   gbdk_SetTiles      - jump only, stack=(return,wh), bc=src, hl=dst, de=xy
+;   gbdk_CopyTilesTo      - jump only, stack=(return,wh), bc=src, hl=dst, de=xy
 ;   gbdk_GetWinTiles   - gets window tiles, hl=wh, de=xy, bc=source
 ;   gbdk_GetBkgTiles   - gets background tiles, hl=wh, de=xy, bc=source
-;   gbdk_GetTiles      - jump only, stack=(return,wh), bc=dest, hl=src, de=xy
+;   gbdk_CopyTilesFrom      - jump only, stack=(return,wh), bc=dest, hl=src, de=xy
 ;   gbdk_Delay         - pauses for de miliseconds
 ;   gbdk_CPUSlow       - sets GBC CPU speed to DMG 
 ;   gbdk_CPUFast       - sets GBC CPU speed to 2x
@@ -195,6 +196,66 @@ CGB_COMPATIBILITY: MACRO
   ldh [rOCPD], a
 ENDM
 
+OP_COPY_TO   EQU 0
+OP_COPY_FROM EQU 1
+OP_SET_TO    EQU 2
+COPY_TILE_BLOCK: MACRO; \1 = operation
+  push bc ; store source
+  xor a
+  or e
+  jr z,.skip\@
+
+  ld bc, 32 ; one line is 32 tiles
+.rowLoop\@
+    add hl,bc ; y coordinate
+    dec e
+    jr nz, .rowLoop\@
+  .skip\@
+    ld b,0 ; x coordinate
+    ld c,d
+    add hl,bc
+
+    pop bc ; bc = source
+    pop de ; de = wh
+    push hl ; store origin
+    push de ; store wh
+  .columnLoop\@
+      ldh a,[rSTAT]
+      and STATF_BUSY
+      jr nz, .columnLoop\@
+
+IF \1 == OP_COPY_TO
+      ld a, [bc]
+      ld [hli], a
+ELIF \1 == OP_COPY_FROM
+      ld a, [hli]
+      ld [bc], a
+ELIF \1 == OP_SET_TO
+      ld a, b; tile id
+      ld [hli], a
+ENDC
+
+      inc bc
+      dec d
+      jr nz, .columnLoop\@
+      pop hl ; hl = wh
+      ld d,h ; restore d = w
+      pop hl ; hl = origin
+      dec e
+      jr z, .exit\@
+
+      push bc ; next line
+      ld bc, 32 ; one line is 32 tiles
+      add hl,bc
+      pop bc
+
+      push hl ; store current origin
+      push de ; store wh
+      jr .columnLoop\@
+.exit\@
+  ret
+ENDM
+
 OAM_OVERFLOW_SIZE EQU 256
 
 SECTION "GBDK Vars", WRAM0[_RAM];ensure OAM buffer is not in switchable WRAM
@@ -316,10 +377,10 @@ gbdk_SetWinTiles::
   bit  6, a
   jr  nz,.innerLoop
   ld  hl, _SCRN0  ; hl = origin
-  jr  gbdk_SetTiles
+  jr  gbdk_CopyTilesTo
 .innerLoop:
   ld  hl,_SCRN1  ; hl = origin
-  jr  gbdk_SetTiles
+  jr  gbdk_CopyTilesTo
 
 
 ;***************************************************************************
@@ -339,14 +400,14 @@ gbdk_SetBkgTiles::
   bit 3, a
   jr nz, .skip
   ld hl, _SCRN0 ; hl = origin
-  jr gbdk_SetTiles
+  jr gbdk_CopyTilesTo
 .skip
   ld hl, _SCRN1 ; hl = origin
-  ;falls through to gbdk_SetTiles
+  ;falls through to gbdk_CopyTilesTo
 
 ;***************************************************************************
 ;
-; gbdk_SetTiles - Sets tiles to address
+; gbdk_CopyTilesTo - Copies tiles to address
 ;   Cannot be called. Must be jumped to.
 ;
 ; input:
@@ -358,52 +419,22 @@ gbdk_SetBkgTiles::
 ;   bc - source
 ;
 ;***************************************************************************
-gbdk_SetTiles::
-  push bc ; store source
-  xor a
-  or e
-  jr z,.skip
+gbdk_CopyTilesTo::
+  COPY_TILE_BLOCK OP_COPY_TO
 
-  ld bc, 32 ; one line is 32 tiles
-.rowLoop
-    add hl,bc ; y coordinate
-    dec e
-    jr nz, .rowLoop
-  .skip
-    ld b,0 ; x coordinate
-    ld c,d
-    add hl,bc
-
-    pop bc ; bc = source
-    pop de ; de = wh
-    push hl ; store origin
-    push de ; store wh
-  .columnLoop
-      ldh a,[rSTAT]
-      and STATF_BUSY
-      jr nz, .columnLoop
-
-      ld a,[bc] ; copy w tiles from source
-      ld [hli], a ;to destination
-      inc bc
-      dec d
-      jr nz, .columnLoop
-      pop hl ; hl = wh
-      ld d,h ; restore d = w
-      pop hl ; hl = origin
-      dec e
-      jr z,.exit
-
-      push bc ; next line
-      ld bc, 32 ; one line is 32 tiles
-      add hl,bc
-      pop bc
-
-      push hl ; store current origin
-      push de ; store wh
-      jr .columnLoop
-.exit
-  ret
+;***************************************************************************
+;
+; gbdk_SetTilesTo - Set tiles to a
+;
+; input:
+;   a  - tile id
+;   hl - 32x32 tile destination (usually _SCRN0 or _SCRN1)
+;   de - x pos, y pos
+;   bc - width, height
+;
+;***************************************************************************
+gbdk_SetTilesTo::
+  COPY_TILE_BLOCK OP_SET_TO
 
 ;***************************************************************************
 ;
@@ -422,10 +453,10 @@ gbdk_GetWinTiles::
   bit 6, a
   jr nz, .skip
   ld hl, _SCRN0 ; hl = origin
-  jr gbdk_GetTiles
+  jr gbdk_CopyTilesFrom
 .skip
   ld hl, _SCRN1 ; hl = origin
-  jr gbdk_GetTiles
+  jr gbdk_CopyTilesFrom
 
 ;***************************************************************************
 ;
@@ -444,14 +475,14 @@ gbdk_GetBkgTiles::
   bit 3, a
   jr nz, .skip
   ld hl, _SCRN0 ; hl = origin
-  jr gbdk_GetTiles
+  jr gbdk_CopyTilesFrom
 .skip
   ld hl, _SCRN1 ; hl = origin
-  ;falls through to gbdk_GetTiles
+  ;falls through to gbdk_CopyTilesFrom
 
 ;***************************************************************************
 ;
-; gbdk_GetTiles - Gets tiles from address
+; gbdk_CopyTilesFrom - Gets tiles from address
 ;   Cannot be called. Must be jumped to.
 ;
 ; input:
@@ -463,52 +494,8 @@ gbdk_GetBkgTiles::
 ;   bc - destination
 ;
 ;***************************************************************************
-gbdk_GetTiles::
-  push bc  ; store source
-  xor a
-  or e
-  jr z, .skip
-
-  ld bc, 32 ; one line is 32 tiles
-.rowLoop
-    add hl, bc  ; y coordinate
-    dec e
-    jr nz, .rowLoop
-  .skip
-    ld b, $00  ; x coordinate
-    ld c, d
-    add hl, bc
-
-    pop bc ; bc = source
-    pop de ; de = wh
-    push hl ; store origin
-    push de ; store wh
-  .columnLoop
-      ldh a, [rSTAT]
-      and $02
-      jr nz, .columnLoop
-
-      ld a, [hli] ; copy w tiles from source
-      ld [bc], a ; to destination
-      inc bc
-      dec d
-      jr nz, .columnLoop
-      pop hl ; hl = wh
-      ld d, h ; restore d = w
-      pop hl ; hl = origin
-      dec e
-      jr z, .exit
-
-      push bc ; next line
-      ld bc, 32 ; one line is 32 tiles
-      add hl,bc
-      pop bc
-
-      push hl ; store current origin
-      push de ; store wh
-      jr .columnLoop
-.exit
-  ret
+gbdk_CopyTilesFrom::
+  COPY_TILE_BLOCK OP_COPY_FROM
 
 ;***************************************************************************
 ;

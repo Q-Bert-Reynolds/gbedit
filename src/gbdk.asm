@@ -199,6 +199,11 @@ ENDM
 OP_COPY_TO   EQU 0
 OP_COPY_FROM EQU 1
 OP_SET_TO    EQU 2
+;   width, height on stack
+;   hl - 32x32 tile table (usually _SCRN0 or _SCRN1)
+;   de - x pos, y pos
+;   bc - source
+
 COPY_TILE_BLOCK: MACRO; \1 = operation
   push bc ; store source
   xor a
@@ -227,15 +232,16 @@ COPY_TILE_BLOCK: MACRO; \1 = operation
 IF \1 == OP_COPY_TO
       ld a, [bc]
       ld [hli], a
+      inc bc
 ELIF \1 == OP_COPY_FROM
       ld a, [hli]
       ld [bc], a
+      inc bc
 ELIF \1 == OP_SET_TO
       ld a, b; tile id
       ld [hli], a
 ENDC
 
-      inc bc
       dec d
       jr nz, .columnLoop\@
       pop hl ; hl = wh
@@ -434,6 +440,8 @@ gbdk_CopyTilesTo::
 ;
 ;***************************************************************************
 gbdk_SetTilesTo::
+  push bc
+  ld b, a
   COPY_TILE_BLOCK OP_SET_TO
 
 ;***************************************************************************

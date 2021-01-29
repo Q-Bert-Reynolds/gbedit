@@ -16,16 +16,27 @@ SetupMapPalettes:
     jr nz, .loop
   ret
 
-DrawSparseMap:; hl = chunk address
+DrawSparseMap:; hl = chunk address, de=xy, bc=wh
+  ld a, d
+  ld [_x], a;x
+  ld a, e
+  ld [_y], a;y
+  ld a, b
+  ld [_u], a;width
+  ld a, c
+  ld [_v], a;height
   xor a
   ld [rVBK], a
 .setChunkTile
   ld a, [hli];tile
-  push hl
-  ld bc, 32*32
+  push hl;palette address
+  push de;xy
+  push bc;wh
   ld hl, _SCRN0
-  call mem_SetVRAM
-  pop hl
+  call gbdk_SetTilesTo
+  pop bc;wh
+  pop de;xy
+  pop hl;palette address
 
 .setChunkPalette
   ld a, [sys_info]
@@ -33,11 +44,10 @@ DrawSparseMap:; hl = chunk address
   jr z, .drawMapObjects
   ld a, 1
   ld [rVBK], a
-  ld a, [hl];tile
+  ld a, [hl];pal
   push hl
-  ld bc, 32*32
   ld hl, _SCRN0
-  call mem_Set
+  call gbdk_SetTilesTo
   pop hl
   xor a
   ld [rVBK], a
@@ -55,151 +65,108 @@ DrawSparseMap:; hl = chunk address
     ld d, a
     ld a, [hli];y
     ld e, a
-    push de;xy
 
     ld a, b;map obj type
     cp a, MAP_STAMP
     jr z, .stamp
     cp a, MAP_FILL
     jr z, .fill
+    ; cp a, MAP_TILE
+    ; jr z, .tile
+
   .tile
     ld a, [hli];tile
-    ld bc, tile_buffer
-    ld [bc], a
-    ld a, [hli];palette
-    ld d, a;palette
-
-    ld a, [sys_info]
-    and a, SYS_INFO_GBC
-    jr z, .skipTilePal
-    ld a, 2
-    ld [rSVBK], a
-    ld a, d;palette
-    ld [bc], a
-    xor a
-    ld [rSVBK], a
-  .skipTilePal
-
-    pop de;xy
-    push hl;next map object
-    ld hl, $0101
-    jp .setTiles
-  .stamp
-    ld a, [hli];stamp lower address
-    ld e, a
-    ld a, [hli];stamp upper address
-    ld d, a
-    push hl
-    ld a, [de];width
-    inc de
     ld b, a
-    ld a, [de];height
-    ld c, a
-    push bc;w,h
-    inc de
-    push de;tiles
-    ld d, 0
-    ld e, b
-    call math_Multiply
-    ld b, h
-    ld c, l
-    pop hl;tiles
-    ld de, tile_buffer
-    push bc;w*h
-    call mem_Copy
-    pop bc;w*h
-
-    ld a, [sys_info]
-    and a, SYS_INFO_GBC
-    jr z, .skipStampPal
-    ld a, 2
-    ld [rSVBK], a
-    ld a, [hl]
-    bit 7, a
-    jr z, .nonUniformPal
-  .uniformPal
-    and a, %01111111
-    ld hl, tile_buffer
-    call mem_Set
-    jr .finishStampPal
-  .nonUniformPal
-    ld de, tile_buffer
-    call mem_Copy
-  .finishStampPal
-    xor a
-    ld [rSVBK], a
-  .skipStampPal
-
-    pop hl;w,h
-    pop bc;next map object
-    pop de;xy
-    push bc;next map object
-    ld bc, tile_buffer
-    jp .setTiles
-
-  .fill
-    ld a, [hli];tile
-    ld d, a;tile
     ld a, [hli];palette
-    ld e, a;palette
-    ld a, [hli];w
-    ld b, a
-    ld a, [hli];h
-    ld c, a;bc = wh
     push hl;next map object
-    push bc;wh
-    push de;tile, pal
-    ld d, 0
-    ld e, b
-    ld a, c
-    call math_Multiply;hl = de * a = width * height
-    ld b, h
-    ld c, l
-
-  .fillPaletteBuffer
-    pop de;tile, palette
-    ld a, [sys_info]
-    and a, SYS_INFO_GBC
-    jr z, .fillTileBuffer
-    push bc;w*h
-    ld a, 2
-    ld [rSVBK], a
-    ld a, e;palette
-    ld hl, tile_buffer
-    call mem_Set
-    xor a
-    ld [rSVBK], a
-
-    pop bc;w*h
-  .fillTileBuffer
-    ld a, d;tile
-    ld hl, tile_buffer
-    call mem_Set
-
-    pop hl;wh
-    pop bc;next map obj
-    pop de;xy
-    push bc;next map obj
-    ld bc, tile_buffer
-  .setTiles
-    push hl;wh
+    push af;palette
+    ld a, b;tile
+    ld bc, $0101
+    ld hl, _SCRN0
     push de;xy
-    call gbdk_SetBkgTiles
+    call gbdk_SetTilesTo
     pop de;xy
-    pop hl;wh
-  .checkCGB
+    pop bc;palette
     ld a, [sys_info]
     and a, SYS_INFO_GBC
     jr z, .nextMapObject
     ld a, 1
     ld [rVBK], a
-    inc a
-    ld [rSVBK], a
-    ld bc, tile_buffer
-    call gbdk_SetBkgTiles
+    ld a, b;palette
+    ld bc, $0101
+    ld hl, _SCRN0
+    call gbdk_SetTilesTo
     xor a
     ld [rVBK], a
-    ld [rSVBK], a
+    jp .nextMapObject
+
+  .stamp
+    ld a, [hli];stamp lower address
+    ld c, a
+    ld a, [hli];stamp upper address
+    ld b, a;bc = stamp address
+    push hl;next object address
+    ld a, [bc];stamp width
+    ld h, a
+    inc bc
+    ld a, [bc];stamp height
+    ld l, a
+    inc bc;stamp tiles
+    push hl;wh
+    push de;xy
+    call gbdk_SetBkgTiles;returns bc=stamp palette
+    pop de;xy
+    pop hl;wh
+    ld a, [sys_info]
+    and a, SYS_INFO_GBC
+    jr z, .nextMapObject
+    ld a, 1
+    ld [rVBK], a
+    ld a, [bc]
+    bit 7, a
+    jr z, .nonUniformPal
+  .uniformPal
+    and a, %01111111;tile
+    ld b, h
+    ld c, l;bc = wh
+    ld hl, _SCRN0
+    call gbdk_SetTilesTo
+    jr .finishStampPal
+  .nonUniformPal
+    call gbdk_SetBkgTiles
+  .finishStampPal
+    xor a
+    ld [rVBK], a
+
+  .fill
+    ld a, [hli];tile
+    ld [_a], a
+    ld a, [hli];palette
+    ld [_b], a
+    ld a, [hli];width
+    ld b, a
+    ld a, [hli];height
+    ld c, a
+    push hl;next map object
+    ld a, [_a];tile
+    ld hl, _SCRN0
+    push de;xy
+    push bc;wh
+    call gbdk_SetTilesTo
+    pop bc;wh
+    pop de;xy
+    ld a, [sys_info]
+    and a, SYS_INFO_GBC
+    jr z, .nextMapObject
+    ld a, 1
+    ld [rVBK], a
+    ld a, [_b];palette
+    ld hl, _SCRN0
+    call gbdk_SetTilesTo
+    xor a
+    ld [rVBK], a
+    jp .nextMapObject
+
   .nextMapObject
     pop hl;next map object
     jp .loop
@@ -213,17 +180,19 @@ TestMap::
   call LoadOverworldTiles
   call SetupMapPalettes
   ld hl, InfieldChunk
+  ld de, 0
+  ld bc, $1412
   call DrawSparseMap
 
   DISPLAY_ON
 
-  ld hl, InfieldChunk
 .loop
-    push hl;chunk
+    ld hl, InfieldChunk
+    ld de, 0
+    ld bc, $1412
     call DrawSparseMap
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START
     call gbdk_WaitVBL
-    pop hl;chunk
     jr .loop
 .exit
   pop hl;chunk

@@ -1,7 +1,7 @@
 Priority
 
 - replace map system, should be sparse objects in 32x32 tile regions
-- make results random so we can move on to FX
+- make batting results semi-random so we can move on to FX
 
  General
 
@@ -21,6 +21,7 @@ Optimization
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 - Load/Set User/Opposing PlayerBkgTiles subroutines share a ton of code
+- OAM_OVERFLOW_SIZE shouldn't be necessary, fix SetSpriteTilesXY
 
 Python scripts
 

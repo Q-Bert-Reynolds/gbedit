@@ -16,15 +16,24 @@ SetupMapPalettes:
     jr nz, .loop
   ret
 
+TestObject:
+  ld a, 1
+  or a
+  ret 
+
 DrawSparseMap:; hl = chunk address, de=xy, bc=wh
+  push bc;wh
   ld a, d
-  ld [_x], a;x
+  ld [_x], a;minX
   ld a, e
-  ld [_y], a;y
-  ld a, b
-  ld [_u], a;width
-  ld a, c
-  ld [_v], a;height
+  ld [_y], a;minY
+  ld a, b;w
+  add a, d;x+w
+  ld [_u], a;maxX
+  ld a, c;h
+  add a, e;y+h
+  ld [_v], a;maxY
+  pop bc;wh
   xor a
   ld [rVBK], a
 .setChunkTile
@@ -59,22 +68,41 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     ld a, [hli];map object type
     and a
     ret z; done if 0
-    ld b, a
+    ld b, a;type
 
     ld a, [hli];x
     ld d, a
     ld a, [hli];y
     ld e, a
+    
+    ld a, b;type
 
-    ld a, b;map obj type
     cp a, MAP_STAMP
-    jr z, .stamp
+    jp z, .testStampX
     cp a, MAP_FILL
-    jr z, .fill
+    jp z, .testFillX
     ; cp a, MAP_TILE
-    ; jr z, .tile
+    ; jp z, .testTileX
 
-  .tile
+  .testTileX
+    ld a, [_u];maxX
+    cp a, d;x
+    jr c, .tileOutOfRange;maxX < x
+    jr z, .tileOutOfRange;maxX == x
+    ld a, [_x];minX
+    cp a, d;x
+    jr z, .testTileY;minX == x
+    jr nc, .tileOutOfRange;minX > x
+  .testTileY
+    ld a, [_v];maxY
+    cp a, e;y
+    jr c, .tileOutOfRange;maxY < y
+    jr z, .tileOutOfRange;maxY == y
+    ld a, [_y];minY
+    cp a, e;y
+    jr z, .drawTile;minY == y
+    jr nc, .tileOutOfRange;minY > y
+  .drawTile
     ld a, [hli];tile
     ld b, a
     ld a, [hli];palette
@@ -89,7 +117,7 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     pop bc;palette
     ld a, [sys_info]
     and a, SYS_INFO_GBC
-    jr z, .nextMapObject
+    jp z, .nextMapObject
     ld a, 1
     ld [rVBK], a
     ld a, b;palette
@@ -99,8 +127,22 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     xor a
     ld [rVBK], a
     jp .nextMapObject
-
-  .stamp
+  .tileOutOfRange
+    inc hl
+    inc hl
+    jp .loop
+  
+  .testStampX
+    ld a, [_u];maxX
+    cp a, d;x
+    jr c, .stampOutOfRange;maxX < x
+    jr z, .stampOutOfRange;maxX == x
+  .testStampY
+    ld a, [_v];maxY
+    cp a, e;y
+    jr c, .stampOutOfRange;maxY < y
+    jr z, .stampOutOfRange;maxY == y
+  .drawStamp
     ld a, [hli];stamp lower address
     ld c, a
     ld a, [hli];stamp upper address
@@ -119,7 +161,7 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     pop hl;wh
     ld a, [sys_info]
     and a, SYS_INFO_GBC
-    jr z, .nextMapObject
+    jp z, .nextMapObject
     ld a, 1
     ld [rVBK], a
     ld a, [bc]
@@ -137,15 +179,58 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
   .finishStampPal
     xor a
     ld [rVBK], a
+    jp .nextMapObject
+  .stampOutOfRange
+    inc hl
+    inc hl
+    jp .loop
 
-  .fill
+  .testFillX
+    ld a, [_u];maxX
+    cp a, d;x
+    jr c, .fillOutOfRange;maxX < x
+    jr z, .fillOutOfRange;maxX == x
+    ld a, [_x];minX
+    cp a, d
+    jr c, .testFillY
+    ld d, a
+  .testFillY
+    ld a, [_v];maxY
+    cp a, e;y
+    jr c, .fillOutOfRange;maxY < y
+    jr z, .fillOutOfRange;maxY == y
+    ld a, [_y];minY
+    cp a, e
+    jr c, .drawFill
+    ld e, a
+  .drawFill
     ld a, [hli];tile
     ld [_a], a
     ld a, [hli];palette
     ld [_b], a
-    ld a, [hli];width
+    ld a, [hli];fill maxX
+    ld b, a;fill maxX
+    ld a, [_u];chunk maxX
+    cp a, b
+    jr nc, .skipMaxXTruncate;chunk maxX >= fill maxX
+    ld b, a;fill maxX = chunk maxX
+  .skipMaxXTruncate
+    ld a, [hli];fill maxY
+    ld c, a;fill maxY
+    ld a, [_v];chunk maxY
+    cp a, c
+    jr nc, .skipMaxYTruncate;chunk maxY >= fill maxY
+    ld c, a;fill maxY = chunk maxY
+  .skipMaxYTruncate
+    ld a, b;maxX
+    sub a, d;width
+    jp c, .loop;if width<0
+    jp z, .loop;if width==0
     ld b, a
-    ld a, [hli];height
+    ld a, c;maxY
+    sub a, e;height
+    jp c, .loop;if height<0
+    jp z, .loop;if height==0
     ld c, a
     push hl;next map object
     ld a, [_a];tile
@@ -165,8 +250,10 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     call gbdk_SetTilesTo
     xor a
     ld [rVBK], a
-    jp .nextMapObject
-
+  .fillOutOfRange
+    ld bc, 4
+    add hl, bc
+    jp .loop
   .nextMapObject
     pop hl;next map object
     jp .loop
@@ -180,7 +267,7 @@ TestMap::
   call LoadOverworldTiles
   call SetupMapPalettes
   ld hl, InfieldChunk
-  ld de, 0
+  ld de, $0800
   ld bc, $1412
   call DrawSparseMap
 
@@ -188,7 +275,7 @@ TestMap::
 
 .loop
     ld hl, InfieldChunk
-    ld de, 0
+    ld de, $0800
     ld bc, $1412
     call DrawSparseMap
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START

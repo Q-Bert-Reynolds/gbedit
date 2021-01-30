@@ -199,22 +199,23 @@ ENDM
 OP_COPY_TO   EQU 0
 OP_COPY_FROM EQU 1
 OP_SET_TO    EQU 2
+SKIP_VRAM    EQU 0
+WAIT_VRAM    EQU 1
 ;   width, height on stack
 ;   hl - 32x32 tile table (usually _SCRN0 or _SCRN1)
 ;   de - x pos, y pos
 ;   bc - source
-
-COPY_TILE_BLOCK: MACRO; \1 = operation
+COPY_TILE_BLOCK: MACRO; \1 = operation, \2 = wait VRAM?
   push bc ; store source
   xor a
   or e
-  jr z,.skip\@
+  jp z,.skip\@
 
   ld bc, 32 ; one line is 32 tiles
 .rowLoop\@
     add hl,bc ; y coordinate
     dec e
-    jr nz, .rowLoop\@
+    jp nz, .rowLoop\@
   .skip\@
     ld b,0 ; x coordinate
     ld c,d
@@ -225,9 +226,11 @@ COPY_TILE_BLOCK: MACRO; \1 = operation
     push hl ; store origin
     push de ; store wh
   .columnLoop\@
+IF \2 == WAIT_VRAM
       ldh a,[rSTAT]
       and STATF_BUSY
-      jr nz, .columnLoop\@
+      jp nz, .columnLoop\@
+ENDC
 
 IF \1 == OP_COPY_TO
       ld a, [bc]
@@ -243,12 +246,12 @@ ELIF \1 == OP_SET_TO
 ENDC
 
       dec d
-      jr nz, .columnLoop\@
+      jp nz, .columnLoop\@
       pop hl ; hl = wh
       ld d,h ; restore d = w
       pop hl ; hl = origin
       dec e
-      jr z, .exit\@
+      jp z, .exit\@
 
       push bc ; next line
       ld bc, 32 ; one line is 32 tiles
@@ -257,7 +260,7 @@ ENDC
 
       push hl ; store current origin
       push de ; store wh
-      jr .columnLoop\@
+      jp .columnLoop\@
 .exit\@
   ret
 ENDM
@@ -426,7 +429,7 @@ gbdk_SetBkgTiles::
 ;
 ;***************************************************************************
 gbdk_CopyTilesTo::
-  COPY_TILE_BLOCK OP_COPY_TO
+  COPY_TILE_BLOCK OP_COPY_TO, WAIT_VRAM
 
 ;***************************************************************************
 ;
@@ -442,7 +445,7 @@ gbdk_CopyTilesTo::
 gbdk_SetTilesTo::
   push bc
   ld b, a
-  COPY_TILE_BLOCK OP_SET_TO
+  COPY_TILE_BLOCK OP_SET_TO, WAIT_VRAM
 
 ;***************************************************************************
 ;
@@ -503,7 +506,7 @@ gbdk_GetBkgTiles::
 ;
 ;***************************************************************************
 gbdk_CopyTilesFrom::
-  COPY_TILE_BLOCK OP_COPY_FROM
+  COPY_TILE_BLOCK OP_COPY_FROM, WAIT_VRAM
 
 ;***************************************************************************
 ;

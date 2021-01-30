@@ -7,7 +7,7 @@ SECTION "Core", ROM0
 ; UpdateInput
 ; DrawStateMap
 ; SetTiles                        a = draw flags, hl=wh, de=xy, bc=firstTile
-; SetBufferTiles                  hl=wh, de=xy, bc=firstTile
+; CopyToTileBuffer                  hl=wh, de=xy, bc=firstTile
 ; SetBkgTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
 ; SetWinTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
 ; DrawSaveStats                   draw flags, de = xy
@@ -246,10 +246,16 @@ SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
   call gbdk_SetBkgTiles
   ret
 
-SetBufferTiles::;hl=wh, de=xy, bc=firstTile
+CopyToTileBuffer::;hl=wh, de=xy, bc=firstTile
   push hl;wh
   ld hl, tile_buffer;destination
-  jp gbdk_CopyTilesTo
+  COPY_TILE_BLOCK OP_COPY_FROM, SKIP_VRAM
+
+SetToTileBuffer::
+  ld hl, tile_buffer
+  push bc
+  ld b, a
+  COPY_TILE_BLOCK OP_SET_TO, SKIP_VRAM
 
 CopyToTileBufferWithOffset: ;hl=wh, de=xy, bc=in_tiles, a=offset
   push de ;xy

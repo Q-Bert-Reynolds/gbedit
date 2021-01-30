@@ -286,6 +286,7 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     call gbdk_SetTilesTo
     xor a
     ld [rVBK], a
+    jr .nextMapObject
   .fillOutOfRange
     ld bc, 4
     add hl, bc

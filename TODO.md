@@ -94,6 +94,7 @@ Team Menu
 Overworld
 
 - add diagonal lines to map system, (already implemented in editor)
+- map stamp culling should also trim tiles in a similar way to fills
 - return to previous world position
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things

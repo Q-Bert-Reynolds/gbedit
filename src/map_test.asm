@@ -78,7 +78,7 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     ld a, b;type
 
     cp a, MAP_STAMP
-    jp z, .testStampX
+    jp z, .testStampMinX
     cp a, MAP_FILL
     jp z, .testFillX
     ; cp a, MAP_TILE
@@ -132,16 +132,16 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     inc hl
     jp .loop
   
-  .testStampX
-    ld a, [_u];maxX
-    cp a, d;x
-    jr c, .stampOutOfRange;maxX < x
-    jr z, .stampOutOfRange;maxX == x
-  .testStampY
-    ld a, [_v];maxY
-    cp a, e;y
-    jr c, .stampOutOfRange;maxY < y
-    jr z, .stampOutOfRange;maxY == y
+  .testStampMinX
+    ld a, [_u];chunk maxX
+    cp a, d;stamp minX
+    jr c, .stampOutOfRange;chunk maxX < stamp minX
+    jr z, .stampOutOfRange;chunk maxX == stamp minX
+  .testStampMinY
+    ld a, [_v];chunk maxY
+    cp a, e;stamp minY
+    jr c, .stampOutOfRange;chunk maxY < stamp minY
+    jr z, .stampOutOfRange;chunk maxY == stamp minY
   .drawStamp
     ld a, [hli];stamp lower address
     ld c, a
@@ -149,11 +149,31 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     ld b, a;bc = stamp address
     push hl;next object address
     ld a, [bc];stamp width
-    ld h, a
+    add a, d;x+w
+    ld h, a;stamp maxX
     inc bc
     ld a, [bc];stamp height
-    ld l, a
+    add a, e;y+h
+    ld l, a;stamp maxY
+
+  .testStampMaxX
+    ld a, [_x];chunk minX
+    cp a, h;stamp maxX
+    jp z, .nextMapObject;chunk minX == stamp maxX
+    jp nc, .nextMapObject;chunk minX > stamp maxX
+  .testStampMaxY
+    ld a, [_y];chunk minX
+    cp a, l;stamp maxy
+    jp z, .nextMapObject;chunk minY == stamp maxY
+    jp nc, .nextMapObject;chunk minY > stamp maxY
+
     inc bc;stamp tiles
+    ld a, h;maxX
+    sub a, d;maxX-x
+    ld h, a;w
+    ld a, l;maxY
+    sub a, e;maxY-y
+    ld l, a;w
     push hl;wh
     push de;xy
     call gbdk_SetBkgTiles;returns bc=stamp palette
@@ -267,16 +287,16 @@ TestMap::
   call LoadOverworldTiles
   call SetupMapPalettes
   ld hl, InfieldChunk
-  ld de, $0800
-  ld bc, $1412
+  ld de, $0000
+  ld bc, $1212
   call DrawSparseMap
 
   DISPLAY_ON
 
 .loop
     ld hl, InfieldChunk
-    ld de, $0800
-    ld bc, $1412
+    ld de, $1400
+    ld bc, $0a0a
     call DrawSparseMap
     UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START
     call gbdk_WaitVBL

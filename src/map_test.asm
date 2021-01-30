@@ -21,53 +21,66 @@ TestObject:
   or a
   ret 
 
-DrawSparseMap:; hl = chunk address, de=xy, bc=wh
-  ld a, d
-  add a, b;maxX
-  sub a, 32
-  jr c, .skipWrapX
-  jr z, .skipWrapX
-  push hl;address
+DrawSparseMap:;de=xy, bc=wh
+.drawCurrent
   push de;xy
   push bc;wh
-  ld a, d;minX
-  sub a, 32
-  jr nc, .drawEast
-  xor a
+  call GetCurrentMapChunk
+  call DrawMapChunk
+  pop bc;wh
+  pop de;xy
+.testEast
+  ld a, d;x
+  add a, b;x+w
+  sub a, 32;x+w-east
+  jr c, .testSouth
 .drawEast
-  ld d, a;minX
+  push de;xy
+  push bc;wh
+  ld b, a;w
+  ld d, 0;x
+  call GetCurrentMapChunk
+  ld a, MAP_EAST
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  pop bc;wh
+  pop de;xy
+.testSouth
+  ld a, e;y
+  add a, c;y+h
+  sub a, 32;y+h-south
+  ret c
+.drawSouth
+  push de;xy
+  push bc;wh
+  ld c, a;h
+  ld e, 0;y
+  call GetCurrentMapChunk
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  pop bc;wh
+  pop de;xy
+.testSouthEast
+  ld a, d;x
+  add a, b;x+w
+  sub a, 32;x+w-east
+  ret c
+  ld b, a;w
+  ld d, 0;x
+  ld a, e;y
+  add a, c;y+h
+  sub a, 32;y+h-south
+  ret c
+.drawSouthEast
+  ld c, a;h
+  ld e, 0;y
+  call GetCurrentMapChunk
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
   ld a, MAP_EAST
   call GetMapChunkNeighbor
-  call DrawMapChunk
-  pop bc;wh
-  pop de;xy
-  pop hl;address
-  ret
-.skipWrapX
-  ld a, e
-  add a, c;maxY
-  sub a, 32
-  jr c, .skipWrapY
-  jr z, .skipWrapY
-  push hl;address
-  push de;xy
-  push bc;wh
-  ld a, e;minY
-  sub a, 32
-  jr nc, .drawSouth
-  xor a
-.drawSouth
-  ld e, a;minY
-  ld a, MAP_SOUTH
-  call GetMapChunkNeighbor
-  call DrawMapChunk
-  pop bc;wh
-  pop de;xy
-  pop hl;address
-  ret
-.skipWrapY
-  
-
+  ;fall through to draw SE chunk
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   ld a, b
@@ -344,11 +357,15 @@ SetCurrentMapChunk:;hl = chunk address, returns address in hl
   ld [map_chunk], a
   ret
 
-GetMapChunkNeighbor:;a = direction, returns chunk in hl
+GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl
   push bc
   ld b, 0
   ld c, a
   call GetCurrentMapChunk
+  pop bc
+  ;fall through
+GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
+  push bc
   add hl, bc
   ld a, [hli]
   ld b, a
@@ -396,7 +413,7 @@ TestMap::
     ld e, a
     jr nc, .noChunkChangeNorth
     ld a, MAP_NORTH
-    call GetMapChunkNeighbor
+    call GetCurrentMapChunkNeighbor
     call SetCurrentMapChunk
   .noChunkChangeNorth
     srl e
@@ -424,7 +441,7 @@ TestMap::
     ld e, a
     jr nc, .noChunkChangeSouth
     ld a, MAP_SOUTH
-    call GetMapChunkNeighbor
+    call GetCurrentMapChunkNeighbor
     call SetCurrentMapChunk
   .noChunkChangeSouth
     srl e
@@ -453,7 +470,7 @@ TestMap::
     ld d, a
     jr nc, .noChunkChangeWest
     ld a, MAP_WEST
-    call GetMapChunkNeighbor
+    call GetCurrentMapChunkNeighbor
     call SetCurrentMapChunk
   .noChunkChangeWest
     srl d
@@ -481,7 +498,7 @@ TestMap::
     ld d, a
     jr nc, .noChunkChangeEast
     ld a, MAP_EAST
-    call GetMapChunkNeighbor
+    call GetCurrentMapChunkNeighbor
     call SetCurrentMapChunk
   .noChunkChangeEast
     srl d
@@ -500,7 +517,6 @@ TestMap::
     srl e
     srl e
   .drawX
-    call GetCurrentMapChunk
     ld bc, $0113
     call DrawSparseMap
   .moveX
@@ -508,7 +524,6 @@ TestMap::
     ld [rSCX], a
     jr .testStartA
   .drawY
-    call GetCurrentMapChunk
     ld bc, $1501
     call DrawSparseMap
   .moveY

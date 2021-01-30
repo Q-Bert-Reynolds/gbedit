@@ -40,6 +40,7 @@ last_map_button_state:: DB
 anim_frame:: DW
 map_x:: DW
 map_y:: DW
+map_chunk:: DW
 
 ;banking
 temp_bank:: DB

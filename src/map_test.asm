@@ -24,14 +24,30 @@ TestObject:
 DrawSparseMap:; hl = chunk address, de=xy, bc=wh
   push bc;wh
   ld a, d
+  cp a, 32
+  jr c, .minXValid
+  xor a
+.minXValid
   ld [_x], a;minX
   ld a, e
+  cp a, 32
+  jr c, .minYValid
+  xor a
+.minYValid
   ld [_y], a;minY
   ld a, b;w
   add a, d;x+w
+  cp a, 33
+  jr c, .maxXValid
+  ld a, 32
+.maxXValid
   ld [_u], a;maxX
   ld a, c;h
   add a, e;y+h
+  cp a, 33
+  jr c, .maxYValid
+  ld a, 32
+.maxYValid
   ld [_v], a;maxY
   pop bc;wh
   xor a
@@ -286,21 +302,143 @@ TestMap::
   call LoadFontTiles
   call LoadOverworldTiles
   call SetupMapPalettes
+  ld a, 3
+  ld [map_x], a
+  ld [map_y], a
+  ld d, a
+  ld e, a
+  sla a
+  sla a
+  sla a
+  ld [rSCX], a
+  ld [rSCY], a
   ld hl, InfieldChunk
-  ld de, $0000
-  ld bc, $1212
+  ld bc, $1513
   call DrawSparseMap
 
   DISPLAY_ON
 
 .loop
+    call UpdateInput
+    ld a, [button_state]
+    ld b, a;buttons
+  .testUp
+    and a, PADF_UP
+    jr z, .testDown
+    ld a, [rSCY]
+    dec a
+    push af
+    ld e, a
+    srl e
+    srl e
+    srl e
+    ld a, [map_y]
+    cp a, e
+    jp z, .moveY
+    ld a, e
+    ld [map_y], a
+    ld e, a
+    ld a, [rSCX]
+    ld d, a
+    srl d
+    srl d
+    srl d
+    jp .drawY
+  .testDown
+    ld a, b
+    and a, PADF_DOWN
+    jr z, .testLeft
+    ld a, [rSCY]
+    inc a
+    push af
+    ld e, a
+    srl e
+    srl e
+    srl e
+    ld a, [map_y]
+    cp a, e
+    jr z, .moveY
+    ld a, e
+    ld [map_y], a
+    add a, 18
+    ld e, a
+    ld a, [rSCX]
+    ld d, a
+    srl d
+    srl d
+    srl d
+    jp .drawY
+  .testLeft
+    ld a, b
+    and a, PADF_LEFT
+    jr z, .testRight
+    ld a, [rSCX]
+    dec a
+    push af
+    ld d, a
+    srl d
+    srl d
+    srl d
+    ld a, [map_x]
+    cp a, d
+    jr z, .moveX
+    ld a, d
+    ld [map_x], a
+    ld d, a
+    ld a, [rSCY]
+    ld e, a
+    srl e
+    srl e
+    srl e
+    jp .drawX
+  .testRight
+    ld a, b
+    and a, PADF_RIGHT
+    jr z, .testStartA
+    ld a, [rSCX]
+    inc a
+    push af
+    ld d, a
+    srl d
+    srl d
+    srl d
+    ld a, [map_x]
+    cp a, d
+    jr z, .moveX
+    ld a, d
+    ld [map_x], a
+    add a, 20
+    ld d, a
+    ld a, [rSCY]
+    ld e, a
+    srl e
+    srl e
+    srl e
+  .drawX
     ld hl, InfieldChunk
-    ld de, $1400
-    ld bc, $0a0a
+    ld bc, $0113
     call DrawSparseMap
-    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_START
+  .moveX
+    pop af
+    ld [rSCX], a
+    jr .testStartA
+  .drawY
+    ld hl, InfieldChunk
+    ld bc, $1501
+    call DrawSparseMap
+  .moveY
+    pop af
+    ld [rSCY], a
+  .testStartA
+    ld a, [last_button_state]
+    and a, PADF_A | PADF_START
+    jr nz, .wait
+    ld a, [button_state]
+    and a, PADF_A | PADF_START
+    jr nz, .exit
+  .wait
     call gbdk_WaitVBL
-    jr .loop
+    jp .loop
 .exit
   pop hl;chunk
   ret

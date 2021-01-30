@@ -49,9 +49,12 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
   ld a, 32
 .maxYValid
   ld [_v], a;maxY
-  pop bc;wh
   xor a
   ld [rVBK], a
+  pop bc;wh
+
+
+DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 .setChunkTile
   ld a, [hli];tile
   push hl;palette address
@@ -62,7 +65,6 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
   pop bc;wh
   pop de;xy
   pop hl;palette address
-
 .setChunkPalette
   ld a, [sys_info]
   and a, SYS_INFO_GBC
@@ -76,7 +78,6 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
   pop hl
   xor a
   ld [rVBK], a
-
 .drawMapObjects
   ld bc, 9
   add hl, bc;skip neighboring chunks
@@ -93,11 +94,11 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     
     ld a, b;type
 
-    cp a, MAP_STAMP
+    cp a, MAP_OBJ_STAMP
     jp z, .testStampMinX
-    cp a, MAP_FILL
+    cp a, MAP_OBJ_FILL
     jp z, .testFillX
-    ; cp a, MAP_TILE
+    ; cp a, MAP_OBJ_TILE
     ; jp z, .testTileX
 
   .testTileX
@@ -296,6 +297,33 @@ DrawSparseMap:; hl = chunk address, de=xy, bc=wh
     jp .loop
   ret
 
+GetCurrentMapChunk:;returns chunk address in hl
+  ld a, [map_chunk+1]
+  ld h, a
+  ld a, [map_chunk]
+  ld l, a
+  ret
+
+SetCurrentMapChunk:;hl = chunk address, returns address in hl
+  ld a, h
+  ld [map_chunk+1], a
+  ld a, l
+  ld [map_chunk], a
+  ret
+
+GetMapChunkNeighbor:;a = direction, returns chunk in hl, affects bc
+  ld b, 0
+  ld c, a
+  call GetCurrentMapChunk
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  ret
+
+
 TestMap::
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
@@ -314,12 +342,14 @@ TestMap::
   ld [rSCX], a
   ld [rSCY], a
   ld hl, InfieldChunk
+  call SetCurrentMapChunk
   ld bc, $1513
   call DrawSparseMap
 
   DISPLAY_ON
 
 .loop
+    ld c, MAP_SCROLL_SPEED
     call UpdateInput
     ld a, [button_state]
     ld b, a;buttons
@@ -327,9 +357,14 @@ TestMap::
     and a, PADF_UP
     jr z, .testDown
     ld a, [rSCY]
-    dec a
+    sub a, c;pos -= speed
     push af
     ld e, a
+    jr nc, .noChunkChangeNorth
+    ld a, MAP_NORTH
+    call GetMapChunkNeighbor
+    call SetCurrentMapChunk
+  .noChunkChangeNorth
     srl e
     srl e
     srl e
@@ -349,16 +384,21 @@ TestMap::
     ld a, b
     and a, PADF_DOWN
     jr z, .testLeft
-    ld a, [rSCY]
-    inc a
+    ld a, [rSCY]    
+    add a, c;pos += speed
     push af
     ld e, a
+    jr nc, .noChunkChangeSouth
+    ld a, MAP_SOUTH
+    call GetMapChunkNeighbor
+    call SetCurrentMapChunk
+  .noChunkChangeSouth
     srl e
     srl e
     srl e
     ld a, [map_y]
     cp a, e
-    jr z, .moveY
+    jp z, .moveY
     ld a, e
     ld [map_y], a
     add a, 18
@@ -374,15 +414,20 @@ TestMap::
     and a, PADF_LEFT
     jr z, .testRight
     ld a, [rSCX]
-    dec a
+    sub a, c;pos -= speed
     push af
     ld d, a
+    jr nc, .noChunkChangeWest
+    ld a, MAP_WEST
+    call GetMapChunkNeighbor
+    call SetCurrentMapChunk
+  .noChunkChangeWest
     srl d
     srl d
     srl d
     ld a, [map_x]
     cp a, d
-    jr z, .moveX
+    jp z, .moveX
     ld a, d
     ld [map_x], a
     ld d, a
@@ -397,15 +442,20 @@ TestMap::
     and a, PADF_RIGHT
     jr z, .testStartA
     ld a, [rSCX]
-    inc a
+    add a, c;pos += speed
     push af
     ld d, a
+    jr nc, .noChunkChangeEast
+    ld a, MAP_EAST
+    call GetMapChunkNeighbor
+    call SetCurrentMapChunk
+  .noChunkChangeEast
     srl d
     srl d
     srl d
     ld a, [map_x]
     cp a, d
-    jr z, .moveX
+    jp z, .moveX
     ld a, d
     ld [map_x], a
     add a, 20
@@ -416,7 +466,7 @@ TestMap::
     srl e
     srl e
   .drawX
-    ld hl, InfieldChunk
+    call GetCurrentMapChunk
     ld bc, $0113
     call DrawSparseMap
   .moveX
@@ -424,7 +474,7 @@ TestMap::
     ld [rSCX], a
     jr .testStartA
   .drawY
-    ld hl, InfieldChunk
+    call GetCurrentMapChunk
     ld bc, $1501
     call DrawSparseMap
   .moveY
@@ -441,5 +491,4 @@ TestMap::
     call gbdk_WaitVBL
     jp .loop
 .exit
-  pop hl;chunk
   ret

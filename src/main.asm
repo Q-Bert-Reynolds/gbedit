@@ -177,6 +177,14 @@ Main::
 
 IF TESTS_ENABLED == 1
   RUN_TESTS
+  DISPLAY_OFF
+  ld a, 1
+  ld [rVBK], a
+  CLEAR_SCREEN 0
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
+  ld [rVBK], a
 ENDC
 
 .start ;show intro credits, batting animation

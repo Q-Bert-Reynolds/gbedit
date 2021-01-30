@@ -94,18 +94,6 @@ DB 253, 253, 221, 222, 254, 219, 220, 253, 253
 .palette:
 DB 133
 
-Mound:: ;28 bytes
-DB 5;width
-DB 5;height
-.tiles:
-DB 139, 140, 254, 142, 143
-DB 155, 254, 215, 254, 159
-DB 254, 254, 231, 232, 254
-DB 187, 254, 254, 254, 191
-DB 203, 204, 254, 206, 207
-.palette:
-DB 133
-
 SecondBase:: ;84 bytes
 DB 9;width
 DB 9;height
@@ -122,12 +110,24 @@ DB 203, 204, 254, 254, 254, 254, 254, 254, 233
 .palette:
 DB 133
 
+Mound:: ;28 bytes
+DB 5;width
+DB 5;height
+.tiles:
+DB 139, 140, 254, 142, 143
+DB 155, 254, 215, 254, 159
+DB 254, 254, 231, 232, 254
+DB 187, 254, 254, 254, 191
+DB 203, 204, 254, 206, 207
+.palette:
+DB 133
+
 ;Map, 249 bytes
 InfieldChunk2::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW -1
-.east:    DW -1
+.north:   DW InfieldChunk2
+.east:    DW InfieldChunk2
 .south:   DW InfieldChunk1
 .west:    DW InfieldChunk3
 
@@ -138,22 +138,22 @@ ChunkA::
 .palette: DB 1
 .north:   DW InfieldChunk
 .east:    DW ChunkA1
-.south:   DW -1
-.west:    DW -1
+.south:   DW ChunkA
+.west:    DW ChunkA
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 20;x
 DB 21;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 23;x
 DB 16;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 21;x1
 DB 13;y1
 DB 167;tile
@@ -161,54 +161,54 @@ DB 2;palette
 DB 23;x2
 DB 32;y2
 
-DB MAP_STAMP;Sign (6)
+DB MAP_OBJ_STAMP;Sign (6)
 DB 18;x
 DB 3;y
 DW TreeStamp
 
-DB MAP_STAMP;Sign
+DB MAP_OBJ_STAMP;Sign
 DB 4;x
 DB 24;y
 DW SignStamp
 
-DB MAP_STAMP;House
+DB MAP_OBJ_STAMP;House
 DB 6;x
 DB 7;y
 DW HouseStamp
 
-DB MAP_STAMP;Sign
+DB MAP_OBJ_STAMP;Sign
 DB 25;x
 DB 11;y
 DW SignStamp
 
-DB MAP_STAMP;Sign
+DB MAP_OBJ_STAMP;Sign
 DB 12;x
 DB 9;y
 DW SignStamp
 
-DB MAP_STAMP;HOUSE
-DB 19;x
-DB 9;y
-DW HouseStamp
-
-DB MAP_STAMP;Sign (5)
+DB MAP_OBJ_STAMP;Sign (5)
 DB 14;x
 DB 1;y
 DW TreeStamp
 
-DB MAP_STAMP;Sign (4)
+DB MAP_OBJ_STAMP;Sign (4)
 DB 10;x
 DB 2;y
 DW TreeStamp
 
-DB MAP_STAMP;Sign (3)
+DB MAP_OBJ_STAMP;Sign (3)
 DB 11;x
 DB 25;y
 DW TreeStamp
 
-DB MAP_STAMP;House (2)
+DB MAP_OBJ_STAMP;House (2)
 DB 6;x
 DB 22;y
+DW HouseStamp
+
+DB MAP_OBJ_STAMP;HOUSE
+DB 19;x
+DB 9;y
 DW HouseStamp
 
 DB 0;END ChunkA, 78 bytes
@@ -219,9 +219,9 @@ InfieldChunk::
 .north:   DW InfieldChunk3
 .east:    DW InfieldChunk1
 .south:   DW ChunkA
-.west:    DW -1
+.west:    DW InfieldChunk
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 9;x1
 DB 27;y1
 DB 252;tile
@@ -229,7 +229,7 @@ DB 5;palette
 DB 32;x2
 DB 28;y2
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 4;x1
 DB 0;y1
 DB 239;tile
@@ -237,12 +237,12 @@ DB 5;palette
 DB 5;x2
 DB 23;y2
 
-DB MAP_STAMP;HomePlate
+DB MAP_OBJ_STAMP;HomePlate
 DB 0;x
 DB 23;y
 DW HomePlate
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 5;x1
 DB 0;y1
 DB 254;tile
@@ -250,7 +250,7 @@ DB 5;palette
 DB 23;x2
 DB 7;y2
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 25;x1
 DB 9;y1
 DB 254;tile
@@ -258,27 +258,27 @@ DB 5;palette
 DB 32;x2
 DB 27;y2
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 25;x
 DB 27;y
 DB 216;tile
 DB 5;palette
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 4;x
 DB 6;y
 DB 216;tile
 DB 5;palette
 
-DB MAP_STAMP;Mound
-DB 13;x
-DB 14;y
-DW Mound
-
-DB MAP_STAMP;HomePlate (1)
+DB MAP_OBJ_STAMP;HomePlate (1)
 DB 23;x
 DB 0;y
 DW SecondBase
+
+DB MAP_OBJ_STAMP;Mound
+DB 13;x
+DB 14;y
+DW Mound
 
 DB 0;END InfieldChunk, 64 bytes
 
@@ -286,11 +286,11 @@ ChunkA1::
 .tile:    DB 255
 .palette: DB 0
 .north:   DW InfieldChunk1
-.east:    DW -1
-.south:   DW -1
+.east:    DW ChunkA1
+.south:   DW ChunkA1
 .west:    DW ChunkA
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 3;x1
 DB 11;y1
 DB 167;tile
@@ -298,19 +298,19 @@ DB 2;palette
 DB 10;x2
 DB 16;y2
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 14;x
 DB 14;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_TILE
+DB MAP_OBJ_TILE
 DB 17;x
 DB 9;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 3;x1
 DB 20;y1
 DB 167;tile
@@ -318,27 +318,27 @@ DB 2;palette
 DB 10;x2
 DB 23;y2
 
-DB MAP_STAMP;Sign (2)
+DB MAP_OBJ_STAMP;Sign (2)
 DB 19;x
 DB 8;y
 DW TreeStamp
 
-DB MAP_STAMP;Sign (1)
+DB MAP_OBJ_STAMP;Sign (1)
 DB 23;x
 DB 6;y
 DW TreeStamp
 
-DB MAP_STAMP;House
+DB MAP_OBJ_STAMP;House
 DB 20;x
 DB 19;y
 DW HouseStamp
 
-DB MAP_STAMP;House
+DB MAP_OBJ_STAMP;House
 DB 2;x
 DB 7;y
 DW HouseStamp
 
-DB MAP_STAMP;Sign
+DB MAP_OBJ_STAMP;Sign
 DB 8;x
 DB 9;y
 DW SignStamp
@@ -349,11 +349,11 @@ InfieldChunk1::
 .tile:    DB 253
 .palette: DB 1
 .north:   DW InfieldChunk2
-.east:    DW -1
+.east:    DW InfieldChunk1
 .south:   DW ChunkA1
 .west:    DW InfieldChunk
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 0;x1
 DB 27;y1
 DB 251;tile
@@ -366,12 +366,12 @@ DB 0;END InfieldChunk1, 18 bytes
 InfieldChunk3::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW -1
+.north:   DW InfieldChunk3
 .east:    DW InfieldChunk2
 .south:   DW InfieldChunk
-.west:    DW -1
+.west:    DW InfieldChunk3
 
-DB MAP_FILL
+DB MAP_OBJ_FILL
 DB 4;x1
 DB 0;y1
 DB 223;tile

@@ -22,39 +22,72 @@ TestObject:
   ret 
 
 DrawSparseMap:; hl = chunk address, de=xy, bc=wh
-  push bc;wh
   ld a, d
-  cp a, 32
-  jr c, .minXValid
+  add a, b;maxX
+  sub a, 32
+  jr c, .skipWrapX
+  jr z, .skipWrapX
+  push hl;address
+  push de;xy
+  push bc;wh
+  ld a, d;minX
+  sub a, 32
+  jr nc, .drawEast
   xor a
-.minXValid
-  ld [_x], a;minX
-  ld a, e
-  cp a, 32
-  jr c, .minYValid
-  xor a
-.minYValid
-  ld [_y], a;minY
-  ld a, b;w
-  add a, d;x+w
-  cp a, 33
-  jr c, .maxXValid
-  ld a, 32
-.maxXValid
-  ld [_u], a;maxX
-  ld a, c;h
-  add a, e;y+h
-  cp a, 33
-  jr c, .maxYValid
-  ld a, 32
-.maxYValid
-  ld [_v], a;maxY
-  xor a
-  ld [rVBK], a
+.drawEast
+  ld d, a;minX
+  ld a, MAP_EAST
+  call GetMapChunkNeighbor
+  call DrawMapChunk
   pop bc;wh
+  pop de;xy
+  pop hl;address
+  ret
+.skipWrapX
+  ld a, e
+  add a, c;maxY
+  sub a, 32
+  jr c, .skipWrapY
+  jr z, .skipWrapY
+  push hl;address
+  push de;xy
+  push bc;wh
+  ld a, e;minY
+  sub a, 32
+  jr nc, .drawSouth
+  xor a
+.drawSouth
+  ld e, a;minY
+  ld a, MAP_SOUTH
+  call GetMapChunkNeighbor
+  call DrawMapChunk
+  pop bc;wh
+  pop de;xy
+  pop hl;address
+  ret
+.skipWrapY
+  
 
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
+  ld a, b
+  and a
+  ret z;if w == 0
+  ld a, c
+  and a
+  ret z;if h == 0
+  ld a, d
+  ld [_x], a;minX
+  ld a, e
+  ld [_y], a;minY
+  ld a, b
+  add a, d;x+w
+  ld [_u], a;maxX
+  ld a, c
+  add a, e;y+h
+  ld [_v], a;maxY
+  xor a
+  ld [rVBK], a
 .setChunkTile
   ld a, [hli];tile
   push hl;palette address
@@ -311,7 +344,8 @@ SetCurrentMapChunk:;hl = chunk address, returns address in hl
   ld [map_chunk], a
   ret
 
-GetMapChunkNeighbor:;a = direction, returns chunk in hl, affects bc
+GetMapChunkNeighbor:;a = direction, returns chunk in hl
+  push bc
   ld b, 0
   ld c, a
   call GetCurrentMapChunk
@@ -321,8 +355,8 @@ GetMapChunkNeighbor:;a = direction, returns chunk in hl, affects bc
   ld a, [hl]
   ld h, a
   ld l, b
+  pop bc
   ret
-
 
 TestMap::
   DISPLAY_OFF

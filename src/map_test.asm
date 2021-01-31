@@ -22,68 +22,37 @@ TestObject:
   ret 
 
 DrawSparseMap:;de=xy, bc=wh
-.drawCurrent
-  push de;xy
-  push bc;wh
   call GetCurrentMapChunk
-  call DrawMapChunk
-  pop bc;wh
-  pop de;xy
-.testEast
-  ld a, d;x
-  add a, b;x+w
-  sub a, 32;x+w-east
-  jr c, .testSouth
-.drawEast
-  push de;xy
-  push bc;wh
-  ld b, a;w
-  ld d, 0;x
-  push bc;east wh
-  ld a, MAP_EAST
-  call GetCurrentMapChunkNeighbor
-  pop bc;east wh
-  call DrawMapChunk
-  pop bc;wh
-  pop de;xy
-.testSouth
-  ld a, e;y
-  add a, c;y+h
-  sub a, 32;y+h-south
-  ret c
-.drawSouth
-  push de;xy
-  push bc;wh
-  ld c, a;h
-  ld e, 0;y
-  push bc;south wh
-  ld a, MAP_SOUTH
-  call GetCurrentMapChunkNeighbor
-  pop bc;south wh
-  call DrawMapChunk
-  pop bc;wh
-  pop de;xy
-.testSouthEast
-  ld a, d;x
-  add a, b;x+w
-  sub a, 32;x+w-east
-  ret c
-  ld b, a;w
-  ld d, 0;x
-  ld a, e;y
-  add a, c;y+h
-  sub a, 32;y+h-south
-  ret c
-.drawSouthEast
-  ld c, a;h
-  ld e, 0;y
-  push bc;south east wh
-  ld a, MAP_SOUTH
-  call GetCurrentMapChunkNeighbor
+.wrapEast
+  ld a, d
+  sub a, 32
+  jr c, .wrapWest
+  ld d, a
   ld a, MAP_EAST
   call GetMapChunkNeighbor
-  pop bc;south east wh
-  ;fall through to draw SE chunk
+  jr .wrapSouth
+.wrapWest
+  ld a, d
+  add a, 32
+  jr nc, .wrapSouth
+  ld d, a
+  ld a, MAP_WEST
+  call GetMapChunkNeighbor
+.wrapSouth
+  ld a, e
+  sub a, 32
+  jr c, .wrapNorth
+  ld e, a
+  ld a, MAP_SOUTH
+  call GetMapChunkNeighbor
+  jr DrawMapChunk
+.wrapNorth
+  ld a, e
+  add a, 32
+  jr nc, DrawMapChunk
+  ld e, a
+  ld a, MAP_NORTH
+  call GetMapChunkNeighbor
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 .testWidth
@@ -389,18 +358,22 @@ SetCurrentMapChunk:;hl = chunk address, returns address in hl
   ld [map_chunk], a
   ret
 
-GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl, affects bc
+GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl
+  push af;dir
+  call GetCurrentMapChunk
+  pop af;dir
+  ;fall through
+GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
+  push bc
   ld b, 0
   ld c, a
-  call GetCurrentMapChunk
-  ;fall through
-GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, affects bc
   add hl, bc
   ld a, [hli]
   ld b, a
   ld a, [hl]
   ld h, a
   ld l, b
+  pop bc
   ret
 
 TestMap::
@@ -428,6 +401,15 @@ TestMap::
   DISPLAY_ON
 
 .loop
+    ; ld a, [map_x]
+    ; ld d, a
+    ; ld a, [map_y]
+    ; ld e, a
+    ; ld bc, $1412
+    ; ld hl, _SCRN0
+    ; xor a
+    ; call gbdk_SetTilesTo
+
     ld c, MAP_SCROLL_SPEED
     call UpdateInput
     ld a, [button_state]

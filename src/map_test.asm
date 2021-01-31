@@ -23,9 +23,9 @@ DrawMapLeftEdge:
   ld a, [map_y]
   ld e, a
 .testY
-  cp a, 15;if y < 15
+  cp a, 14
   jr c, .drawCurrentChunk
-  ld a, 33
+  ld a, 32
   sub a, e;bottom-y
   ld c, a;h=bottom-y
 .drawCurrentChunk
@@ -41,7 +41,7 @@ DrawMapLeftEdge:
   ret z
 .drawSouthChunk
   ld e, 0
-  ld a, 20;full h
+  ld a, 19;full h
   sub a, c;19-h
   ld c, a;h=19-h
   ld a, MAP_SOUTH
@@ -65,9 +65,9 @@ DrawMapRightEdge:
   call GetMapChunkNeighbor
 .testY
   ld a, e;y
-  cp a, 15
+  cp a, 14
   jr c, .drawCurrentChunk
-  ld a, 33
+  ld a, 32
   sub a, e;bottom-y
   ld c, a;h=bottom-y
 .drawCurrentChunk
@@ -84,7 +84,7 @@ DrawMapRightEdge:
   ret z
 .drawSouthChunk
   ld e, 0
-  ld a, 20;full h
+  ld a, 19;full h
   sub a, c;19-h
   ld c, a;h=19-h
   ld a, MAP_SOUTH
@@ -100,9 +100,9 @@ DrawMapTopEdge:
   ld bc, $1501
 .testX
   ld a, d;x
-  cp a, 13
+  cp a, 12
   jr c, .drawCurrentChunk
-  ld a, 33
+  ld a, 32
   sub a, d;right-x
   ld b, a;w=right-x
 .drawCurrentChunk
@@ -118,7 +118,7 @@ DrawMapTopEdge:
   ret z
 .drawEastChunk
   ld d, 0
-  ld a, 22;full w
+  ld a, 21;full w
   sub a, b;21-w
   ld b, a;w=21-w
   ld a, MAP_EAST
@@ -142,9 +142,9 @@ DrawMapBottomEdge:
   call GetMapChunkNeighbor
 .testX
   ld a, d;x
-  cp a, 13
+  cp a, 12
   jr c, .drawCurrentChunk
-  ld a, 33
+  ld a, 32
   sub a, d;right-x
   ld b, a;w=right-x
 .drawCurrentChunk
@@ -161,7 +161,7 @@ DrawMapBottomEdge:
   ret z
 .drawEastChunk
   ld d, 0
-  ld a, 22;full w
+  ld a, 21;full w
   sub a, b;21-w
   ld b, a;w=21-w
   ld a, MAP_EAST
@@ -567,10 +567,12 @@ TestMap::
 
 .loop
     ; ld a, [map_x]
+    ; inc a
     ; ld d, a
     ; ld a, [map_y]
+    ; inc a
     ; ld e, a
-    ; ld bc, $1412
+    ; ld bc, $1210
     ; ld hl, _SCRN0
     ; xor a
     ; call gbdk_SetTilesTo

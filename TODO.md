@@ -1,6 +1,6 @@
 Priority
 
-- replace map system, should be sparse objects in 32x32 tile regions
+- remove old map system and assets, replace with new one
 - make batting results semi-random so we can move on to FX
 
  General

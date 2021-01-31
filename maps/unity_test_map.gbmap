@@ -1,4 +1,4 @@
-;unity_test_map.gbmap, 600 bytes
+;unity_test_map.gbmap, 754 bytes
 MapPalettes:: ;64 bytes
   RGB 30, 28, 19
   RGB 31, 31, 31
@@ -122,12 +122,152 @@ DB 203, 204, 254, 206, 207
 .palette:
 DB 133
 
-;Map, 249 bytes
+;Map, 403 bytes
+InfieldChunk17::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW ChunkA
+.east:    DW InfieldChunk16
+.south:   DW InfieldChunk17
+.west:    DW InfieldChunk5
+
+DB 0;END InfieldChunk17, 11 bytes
+
+InfieldChunk16::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW ChunkA1
+.east:    DW InfieldChunk15
+.south:   DW InfieldChunk16
+.west:    DW InfieldChunk17
+
+DB 0;END InfieldChunk16, 11 bytes
+
+InfieldChunk15::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk14
+.east:    DW InfieldChunk15
+.south:   DW InfieldChunk15
+.west:    DW InfieldChunk16
+
+DB 0;END InfieldChunk15, 11 bytes
+
+InfieldChunk14::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk13
+.east:    DW InfieldChunk14
+.south:   DW InfieldChunk15
+.west:    DW ChunkA1
+
+DB 0;END InfieldChunk14, 11 bytes
+
+InfieldChunk13::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk12
+.east:    DW InfieldChunk13
+.south:   DW InfieldChunk14
+.west:    DW InfieldChunk1
+
+DB 0;END InfieldChunk13, 11 bytes
+
+InfieldChunk12::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk11
+.east:    DW InfieldChunk12
+.south:   DW InfieldChunk13
+.west:    DW InfieldChunk2
+
+DB 0;END InfieldChunk12, 11 bytes
+
+InfieldChunk11::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk11
+.east:    DW InfieldChunk11
+.south:   DW InfieldChunk12
+.west:    DW InfieldChunk10
+
+DB 0;END InfieldChunk11, 11 bytes
+
+InfieldChunk10::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk10
+.east:    DW InfieldChunk11
+.south:   DW InfieldChunk2
+.west:    DW InfieldChunk9
+
+DB 0;END InfieldChunk10, 11 bytes
+
+InfieldChunk9::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk9
+.east:    DW InfieldChunk10
+.south:   DW InfieldChunk3
+.west:    DW InfieldChunk8
+
+DB 0;END InfieldChunk9, 11 bytes
+
+InfieldChunk8::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk8
+.east:    DW InfieldChunk9
+.south:   DW InfieldChunk6
+.west:    DW InfieldChunk8
+
+DB 0;END InfieldChunk8, 11 bytes
+
+InfieldChunk6::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk8
+.east:    DW InfieldChunk3
+.south:   DW InfieldChunk7
+.west:    DW InfieldChunk6
+
+DB 0;END InfieldChunk6, 11 bytes
+
+InfieldChunk7::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk6
+.east:    DW InfieldChunk
+.south:   DW InfieldChunk4
+.west:    DW InfieldChunk7
+
+DB 0;END InfieldChunk7, 11 bytes
+
+InfieldChunk5::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk4
+.east:    DW InfieldChunk17
+.south:   DW InfieldChunk5
+.west:    DW InfieldChunk5
+
+DB 0;END InfieldChunk5, 11 bytes
+
+InfieldChunk4::
+.tile:    DB 147
+.palette: DB 1
+.north:   DW InfieldChunk7
+.east:    DW ChunkA
+.south:   DW InfieldChunk5
+.west:    DW InfieldChunk4
+
+DB 0;END InfieldChunk4, 11 bytes
+
 InfieldChunk2::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW InfieldChunk2
-.east:    DW InfieldChunk2
+.north:   DW InfieldChunk10
+.east:    DW InfieldChunk12
 .south:   DW InfieldChunk1
 .west:    DW InfieldChunk3
 
@@ -138,8 +278,8 @@ ChunkA::
 .palette: DB 1
 .north:   DW InfieldChunk
 .east:    DW ChunkA1
-.south:   DW ChunkA
-.west:    DW ChunkA
+.south:   DW InfieldChunk17
+.west:    DW InfieldChunk4
 
 DB MAP_OBJ_TILE
 DB 20;x
@@ -219,7 +359,7 @@ InfieldChunk::
 .north:   DW InfieldChunk3
 .east:    DW InfieldChunk1
 .south:   DW ChunkA
-.west:    DW InfieldChunk
+.west:    DW InfieldChunk7
 
 DB MAP_OBJ_FILL
 DB 9;x1
@@ -286,8 +426,8 @@ ChunkA1::
 .tile:    DB 255
 .palette: DB 0
 .north:   DW InfieldChunk1
-.east:    DW ChunkA1
-.south:   DW ChunkA1
+.east:    DW InfieldChunk14
+.south:   DW InfieldChunk16
 .west:    DW ChunkA
 
 DB MAP_OBJ_FILL
@@ -349,7 +489,7 @@ InfieldChunk1::
 .tile:    DB 253
 .palette: DB 1
 .north:   DW InfieldChunk2
-.east:    DW InfieldChunk1
+.east:    DW InfieldChunk13
 .south:   DW ChunkA1
 .west:    DW InfieldChunk
 
@@ -366,10 +506,10 @@ DB 0;END InfieldChunk1, 18 bytes
 InfieldChunk3::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW InfieldChunk3
+.north:   DW InfieldChunk9
 .east:    DW InfieldChunk2
 .south:   DW InfieldChunk
-.west:    DW InfieldChunk3
+.west:    DW InfieldChunk6
 
 DB MAP_OBJ_FILL
 DB 4;x1

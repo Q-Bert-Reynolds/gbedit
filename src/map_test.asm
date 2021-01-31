@@ -16,43 +16,233 @@ SetupMapPalettes:
     jr nz, .loop
   ret
 
-TestObject:
-  ld a, 1
-  or a
-  ret 
-
-DrawSparseMap:;de=xy, bc=wh
+DrawMapLeftEdge:
+  ld bc, $0113
+  ld a, [map_x]
+  ld d, a
+  ld a, [map_y]
+  ld e, a
+.testY
+  cp a, 15;if y < 15
+  jr c, .drawCurrentChunk
+  ld a, 33
+  sub a, e;bottom-y
+  ld c, a;h=bottom-y
+.drawCurrentChunk
+  push bc;wh
+  push de;xy
   call GetCurrentMapChunk
-.wrapEast
-  ld a, d
+  call DrawMapChunk
+  pop de;xy
+  pop bc;wh
+.testSouth
+  ld a, c;h
+  cp a, 19;full h
+  ret z
+.drawSouthChunk
+  ld e, 0
+  ld a, 20;full h
+  sub a, c;19-h
+  ld c, a;h=19-h
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  ret
+
+DrawMapRightEdge:
+  call GetCurrentMapChunk
+  ld bc, $0113
+  ld a, [map_y]
+  ld e, a
+  ld a, [map_x]
+  add a, 20
+  ld d, a
+.testX
   sub a, 32
-  jr c, .wrapWest
+  jr c, .testY
   ld d, a
   ld a, MAP_EAST
   call GetMapChunkNeighbor
-  jr .wrapSouth
-.wrapWest
-  ld a, d
-  add a, 32
-  jr nc, .wrapSouth
-  ld d, a
-  ld a, MAP_WEST
+.testY
+  ld a, e;y
+  cp a, 15
+  jr c, .drawCurrentChunk
+  ld a, 33
+  sub a, e;bottom-y
+  ld c, a;h=bottom-y
+.drawCurrentChunk
+  push bc;wh
+  push de;xy
+  push hl;chunk
+  call DrawMapChunk
+  pop hl;chunk
+  pop de;xy
+  pop bc;wh
+.testSouth
+  ld a, c;h
+  cp a, 19;full h
+  ret z
+.drawSouthChunk
+  ld e, 0
+  ld a, 20;full h
+  sub a, c;19-h
+  ld c, a;h=19-h
+  ld a, MAP_SOUTH
   call GetMapChunkNeighbor
-.wrapSouth
-  ld a, e
+  call DrawMapChunk
+  ret
+
+DrawMapTopEdge:
+  ld a, [map_x]
+  ld d, a
+  ld a, [map_y]
+  ld e, a
+  ld bc, $1501
+.testX
+  ld a, d;x
+  cp a, 13
+  jr c, .drawCurrentChunk
+  ld a, 33
+  sub a, d;right-x
+  ld b, a;w=right-x
+.drawCurrentChunk
+  push bc;wh
+  push de;xy
+  call GetCurrentMapChunk
+  call DrawMapChunk
+  pop de;xy
+  pop bc;wh
+.testEast
+  ld a, b;w
+  cp a, 21;full w
+  ret z
+.drawEastChunk
+  ld d, 0
+  ld a, 22;full w
+  sub a, b;21-w
+  ld b, a;w=21-w
+  ld a, MAP_EAST
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  ret
+
+DrawMapBottomEdge:
+  call GetCurrentMapChunk
+  ld bc, $1501
+  ld a, [map_x]
+  ld d, a
+  ld a, [map_y]
+  add a, 18
+  ld e, a
+.testY
   sub a, 32
-  jr c, .wrapNorth
+  jr c, .testX
   ld e, a
   ld a, MAP_SOUTH
   call GetMapChunkNeighbor
-  jr DrawMapChunk
-.wrapNorth
-  ld a, e
-  add a, 32
-  jr nc, DrawMapChunk
-  ld e, a
-  ld a, MAP_NORTH
+.testX
+  ld a, d;x
+  cp a, 13
+  jr c, .drawCurrentChunk
+  ld a, 33
+  sub a, d;right-x
+  ld b, a;w=right-x
+.drawCurrentChunk
+  push bc;wh
+  push de;xy
+  push hl;chunk
+  call DrawMapChunk
+  pop hl;chunk
+  pop de;xy
+  pop bc;wh
+.testEast
+  ld a, b;w
+  cp a, 21;full w
+  ret z
+.drawEastChunk
+  ld d, 0
+  ld a, 22;full w
+  sub a, b;21-w
+  ld b, a;w=21-w
+  ld a, MAP_EAST
   call GetMapChunkNeighbor
+  call DrawMapChunk
+  ret
+  
+DrawMapToScreen:
+  ld a, [map_x]
+  ld d, a
+  ld a, [map_y]
+  ld e, a
+  ld bc, $1513;w+1,h+1
+.testX
+  ld a, d;x
+  cp a, 12
+  jr c, .testY
+  ld a, 32
+  sub a, d;right-x
+  ld b, a;w=right-x
+.testY
+  ld a, e;y
+  cp a, 14
+  jr c, .drawCurrentChunk
+  ld a, 32
+  sub a, e;bottom-y
+  ld c, a;h=bottom-y
+.drawCurrentChunk
+  push bc;wh
+  push de;xy
+  call GetCurrentMapChunk
+  call DrawMapChunk
+  pop de;xy
+  pop bc;wh
+.testEast
+  ld a, b;w
+  cp a, 21;full w
+  jr z, .testSouth
+.drawEastChunk
+  push bc;wh
+  push de;xy
+  ld d, 0
+  ld a, 21;full w
+  sub a, b;21-w
+  ld b, a;w=21-w
+  ld a, MAP_EAST
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  pop de;xy
+  pop bc;wh
+.testSouth
+  ld a, c;h
+  cp a, 19;full h
+  ret z
+.drawSouthChunk
+  ld e, 0
+  ld a, 19;full h
+  sub a, c;19-h
+  ld c, a;h=19-h
+  push bc;wh
+  push de;xy
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
+  call DrawMapChunk
+  pop de;xy
+  pop bc;wh
+.testSouthEast
+  ld a, b;w
+  cp a, 21;full w
+  ret z
+.drawSouthEastChunk
+  ld d, 0
+  ld a, 21;full w
+  sub a, b;21-w
+  ld b, a;w=21-w
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
+  ld a, MAP_EAST
+  call GetMapChunkNeighbor
+  call DrawMapChunk
+  ret
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 .testWidth
@@ -63,32 +253,6 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   ld a, c;h
   and a
   ret z
-.testMinX
-  ld a, d;x
-  cp a, 32
-  ret nc
-.testMinY
-  ld a, e;y
-  cp a, 32
-  ret nc
-.testMaxX
-  ld a, d;x
-  add a, b;x+w
-  cp a, 32;if x+w>east
-  jr c, .testMaxW
-.truncateW
-  ld a, 32;east
-  sub a, d;w=east-x
-  ld b, a;w
-.testMaxW
-  ld a, e;y
-  add a, c;y+h
-  cp a, 32;if y+h>south
-  jr c, .storeMinMax
-.truncateH
-  ld a, 32;south
-  sub a, d;h=south-y
-  ld b, a;h
 .storeMinMax
   ld a, d
   ld [_x], a;minX
@@ -383,7 +547,7 @@ TestMap::
   call LoadFontTiles
   call LoadOverworldTiles
   call SetupMapPalettes
-  ld a, 12
+  ld a, 21
   ld [map_x], a
   ld [map_y], a
   ld d, a
@@ -395,8 +559,9 @@ TestMap::
   ld [rSCY], a
   ld hl, InfieldChunk
   call SetCurrentMapChunk
-  ld bc, $1513
-  call DrawSparseMap
+  
+  
+  call DrawMapToScreen
 
   DISPLAY_ON
 
@@ -435,10 +600,8 @@ TestMap::
     jp z, .moveY;if y == map_y, no draw
     ld a, e
     ld [map_y], a
-    ld e, a
-    ld a, [map_x]
-    ld d, a
-    jp .drawY;draw top edge
+    call DrawMapTopEdge
+    jp .moveY
   .testDown
     ld a, b
     and a, PADF_DOWN
@@ -460,11 +623,8 @@ TestMap::
     jp z, .moveY;if y == map_y, no draw
     ld a, e
     ld [map_y], a
-    add a, 18
-    ld e, a
-    ld a, [map_x]
-    ld d, a
-    jp .drawY;draw bottom edge
+    call DrawMapBottomEdge
+    jp .moveY
   .testLeft
     ld a, b
     and a, PADF_LEFT
@@ -486,10 +646,8 @@ TestMap::
     jp z, .moveX;if x == map_x, no draw
     ld a, d
     ld [map_x], a
-    ld d, a
-    ld a, [map_y]
-    ld e, a
-    jp .drawX;draw left edge
+    call DrawMapLeftEdge
+    jp .moveX
   .testRight
     ld a, b
     and a, PADF_RIGHT
@@ -511,23 +669,12 @@ TestMap::
     jp z, .moveX;if x == map_x, no draw
     ld a, d
     ld [map_x], a
-    add a, 20
-    ld d, a
-    ld a, [map_y]
-    ld e, a
-    ;fall through to draw right edge
-  .drawX
-    ld bc, $0113
-    ; ld bc, $1412
-    call DrawSparseMap
+    call DrawMapRightEdge
+    ;fall through to move right
   .moveX
     pop af
     ld [rSCX], a
     jr .testStartA
-  .drawY
-    ld bc, $1501
-    ; ld bc, $1412
-    call DrawSparseMap
   .moveY
     pop af
     ld [rSCY], a

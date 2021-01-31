@@ -39,9 +39,10 @@ DrawSparseMap:;de=xy, bc=wh
   push bc;wh
   ld b, a;w
   ld d, 0;x
-  call GetCurrentMapChunk
+  push bc;east wh
   ld a, MAP_EAST
   call GetCurrentMapChunkNeighbor
+  pop bc;east wh
   call DrawMapChunk
   pop bc;wh
   pop de;xy
@@ -55,9 +56,10 @@ DrawSparseMap:;de=xy, bc=wh
   push bc;wh
   ld c, a;h
   ld e, 0;y
-  call GetCurrentMapChunk
+  push bc;south wh
   ld a, MAP_SOUTH
   call GetCurrentMapChunkNeighbor
+  pop bc;south wh
   call DrawMapChunk
   pop bc;wh
   pop de;xy
@@ -75,20 +77,50 @@ DrawSparseMap:;de=xy, bc=wh
 .drawSouthEast
   ld c, a;h
   ld e, 0;y
-  call GetCurrentMapChunk
+  push bc;south east wh
   ld a, MAP_SOUTH
   call GetCurrentMapChunkNeighbor
   ld a, MAP_EAST
   call GetMapChunkNeighbor
+  pop bc;south east wh
   ;fall through to draw SE chunk
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
-  ld a, b
+.testWidth
+  ld a, b;w
   and a
-  ret z;if w == 0
-  ld a, c
+  ret z 
+.testHeight 
+  ld a, c;h
   and a
-  ret z;if h == 0
+  ret z
+.testMinX
+  ld a, d;x
+  cp a, 32
+  ret nc
+.testMinY
+  ld a, e;y
+  cp a, 32
+  ret nc
+.testMaxX
+  ld a, d;x
+  add a, b;x+w
+  cp a, 32;if x+w>east
+  jr c, .testMaxW
+.truncateW
+  ld a, 32;east
+  sub a, d;w=east-x
+  ld b, a;w
+.testMaxW
+  ld a, e;y
+  add a, c;y+h
+  cp a, 32;if y+h>south
+  jr c, .storeMinMax
+.truncateH
+  ld a, 32;south
+  sub a, d;h=south-y
+  ld b, a;h
+.storeMinMax
   ld a, d
   ld [_x], a;minX
   ld a, e
@@ -357,22 +389,18 @@ SetCurrentMapChunk:;hl = chunk address, returns address in hl
   ld [map_chunk], a
   ret
 
-GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl
-  push bc
+GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl, affects bc
   ld b, 0
   ld c, a
   call GetCurrentMapChunk
-  pop bc
   ;fall through
-GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
-  push bc
+GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, affects bc
   add hl, bc
   ld a, [hli]
   ld b, a
   ld a, [hl]
   ld h, a
   ld l, b
-  pop bc
   ret
 
 TestMap::
@@ -382,7 +410,7 @@ TestMap::
   call LoadFontTiles
   call LoadOverworldTiles
   call SetupMapPalettes
-  ld a, 3
+  ld a, 12
   ld [map_x], a
   ld [map_y], a
   ld d, a
@@ -404,6 +432,7 @@ TestMap::
     call UpdateInput
     ld a, [button_state]
     ld b, a;buttons
+
   .testUp
     and a, PADF_UP
     jr z, .testDown
@@ -421,16 +450,13 @@ TestMap::
     srl e
     ld a, [map_y]
     cp a, e
-    jp z, .moveY
+    jp z, .moveY;if y == map_y, no draw
     ld a, e
     ld [map_y], a
     ld e, a
-    ld a, [rSCX]
+    ld a, [map_x]
     ld d, a
-    srl d
-    srl d
-    srl d
-    jp .drawY
+    jp .drawY;draw top edge
   .testDown
     ld a, b
     and a, PADF_DOWN
@@ -449,17 +475,14 @@ TestMap::
     srl e
     ld a, [map_y]
     cp a, e
-    jp z, .moveY
+    jp z, .moveY;if y == map_y, no draw
     ld a, e
     ld [map_y], a
     add a, 18
     ld e, a
-    ld a, [rSCX]
+    ld a, [map_x]
     ld d, a
-    srl d
-    srl d
-    srl d
-    jp .drawY
+    jp .drawY;draw bottom edge
   .testLeft
     ld a, b
     and a, PADF_LEFT
@@ -478,16 +501,13 @@ TestMap::
     srl d
     ld a, [map_x]
     cp a, d
-    jp z, .moveX
+    jp z, .moveX;if x == map_x, no draw
     ld a, d
     ld [map_x], a
     ld d, a
-    ld a, [rSCY]
+    ld a, [map_y]
     ld e, a
-    srl e
-    srl e
-    srl e
-    jp .drawX
+    jp .drawX;draw left edge
   .testRight
     ld a, b
     and a, PADF_RIGHT
@@ -506,18 +526,17 @@ TestMap::
     srl d
     ld a, [map_x]
     cp a, d
-    jp z, .moveX
+    jp z, .moveX;if x == map_x, no draw
     ld a, d
     ld [map_x], a
     add a, 20
     ld d, a
-    ld a, [rSCY]
+    ld a, [map_y]
     ld e, a
-    srl e
-    srl e
-    srl e
+    ;fall through to draw right edge
   .drawX
     ld bc, $0113
+    ; ld bc, $1412
     call DrawSparseMap
   .moveX
     pop af
@@ -525,6 +544,7 @@ TestMap::
     jr .testStartA
   .drawY
     ld bc, $1501
+    ; ld bc, $1412
     call DrawSparseMap
   .moveY
     pop af

@@ -543,7 +543,6 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
 TestMap::
   DISPLAY_OFF
   SET_DEFAULT_PALETTE
-
   call LoadFontTiles
   call LoadOverworldTiles
   call SetupMapPalettes
@@ -557,31 +556,16 @@ TestMap::
   sla a
   ld [rSCX], a
   ld [rSCY], a
-  ld hl, InfieldChunk
+  ld hl, BilletTownNE
   call SetCurrentMapChunk
-  
-  
   call DrawMapToScreen
-
   DISPLAY_ON
 
 .loop
-    ; ld a, [map_x]
-    ; inc a
-    ; ld d, a
-    ; ld a, [map_y]
-    ; inc a
-    ; ld e, a
-    ; ld bc, $1210
-    ; ld hl, _SCRN0
-    ; xor a
-    ; call gbdk_SetTilesTo
-
     ld c, MAP_SCROLL_SPEED
     call UpdateInput
     ld a, [button_state]
     ld b, a;buttons
-
   .testUp
     and a, PADF_UP
     jr z, .testDown

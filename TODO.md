@@ -100,8 +100,6 @@ Overworld
 - make legs go behind things
 - collisions
 - animated tiles
-- load black tiles outside of map bounds
-- fix move left/up bug where boundary tiles don't load sometimes (if the map system doesn't change) 
 - enter/exit buildings
 - read signs
 

@@ -458,19 +458,6 @@ Overworld::
   ld [list_selection], a
   ld hl, MapPalettes
   call SetupMapPalettes
-  ld a, 21
-  ld [map_x], a
-  ld [map_y], a
-  ld d, a
-  ld e, a
-  sla a
-  sla a
-  sla a
-  ld [rSCY], a
-  add a, 8
-  ld [rSCX], a
-  ld hl, BilletTownNE
-  call SetCurrentMapChunk
   call DrawMapToScreen
 
   SHOW_BKG

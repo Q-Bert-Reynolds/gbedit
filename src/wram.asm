@@ -24,6 +24,10 @@ inventory:: DS MAX_ITEMS*BYTES_PER_ITEM;each item is 2 bytes
 money:: DS 3;max ~$17m, probably should be 32bit so we can store ~$4b
 players_seen:: DS 151/8+1
 players_sign:: DS 151/8+1
+map_x:: DB
+map_y:: DB
+map_bank:: DB
+map_chunk:: DW
 
 ;drawing
 sprite_props:: DB
@@ -38,14 +42,10 @@ vbl_timer:: DB ;counts to 60
 ;map
 last_map_button_state:: DB
 anim_frame:: DW
-map_x:: DW
-map_y:: DW
-map_chunk:: DW
 
 ;banking
 temp_bank:: DB
 loaded_bank:: DB
-map_bank:: DB
 
 ;temp vars
 _a:: DB

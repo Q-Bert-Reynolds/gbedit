@@ -13,14 +13,7 @@ TestMap::
   ld a, 21
   ld [map_x], a
   ld [map_y], a
-  ld d, a
-  ld e, a
-  sla a
-  sla a
-  sla a
-  ld [rSCX], a
-  ld [rSCY], a
-  ld hl, BilletTownNE
+  ld hl, InfieldChunk
   call SetCurrentMapChunk
   call DrawMapToScreen
   DISPLAY_ON

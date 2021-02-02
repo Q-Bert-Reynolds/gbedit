@@ -283,8 +283,16 @@ DrawMapBottomEdge:
 DrawMapToScreen::
   ld a, [map_x]
   ld d, a
+  sla a
+  sla a
+  sla a
+  ld [rSCX], a
   ld a, [map_y]
   ld e, a
+  sla a
+  sla a
+  sla a
+  ld [rSCY], a
   ld bc, $1513;w+1,h+1
 .testX
   ld a, d;x

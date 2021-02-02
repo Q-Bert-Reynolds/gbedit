@@ -1,7 +1,9 @@
-SECTION "Main Save", SRAM, BANK[MAIN_SRAM_BANK]
+SECTION "Options Save", SRAM, BANK[MAIN_SRAM_BANK]
 sram_text_speed: DB
 sram_animation_style: DB
 sram_coaching_style: DB
+
+SECTION "Main Save", SRAM, BANK[MAIN_SRAM_BANK]
 sram_user_name: DS NAME_LENGTH
 sram_rival_name: DS NAME_LENGTH
 sram_hours:: DW
@@ -11,6 +13,10 @@ sram_inventory:: DS MAX_ITEMS*BYTES_PER_ITEM
 sram_money:: DS 3
 sram_players_seen:: DS 151/8+1
 sram_players_sign:: DS 151/8+1
+sram_map_x:: DB
+sram_map_y:: DB
+sram_map_bank:: DB
+sram_map_chunk:: DW
 sram_main_save_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]

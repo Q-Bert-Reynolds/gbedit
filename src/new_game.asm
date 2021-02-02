@@ -453,6 +453,14 @@ ENDC
 
   FADE_OUT
 
+  ;NOTE: starting number determines grid alignment!!!
+  ld a, 22
+  ld [map_x], a
+  ld a, 21
+  ld [map_y], a
+  ld hl, BilletTownNE
+  call SetCurrentMapChunk
+
   xor a
   ld [seconds], a
   ld [minutes], a

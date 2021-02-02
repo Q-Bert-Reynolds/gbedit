@@ -4,6 +4,7 @@ SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 
 INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
+INCLUDE "maps/overworld.gbmap"
 
 Look:;a = button_state
   push af
@@ -227,125 +228,77 @@ AnimateAvatar:;hl = animation
   ret
 
 MoveUp:
-  call DrawMapTopEdge
-  ld hl, map_y
-  ld a, [hl]
-  sub a, MAP_STEP_SIZE/8
-  ld [hli], a
-  jr nc, .move;skip if no borrow
-  ld a, [hl]
-  dec a
-  ld [hl], a
-.move
   ld hl, WalkUpAnim
   call AnimateAvatar
   ld a, MAP_STEP_SIZE
 .loop
-    push af
+    push af;steps left
     ld b, MAP_STEP_SIZE/2
     cp b
     jr nz, .skipAnim
-      ld hl, WalkUpAnim
+    ld hl, WalkUpAnim
     call AnimateAvatar
-.skipAnim
-    ld a, [rSCY]
-    dec a
-    ld [rSCY], a
+  .skipAnim
+    call MoveMapUp
     call gbdk_WaitVBL
-    pop af
+    pop af;steps left
     dec a
     jr nz, .loop
   ret
 
 MoveDown:
-  call DrawMapBottomEdge
-  ld hl, map_y
-  ld a, [hl]
-  add a, MAP_STEP_SIZE/8
-  ld [hli], a
-  jr nc, .move;skip if no carry
-  ld a, [hl]
-  inc a
-  ld [hl], a
-.move
   ld hl, WalkDownAnim
   call AnimateAvatar
   ld a, MAP_STEP_SIZE
 .loop
-    push af
+    push af;steps left
     ld b, MAP_STEP_SIZE/2
     cp b
     jr nz, .skipAnim
     ld hl, WalkDownAnim
     call AnimateAvatar
-.skipAnim
-    ld a, [rSCY]
-    inc a
-    ld [rSCY], a
+  .skipAnim
+    call MoveMapDown
     call gbdk_WaitVBL
-    pop af
+    pop af;steps left
     dec a
     jr nz, .loop
   ret
 
 MoveLeft:
-  call DrawMapLeftEdge
-  ld hl, map_x
-  ld a, [hl]
-  sub a, MAP_STEP_SIZE/8
-  ld [hli], a
-  jr nc, .move;skip if no borrow
-  ld a, [hl]
-  dec a
-  ld [hl], a
-.move
   ld hl, WalkLeftAnim
   call AnimateAvatar
   ld a, MAP_STEP_SIZE
 .loop
-    push af
+    push af;steps left
     ld b, MAP_STEP_SIZE/2
     cp b
     jr nz, .skipAnim
     ld hl, WalkLeftAnim
     call AnimateAvatar
-.skipAnim
-    ld a, [rSCX]
-    dec a
-    ld [rSCX], a
+  .skipAnim
+    call MoveMapLeft
     call gbdk_WaitVBL
-    pop af
+    pop af;steps left
     dec a
     jr nz, .loop
   ret
 
 MoveRight:
-  call DrawMapRightEdge
-  ld hl, map_x
-  ld a, [hl]
-  add a, MAP_STEP_SIZE/8
-  ld [hli], a
-  jr nc, .move;skip if no carry
-  ld a, [hl]
-  inc a
-  ld [hl], a
-.move
   ld hl, WalkRightAnim
   call AnimateAvatar
   ld a, MAP_STEP_SIZE
 .loop
-    push af
+    push af;steps left
     ld b, MAP_STEP_SIZE/2
     cp b
     jr nz, .skipAnim
-      ld hl, WalkRightAnim
+    ld hl, WalkRightAnim
     call AnimateAvatar
-.skipAnim
-    ld a, [rSCX]
-    inc a
-    ld [rSCX], a
+  .skipAnim
+    call MoveMapRight
     call gbdk_WaitVBL
-    pop af
+    pop af;steps left
     dec a
     jr nz, .loop
   ret
@@ -513,8 +466,9 @@ Overworld::
   sla a
   sla a
   sla a
-  ld [rSCX], a
   ld [rSCY], a
+  add a, 8
+  ld [rSCX], a
   ld hl, BilletTownNE
   call SetCurrentMapChunk
   call DrawMapToScreen
@@ -549,6 +503,7 @@ Overworld::
 .move
     ld a, [button_state]
     call Move
-    call CheckRandomAppearance
-    jr z, .moveLoop
+    ; call CheckRandomAppearance
+    ; jr z, .moveLoop
+    jr .moveLoop
     ret

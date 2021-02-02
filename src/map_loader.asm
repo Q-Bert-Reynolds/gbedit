@@ -2,9 +2,12 @@ IF !DEF(MAP_LOADER)
 MAP_LOADER SET 1
 
 INCLUDE "src/beisbol.inc"
-INCLUDE "maps/overworld.asm"
 
 SECTION "Map Loader", ROM0
+; MoveMapLeft
+; MoveMapRight
+; MoveMapUp
+; MoveMapDown
 ; SetupMapPalettes                   hl = map palette address
 ; DrawMapLeftEdge
 ; DrawMapRightEdge
@@ -17,7 +20,103 @@ SECTION "Map Loader", ROM0
 ; GetCurrentMapChunkNeighbor         a = direction, returns chunk in hl
 ; GetMapChunkNeighbor                a = direction, hl = map chunk, returns chunk in hl
 
-SetupMapPalettes:;hl = map palette address
+MoveMapLeft::
+  ld a, [rSCX]
+  sub a, MAP_SCROLL_SPEED
+  push af
+  ld d, a
+  jr nc, .noChunkChangeWest
+  ld a, MAP_WEST
+  call GetCurrentMapChunkNeighbor
+  call SetCurrentMapChunk
+.noChunkChangeWest
+  srl d
+  srl d
+  srl d
+  ld a, [map_x]
+  cp a, d
+  jp z, .move;if x == map_x, no draw
+  ld a, d
+  ld [map_x], a
+  call DrawMapLeftEdge
+.move
+  pop af
+  ld [rSCX], a
+  ret
+
+MoveMapRight::
+  ld a, [rSCX]
+  add a, MAP_SCROLL_SPEED
+  push af
+  ld d, a
+  jr nc, .noChunkChangeEast
+  ld a, MAP_EAST
+  call GetCurrentMapChunkNeighbor
+  call SetCurrentMapChunk
+.noChunkChangeEast
+  srl d
+  srl d
+  srl d
+  ld a, [map_x]
+  cp a, d
+  jp z, .move;if x == map_x, no draw
+  ld a, d
+  ld [map_x], a
+  call DrawMapRightEdge
+.move
+  pop af
+  ld [rSCX], a
+  ret
+
+MoveMapUp::
+  ld a, [rSCY]
+  sub a, MAP_SCROLL_SPEED
+  push af
+  ld e, a
+  jr nc, .noChunkChangeNorth
+  ld a, MAP_NORTH
+  call GetCurrentMapChunkNeighbor
+  call SetCurrentMapChunk
+.noChunkChangeNorth
+  srl e
+  srl e
+  srl e
+  ld a, [map_y]
+  cp a, e
+  jp z, .move;if y == map_y, no draw
+  ld a, e
+  ld [map_y], a
+  call DrawMapTopEdge
+.move
+  pop af
+  ld [rSCY], a
+  ret
+
+MoveMapDown::
+  ld a, [rSCY]
+  add a, MAP_SCROLL_SPEED
+  push af
+  ld e, a
+  jr nc, .noChunkChangeSouth
+  ld a, MAP_SOUTH
+  call GetCurrentMapChunkNeighbor
+  call SetCurrentMapChunk
+.noChunkChangeSouth
+  srl e
+  srl e
+  srl e
+  ld a, [map_y]
+  cp a, e
+  jp z, .move;if y == map_y, no draw
+  ld a, e
+  ld [map_y], a
+  call DrawMapBottomEdge
+.move
+  pop af
+  ld [rSCY], a
+  ret
+
+SetupMapPalettes::;hl = map palette address
   ld a, %10000000
   ldh [rBCPS], a
   ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
@@ -181,7 +280,7 @@ DrawMapBottomEdge:
   call DrawMapChunk
   ret
   
-DrawMapToScreen:
+DrawMapToScreen::
   ld a, [map_x]
   ld d, a
   ld a, [map_y]

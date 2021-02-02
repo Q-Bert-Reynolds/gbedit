@@ -91,14 +91,15 @@ Team Menu
 - show pitch or bat icon next to move PP
 - show appropriate stat (ie. BA, ERA) below age
 
-Overworld
+Map System
 
-- add diagonal lines to map system, (already implemented in editor)
+- collisions
+- map editor should split objects that span multiple chunks
 - map stamp culling should also trim tiles in a similar way to fills
+- add diagonal lines to map system, (already implemented in editor)
 - return to previous world position
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
-- collisions
 - animated tiles
 - enter/exit buildings
 - read signs

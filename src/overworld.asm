@@ -227,7 +227,7 @@ AnimateAvatar:;hl = animation
   ret
 
 MoveUp:
-  call SetMapTilesUp
+  call DrawMapTopEdge
   ld hl, map_y
   ld a, [hl]
   sub a, MAP_STEP_SIZE/8
@@ -258,7 +258,7 @@ MoveUp:
   ret
 
 MoveDown:
-  call SetMapTilesDown
+  call DrawMapBottomEdge
   ld hl, map_y
   ld a, [hl]
   add a, MAP_STEP_SIZE/8
@@ -289,7 +289,7 @@ MoveDown:
   ret
 
 MoveLeft:
-  call SetMapTilesLeft
+  call DrawMapLeftEdge
   ld hl, map_x
   ld a, [hl]
   sub a, MAP_STEP_SIZE/8
@@ -320,7 +320,7 @@ MoveLeft:
   ret
 
 MoveRight:
-  call SetMapTilesRight
+  call DrawMapRightEdge
   ld hl, map_x
   ld a, [hl]
   add a, MAP_STEP_SIZE/8
@@ -408,7 +408,7 @@ ShowPauseMenu::
   jr nz, .option
   call ShowSaveGame
   call ShowPlayerAvatar
-  call SetMapTiles
+  call DrawMapToScreen
   jp .exit
 .option
   cp 6
@@ -433,12 +433,12 @@ ShowPauseMenu::
   call LoadAvatarSprites
   call LoadOverworldTiles
   call ShowPlayerAvatar
-  call SetMapTiles
+  call DrawMapToScreen
   POP_VAR list_selection
   jp ShowPauseMenu
 .exit
   HIDE_WIN
-  call SetMapTiles
+  call DrawMapToScreen
   WAITPAD_UP
   POP_VAR list_selection
   ret
@@ -503,13 +503,21 @@ Overworld::
   ;TODO: load initial map position
   xor a
   ld [list_selection], a
-  ld [rSCX], a
-  ld [rSCY], a
+  ld hl, MapPalettes
+  call SetupMapPalettes
+  ld a, 21
   ld [map_x], a
   ld [map_y], a
-  ld [map_x+1], a
-  ld [map_y+1], a
-  call SetMapTiles
+  ld d, a
+  ld e, a
+  sla a
+  sla a
+  sla a
+  ld [rSCX], a
+  ld [rSCY], a
+  ld hl, BilletTownNE
+  call SetCurrentMapChunk
+  call DrawMapToScreen
 
   SHOW_BKG
   HIDE_WIN

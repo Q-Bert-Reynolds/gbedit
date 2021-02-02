@@ -569,7 +569,6 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
   ld b, 0
   ld c, a
   xor a
-  ld [_breakpoint], a
   call mem_Set
 
   xor a

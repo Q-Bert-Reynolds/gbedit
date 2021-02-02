@@ -272,7 +272,7 @@ ShowTitle:
     jr z, .finishTitleDrop
     cp 0
     jr nz, .skipDropSFX
-    ; PLAY_SFX TitleDropInSound
+    PLAY_SFX TitleDropInSound
 .skipDropSFX
     ld [_y], a
     jr .dropInTitleLoop
@@ -286,7 +286,7 @@ ShowTitle:
   ld bc, _VersionTileMap
   call SetBkgTilesWithOffset
 
-  ; PLAY_SFX VersionSlideInSound
+  PLAY_SFX VersionSlideInSound
 
   xor a
   ld [_x], a

@@ -97,7 +97,7 @@ UpdateSFX:
 
     call FinishSFX
     ld a, %1111
-    ld [gbt_enable_channels], a
+    ld [gbt_channels_enabled], a
     ret
 
 .notDone
@@ -114,6 +114,9 @@ UpdateSFX:
   ld l, a
   add hl, bc;current step
 
+  ld a, [loaded_bank]
+  push af
+  
   ld a, [current_sfx_bank]
   call SetBank
 
@@ -121,7 +124,7 @@ UpdateSFX:
   ld [sfx_ticks], a
 
   ld a, [hli]
-  ld [gbt_enable_channels], a
+  ld [gbt_channels_enabled], a
 
   ld a, [hli]
   ld b, $FF
@@ -140,7 +143,10 @@ ENDR
   or AUDHIGH_RESTART
   ld [bc], a
 
-  ret
+  pop af;restore bank
+  call SetBank
+
+  reti
 
 PlaySFX:: ; a = bank, hl = sfx address
   di

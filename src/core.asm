@@ -558,19 +558,14 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
   ret z
 
   ld a, [_a]
-  cp a, 40
-  ret nc
   ld e, a
   ld hl, oam_buffer
   sla e ;multiply e by 4
   sla e
   ld d, 0
   add hl, de
-  ld a, 40
+  ld a, 160
   sub a, e
-  ret c
-  sla a
-  sla a
   ld b, 0
   ld c, a
   xor a

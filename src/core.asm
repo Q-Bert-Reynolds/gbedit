@@ -424,7 +424,7 @@ SetSpriteTilesProps:: ;bc = offset\count, hl = tilemap, de = propmap
     jr nz, .loop
   ret
 
-;; moves a grid of sprite tiles
+; moves a grid of sprite tiles
 MoveSprites:: ;bc = xy in screen space, hl = wh in tiles, a = first sprite index
   ld [_a], a
   xor a
@@ -498,9 +498,11 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
       cp h;skip me
       jr z, .skip
     .noSkip
+      ld a, [_a]
+      cp a, 40
+      jr nc, .skip
       push de;tilemap
       
-      ld a, [_a]
       ld e, a
       inc a
       ld [_a], a
@@ -556,6 +558,8 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
   ret z
 
   ld a, [_a]
+  cp a, 40
+  ret nc
   ld e, a
   ld hl, oam_buffer
   sla e ;multiply e by 4
@@ -564,6 +568,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
   add hl, de
   ld a, 40
   sub a, e
+  ret c
   sla a
   sla a
   ld b, 0

@@ -4,6 +4,7 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
+; GetMapCollision                    hl = chunk address, de = xy, returns z if no collision
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
@@ -20,6 +21,29 @@ SECTION "Map Loader", ROM0
 ; GetCurrentMapChunkNeighbor         a = direction, returns chunk in hl
 ; GetMapChunkNeighbor                a = direction, hl = map chunk, returns chunk in hl
 
+GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
+  ld bc, 10;fill(1)+pal(1)+neighbors(8)
+  add hl, bc;collision address
+  srl d;x
+  ld a, e;y
+  and a, %11111110;toss low bit for y offset
+  ld e, a;y
+  ld a, d;x
+  ld d, 0
+  add hl, de;collision row
+  cp a, 8
+  jr c, .testBit
+  inc hl;x in second byte
+  srl a;x
+.testBit
+  ld d, a;x
+  ld a, 7
+  sub a, d
+  ld d, a
+  ld a, [hl]
+  ld e, a;collision byte
+  jp math_TestBit
+  
 MoveMapLeft::
   ld a, [rSCX]
   sub a, MAP_SCROLL_SPEED
@@ -401,7 +425,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   jr z, .drawMapObjects
   ld a, 1
   ld [rVBK], a
-  ld a, [hl];pal
+  ld a, [hl];pal, no increment since this section can be skipped
   push hl
   ld hl, _SCRN0
   call gbdk_SetTilesTo
@@ -409,8 +433,8 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   xor a
   ld [rVBK], a
 .drawMapObjects
-  ld bc, 9
-  add hl, bc;skip neighboring chunks
+  ld bc, 41;pal(1)+neighbors(8)+collision(32)
+  add hl, bc;skip pal, neighboring chunks, and collision
 .loop
     ld a, [hli];map object type
     and a

@@ -1,4 +1,4 @@
-TESTS_ENABLED EQU 0
+TESTS_ENABLED EQU 1
 INTRO_ENABLED EQU 1
 TITLE_ENABLED EQU 1
 WORLD_ENABLED EQU 1
@@ -10,6 +10,12 @@ RUN_TESTS: MACRO
   ld a, OVERWORLD_BANK
   call SetBank
   call TestMap
+
+  ld hl, BilletTownSE
+  ld d, 24
+  ld e, 20
+  call GetMapCollision
+  ld [_breakpoint], a
 
 ;   call LoadFontTiles
 

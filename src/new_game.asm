@@ -453,10 +453,9 @@ ENDC
 
   FADE_OUT
 
-  ;NOTE: starting number determines grid alignment!!!
+  ;NOTE: starting xy determines grid alignment!!! should be even
   ld a, 22
   ld [map_x], a
-  ld a, 21
   ld [map_y], a
   ld hl, BilletTownNE
   call SetCurrentMapChunk

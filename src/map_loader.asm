@@ -4,22 +4,23 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
-; GetMapCollision                    hl = chunk address, de = xy, returns z if no collision
+; GetMapCollision              hl = chunk address, de = xy, returns z if no collision
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
 ; MoveMapDown
-; SetupMapPalettes                   hl = map palette address
+; SetupMapPalettes             hl = map palette address
 ; DrawMapLeftEdge
 ; DrawMapRightEdge
 ; DrawMapTopEdge
 ; DrawMapBottomEdge
 ; DrawMapToScreen
-; DrawMapChunk                       hl = chunk address, de=xy, bc=wh
-; GetCurrentMapChunk                 returns chunk address in hl
-; SetCurrentMapChunk                 hl = chunk address, returns address in hl
-; GetCurrentMapChunkNeighbor         a = direction, returns chunk in hl
-; GetMapChunkNeighbor                a = direction, hl = map chunk, returns chunk in hl
+; DrawMapChunk                 hl = chunk address, de=xy, bc=wh
+; GetCurrentMapChunk           returns chunk address in hl
+; SetCurrentMapChunk           hl = chunk address, returns address in hl
+; GetCurrentMapChunkNeighbor   a = direction, returns chunk in hl
+; GetMapChunkNeighbor          a = direction, hl = map chunk, returns chunk in hl
+; GetMapChunkForOffset         de = xy offset (-31,31), returns chunk in hl, xy in de
 
 GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   ld bc, 10;fill(1)+pal(1)+neighbors(8)
@@ -34,7 +35,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   cp a, 8
   jr c, .testBit
   inc hl;x in second byte
-  srl a;x
+  sub a, 8
 .testBit
   ld d, a;x
   ld a, 7
@@ -45,6 +46,10 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   jp math_TestBit
   
 MoveMapLeft::
+  ld de, $080b;left
+  call GetMapChunkForOffset
+  call GetMapCollision
+  ret nz
   ld a, [rSCX]
   sub a, MAP_SCROLL_SPEED
   push af
@@ -69,6 +74,10 @@ MoveMapLeft::
   ret
 
 MoveMapRight::
+  ld de, $0a0b;right
+  call GetMapChunkForOffset
+  call GetMapCollision
+  ret nz
   ld a, [rSCX]
   add a, MAP_SCROLL_SPEED
   push af
@@ -93,6 +102,10 @@ MoveMapRight::
   ret
 
 MoveMapUp::
+  ld de, $090a;up
+  call GetMapChunkForOffset
+  call GetMapCollision
+  ret nz
   ld a, [rSCY]
   sub a, MAP_SCROLL_SPEED
   push af
@@ -117,6 +130,10 @@ MoveMapUp::
   ret
 
 MoveMapDown::
+  ld de, $090c;down
+  call GetMapChunkForOffset
+  call GetMapCollision
+  ret nz
   ld a, [rSCY]
   add a, MAP_SCROLL_SPEED
   push af
@@ -681,6 +698,49 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
   ld h, a
   ld l, b
   pop bc
+  ret
+
+GetMapChunkForOffset:;de = xy offset (-31,31), returns chunk in hl, xy in de
+  call GetCurrentMapChunk
+.testX
+  ld a, [map_x]
+  add a, d
+  jr c, .west
+  cp a, 32
+  jr nc, .east
+  ld d, a
+  jr .testY
+.west
+  add a, 32
+  ld d, a
+  ld a, MAP_WEST
+  call GetMapChunkNeighbor
+  jr .testY
+.east
+  sub a, 32
+  ld d, a
+  ld a, MAP_EAST
+  call GetMapChunkNeighbor
+  ;fall through to testY
+.testY
+  ld a, [map_y]
+  add a, e
+  jr c, .north
+  cp a, 32
+  jr nc, .south
+  ld e, a
+  ret
+.north
+  add a, 32
+  ld e, a
+  ld a, MAP_NORTH
+  call GetMapChunkNeighbor
+  ret
+.south
+  sub a, 32
+  ld e, a
+  ld a, MAP_SOUTH
+  call GetMapChunkNeighbor
   ret
 
 ENDC ;MAP_LOADER

@@ -1,5 +1,5 @@
-TESTS_ENABLED EQU 1
-INTRO_ENABLED EQU 1
+TESTS_ENABLED EQU 0
+INTRO_ENABLED EQU 0
 TITLE_ENABLED EQU 1
 WORLD_ENABLED EQU 1
 PLAY_ENABLED  EQU 1
@@ -9,11 +9,11 @@ INCLUDE "src/beisbol.inc"
 RUN_TESTS: MACRO
   ld a, OVERWORLD_BANK
   call SetBank
-  call TestMap
+  ; call TestMap
 
   ld hl, BilletTownSE
-  ld d, 24
-  ld e, 20
+  ld d, 17
+  ld e, 10
   call GetMapCollision
   ld [_breakpoint], a
 

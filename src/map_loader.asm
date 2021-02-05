@@ -46,7 +46,8 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   jp math_TestBit
   
 MoveMapLeft::
-  ld de, $080b;left
+  ld b, 63;left
+  ld c, 88
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -74,7 +75,8 @@ MoveMapLeft::
   ret
 
 MoveMapRight::
-  ld de, $0a0b;right
+  ld b, 81;right
+  ld c, 88
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -102,7 +104,8 @@ MoveMapRight::
   ret
 
 MoveMapUp::
-  ld de, $090a;up
+  ld b, 72
+  ld c, 79;up
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -130,7 +133,8 @@ MoveMapUp::
   ret
 
 MoveMapDown::
-  ld de, $090c;down
+  ld b, 72
+  ld c, 97;down
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -700,47 +704,48 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
   pop bc
   ret
 
-GetMapChunkForOffset:;de = xy offset (-31,31), returns chunk in hl, xy in de
+GetMapChunkForOffset:;bc = xy pixel offset (-127,127), returns chunk in hl, tile xy in de
   call GetCurrentMapChunk
 .testX
-  ld a, [map_x]
-  add a, d
-  jr c, .west
-  cp a, 32
-  jr nc, .east
-  ld d, a
-  jr .testY
+  ld a, [rSCX]
+  add a, b;x+rSCX
+  ld d, a;x+rSCX
+  jr nc, .testY
+.wrapX
+  ld a, b;x
+  cp a, 128
+  jr c, .east
 .west
-  add a, 32
-  ld d, a
   ld a, MAP_WEST
   call GetMapChunkNeighbor
   jr .testY
 .east
-  sub a, 32
-  ld d, a
   ld a, MAP_EAST
   call GetMapChunkNeighbor
   ;fall through to testY
 .testY
-  ld a, [map_y]
-  add a, e
-  jr c, .north
-  cp a, 32
-  jr nc, .south
-  ld e, a
-  ret
+  ld a, [rSCY]
+  add a, c;y+rSCY
+  ld e, a;y+rSCY
+  jr nc, .finish
+.wrapY
+  ld a, c;y
+  cp a, 128
+  jr c, .south
 .north
-  add a, 32
-  ld e, a
   ld a, MAP_NORTH
   call GetMapChunkNeighbor
-  ret
+  jr .finish
 .south
-  sub a, 32
-  ld e, a
   ld a, MAP_SOUTH
   call GetMapChunkNeighbor
+.finish
+  srl d
+  srl d
+  srl d
+  srl e
+  srl e
+  srl e
   ret
 
 ENDC ;MAP_LOADER

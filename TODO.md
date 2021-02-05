@@ -1,7 +1,8 @@
 Priority
 
 - map system
-  - collisions
+  - move collision info to map objects
+  - trim stamp tiles in a similar way to fills
   - enter/exit buildings
   - read signs
 - make batting results semi-random so we can move on to FX
@@ -96,8 +97,6 @@ Team Menu
 
 Map System
 
-- map editor should split objects that span multiple chunks
-- map stamp culling should also trim tiles in a similar way to fills
 - add diagonal lines to map system, (already implemented in editor)
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things

@@ -5,16 +5,17 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
 ; GetMapCollision              hl = chunk address, de = xy, returns z if no collision
+; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
 ; MoveMapDown
 ; SetupMapPalettes             hl = map palette address
-; DrawMapLeftEdge
-; DrawMapRightEdge
-; DrawMapTopEdge
-; DrawMapBottomEdge
-; DrawMapToScreen
+; DrawMapLeftEdge              draws column of map tile to background off-screen left
+; DrawMapRightEdge             draws column of map tile to background off-screen right
+; DrawMapTopEdge               draws row map tiles to background off-screen up
+; DrawMapBottomEdge            draws row map tiles to background off-screen down
+; DrawMapToScreen              draws map to visible background
 ; DrawMapChunk                 hl = chunk address, de=xy, bc=wh
 ; GetCurrentMapChunk           returns chunk address in hl, index in a
 ; SetCurrentMapChunk           hl = chunk address, returns address in hl, index in a

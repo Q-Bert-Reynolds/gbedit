@@ -1,6 +1,7 @@
 Priority
 
 - map system
+  - move tile/fill/stamp drawing to subroutines
   - trim stamp tiles in a similar way to fills
   - enter/exit buildings
   - read signs (CheckActions in overworld.asm)

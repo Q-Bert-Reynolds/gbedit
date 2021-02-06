@@ -856,7 +856,7 @@ CopyBkgToWin::
   call ScrollXYToTileXY;de
   call DistanceToScreenOrVRAMEdge;hl
   
-  ;tiles
+.upperLeft
   push hl;wh
   push de;xy
   ld bc, bkg_buffer
@@ -870,29 +870,6 @@ CopyBkgToWin::
   ld bc, bkg_buffer
   call gbdk_SetWinTiles
 
-  ;colors
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jr z, .notGBC
-  ld a, 1
-  ld [rVBK], a
-  pop de;xy
-  pop hl;wh
-  push hl;wh
-  push de;xy
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
-
-  pop de;xy
-  pop hl;wh
-  push hl;wh
-  push de;xy
-  ld de, 0
-  ld bc, bkg_buffer
-  call gbdk_SetWinTiles
-  xor a
-  ld [rVBK], a
-.notGBC
   pop de;xy
   pop hl;wh
   push hl
@@ -900,13 +877,13 @@ CopyBkgToWin::
 
   ld a, 32-20
   cp d
-  jp nc, .skipRight
+  jp nc, .bottomLeft
   ld d, h;x = left width
   ld a, 20
   sub a, h
   ld h, a; right width
 
-  ;tiles
+.upperRight
   push hl;wh
   push de;xy
   ld d, 0
@@ -921,43 +898,18 @@ CopyBkgToWin::
   ld bc, bkg_buffer
   call gbdk_SetWinTiles
 
-  ;colors
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jr z, .skip
-  ld a, 1
-  ld [rVBK], a
-  pop de;xy
-  pop hl;wh
-  push hl;wh
-  push de;xy
-  ld d, 0
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
-
-  pop de;xy
-  pop hl;wh
-  push hl;wh
-  push de;xy
-  ld e, 0
-  ld bc, bkg_buffer
-  call gbdk_SetWinTiles
-  xor a
-  ld [rVBK], a
-
-.skip
   pop de;xy
   pop hl;wh
   
   ld a, 32-18
   cp e
-  jr nc, .skipRight;skip bottom right
+  jr nc, .bottomLeft;skip bottom right
   ld e, l;y = upper height
   ld a, 18
   sub a, l
   ld l, a; bottom right height
 
-  ;tiles
+.bottomRight
   push hl;wh
   push de;xy
   ld de, 0
@@ -973,33 +925,13 @@ CopyBkgToWin::
 
   pop de;xy
   pop hl;wh
-    
-  ;colors
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jr z, .skipRight
-  ld a, 1
-  ld [rVBK], a
-  push hl;wh
-  push de;xy
-  ld d, 0
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
 
-  pop de;xy
-  pop hl;wh
-  ld e, 0
-  ld bc, bkg_buffer
-  call gbdk_SetWinTiles
-  xor a
-  ld [rVBK], a
-
-.skipRight
+.bottomLeft
   pop de;xy
   pop hl;wh
   ld a, 32-18
   cp e
-  jr nc, .skipBottom;skip bottom 
+  jr nc, .checkGBC;skip bottom 
   ld e, l;y = upper height
   ld a, 18
   sub a, l
@@ -1020,28 +952,24 @@ CopyBkgToWin::
   call gbdk_SetWinTiles
 
   pop de;xy
-  pop hl;wh
-    
-  ;colors
+  pop hl;wh 
+
+.checkGBC
   ld a, [sys_info]
   and a, SYS_INFO_GBC
-  jr z, .skipBottom
+  ret z
+
+  ld a, [rVBK]
+  bit 0, a
+  jr nz, .resetVRAMBank;if rVBK == 1, we've already set colors, so we're done
+
   ld a, 1
   ld [rVBK], a
-  push hl;wh
-  push de;xy
-  ld d, 0
-  ld bc, bkg_buffer
-  call gbdk_GetBkgTiles
+  jp CopyBkgToWin; otherwise, set rVBK to 1 and copy again
 
-  pop de;xy
-  pop hl;wh
-  ld e, 0
-  ld bc, bkg_buffer
-  call gbdk_SetWinTiles
+.resetVRAMBank
   xor a
-  ld [rVBK], a  
-.skipBottom
+  ld [rVBK], a
   ret
 
 ShowSaveGame::

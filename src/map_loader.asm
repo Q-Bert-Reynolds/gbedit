@@ -76,6 +76,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
     ld a, [hli];stamp upper address
     ld b, a;bc = stamp address
     ld a, [bc];width
+    inc bc
     add a, d;x+width
     ld d, a;x2
     ld a, [_x]
@@ -124,7 +125,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
 
 MoveMapLeft::
   ld b, 63;left
-  ld c, 72
+  ld c, 76
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -153,7 +154,7 @@ MoveMapLeft::
 
 MoveMapRight::
   ld b, 81;right
-  ld c, 72
+  ld c, 76
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -181,7 +182,7 @@ MoveMapRight::
   ret
 
 MoveMapUp::
-  ld b, 72
+  ld b, 76
   ld c, 63;up
   call GetMapChunkForOffset
   call GetMapCollision
@@ -210,7 +211,7 @@ MoveMapUp::
   ret
 
 MoveMapDown::
-  ld b, 72
+  ld b, 76
   ld c, 81;down
   call GetMapChunkForOffset
   call GetMapCollision

@@ -27,7 +27,7 @@ players_sign:: DS 151/8+1
 map_x:: DB
 map_y:: DB
 map_bank:: DB
-map_chunk:: DW
+map_chunk:: DB
 
 ;drawing
 sprite_props:: DB

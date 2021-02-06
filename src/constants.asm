@@ -213,10 +213,10 @@ MAP_COLLISION_DOOR  EQU %00001100
 MAP_COLLISION_TEXT  EQU %00010000
 MAP_STEP_SIZE       EQU 16
 MAP_SCROLL_SPEED    EQU 1
-MAP_NORTH           EQU 2
-MAP_EAST            EQU 4
-MAP_SOUTH           EQU 6
-MAP_WEST            EQU 8
+MAP_NORTH           EQU 2;skip tile & pal
+MAP_EAST            EQU 3
+MAP_SOUTH           EQU 4
+MAP_WEST            EQU 5
 
 ;sizes
 MAX_ITEMS        EQU 20

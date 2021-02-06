@@ -1,7 +1,6 @@
 Priority
 
 - map system
-  - Changes to map data breaks save. To fix this, map data should start with list of chunks, and references to chunks should be changed to list indices. The upfront cost is 2 bytes per chunk, but each chunk's size will be reduced by 4 bytes.
   - trim stamp tiles in a similar way to fills
   - enter/exit buildings
   - read signs
@@ -97,10 +96,15 @@ Team Menu
 
 Map System
 
+- an chunk index of 0 should fill the chunk with black tiles
+- font tiles should be usable in the editor
+- handle multiple map banks
+- stamp objects should store jump table indices instead of direct references 
 - add diagonal lines to map system, (already implemented in editor)
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
+- make the editor a standalone application
 
 Items
 

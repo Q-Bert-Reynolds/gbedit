@@ -457,7 +457,8 @@ ENDC
   ld a, 22
   ld [map_x], a
   ld [map_y], a
-  ld hl, BilletTownNE
+  ld a, BILLETTOWNNE
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
   call SetCurrentMapChunk
 
   xor a

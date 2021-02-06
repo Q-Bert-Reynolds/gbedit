@@ -16,10 +16,11 @@ SECTION "Map Loader", ROM0
 ; DrawMapBottomEdge
 ; DrawMapToScreen
 ; DrawMapChunk                 hl = chunk address, de=xy, bc=wh
-; GetCurrentMapChunk           returns chunk address in hl
-; SetCurrentMapChunk           hl = chunk address, returns address in hl
-; GetCurrentMapChunkNeighbor   a = direction, returns chunk in hl
-; GetMapChunkNeighbor          a = direction, hl = map chunk, returns chunk in hl
+; GetCurrentMapChunk           returns chunk address in hl, index in a
+; SetCurrentMapChunk           hl = chunk address, returns address in hl, index in a
+; GetCurrentMapChunkNeighbor   a = direction, returns chunk in hl, index in a
+; GetMapChunkNeighbor          a = direction, hl = map chunk, returns chunk in hl, index in a
+; GetMapChunk                  a = jump table index; hl = jump table, returns chunk in hl, index in a
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
 GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
@@ -27,7 +28,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   ld [_x], a
   ld a, e
   ld [_y], a
-  ld bc, 10;tile(1)+pal(1)+neighbors(8)
+  ld bc, 6;tile(1)+pal(1)+neighbors(4)
   add hl, bc
 .loop
     ld a, [hli];map object type and collision
@@ -532,7 +533,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   xor a
   ld [rVBK], a
 .drawMapObjects
-  ld bc, 9;pal(1)+neighbors(8)
+  ld bc, 5;pal(1)+neighbors(4)
   add hl, bc;skip pal, neighboring chunks, and collision
 .loop
     ld a, [hli];map object type and collision
@@ -750,27 +751,38 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jp .loop
   ret
 
-GetCurrentMapChunk:;returns chunk address in hl
-  ld a, [map_chunk+1]
-  ld h, a
+GetCurrentMapChunk:;returns chunk address in hl, index in a
   ld a, [map_chunk]
-  ld l, a
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
+  call GetMapChunk
   ret
 
-SetCurrentMapChunk:;hl = chunk address, returns address in hl
-  ld a, h
-  ld [map_chunk+1], a
-  ld a, l
+SetCurrentMapChunk:;a = chunk index, returns address in hl, index in a
   ld [map_chunk], a
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
+  call GetMapChunk
   ret
 
-GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl
+GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl, index in a
   push af;dir
   call GetCurrentMapChunk
   pop af;dir
   ;fall through
-GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
+GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, index in a
   push bc
+  ld b, 0
+  ld c, a
+  add hl, bc
+  ld a, [hl];jump table index
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
+  call GetMapChunk
+  pop bc
+  ret
+
+GetMapChunk:;a = jump table index; hl = jump table, returns chunk in hl, index in a
+  push bc
+  push af;index
+  add a, a;index * 2
   ld b, 0
   ld c, a
   add hl, bc
@@ -779,6 +791,7 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl
   ld a, [hl]
   ld h, a
   ld l, b
+  pop af;index
   pop bc
   ret
 

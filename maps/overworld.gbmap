@@ -1,4 +1,4 @@
-;overworld.gbmap, 1920 bytes
+;Overworld.gbmap, 1944 bytes
 MapPalettes:: ;64 bytes
   RGB 30, 28, 19
   RGB 31, 31, 31
@@ -179,14 +179,41 @@ DB 128, 129
 .palette:
 DB 131
 
+RIGHTFIELDCHUNK EQU 0
+BILLETTOWNSW EQU 1
+BILLETTOWNSEWATER EQU 2
+BILLETTOWNSE EQU 3
+LEFTFIELDCHUNK EQU 4
+INFIELDCHUNK EQU 5
+ROUTE1EAST EQU 6
+BILLETTOWNNW EQU 7
+BILLETTOWNSWWATER EQU 8
+BILLETTOWNNE EQU 9
+CENTERFIELDCHUNK EQU 10
+ROUTE1WEST EQU 11
+
+MapOverworldChunks:: ;24 bytes
+  DW RightFieldChunk
+  DW BilletTownSW
+  DW BilletTownSEWater
+  DW BilletTownSE
+  DW LeftFieldChunk
+  DW InfieldChunk
+  DW Route1East
+  DW BilletTownNW
+  DW BilletTownSWWater
+  DW BilletTownNE
+  DW CenterFieldChunk
+  DW Route1West
+
 ;Map, 1558 bytes
 RightFieldChunk::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW CenterFieldChunk
-.east:    DW RightFieldChunk
-.south:   DW RightFieldChunk
-.west:    DW InfieldChunk
+.north:   DB CENTERFIELDCHUNK
+.east:    DB RIGHTFIELDCHUNK
+.south:   DB RIGHTFIELDCHUNK
+.west:    DB INFIELDCHUNK
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
 DB 8;x
@@ -213,10 +240,10 @@ DB 0;END RightFieldChunk, 28 bytes
 BilletTownSW::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW BilletTownNW
-.east:    DW BilletTownSE
-.south:   DW BilletTownSWWater
-.west:    DW BilletTownSW
+.north:   DB BILLETTOWNNW
+.east:    DB BILLETTOWNSE
+.south:   DB BILLETTOWNSWWATER
+.west:    DB BILLETTOWNSW
 
 DB MAP_OBJ_FILL | MAP_COLLISION_SOLID;;GameObject
 DB 25;x1
@@ -348,10 +375,10 @@ DB 0;END BilletTownSW, 125 bytes
 BilletTownSEWater::
 .tile:    DB 188
 .palette: DB 7
-.north:   DW BilletTownSE
-.east:    DW BilletTownSEWater
-.south:   DW BilletTownSEWater
-.west:    DW BilletTownSWWater
+.north:   DB BILLETTOWNSE
+.east:    DB BILLETTOWNSEWATER
+.south:   DB BILLETTOWNSEWATER
+.west:    DB BILLETTOWNSWWATER
 
 DB MAP_OBJ_FILL | MAP_COLLISION_SOLID;;GameObject (10)
 DB 0;x1
@@ -427,10 +454,10 @@ DB 0;END BilletTownSEWater, 77 bytes
 BilletTownSE::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW BilletTownNE
-.east:    DW InfieldChunk
-.south:   DW BilletTownSEWater
-.west:    DW BilletTownSW
+.north:   DB BILLETTOWNNE
+.east:    DB INFIELDCHUNK
+.south:   DB BILLETTOWNSEWATER
+.west:    DB BILLETTOWNSW
 
 DB MAP_OBJ_FILL | MAP_COLLISION_NONE ;GameObject (4)
 DB 0;x1
@@ -719,10 +746,10 @@ DB 0;END BilletTownSE, 266 bytes
 LeftFieldChunk::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW LeftFieldChunk
-.east:    DW CenterFieldChunk
-.south:   DW InfieldChunk
-.west:    DW BilletTownNE
+.north:   DB LEFTFIELDCHUNK
+.east:    DB CENTERFIELDCHUNK
+.south:   DB INFIELDCHUNK
+.west:    DB BILLETTOWNNE
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
 DB 12;x
@@ -749,10 +776,10 @@ DB 0;END LeftFieldChunk, 28 bytes
 InfieldChunk::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW LeftFieldChunk
-.east:    DW RightFieldChunk
-.south:   DW InfieldChunk
-.west:    DW BilletTownSE
+.north:   DB LEFTFIELDCHUNK
+.east:    DB RIGHTFIELDCHUNK
+.south:   DB INFIELDCHUNK
+.west:    DB BILLETTOWNSE
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
 DB 17;x
@@ -846,10 +873,10 @@ DB 0;END InfieldChunk, 88 bytes
 Route1East::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW Route1East
-.east:    DW Route1East
-.south:   DW BilletTownNE
-.west:    DW Route1West
+.north:   DB ROUTE1EAST
+.east:    DB ROUTE1EAST
+.south:   DB BILLETTOWNNE
+.west:    DB ROUTE1WEST
 
 DB MAP_OBJ_FILL | MAP_COLLISION_NONE ;GameObject (11)
 DB 0;x1
@@ -931,10 +958,10 @@ DB 0;END Route1East, 81 bytes
 BilletTownNW::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW Route1West
-.east:    DW BilletTownNE
-.south:   DW BilletTownSW
-.west:    DW BilletTownNW
+.north:   DB ROUTE1WEST
+.east:    DB BILLETTOWNNE
+.south:   DB BILLETTOWNSW
+.west:    DB BILLETTOWNNW
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
 DB 30;x
@@ -1206,10 +1233,10 @@ DB 0;END BilletTownNW, 255 bytes
 BilletTownSWWater::
 .tile:    DB 188
 .palette: DB 7
-.north:   DW BilletTownSW
-.east:    DW BilletTownSEWater
-.south:   DW BilletTownSWWater
-.west:    DW BilletTownSWWater
+.north:   DB BILLETTOWNSW
+.east:    DB BILLETTOWNSEWATER
+.south:   DB BILLETTOWNSWWATER
+.west:    DB BILLETTOWNSWWATER
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (15)
 DB 24;x
@@ -1320,10 +1347,10 @@ DB 0;END BilletTownSWWater, 109 bytes
 BilletTownNE::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW Route1East
-.east:    DW LeftFieldChunk
-.south:   DW BilletTownSE
-.west:    DW BilletTownNW
+.north:   DB ROUTE1EAST
+.east:    DB LEFTFIELDCHUNK
+.south:   DB BILLETTOWNSE
+.west:    DB BILLETTOWNNW
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 0,1
 DB 4;x
@@ -1735,10 +1762,10 @@ DB 0;END BilletTownNE, 378 bytes
 CenterFieldChunk::
 .tile:    DB 253
 .palette: DB 1
-.north:   DW CenterFieldChunk
-.east:    DW CenterFieldChunk
-.south:   DW RightFieldChunk
-.west:    DW LeftFieldChunk
+.north:   DB CENTERFIELDCHUNK
+.east:    DB CENTERFIELDCHUNK
+.south:   DB RIGHTFIELDCHUNK
+.west:    DB LEFTFIELDCHUNK
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
 DB 12;x
@@ -1757,10 +1784,10 @@ DB 0;END CenterFieldChunk, 21 bytes
 Route1West::
 .tile:    DB 255
 .palette: DB 1
-.north:   DW Route1West
-.east:    DW Route1East
-.south:   DW BilletTownNW
-.west:    DW Route1West
+.north:   DB ROUTE1WEST
+.east:    DB ROUTE1EAST
+.south:   DB BILLETTOWNNW
+.west:    DB ROUTE1WEST
 
 DB MAP_OBJ_FILL | MAP_COLLISION_NONE ;GameObject (10)
 DB 28;x1

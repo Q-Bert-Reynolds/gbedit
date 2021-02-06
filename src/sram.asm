@@ -16,7 +16,7 @@ sram_players_sign:: DS 151/8+1
 sram_map_x:: DB
 sram_map_y:: DB
 sram_map_bank:: DB
-sram_map_chunk:: DW
+sram_map_chunk:: DB
 sram_main_save_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]

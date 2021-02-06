@@ -3,7 +3,7 @@ Priority
 - map system
   - trim stamp tiles in a similar way to fills
   - enter/exit buildings
-  - read signs
+  - read signs (CheckActions in overworld.asm)
 - make batting results semi-random so we can move on to FX
 
  General
@@ -96,6 +96,7 @@ Team Menu
 
 Map System
 
+- load/interact characters and items
 - an chunk index of 0 should fill the chunk with black tiles
 - font tiles should be usable in the editor
 - handle multiple map banks

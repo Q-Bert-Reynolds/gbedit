@@ -124,6 +124,35 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   cp a, MAP_COLLISION_DOOR
   ret
 
+;HACK: rounds rSCX and rSCY to nearest multiple of 8
+;  Walking around often results in off-by-one collision errors.
+;  Visually, it's not noticable, but results in crashes when pausing.
+;  This should really be corrected in the collision routine, but it's easier here.
+FixMapScroll::
+.fixX
+  ld a, [rSCX]
+  and a, %00000111
+  jr z, .fixY
+  ld a, [rSCX]
+  inc a
+  ld [rSCX], a
+  srl a
+  srl a
+  srl a
+  ld [map_x], a
+.fixY
+  ld a, [rSCY]
+  and a, %00000111
+  ret z
+  ld a, [rSCY]
+  inc a
+  ld [rSCY], a
+  srl a
+  srl a
+  srl a
+  ld [map_y], a
+  ret
+
 MoveMapLeft::
   ld b, 63;left
   ld c, 76

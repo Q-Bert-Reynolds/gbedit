@@ -244,6 +244,7 @@ MoveUp:
     pop af;steps left
     dec a
     jr nz, .loop
+  call FixMapScroll
   ret
 
 MoveDown:
@@ -263,6 +264,7 @@ MoveDown:
     pop af;steps left
     dec a
     jr nz, .loop
+  call FixMapScroll
   ret
 
 MoveLeft:
@@ -282,6 +284,7 @@ MoveLeft:
     pop af;steps left
     dec a
     jr nz, .loop
+  call FixMapScroll
   ret
 
 MoveRight:
@@ -301,6 +304,7 @@ MoveRight:
     pop af;steps left
     dec a
     jr nz, .loop
+  call FixMapScroll
   ret
 
 StartMenuText:
@@ -453,7 +457,6 @@ Overworld::
   ;TODO: load song based on location
   PLAY_SONG hurrah_for_our_national_game_data, 1
   
-  ;TODO: load initial map position
   xor a
   ld [list_selection], a
   ld hl, MapPalettes

@@ -20,34 +20,111 @@ SECTION "Map Loader", ROM0
 ; SetCurrentMapChunk           hl = chunk address, returns address in hl
 ; GetCurrentMapChunkNeighbor   a = direction, returns chunk in hl
 ; GetMapChunkNeighbor          a = direction, hl = map chunk, returns chunk in hl
-; GetMapChunkForOffset         de = xy offset (-31,31), returns chunk in hl, xy in de
+; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
 GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
-  ld bc, 10;fill(1)+pal(1)+neighbors(8)
-  add hl, bc;collision address
-  srl d;x
-  ld a, e;y
-  and a, %11111110;toss low bit for y offset
-  ld e, a;y
-  ld a, d;x
-  ld d, 0
-  add hl, de;collision row
-  cp a, 8
-  jr c, .testBit
-  inc hl;x in second byte
-  sub a, 8
-.testBit
-  ld d, a;x
-  ld a, 7
-  sub a, d
-  ld d, a
-  ld a, [hl]
-  ld e, a;collision byte
-  jp math_TestBit
-  
+  ld a, d
+  ld [_x], a
+  ld a, e
+  ld [_y], a
+  ld bc, 10;tile(1)+pal(1)+neighbors(8)
+  add hl, bc
+.loop
+    ld a, [hli];map object type and collision
+    and a
+    ret z; done if 0
+    
+    ld b, a;map object type and collision
+    and a, MAP_COLLISION_MASK
+    ld c, a;collision type
+    ld [_c], a
+    
+    ld a, [hli];x
+    ld d, a
+    ld a, [hli];y
+    ld e, a
+    
+    ld a, b;map object type and collision
+    and a, MAP_OBJ_TYPE_MASK
+    cp a, MAP_OBJ_STAMP
+    jp z, .stamp
+    cp a, MAP_OBJ_FILL
+    jp z, .fill
+    ; cp a, MAP_OBJ_TILE
+    ; jp z, .tile
+
+  .tile
+    inc hl;skip tile
+    inc hl;skip palete
+    ld a, [_x]
+    cp a, d;x
+    jp nz, .loop
+    ld a, [_y]
+    cp a, e;y
+    jp z, .collisonFound
+    jp .loop
+
+  .stamp
+    ld a, [_x]
+    cp a, d;x
+    jr c, .skip2Bytes
+    ld a, [_y]
+    cp a, e;y
+    jr c, .skip2Bytes
+    ld a, [hli];stamp lower address
+    ld c, a
+    ld a, [hli];stamp upper address
+    ld b, a;bc = stamp address
+    ld a, [bc];width
+    add a, d;x+width
+    ld d, a;x2
+    ld a, [_x]
+    cp a, d;x2
+    jp nc, .loop
+    ld a, [bc];height
+    add a, e;y+height
+    ld e, a;y2
+    ld a, [_y]
+    cp a, e;y2
+    jp c, .collisonFound
+    jp .loop
+
+  .fill
+    inc hl;skip tile
+    inc hl;skip palete
+    ld a, [_x]
+    cp a, d;x1
+    jr c, .skip2Bytes
+    ld a, [_y]
+    cp a, e;y1
+    jr c, .skip2Bytes
+    ld a, [hli];x2
+    ld d, a
+    ld a, [hli];y2
+    ld e, a
+    ld a, [_x]
+    cp a, d;x2
+    jp nc, .loop
+    ld a, [_y]
+    cp a, e;y2
+    jp c, .collisonFound
+    jp .loop
+
+  .skip2Bytes
+    inc hl
+    inc hl
+    jp .loop
+
+.collisonFound
+  ld a, [_c]
+  cp a, MAP_COLLISION_NONE
+  jp z, .loop
+  cp a, MAP_COLLISION_DOOR
+  ret
+
 MoveMapLeft::
   ld b, 63;left
-  ld c, 88
+  ld c, 72
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -76,7 +153,7 @@ MoveMapLeft::
 
 MoveMapRight::
   ld b, 81;right
-  ld c, 88
+  ld c, 72
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -105,7 +182,7 @@ MoveMapRight::
 
 MoveMapUp::
   ld b, 72
-  ld c, 79;up
+  ld c, 63;up
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -134,7 +211,7 @@ MoveMapUp::
 
 MoveMapDown::
   ld b, 72
-  ld c, 97;down
+  ld c, 81;down
   call GetMapChunkForOffset
   call GetMapCollision
   ret nz
@@ -454,21 +531,21 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   xor a
   ld [rVBK], a
 .drawMapObjects
-  ld bc, 41;pal(1)+neighbors(8)+collision(32)
+  ld bc, 9;pal(1)+neighbors(8)
   add hl, bc;skip pal, neighboring chunks, and collision
 .loop
-    ld a, [hli];map object type
+    ld a, [hli];map object type and collision
     and a
     ret z; done if 0
-    ld b, a;type
+    ld b, a;map object type and collision
 
     ld a, [hli];x
     ld d, a
     ld a, [hli];y
     ld e, a
     
-    ld a, b;type
-
+    ld a, b;map object type and collision
+    and a, MAP_OBJ_TYPE_MASK
     cp a, MAP_OBJ_STAMP
     jp z, .testStampMinX
     cp a, MAP_OBJ_FILL

@@ -1,7 +1,7 @@
 Priority
 
 - map system
-  - move collision info to map objects
+  - Changes to map data breaks save. To fix this, map data should start with list of chunks, and references to chunks should be changed to list indices. The upfront cost is 2 bytes per chunk, but each chunk's size will be reduced by 4 bytes.
   - trim stamp tiles in a similar way to fills
   - enter/exit buildings
   - read signs
@@ -21,11 +21,11 @@ Optimization
 - replace long chains of compares and jumps with jump tables
 - remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
-- overworld map and player image data need to be compressed to fit more
+- player image data need to be compressed to fit more
 - math_Divide24 and str_Number24 are both really similar to their 16 bit counterparts, perhaps they can be reduced in to a smaller number of instructions, or we could only use the 24 bit versions
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 - Load/Set User/Opposing PlayerBkgTiles subroutines share a ton of code
-- OAM_OVERFLOW_SIZE shouldn't be necessary, fix SetSpriteTilesXY
+- palette ids are at most 7, so two palettes could fit in a byte, cutting palette data in half
 
 Python scripts
 

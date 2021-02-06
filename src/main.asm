@@ -1,8 +1,9 @@
-TESTS_ENABLED EQU 0
-INTRO_ENABLED EQU 0
-TITLE_ENABLED EQU 1
-WORLD_ENABLED EQU 1
-PLAY_ENABLED  EQU 1
+TESTS_ENABLED    EQU 0
+INTRO_ENABLED    EQU 0
+TITLE_ENABLED    EQU 0
+NEW_GAME_ENABLED EQU 1
+WORLD_ENABLED    EQU 1
+PLAY_ENABLED     EQU 1
 
 INCLUDE "src/beisbol.inc"
 
@@ -207,7 +208,9 @@ IF TITLE_ENABLED == 1
   call SetBank
   call Title ;sets a to 0 if new game pressed
   jr nz, .startClock
+ENDC
 
+IF NEW_GAME_ENABLED == 1
 .newGame
   ld a, NEW_GAME_BANK
   call SetBank

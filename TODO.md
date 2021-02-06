@@ -1,5 +1,7 @@
 Priority
 
+- New Game colors
+- GBC fading
 - map system
   - move tile/fill/stamp drawing to subroutines
   - trim stamp tiles in a similar way to fills

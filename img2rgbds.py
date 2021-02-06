@@ -1,4 +1,5 @@
 import os
+import sys
 import math
 import colorsys
 import pathlib 
@@ -6,15 +7,18 @@ from PIL import Image
 from PIL import GifImagePlugin
 from sgb_border import convert as sgb_convert
 
-def main():
+def parse_all():
   for root, folders, files in os.walk("./img"):
-    name = os.path.basename(root)
-    if name in ["img", "players", "coaches", "maps"]:
-      for name in files:
-        path = os.path.join(root, name)
-        img_to_asm(path)
-    else:
-      folder_to_asm(root, files)
+    parse_files(root, files)
+
+def parse_files(root, files):
+  name = os.path.basename(root)
+  if name in ["img", "players", "coaches", "maps"]:
+    for name in files:
+      path = os.path.join(root, name)
+      img_to_asm(path)
+  else:
+    folder_to_asm(root, files)
 
 def rgb_to_grey (px):
   if not isinstance(px, int):
@@ -27,8 +31,13 @@ def gb_encode (img):
   cols = int(img.width / 8)
   hex_vals = []
   pixels = list(img.getdata())
+  palettemap = []
+  palette = img.getpalette()
+  color_count = 0
+  colors = ""
   for row in range(rows):
     for col in range(cols):
+      palette_id = 0
       for j in range(8):
         upper_binary = ""
         lower_binary = ""
@@ -36,13 +45,27 @@ def gb_encode (img):
           x = col*8+i
           y = row*8+j
           px = pixels[y*img.width+x]
-          px = px if isinstance(px, int) else px[0]
-          px = int(math.floor(float(px) / 64.0))
+          if palette != None:
+            if px > color_count:
+              color_count = px
+            palette_id += px/4
+            px = px % 4
+          else:
+            px = px if isinstance(px, int) else px[0]
+            px = int(math.floor(float(px) / 64.0))
           upper_binary += str(1-int(px%2))
           lower_binary += str(1-int(px/2))
         hex_vals.append("{:02X}".format(int(upper_binary, 2)))
         hex_vals.append("{:02X}".format(int(lower_binary, 2)))
-  return (rows, cols, hex_vals)
+      palette_id /= 64 #average palette_id
+      palettemap.append(int(palette_id))
+  if palette != None:
+    for i in range(0, color_count*3, 3):
+      r = palette[i]   / 8
+      g = palette[i+1] / 8
+      b = palette[i+2] / 8
+      colors.append("  RGB {0}, {1}, {2}\n".format(r,g,b))
+  return (rows, cols, hex_vals, colors, palettemap)
 
 def flipTileX (tile):
   flipped = ""
@@ -82,6 +105,9 @@ def folder_to_asm (root, files):
   tilemaps = {}
   dimensions = {}
   properties = {}
+  palettemaps = {}
+  colorset = {}
+
   name = os.path.basename(root)
   for file in files:
     path = os.path.join(root, file)
@@ -96,7 +122,7 @@ def folder_to_asm (root, files):
       continue
     img = Image.open(path)
     img_name = os.path.basename(base)
-    rows, cols, hex_vals = gb_encode(img)
+    rows, cols, hex_vals, colors, palettemap = gb_encode(img)
 
     if "avatar" in img_name:
       parts = [
@@ -116,6 +142,8 @@ def folder_to_asm (root, files):
       
     else:
       tilemaps[img_name] = []
+      palettemaps[img_name] = palettemap
+      colorset[img_name] = colors
       dimensions[img_name] = (rows, cols)
       for i in range(0, len(hex_vals), 16):
         tile = "".join(hex_vals[i:i+16])
@@ -123,9 +151,9 @@ def folder_to_asm (root, files):
           tileset.append(tile)
         tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
   
-  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
+  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties, palettemaps, colors)
 
-def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties):
+def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, palettemaps, colors):
   if len(tileset) == 0:
     return
   
@@ -196,11 +224,16 @@ def gif_to_asm (path, base):
   tilemaps = {}
   dimensions = {}
   properties = {}
+  palettemaps = {}
+  colorset = {}
 
   for frame in range(img.n_frames):
     img_name = os.path.basename(base)+str(frame)
     img.seek(frame)
-    rows, cols, hex_vals = gb_encode(img.convert('RGB'))
+    rows, cols, hex_vals, colors, palettemap = gb_encode(img.convert('RGB'))
+
+    colorset[img_name] = colors
+    palettemaps[img_name] = palettemap
     tilemaps[img_name] = []
     for i in range(0, len(hex_vals), 16):
       tile = "".join(hex_vals[i:i+16])
@@ -234,7 +267,7 @@ def gif_to_asm (path, base):
     dimensions[img_name] = (rows, cols)
 
   root = os.path.split(path)[0]
-  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties)
+  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties, palettemaps, colors)
 
 def png_to_asm (path, base):
   name = os.path.basename(base)
@@ -251,7 +284,7 @@ def png_to_sgb (path, base, name):
   
 def png_to_gb (path, base, name):
   img = Image.open(path)
-  rows, cols, hex_vals = gb_encode(img)
+  rows, cols, hex_vals, colors, palettemap = gb_encode(img)
   tile_count = rows*cols
 
   if name in ["ui_font", "simulation"] or "maps" in path:
@@ -342,4 +375,7 @@ def PascalCase(name):
   return s
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 1: parse_all()
+    else:
+      for root, folders, files in os.walk(sys.argv[1]):
+        parse_files(root, files)

@@ -1,6 +1,8 @@
 Priority
 
+- player GBC palettes
 - GBC fading
+- only store the middle 2 colors of a palette, black and white are always the same
 - map system
   - move tile/fill/stamp drawing to subroutines
   - trim stamp tiles in a similar way to fills
@@ -33,7 +35,6 @@ Python scripts
 
 - roledex description parser should print warning when more than 6 lines
 - avatar directional maps should be organized into arrays
-- generate GBC palette maps from images
 - SGB borders should (optionally?) use PNG palettes directly
 - duplicate functionality (like the PascalCase function) should be moved to library file
 - only update .asm file when PNG, GIF, TMX, or MOD files change
@@ -46,9 +47,6 @@ Start
 - make intro ball movement smooth
 - randomize(ish) scrolling players on title screen
 - load bedroom map after new game scene ends
-- fix fade out on GBC
-- set image colors
-
 
 Play Ball
 

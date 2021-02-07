@@ -38,7 +38,7 @@ def gb_encode (img):
   for row in range(rows):
     palettemap += "  DB "
     for col in range(cols):
-      palette_id = 0
+      palette_ids = [0]*8
       for j in range(8):
         upper_binary = ""
         lower_binary = ""
@@ -49,7 +49,7 @@ def gb_encode (img):
           if palette != None:
             if px > color_count:
               color_count = px
-            palette_id += px/4
+            palette_ids[int(px/4)] += 1
             px = px % 4
           else:
             px = px if isinstance(px, int) else px[0]
@@ -58,15 +58,14 @@ def gb_encode (img):
           lower_binary += str(1-int(px/2))
         hex_vals.append("{:02X}".format(int(upper_binary, 2)))
         hex_vals.append("{:02X}".format(int(lower_binary, 2)))
-      palette_id /= 64 #average palette_id
-      palettemap += str(int(palette_id))
+      palettemap += str(palette_ids.index(max(palette_ids)))
       if col == cols-1: palettemap += "\n"
       else: palettemap += ","
 
   if palette != None:
     c = ""
     count = 0
-    color_count += 1
+    color_count = math.ceil((color_count+1)/4)*4
     for i in range(0, color_count*3, 3):
       r = round(palette[i]   / 8)
       g = round(palette[i+1] / 8)
@@ -76,6 +75,7 @@ def gb_encode (img):
       if count % 4 == 0:
         colors.append(c)
         c = ""
+        
   return (rows, cols, hex_vals, colors, palettemap)
 
 def flipTileX (tile):
@@ -358,7 +358,7 @@ def png_to_gb (path, base, name):
         asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
 
       if colors:
-        asm_file.write("_" + name.upper() + "_PALETTE_COUNT EQU " + str(len(colors)) + "\n")
+        asm_file.write("_" + name.upper() + "_COLOR_COUNT EQU " + str(len(colors)*4) + "\n")
         asm_file.write("_"+PascalCase(name)+"Colors:\n"+"".join(colors))
         asm_file.write("_"+PascalCase(name)+"PaletteMap:\n"+palettemap)
 

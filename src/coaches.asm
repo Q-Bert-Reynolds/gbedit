@@ -37,23 +37,23 @@ CoachTileMaps:
   DW _Nolan2TileMap
 
 CoachColorCounts:
-  DB 0
-  DB _DOC_HICKORY_PALETTE_COUNT*4
-  DB 0
+  DB _CALVIN_COLOR_COUNT
+  DB _DOC_HICKORY_COLOR_COUNT
+  DB _NOLAN0_COLOR_COUNT
   DB 0
   DB 0
 
 CoachPaletteMaps:
-  DW 0
+  DW _CalvinPaletteMap
   DW _DocHickoryPaletteMap
-  DW 0
+  DW _Nolan0PaletteMap
   DW 0
   DW 0
 
 CoachColors:
-  DW 0
+  DW _CalvinColors
   DW _DocHickoryColors
-  DW 0
+  DW _Nolan0Colors
   DW 0
   DW 0
 

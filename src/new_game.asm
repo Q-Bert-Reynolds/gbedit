@@ -159,15 +159,42 @@ NewGame::
   DISPLAY_OFF
   CLEAR_SCREEN " "
     
-  ld a, 33
+  ld a, NUM_MUCHACHO
   ld de, _UI_FONT_TILE_COUNT
   call LoadPlayerBkgData
 
-  ld a, 33
+  ld a, NUM_MUCHACHO
   ld b, 13
   ld c, 4
   ld de, _UI_FONT_TILE_COUNT
   call SetPlayerBkgTiles
+
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .skipColor
+  ld a, 1
+  ld [rVBK], a
+  ld a, NUM_MUCHACHO
+  call LoadPlayerBaseData
+  ld hl, player_base.sgb_pal
+  ld a, [hli]
+  ld c, a
+  ld a, [hli]
+  ld b, a
+  ld a, [sgb_Pal23]
+  call SetPalettesDirect
+  ld d, 13
+  ld e, 4
+  ld a, 2
+  ld bc, $0707
+  ld hl, _SCRN0
+  call gbdk_SetTilesTo
+  xor a
+  ld [rVBK], a
+.skipColor
+
+
+
   DISPLAY_ON
 
   FADE_IN
@@ -186,14 +213,12 @@ NewGame::
 
 ; set image to Calvin
   DISPLAY_OFF
-  ld hl, _CalvinTiles
-  ld de, $8800
-  ld bc, _CALVIN_TILE_COUNT*16
-  call mem_CopyVRAM
-
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_CALVIN
   call LoadCoachTiles
+  ld h, 1
+  ld a, COACH_CALVIN
+  call LoadCoachPalettes
   CLEAR_SCREEN " "
 
   ld d, 13
@@ -201,6 +226,12 @@ NewGame::
   ld a, COACH_CALVIN
   ld h, _UI_FONT_TILE_COUNT
   call SetCoachTiles
+
+  ld d, 13
+  ld e, 4
+  ld h, 1;offset
+  ld a, COACH_CALVIN
+  call SetCoachPalettes
 
   ld a, -56
   ld [rSCX], a
@@ -284,9 +315,13 @@ ENDC
 
 ;set image to Nolan
   DISPLAY_OFF
-    ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
+  ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_NOLAN0
   call LoadCoachTiles
+
+  ld h, 1
+  ld a, COACH_NOLAN0
+  call LoadCoachPalettes
   CLEAR_SCREEN " "
 
   ld d, 13
@@ -294,6 +329,12 @@ ENDC
   ld a, COACH_NOLAN0
   ld h, _UI_FONT_TILE_COUNT
   call SetCoachTiles
+
+  ld d, 13
+  ld e, 4
+  ld a, COACH_NOLAN0
+  ld h, 1
+  call SetCoachPalettes
 
   ld a, -56
   ld [rSCX], a
@@ -340,7 +381,6 @@ ENDC
     ld hl, UserNameTitle
     ld de, name_buffer
     call str_Copy
-    
 
     xor a
     ld [list_selection], a
@@ -380,6 +420,22 @@ ENDC
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_CALVIN
   call LoadCoachTiles
+  ld h, 1
+  ld a, COACH_CALVIN
+  call LoadCoachPalettes
+  CLEAR_SCREEN " "
+
+  ld d, 13
+  ld e, 4
+  ld a, COACH_CALVIN
+  ld h, _UI_FONT_TILE_COUNT
+  call SetCoachTiles
+
+  ld d, 13
+  ld e, 4
+  ld h, 1;offset
+  ld a, COACH_CALVIN
+  call SetCoachPalettes
 
   ld hl, _NewGameTiles
   ld de, $8800+_CALVIN_TILE_COUNT*16
@@ -390,12 +446,6 @@ ENDC
   ld de, _VRAM
   ld bc, _NEW_GAME_TILE_COUNT*16
   call mem_CopyVRAM
-
-  ld d, 13
-  ld e, 4
-  ld a, COACH_CALVIN
-  ld h, _UI_FONT_TILE_COUNT
-  call SetCoachTiles
   
   DISPLAY_ON
   FADE_IN

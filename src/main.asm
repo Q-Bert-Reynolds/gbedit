@@ -1,6 +1,6 @@
 TESTS_ENABLED    EQU 0
-INTRO_ENABLED    EQU 0
-TITLE_ENABLED    EQU 0
+INTRO_ENABLED    EQU 1
+TITLE_ENABLED    EQU 1
 NEW_GAME_ENABLED EQU 1
 WORLD_ENABLED    EQU 1
 PLAY_ENABLED     EQU 1
@@ -103,6 +103,8 @@ SECTION "p1thru4", ROM0[$0060]
 SECTION "Main", ROM0[$0150]
 Main::
 .gbcCheck ;must happen first
+  cp a, $FF;is this a Pocket
+  jr z, .gbp
   cp a, $11;is this a GBC
   ld a, 0;don't xor here
   jr nz, .setSysInfo
@@ -112,6 +114,9 @@ Main::
   or a, SYS_INFO_GBA
 .gbc
   or a, SYS_INFO_GBC
+  jr .setSysInfo
+.gbp
+  ld a, SYS_INFO_GBP
 .setSysInfo
   ld [sys_info], a
 
@@ -120,12 +125,12 @@ Main::
   and a, SYS_INFO_GBC
   jr z, .setup
   call gbdk_CPUFast; GBC always in fast mode
+  CGB_COMPATIBILITY
 
 .setup
   di
   ld sp, $ffff
   DISPLAY_OFF
-  CGB_COMPATIBILITY
   DISABLE_LCD_INTERRUPT
   xor a
   ld [rSCX], a

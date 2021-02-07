@@ -31,11 +31,12 @@ def gb_encode (img):
   cols = int(img.width / 8)
   hex_vals = []
   pixels = list(img.getdata())
-  palettemap = []
+  palettemap = ""
   palette = img.getpalette()
   color_count = 0
-  colors = ""
+  colors = []
   for row in range(rows):
+    palettemap += "  DB "
     for col in range(cols):
       palette_id = 0
       for j in range(8):
@@ -58,13 +59,23 @@ def gb_encode (img):
         hex_vals.append("{:02X}".format(int(upper_binary, 2)))
         hex_vals.append("{:02X}".format(int(lower_binary, 2)))
       palette_id /= 64 #average palette_id
-      palettemap.append(int(palette_id))
+      palettemap += str(int(palette_id))
+      if col == cols-1: palettemap += "\n"
+      else: palettemap += ","
+
   if palette != None:
+    c = ""
+    count = 0
+    color_count += 1
     for i in range(0, color_count*3, 3):
-      r = palette[i]   / 8
-      g = palette[i+1] / 8
-      b = palette[i+2] / 8
-      colors.append("  RGB {0}, {1}, {2}\n".format(r,g,b))
+      r = round(palette[i]   / 8)
+      g = round(palette[i+1] / 8)
+      b = round(palette[i+2] / 8)
+      c = "  RGB {0:>2}, {1:>2}, {2:>2}\n".format(r,g,b) + c
+      count += 1
+      if count % 4 == 0:
+        colors.append(c)
+        c = ""
   return (rows, cols, hex_vals, colors, palettemap)
 
 def flipTileX (tile):
@@ -151,9 +162,9 @@ def folder_to_asm (root, files):
           tileset.append(tile)
         tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
   
-  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties, palettemaps, colors)
+  image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties, palettemaps, colorset)
 
-def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, palettemaps, colors):
+def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, palettemaps, colorset):
   if len(tileset) == 0:
     return
   
@@ -278,7 +289,7 @@ def png_to_asm (path, base):
   return
 
 def png_to_sgb (path, base, name):
-  print (path)
+  print(path)
   sgb_convert(path, base + ".asm")
   return
   
@@ -345,7 +356,12 @@ def png_to_gb (path, base, name):
       if has_map:
         asm_file.write("_" + name.upper() + "_ROWS EQU " + str(rows) + "\n")
         asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
-      
+
+      if colors:
+        asm_file.write("_" + name.upper() + "_PALETTE_COUNT EQU " + str(len(colors)) + "\n")
+        asm_file.write("_"+PascalCase(name)+"Colors:\n"+"".join(colors))
+        asm_file.write("_"+PascalCase(name)+"PaletteMap:\n"+palettemap)
+
       tilesPath = pathlib.PurePath(base + ".tiles").as_posix()
       asm_file.write("_"+PascalCase(name)+"Tiles: INCBIN \"")
       asm_file.write(tilesPath+"\"\n")
@@ -364,6 +380,7 @@ def png_to_gb (path, base, name):
           for i in range(0, len(tilemap), cols):
             hex_string += "".join(tilemap[i:i+cols])
           bin_file.write(bytes.fromhex(hex_string))
+
       asm_file.write("ENDC\n")
 
 def PascalCase(name):

@@ -36,6 +36,27 @@ CoachTileMaps:
   DW _Nolan1TileMap
   DW _Nolan2TileMap
 
+CoachColorCounts:
+  DB 0
+  DB _DOC_HICKORY_PALETTE_COUNT*4
+  DB 0
+  DB 0
+  DB 0
+
+CoachPaletteMaps:
+  DW 0
+  DW _DocHickoryPaletteMap
+  DW 0
+  DW 0
+  DW 0
+
+CoachColors:
+  DW 0
+  DW _DocHickoryColors
+  DW 0
+  DW 0
+  DW 0
+
 CoachNames:
   DB "Calvin", 0
   DB "Doc", 0
@@ -72,6 +93,47 @@ BankedLoadCoachTiles:: ;a = coach id, de = vram address
   call mem_CopyVRAM
   ret
 
+BankedLoadCoachPalettes:: ;a = coach id, h = offset
+  ld b, a;coach
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC | SYS_INFO_SGB
+  ret z;exit early if not GBC
+  push bc;coach id
+  sla h;offset*2
+  sla h;offset*4(colors per palette)
+  sla h;offset*8(bytes per color)
+  ld a, %10000000;auto increment
+  or a, h;offset
+  ldh [rBCPS], a
+  pop af;coach id
+  push af;coach id
+  add a, a
+  ld b, 0
+  ld c, a
+  ld hl, CoachColors
+  add hl, bc
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld h, a 
+  ld l, c;hl = colors
+  pop af;coach id
+  push hl;colors
+  ld b, 0
+  ld c, a
+  ld hl, CoachColorCounts
+  add hl, bc
+  ld a, [hl];color count
+  add a, a;num color * 2B / color 
+  ld c, a
+  pop hl;colors
+.loop
+    ld a, [hli]
+    ldh [rBCPD], a
+    dec c
+    jr nz, .loop
+  ret
+
 BankedSetCoachTiles:: ;a = coach, de=xy, h=offset
   push hl;offset
 
@@ -90,6 +152,35 @@ BankedSetCoachTiles:: ;a = coach, de=xy, h=offset
 
   ld hl, $0707
   call SetBkgTilesWithOffset
+  ret
+
+BankedSetCoachPalettes:: ;a = coach, de=xy, h=offset
+  ld b, a;coach
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC | SYS_INFO_SGB
+  ret z;exit early if not GBC
+  ld a, b;coach
+
+  push hl;offset
+  add a, a
+  ld b, 0
+  ld c, a
+  ld hl, CoachPaletteMaps
+  add hl, bc
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld b, a ;bc = tiles
+
+  ld a, 1
+  ld [rVBK], a
+  pop hl;offset
+  ld a, h; a = offset
+
+  ld hl, $0707
+  call SetBkgTilesWithOffset
+  xor a
+  ld [rVBK], a
   ret
 
 BankedGetCoachsName:: ;a = coach, returns name in name_buffer
@@ -121,6 +212,21 @@ LoadCoachTiles:: ;a = coach id, de = vram address
   call SetBank
   ret
 
+LoadCoachPalettes:: ;a = coach id, h = offset
+  push af
+  ld a, [loaded_bank]
+  ld b, a;bank
+  ld a, COACHES_BANK
+  call SetBank
+
+  pop af
+  push bc;bank
+  call BankedLoadCoachPalettes
+
+  pop af;bank
+  call SetBank
+  ret
+
 SetCoachTiles:: ;a = coach, de=xy, h=offset
   push af
   ld a, [loaded_bank]
@@ -131,6 +237,21 @@ SetCoachTiles:: ;a = coach, de=xy, h=offset
   pop af
   push bc;bank
   call BankedSetCoachTiles
+
+  pop af;bank
+  call SetBank
+  ret
+
+SetCoachPalettes:: ;a = coach, de=xy, h=offset
+  push af
+  ld a, [loaded_bank]
+  ld b, a;bank
+  ld a, COACHES_BANK
+  call SetBank
+
+  pop af
+  push bc;bank
+  call BankedSetCoachPalettes
 
   pop af;bank
   call SetBank

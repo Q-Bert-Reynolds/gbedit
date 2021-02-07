@@ -1,6 +1,5 @@
 Priority
 
-- New Game colors
 - GBC fading
 - map system
   - move tile/fill/stamp drawing to subroutines
@@ -28,6 +27,7 @@ Optimization
 - SetSpriteTiles, SetSpriteTilesProps, and SetSpriteTilesXY can likely be merged
 - Load/Set User/Opposing PlayerBkgTiles subroutines share a ton of code
 - palette ids are at most 7, so two palettes could fit in a byte, cutting palette data in half
+- several routines that simply call their banked counterpart can likely be replaced with Trampoline
 
 Python scripts
 

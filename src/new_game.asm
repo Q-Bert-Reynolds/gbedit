@@ -128,6 +128,9 @@ NewGame::
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_DOC_HICKORY
   call LoadCoachTiles
+  ld h, 1
+  ld a, COACH_DOC_HICKORY
+  call LoadCoachPalettes
   CLEAR_SCREEN " "
 
   ld d, 13
@@ -135,6 +138,12 @@ NewGame::
   ld h, _UI_FONT_TILE_COUNT;offset
   ld a, COACH_DOC_HICKORY
   call SetCoachTiles
+
+  ld d, 13
+  ld e, 4
+  ld h, 1;offset
+  ld a, COACH_DOC_HICKORY
+  call SetCoachPalettes
 
   DISPLAY_ON
   FADE_IN

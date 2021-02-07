@@ -188,42 +188,6 @@ CLEAR_WIN_AREA: MACRO ;x, y, w, h, tile
   call gbdk_SetWinTiles
 ENDM
 
-FADE_OUT: MACRO
-  ld a, $90
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-  ld a, $40
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-  xor a
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-ENDM
-
-FADE_IN: MACRO
-  ld a, $40
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-  ld a, $90
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-  ld a, DMG_PAL_BDLW
-  ld [rBGP], a
-  ld [rOBP0], a
-  ld de, 200
-  call gbdk_Delay
-ENDM
-
 UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS: MACRO ; \1=address, \2=buttons
   call UpdateInput
   JUMP_TO_IF_BUTTONS \1, \2

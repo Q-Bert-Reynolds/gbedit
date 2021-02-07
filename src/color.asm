@@ -7,6 +7,9 @@ DMG_PAL_BLWW EQU %11010000 ;black, light, white, white/transparent
 DMG_PAL_BLBW EQU %11011100 ;black, light, black, white/transparent
 
 ;CGB/SGB
+WHITE_R EQU 29
+WHITE_G EQU 29
+WHITE_B EQU 27
 COLOR_WHITE       : MACRO RGB 31, 31, 31 ENDM
 COLOR_ALMOST_WHITE: MACRO RGB 29, 29, 27 ENDM
 COLOR_LIGHT_GREY  : MACRO RGB 23, 23, 23 ENDM
@@ -44,10 +47,10 @@ COLOR_DARK_BLUE   : MACRO RGB  5,  8, 16 ENDM
 
 DefaultPalettes::
 PaletteGrey::
-  COLOR_ALMOST_WHITE
-  COLOR_LIGHT_GREY
-  COLOR_DARK_GREY
-  COLOR_BLACK
+ColorWhite:: COLOR_ALMOST_WHITE
+ColorLight:: COLOR_LIGHT_GREY
+ColorDark::  COLOR_DARK_GREY
+ColorBlack:: COLOR_BLACK
 PALETTE_GREY EQU (PaletteGrey-DefaultPalettes)/8
 
 PaletteSepia::

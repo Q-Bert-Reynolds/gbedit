@@ -146,14 +146,14 @@ NewGame::
   call SetCoachPalettes
 
   DISPLAY_ON
-  FADE_IN
+  call FadeIn
   
   ld hl, HelloThereString
   call RevealTextAndWait
 
   ld hl, MyNameIsDocString
   call RevealTextAndWait
-  FADE_OUT
+  call FadeOut
 
 ;set image to Muchacho
   DISPLAY_OFF
@@ -197,7 +197,7 @@ NewGame::
 
   DISPLAY_ON
 
-  FADE_IN
+  call FadeIn
   ld hl, ThisWorldIsString
   call RevealTextAndWait
 
@@ -209,7 +209,7 @@ NewGame::
 
   ld hl, IStudyBeisbolString
   call RevealTextAndWait
-  FADE_OUT
+  call FadeOut
 
 ; set image to Calvin
   DISPLAY_OFF
@@ -239,7 +239,7 @@ NewGame::
   ld [rSCY], a
 
   DISPLAY_ON
-  FADE_IN
+  call FadeIn
 
   ld a, -56
 .slideInCalvinLoop
@@ -305,7 +305,7 @@ ENDC
   ld hl, str_buffer
   call RevealTextAndWait
 
-  FADE_OUT
+  call FadeOut
 
 ;save user name
   ld hl, name_buffer
@@ -339,7 +339,7 @@ ENDC
   ld a, -56
   ld [rSCX], a
   DISPLAY_ON
-  FADE_IN
+  call FadeIn
 
   ld a, -56
 .slideInNolanLoop
@@ -405,7 +405,7 @@ ENDC
   call str_Replace
   ld hl, str_buffer
   call RevealTextAndWait
-  FADE_OUT
+  call FadeOut
 
 ;save rival name
   ld hl, name_buffer
@@ -448,7 +448,7 @@ ENDC
   call mem_CopyVRAM
   
   DISPLAY_ON
-  FADE_IN
+  call FadeIn
 
 ;transition to game
   ld hl, user_name
@@ -510,7 +510,7 @@ ENDC
   ld de, 500
   call gbdk_Delay
 
-  FADE_OUT
+  call FadeOut
 
   ;NOTE: starting xy determines grid alignment!!! should be even
   ld a, 22

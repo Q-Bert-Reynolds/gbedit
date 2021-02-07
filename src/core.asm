@@ -29,6 +29,10 @@ SECTION "Core", ROM0
 ; SignedRandom                    a = bitmask, returns signed random bytes in d and e
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
 ; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
+; FadeIn
+; FadeOut
+; CopyPalettesToTileBuffer
+; CopyPalettesFromTileBuffer
 
 TypeStrings::
   DB "", 0
@@ -1291,4 +1295,171 @@ GBCSetWinPaletteMap::;hl = wh, de = xy, bc = firstTile
   call gbdk_SetWinTiles
   xor a
   ld [rVBK], a
+  ret
+
+FadeIn::
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr nz, .fadeInGBC
+  
+.fadeInDMG
+  ld a, $40
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, $90
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ld a, DMG_PAL_BDLW
+  ld [rBGP], a
+  ld [rOBP0], a
+  ld de, 200
+  call gbdk_Delay
+  ret
+
+.fadeInGBC
+
+  ret
+
+FadeOut::
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr nz, .fadeOutGBC
+
+.fadeOutDMG  
+  jr .delayDMG
+.fadeOutDMGLoop
+    sla a
+    sla a
+    ld [rBGP], a
+    ld [rOBP0], a
+  .delayDMG
+    ld de, 200
+    call gbdk_Delay
+    ld a, [rBGP]
+    and a
+    jr nz, .fadeOutDMGLoop
+  ret
+  
+.fadeOutGBC
+  ld a, 32;max steps
+.fadeOutGBCLoop
+    push af;steps left
+    ld a, %10000000
+    ldh [rBCPS], a
+    ldh [rOCPS], a
+    ld c, 8*4;8 palettes * 4 colors / palette
+  .loop
+      LCD_WAIT_VRAM
+    .incrementBkgRed
+      ld a, [rBCPD]
+      and a, %00001111
+      ld d, a
+      cp a, WHITE_R
+      jr nc, .incrementBkgGreen
+      inc d
+    .incrementBkgGreen
+      ld a, [rBCPD]
+      and a, %11110000
+      ld e, a
+      swap a
+      cp a, WHITE_G
+      jr nc, .setBkgRedGreen
+      inc a
+      swap a
+      ld e, a
+    .setBkgRedGreen
+      ld a, d;red
+      or a, e;green
+      ld [rBCPD], a
+    .incrementBkgBlue
+      ld a, [rBCPD]
+      and a, %00001111
+      cp a, WHITE_B
+      jr nc, .setBkgBlue
+      inc a
+    .setBkgBlue
+      ld [rBCPD], a
+      
+    .incrementObjRed
+      ld a, [rOCPD]
+      and a, %00001111
+      ld d, a
+      cp a, WHITE_R
+      jr nc, .incrementObjGreen
+      inc d
+    .incrementObjGreen
+      ld a, [rOCPD]
+      and a, %11110000
+      ld e, a
+      swap a
+      cp a, WHITE_G
+      jr nc, .setObjRedGreen
+      inc a
+      swap a
+      ld e, a
+    .setObjRedGreen
+      ld a, d;red
+      or a, e;green
+      ld [rOCPD], a
+    .incrementObjBlue
+      ld a, [rOCPD]
+      and a, %00001111
+      cp a, WHITE_B
+      jr nc, .setObjBlue
+      inc a
+    .setObjBlue
+      ld [rOCPD], a
+
+      dec c
+      jr nz, .loop
+    ld de, 18
+    call gbdk_Delay
+    pop af;steps left
+    dec a
+    jr nz, .fadeOutGBCLoop
+.restoreColors
+  DISPLAY_OFF
+  ret
+
+CopyPalettesToTileBuffer::
+  ld hl, tile_buffer
+  ld de, tile_buffer+8*2*4
+  xor a
+  ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
+.copyBkgPal
+    ldh [rBCPS], a;set bkg palette index
+    ldh [rOCPS], a;set obj palette index
+    inc a
+    push af;index
+    LCD_WAIT_VRAM
+    ldh a, [rBCPD];get bkg color
+    ld [hli], a;store in tile_buffer
+    ldh a, [rOCPD];get obj color
+    ld [de], a;store in tile_buffer
+    inc de
+    pop af;index
+    dec c
+    jr nz, .copyBkgPal
+  ret
+
+CopyPalettesFromTileBuffer::
+  ld hl, tile_buffer
+  ld de, tile_buffer+8*2*4
+  ld a, %10000000
+  ldh [rBCPS], a
+  ldh [rOCPS], a
+  ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
+.loop
+    LCD_WAIT_VRAM
+    ld a, [hli]
+    ldh [rBCPD], a
+    ld a, [de]
+    ldh [rOCPD], a
+    inc de
+    dec c
+    jr nz, .loop
   ret

@@ -1,8 +1,7 @@
 Priority
 
-- player GBC palettes
 - GBC fading
-- only store the middle 2 colors of a palette, black and white are always the same
+- only write the middle 2 colors of a palette, black and white are always the same
 - map system
   - move tile/fill/stamp drawing to subroutines
   - trim stamp tiles in a similar way to fills
@@ -33,6 +32,7 @@ Optimization
 
 Python scripts
 
+- add colors and palette maps to player data
 - roledex description parser should print warning when more than 6 lines
 - avatar directional maps should be organized into arrays
 - SGB borders should (optionally?) use PNG palettes directly

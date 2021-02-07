@@ -546,5 +546,5 @@ Start::
 .fadeOutAndExit
   ld hl, SGBFadeOutAttrBlk
   call sgb_PacketTransfer
-  FADE_OUT
+  call FadeOut
   ret

@@ -1,6 +1,6 @@
 Priority
 
-- GBC fading
+- GBC fade in
 - only write the middle 2 colors of a palette, black and white are always the same
 - map system
   - move tile/fill/stamp drawing to subroutines

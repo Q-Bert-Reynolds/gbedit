@@ -45,7 +45,7 @@ MCB5, 2M ROM (128 banks), 32K SRAM (4 banks)
 - Pascal Felber, Lars Malmborg, and Michael Hope for [GBDK](https://gbdk.sourceforge.net)
 - [Jeff Frohwein](https://devrs.com/gb/)
 - [John Metcalf](https://www.retroprogramming.com)
-- Anyon who has contributed to [Z80 Heaven](https://z80-heaven.wikidot.com/)
+- Anyone who has contributed to [Z80 Heaven](https://z80-heaven.wikidot.com/)
 - Anyone who worked on the [GameBoy Pandocs](https://gbdev.github.io/pandocs/):
   - Pan of Anthrox
   - Marat Fayzullin

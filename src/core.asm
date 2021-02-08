@@ -1091,7 +1091,7 @@ SetPalettesIndirect::;hl = palettes in PAL_SET (SGB) fromat
 .setPaletteCGB
   push hl;palettes
   inc hl;first palette index
-  ld a, %10000000
+  ld a, BCPSF_AUTOINC
   ld [rBCPS], a
   ld [rOCPS], a
 
@@ -1170,7 +1170,7 @@ GBCSetPalette::;a = palette id, hl = colors
   sla a
   sla a
   sla a
-  or a, %10000000
+  or a, BCPSF_AUTOINC
   ld [rBCPS], a
   ld [rOCPS], a
   ld a, 8;4 colors, 2 bytes each
@@ -1348,76 +1348,64 @@ FadeOut::
   ld a, 32;max steps
 .fadeOutGBCLoop
     push af;steps left
-    ld a, %10000000
-    ldh [rBCPS], a
-    ldh [rOCPS], a
-    ld c, 8*4;8 palettes * 4 colors / palette
+    call CopyPalettesToTileBuffer
+    ld hl, tile_buffer
+    ld c, 16*4;16 palettes * 4 colors / palette
   .loop
-      LCD_WAIT_VRAM
-    .incrementBkgRed
-      ld a, [rBCPD]
-      and a, %00001111
-      ld d, a
+      push bc;colors left
+    .incrementRed
+      ld a, [hli];GGGRRRRR
+      ld e, a;save green for later
+      and a, %00011111
+      ld d, a;red
       cp a, WHITE_R
-      jr nc, .incrementBkgGreen
-      inc d
-    .incrementBkgGreen
-      ld a, [rBCPD]
-      and a, %11110000
-      ld e, a
-      swap a
+      jr nc, .incrementGreen
+      inc d;red
+    .incrementGreen
+      ld a, [hld];xBBBBBGG
+      ld b, a;save blue for later
+      swap a     ;BBGGxBBB
+      srl a      ;xBBGGxBB
+      and a,     %00011000
+      ld c, a    ;xxxGGxxx
+      ld a, e    ;GGGRRRRR
+      swap a     ;RRRRGGGR
+      srl a      ;xRRRRGGG
+      and a,     %00000111
+      or a, c    ;xxxGGGGG
       cp a, WHITE_G
-      jr nc, .setBkgRedGreen
-      inc a
-      swap a
-      ld e, a
-    .setBkgRedGreen
-      ld a, d;red
-      or a, e;green
-      ld [rBCPD], a
-    .incrementBkgBlue
-      ld a, [rBCPD]
-      and a, %00001111
+      jr nc, .setRedGreen
+      inc a;green
+    .setRedGreen
+      ld e, a;green
+      swap a     ;GGGGxxxG
+      sla a      ;GGGxxxGx
+      and a,     %11100000
+      or a, d    ;GGGRRRRR
+      ld [hli], a
+    .incrementBlue
+      ld a, b    ;xBBBBBGG
+      srl a      ;xxBBBBBG
+      srl a      ;xxxBBBBB
       cp a, WHITE_B
-      jr nc, .setBkgBlue
+      jr nc, .setBlue
       inc a
-    .setBkgBlue
-      ld [rBCPD], a
-      
-    .incrementObjRed
-      ld a, [rOCPD]
-      and a, %00001111
-      ld d, a
-      cp a, WHITE_R
-      jr nc, .incrementObjGreen
-      inc d
-    .incrementObjGreen
-      ld a, [rOCPD]
-      and a, %11110000
-      ld e, a
-      swap a
-      cp a, WHITE_G
-      jr nc, .setObjRedGreen
-      inc a
-      swap a
-      ld e, a
-    .setObjRedGreen
-      ld a, d;red
-      or a, e;green
-      ld [rOCPD], a
-    .incrementObjBlue
-      ld a, [rOCPD]
-      and a, %00001111
-      cp a, WHITE_B
-      jr nc, .setObjBlue
-      inc a
-    .setObjBlue
-      ld [rOCPD], a
-
+    .setBlue
+      sla a      ;xxBBBBBx
+      sla a      ;xBBBBBxx
+      ld b, a;blue
+      ld a, e    ;xxxGGGGG
+      srl a      ;xxxxGGGG
+      srl a      ;xxxxxGGG
+      srl a      ;xxxxxxGG
+      or a, b    ;xBBBBBGG
+      ld [hli], a
+      pop bc;colors left
       dec c
       jr nz, .loop
     ld de, 18
     call gbdk_Delay
+    call CopyPalettesFromTileBuffer
     pop af;steps left
     dec a
     jr nz, .fadeOutGBCLoop
@@ -1449,7 +1437,7 @@ CopyPalettesToTileBuffer::
 CopyPalettesFromTileBuffer::
   ld hl, tile_buffer
   ld de, tile_buffer+8*2*4
-  ld a, %10000000
+  ld a, BCPSF_AUTOINC
   ldh [rBCPS], a
   ldh [rOCPS], a
   ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette

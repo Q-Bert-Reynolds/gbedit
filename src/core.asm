@@ -1339,6 +1339,7 @@ FadeIn::
   ld a, 32;max steps
 .fadeInGBCLoop
     push af;steps left
+    ld [_breakpoint], a
     ld hl, tile_buffer
     ld bc, 16*4;16 palettes * 4 colors / palette
   .loopColors
@@ -1423,20 +1424,19 @@ LerpGreenChannel:; a = green, hl = address of current color, returns new red in 
   push bc
   push de
   push hl
-  push af;current green
+  ld d, a;current green
   ld bc, 16*4*2;palettes * colors/palette * bytes/color
   add hl, bc;address of target color
   ld a, [hli];GGGRRRRR
   swap a     ;RRRRGGGR
   srl a      ;xRRRRGGG
   and a,     %00000111
-  ld a, e
+  ld e, a
   ld a, [hld];xBBBBBGG
   swap a     ;BBGGxBBB
   srl a      ;xBBGGxBB
   and a,     %00011000
   or a, e    ;xxxGGGGG
-  pop de;current green
   cp a, d;if target < current
   jr z, .done
   jr c, .decrement

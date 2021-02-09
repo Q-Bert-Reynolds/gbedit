@@ -115,7 +115,7 @@ NewGame::
   DISABLE_LCD_INTERRUPT
   SWITCH_RAM_MBC5 0
 
-;set image to Doc
+.showDoc
   DISPLAY_OFF
   xor a
   ld [rSCY], a
@@ -124,13 +124,11 @@ NewGame::
 
   call LoadFontTiles
 
+.docTiles
   ; since font takes up $9000 to $9800, no need to wrap around with mem_CopyToTileData
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_DOC_HICKORY
   call LoadCoachTiles
-  ld h, 1
-  ld a, COACH_DOC_HICKORY
-  call LoadCoachPalettes
   CLEAR_SCREEN " "
 
   ld d, 13
@@ -139,12 +137,26 @@ NewGame::
   ld a, COACH_DOC_HICKORY
   call SetCoachTiles
 
+.docPalettes
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .fadeInDoc
+
+  xor a
+  ld hl, PaletteUI
+  call GBCSetPalette
+
+  ld h, 1
+  ld a, COACH_DOC_HICKORY
+  call LoadCoachPalettes
+
   ld d, 13
   ld e, 4
   ld h, 1;offset
   ld a, COACH_DOC_HICKORY
   call SetCoachPalettes
 
+.fadeInDoc
   DISPLAY_ON
   call FadeIn
   
@@ -155,10 +167,11 @@ NewGame::
   call RevealTextAndWait
   call FadeOut
 
-;set image to Muchacho
+.showMuchacho
   DISPLAY_OFF
   CLEAR_SCREEN " "
     
+.muchachoTiles
   ld a, NUM_MUCHACHO
   ld de, _UI_FONT_TILE_COUNT
   call LoadPlayerBkgData
@@ -169,9 +182,15 @@ NewGame::
   ld de, _UI_FONT_TILE_COUNT
   call SetPlayerBkgTiles
 
+.muchachoColors
   ld a, [sys_info]
   and a, SYS_INFO_GBC
-  jr z, .skipColor
+  jr z, .fadeInMuchacho
+
+  xor a
+  ld hl, PaletteUI
+  call GBCSetPalette
+
   ld a, 1
   ld [rVBK], a
   ld a, NUM_MUCHACHO
@@ -191,10 +210,8 @@ NewGame::
   call gbdk_SetTilesTo
   xor a
   ld [rVBK], a
-.skipColor
 
-
-
+.fadeInMuchacho
   DISPLAY_ON
 
   call FadeIn
@@ -211,15 +228,14 @@ NewGame::
   call RevealTextAndWait
   call FadeOut
 
-; set image to Calvin
+.showCalvin
   DISPLAY_OFF
+  CLEAR_SCREEN " "
+
+.calvinTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_CALVIN
   call LoadCoachTiles
-  ld h, 1
-  ld a, COACH_CALVIN
-  call LoadCoachPalettes
-  CLEAR_SCREEN " "
 
   ld d, 13
   ld e, 4
@@ -227,19 +243,32 @@ NewGame::
   ld h, _UI_FONT_TILE_COUNT
   call SetCoachTiles
 
+.calvinColors
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .slideInCalvin
+
+  xor a
+  ld hl, PaletteUI
+  call GBCSetPalette
+
+  ld h, 1
+  ld a, COACH_CALVIN
+  call LoadCoachPalettes
+
   ld d, 13
   ld e, 4
   ld h, 1;offset
   ld a, COACH_CALVIN
   call SetCoachPalettes
 
+.slideInCalvin
   ld a, -56
   ld [rSCX], a
   xor a
   ld [rSCY], a
 
   DISPLAY_ON
-  call FadeIn
 
   ld a, -56
 .slideInCalvinLoop
@@ -292,7 +321,7 @@ ENDC
     and a
     jp z, .showUserNameListLoop
 
-;show text entry
+.showTextEntry
   CLEAR_BKG_AREA 0,0,12,12," "
   ld bc, UserNameTextEntryTitle
   call SelectNameOrTextEntry
@@ -307,22 +336,20 @@ ENDC
 
   call FadeOut
 
-;save user name
+.saveUserName
   ld hl, name_buffer
   ld de, user_name
   ld bc, 7
   call mem_Copy
 
-;set image to Nolan
+.showNolan
   DISPLAY_OFF
+  CLEAR_SCREEN " "
+
+.nolanTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_NOLAN0
   call LoadCoachTiles
-
-  ld h, 1
-  ld a, COACH_NOLAN0
-  call LoadCoachPalettes
-  CLEAR_SCREEN " "
 
   ld d, 13
   ld e, 4
@@ -330,16 +357,29 @@ ENDC
   ld h, _UI_FONT_TILE_COUNT
   call SetCoachTiles
 
+.nolanColors
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .slideInNolan
+
+  xor a
+  ld hl, PaletteUI
+  call GBCSetPalette
+
+  ld h, 1
+  ld a, COACH_NOLAN0
+  call LoadCoachPalettes
+
   ld d, 13
   ld e, 4
   ld a, COACH_NOLAN0
   ld h, 1
   call SetCoachPalettes
 
+.slideInNolan
   ld a, -56
   ld [rSCX], a
   DISPLAY_ON
-  call FadeIn
 
   ld a, -56
 .slideInNolanLoop
@@ -407,35 +447,26 @@ ENDC
   call RevealTextAndWait
   call FadeOut
 
-;save rival name
+.saveRivalName
   ld hl, name_buffer
   ld de, rival_name
   ld bc, 8
   call mem_Copy; memcpy(rival_name, name_buff, 8);
 
-;set image to Calvin
+.showCalvinAgain
   DISPLAY_OFF
   CLEAR_SCREEN " "
 
+.calvinTilesAgain
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld a, COACH_CALVIN
   call LoadCoachTiles
-  ld h, 1
-  ld a, COACH_CALVIN
-  call LoadCoachPalettes
-  CLEAR_SCREEN " "
 
   ld d, 13
   ld e, 4
   ld a, COACH_CALVIN
   ld h, _UI_FONT_TILE_COUNT
   call SetCoachTiles
-
-  ld d, 13
-  ld e, 4
-  ld h, 1;offset
-  ld a, COACH_CALVIN
-  call SetCoachPalettes
 
   ld hl, _NewGameTiles
   ld de, $8800+_CALVIN_TILE_COUNT*16
@@ -447,6 +478,26 @@ ENDC
   ld bc, _NEW_GAME_TILE_COUNT*16
   call mem_CopyVRAM
   
+.calvinColorsAgain
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .fadeInCalvin
+
+  xor a
+  ld hl, PaletteUI
+  call GBCSetPalette
+
+  ld h, 1
+  ld a, COACH_CALVIN
+  call LoadCoachPalettes
+
+  ld d, 13
+  ld e, 4
+  ld h, 1;offset
+  ld a, COACH_CALVIN
+  call SetCoachPalettes
+
+.fadeInCalvin
   DISPLAY_ON
   call FadeIn
 

@@ -36,10 +36,10 @@ CoachTileMaps:
   DW _Nolan1TileMap
   DW _Nolan2TileMap
 
-CoachColorCounts:
-  DB _CALVIN_COLOR_COUNT
-  DB _DOC_HICKORY_COLOR_COUNT
-  DB _NOLAN0_COLOR_COUNT
+CoachPaletteCounts:
+  DB _CALVIN_PALETTE_COUNT
+  DB _DOC_HICKORY_PALETTE_COUNT
+  DB _NOLAN0_PALETTE_COUNT
   DB 0
   DB 0
 
@@ -98,6 +98,7 @@ BankedLoadCoachPalettes:: ;a = coach id, h = offset
   ld a, [sys_info]
   and a, SYS_INFO_GBC | SYS_INFO_SGB
   ret z;exit early if not GBC
+  
   push bc;coach id
   sla h;offset*2
   sla h;offset*4(colors per palette)
@@ -121,14 +122,27 @@ BankedLoadCoachPalettes:: ;a = coach id, h = offset
   push hl;colors
   ld b, 0
   ld c, a
-  ld hl, CoachColorCounts
+  ld hl, CoachPaletteCounts
   add hl, bc
-  ld a, [hl];color count
-  add a, a;num color * 2B / color 
+  ld a, [hl];palette count
   ld c, a
   pop hl;colors
 .loop
+    ld a, [ColorWhite]
+    ldh [rBCPD], a
+    ld a, [ColorWhite+1]
+    ldh [rBCPD], a
+    ld a, [hli];light grey
+    ldh [rBCPD], a
     ld a, [hli]
+    ldh [rBCPD], a
+    ld a, [hli];dark grey
+    ldh [rBCPD], a
+    ld a, [hli]
+    ldh [rBCPD], a
+    ld a, [ColorBlack]
+    ldh [rBCPD], a
+    ld a, [ColorBlack+1]
     ldh [rBCPD], a
     dec c
     jr nz, .loop

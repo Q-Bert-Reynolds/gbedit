@@ -67,12 +67,14 @@ def gb_encode (img):
     count = 0
     color_count = math.ceil((color_count+1)/4)*4
     for i in range(0, color_count*3, 3):
-      r = round(palette[i]   / 8)
-      g = round(palette[i+1] / 8)
-      b = round(palette[i+2] / 8)
-      c = "  RGB {0:>2}, {1:>2}, {2:>2}\n".format(r,g,b) + c
       count += 1
-      if count % 4 == 0:
+      index = count % 4
+      if index > 1:#only write middle colors, black and white consistent
+        r = round(palette[i]   / 8)
+        g = round(palette[i+1] / 8)
+        b = round(palette[i+2] / 8)
+        c = "  RGB {0:>2}, {1:>2}, {2:>2}\n".format(r,g,b) + c
+      if index == 0:
         colors.append(c)
         c = ""
         
@@ -358,7 +360,7 @@ def png_to_gb (path, base, name):
         asm_file.write("_" + name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
 
       if colors:
-        asm_file.write("_" + name.upper() + "_COLOR_COUNT EQU " + str(len(colors)*4) + "\n")
+        asm_file.write("_" + name.upper() + "_PALETTE_COUNT EQU " + str(len(colors)) + "\n")
         asm_file.write("_"+PascalCase(name)+"Colors:\n"+"".join(colors))
         asm_file.write("_"+PascalCase(name)+"PaletteMap:\n"+palettemap)
 

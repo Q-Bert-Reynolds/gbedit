@@ -29,10 +29,11 @@ SECTION "Core", ROM0
 ; SignedRandom                    a = bitmask, returns signed random bytes in d and e
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
 ; SetPalettesDirect               a = SGB packet header, bc = paletteA, de = paletteB
+; GBCSetPalette                   a = palette id, hl = colors
 ; FadeIn
 ; FadeOut
-; CopyPalettesToTileBuffer
-; CopyPalettesFromTileBuffer
+; CopyPalettesTo                  hl = destination
+; CopyPalettesFrom                hl = source
 
 TypeStrings::
   DB "", 0
@@ -1176,10 +1177,7 @@ GBCSetPalette::;a = palette id, hl = colors
   ld a, 8;4 colors, 2 bytes each
 .loopColors
     push af
-  .wait
-      ldh a,[rSTAT]
-      and STATF_BUSY
-      jr nz, .wait
+    LCD_WAIT_VRAM
     ld a, [hli]
     ldh [rBCPD], a
     ldh [rOCPD], a
@@ -1321,7 +1319,163 @@ FadeIn::
   ret
 
 .fadeInGBC
+  ld hl, tile_buffer+16*4*2;palettes * colors/palette * bytes/color
+  call CopyPalettesTo
+  ld c, 16;palettes
+  ld hl, tile_buffer
+.setToWhitePaletteLoop
+    ld b, 4
+  .setToWhiteColorLoop
+      ld a, [ColorWhite]
+      ld [hli], a
+      ld a, [ColorWhite+1]
+      ld [hli], a
+      dec b
+      jr nz, .setToWhiteColorLoop
+    dec c
+    jr nz, .setToWhitePaletteLoop
+  ld hl, tile_buffer
+  call CopyPalettesFrom
+  ld a, 32;max steps
+.fadeInGBCLoop
+    push af;steps left
+    ld hl, tile_buffer
+    ld bc, 16*4;16 palettes * 4 colors / palette
+  .loopColors
+      push bc;colors left
+    .lerpRed
+      ld a, [hl];GGGRRRRR
+      ld e, a;save green for later
+      and a, %00011111
+      call LerpRedChannel
+      ld d, a;red
+      inc hl
+    .lerpGreen
+      ld a, [hld];xBBBBBGG
+      ld b, a;save blue for later
+      swap a     ;BBGGxBBB
+      srl a      ;xBBGGxBB
+      and a,     %00011000
+      ld c, a    ;xxxGGxxx
+      ld a, e    ;GGGRRRRR
+      swap a     ;RRRRGGGR
+      srl a      ;xRRRRGGG
+      and a,     %00000111
+      or a, c    ;xxxGGGGG
+      call LerpGreenChannel
+      ld e, a;save green for later
+      swap a     ;GGGGxxxG
+      sla a      ;GGGxxxGx
+      and a,     %11100000
+      or a, d    ;GGGRRRRR
+      ld [hli], a
+    .lerpBlue
+      ld a, b    ;xBBBBBGG
+      srl a      ;xxBBBBBG
+      srl a      ;xxxBBBBB
+      call LerpBlueChannel
+      sla a      ;xxBBBBBx
+      sla a      ;xBBBBBxx
+      ld b, a;blue
+      ld a, e    ;xxxGGGGG
+      srl a      ;xxxxGGGG
+      srl a      ;xxxxxGGG
+      srl a      ;xxxxxxGG
+      or a, b    ;xBBBBBGG
+      ld [hli], a
+      pop bc;colors left
+      dec c
+      jr nz, .loopColors
+    ld de, 18
+    call gbdk_Delay
+    ld hl, tile_buffer
+    call CopyPalettesFrom
+    pop af;steps left
+    dec a
+    jr nz, .fadeInGBCLoop
+  ret
 
+LerpRedChannel:; a = red, hl = address of current color, returns new red in a, bc,de,hl unchanged
+  push bc
+  push de
+  push hl
+  ld bc, 16*4*2;palettes * colors/palette * bytes/color
+  add hl, bc;address of target color
+  ld d, a;current red
+  ld a, [hl]
+  and a, %00011111;target red
+  cp a, d;if target < current
+  jr z, .done
+  jr c, .decrement
+.increment
+  inc d
+  jr .done
+.decrement
+  dec d
+.done
+  ld a, d;red
+  pop hl
+  pop de
+  pop bc
+  ret
+
+LerpGreenChannel:; a = green, hl = address of current color, returns new red in a, bc,de,hl unchanged
+  push bc
+  push de
+  push hl
+  push af;current green
+  ld bc, 16*4*2;palettes * colors/palette * bytes/color
+  add hl, bc;address of target color
+  ld a, [hli];GGGRRRRR
+  swap a     ;RRRRGGGR
+  srl a      ;xRRRRGGG
+  and a,     %00000111
+  ld a, e
+  ld a, [hld];xBBBBBGG
+  swap a     ;BBGGxBBB
+  srl a      ;xBBGGxBB
+  and a,     %00011000
+  or a, e    ;xxxGGGGG
+  pop de;current green
+  cp a, d;if target < current
+  jr z, .done
+  jr c, .decrement
+.increment
+  inc d
+  jr .done
+.decrement
+  dec d
+.done
+  ld a, d;green
+  pop hl
+  pop de
+  pop bc
+  ret
+
+LerpBlueChannel:; a = blue, hl = address of current color, returns new red in a, bc,de,hl unchanged
+  push bc
+  push de
+  push hl
+  ld bc, 16*4*2;palettes * colors/palette * bytes/color
+  add hl, bc;address of target color
+  ld d, a;current blue
+  ld a, [hl]
+  and a, %01111100;target blue
+  srl a  ;00BBBBB0
+  srl a  ;000BBBBB
+  cp a, d;if target < current
+  jr z, .done
+  jr c, .decrement
+.increment
+  inc d
+  jr .done
+.decrement
+  dec d
+.done
+  ld a, d;blue
+  pop hl
+  pop de
+  pop bc
   ret
 
 FadeOut::
@@ -1345,13 +1499,14 @@ FadeOut::
   ret
   
 .fadeOutGBC
+  ld hl, tile_buffer
+  call CopyPalettesTo
   ld a, 32;max steps
 .fadeOutGBCLoop
     push af;steps left
-    call CopyPalettesToTileBuffer
     ld hl, tile_buffer
     ld c, 16*4;16 palettes * 4 colors / palette
-  .loop
+  .loopColors
       push bc;colors left
     .incrementRed
       ld a, [hli];GGGRRRRR
@@ -1402,20 +1557,24 @@ FadeOut::
       ld [hli], a
       pop bc;colors left
       dec c
-      jr nz, .loop
+      jr nz, .loopColors
     ld de, 18
     call gbdk_Delay
-    call CopyPalettesFromTileBuffer
+    ld hl, tile_buffer
+    call CopyPalettesFrom
     pop af;steps left
     dec a
     jr nz, .fadeOutGBCLoop
-.restoreColors
   DISPLAY_OFF
   ret
 
-CopyPalettesToTileBuffer::
-  ld hl, tile_buffer
-  ld de, tile_buffer+8*2*4
+CopyPalettesTo::;hl = dest
+  push hl;dest
+  ld bc, 8*2*4
+  add hl, bc
+  ld d, h
+  ld e, l;de = dest+8*2*4
+  pop hl;dest
   xor a
   ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
 .copyBkgPal
@@ -1434,9 +1593,13 @@ CopyPalettesToTileBuffer::
     jr nz, .copyBkgPal
   ret
 
-CopyPalettesFromTileBuffer::
-  ld hl, tile_buffer
-  ld de, tile_buffer+8*2*4
+CopyPalettesFrom::;hl = source
+  push hl;dest
+  ld bc, 8*2*4
+  add hl, bc
+  ld d, h
+  ld e, l;de = dest+8*2*4
+  pop hl;dest
   ld a, BCPSF_AUTOINC
   ldh [rBCPS], a
   ldh [rOCPS], a

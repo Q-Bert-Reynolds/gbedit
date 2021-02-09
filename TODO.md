@@ -1,10 +1,8 @@
 Priority
 
-- only write the middle 2 colors of a palette, black and white are always the same
 - map system
-  - BUG: occasionally tiled are not being drawn over, unsure why
-  - move tile/fill/stamp drawing to subroutines
   - trim stamp tiles in a similar way to fills
+  - BUG: occasionally tiles are not being drawn over, perhaps related to collision workaround
   - enter/exit buildings
   - read signs (CheckActions in overworld.asm)
 - make batting results semi-random so we can move on to FX

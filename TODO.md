@@ -1,6 +1,5 @@
 Priority
 
-- move fade routines to separate file (in START_BANK)
 - only write the middle 2 colors of a palette, black and white are always the same
 - map system
   - BUG: occasionally tiled are not being drawn over, unsure why

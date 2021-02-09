@@ -29,6 +29,7 @@ INCLUDE "src/map_loader.asm"
 INCLUDE "src/map_test.asm"
 INCLUDE "src/temp_data.asm"
 
+INCLUDE "src/fade.asm"
 INCLUDE "src/start.asm"
 INCLUDE "src/title.asm"
 INCLUDE "src/new_game.asm"

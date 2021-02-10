@@ -44,7 +44,7 @@ last_map_button_state:: DB
 anim_frame:: DW
 
 ;banking
-temp_bank:: DB
+temp_bank:: DB;only roledex.asm still uses this, should use stack instead
 loaded_bank:: DB
 
 ;temp vars

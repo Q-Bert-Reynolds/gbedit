@@ -526,6 +526,16 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   ld a, c;h
   and a
   ret z
+
+  PUSH_VAR _x;min x
+  PUSH_VAR _y;min y
+  PUSH_VAR _u;max x
+  PUSH_VAR _v;max y
+  PUSH_VAR _a;clipped x
+  PUSH_VAR _b;clipped y
+  PUSH_VAR _c;clipped width
+  PUSH_VAR _d;clipped height
+
 .storeMinMax
   ld a, d
   ld [_x], a;minX
@@ -568,7 +578,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 .loop
     ld a, [hli];map object type and collision
     and a
-    ret z; done if 0
+    jp z, .done
     ld b, a;map object type and collision
 
     ld a, [hli];x
@@ -593,6 +603,16 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   .fill
     call DrawMapFill
     jp .loop
+
+.done
+  POP_VAR _d;clipped height
+  POP_VAR _c;clipped width
+  POP_VAR _b;clipped y
+  POP_VAR _a;clipped x
+  POP_VAR _v;max y
+  POP_VAR _u;max x
+  POP_VAR _y;min y
+  POP_VAR _x;min x
   ret
 
 DrawMapFill:;hl = fill data, de = xy, min/max XY in _x,_y,_u,_v
@@ -707,12 +727,14 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   jp nc, .nextMapObject;chunk minY > stamp maxY
 
   inc bc;stamp tiles
-  ld a, h;maxX
-  sub a, d;maxX-x
-  ld h, a;w
-  ld a, l;maxY
-  sub a, e;maxY-y
-  ld l, a;w
+  ; ld a, h;maxX
+  ; sub a, d;maxX-x
+  ; ld h, a;w
+  ; ld a, l;maxY
+  ; sub a, e;maxY-y
+  ; ld l, a;w
+  call ClipStamp
+
   push hl;wh
   push de;xy
   call gbdk_SetBkgTiles;returns bc=stamp palette
@@ -744,6 +766,111 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
 .outOfRange
   inc hl
   inc hl
+  ret
+
+ClipStamp:;bc = stamp tiles, de = stamp minXY, hl = stamp maxXY, clip min/max XY in _x,_y,_u,_v, returns tilemap/palettemap in tile_buffer, xy in de, wh in hl
+  push de;xy
+  push bc;stamp tiles
+
+  ld a, [_x]
+  sub a, d
+  jr nc, .clipX
+  xor a
+.clipX
+  ld [_a], a
+
+  ld a, [_y]
+  sub a, e
+  jr nc, .clipY
+  xor a
+.clipY
+  ld [_b], a
+
+  ld a, [_u];clip maxX
+  cp a, h;stamp maxX
+  jr nc, .clipWidth
+  ld a, h;maxX
+.clipWidth
+  sub a, d;maxX-x
+  ld [_c], a;clipped width
+
+  ld a, [_v];clip maxY
+  cp a, l;stamp maxY
+  jr nc, .clipHeight
+  ld a, l;maxY
+.clipHeight
+  sub a, e;maxY-y
+  ld [_d], a;clipped height
+
+.setFullWidth;in hl
+  ld a, h
+  sub a, d;x2-x1
+  ld d, a;full stamp width
+  ld a, l
+  sub a, d;y2-y1
+  ld e, a;full stamp height
+
+.copyTilesToBuffer
+  push de;wh
+  ld a, [_b];clip y
+  ld e, a
+  ld a, d;full width
+  ld d, 0;de = clip y
+  call math_Multiply
+  ld b, h
+  ld c, l;bc = y clip * width
+  pop de;wh
+  pop hl;stamp tiles
+  add hl, bc;stamp tiles + y clip * width
+  ld b, 0
+  ld a, [_a];x
+  ld c, a
+  push hl;stamp tile
+  add hl, bc;stamp tiles + y clip * width + x clip
+  ld bc, tile_buffer
+  ld a, e;full height
+  ld e, d
+  ld d, 0;de = full width
+  push af;full height
+  ld a, [_d];clip height
+.loopRows
+    push af;rows left
+    push hl;stamp tiles
+    ld a, [_c];clip width
+  .loopColumns
+      push af;columns left
+      ld a, [hli]
+      ld [bc], a
+      inc bc
+      pop af;columns left
+      dec a
+      jr nz, .loopColumns
+    pop hl;stamp tiles
+    add hl, de;next row
+    pop af;rows left
+    dec a
+    jr nz, .loopRows
+
+.copyPaletteToBuffer
+  pop af;full height
+  call math_Multiply
+  ld b, h
+  ld c, l;bc = width * height
+  pop hl;stamp tiles
+  add hl, bc;palette
+
+
+  pop de;xy
+  ld a, [_a]
+  add a, d
+  ld d, a;x
+  ld a, [_b]
+  add a, e
+  ld e, a;y
+  ld a, [_c]
+  ld h, a;w
+  ld a, [_d]
+  ld l, a;h
   ret
 
 DrawMapTile:;hl = tile data, de = xy, min/max XY in _x,_y,_u,_v

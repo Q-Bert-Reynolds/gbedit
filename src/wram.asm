@@ -65,6 +65,11 @@ _x:: DW
 _y:: DW
 _z:: DW
 
+_clipX:: DB
+_clipY:: DB
+_clipW:: DB
+_clipH:: DB
+
 ;audio
 rCurrentSFX:: DW
 current_sfx_bank:: DB

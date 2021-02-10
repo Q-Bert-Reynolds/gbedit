@@ -527,14 +527,14 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   and a
   ret z
 
-  PUSH_VAR _x;min x
-  PUSH_VAR _y;min y
-  PUSH_VAR _u;max x
-  PUSH_VAR _v;max y
-  PUSH_VAR _a;clipped x
-  PUSH_VAR _b;clipped y
-  PUSH_VAR _c;clipped width
-  PUSH_VAR _d;clipped height
+  ; PUSH_VAR _x;min x
+  ; PUSH_VAR _y;min y
+  ; PUSH_VAR _u;max x
+  ; PUSH_VAR _v;max y
+  ; PUSH_VAR _a;clipped x
+  ; PUSH_VAR _b;clipped y
+  ; PUSH_VAR _c;clipped width
+  ; PUSH_VAR _d;clipped height
 
 .storeMinMax
   ld a, d
@@ -605,14 +605,14 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jp .loop
 
 .done
-  POP_VAR _d;clipped height
-  POP_VAR _c;clipped width
-  POP_VAR _b;clipped y
-  POP_VAR _a;clipped x
-  POP_VAR _v;max y
-  POP_VAR _u;max x
-  POP_VAR _y;min y
-  POP_VAR _x;min x
+  ; POP_VAR _d;clipped height
+  ; POP_VAR _c;clipped width
+  ; POP_VAR _b;clipped y
+  ; POP_VAR _a;clipped x
+  ; POP_VAR _v;max y
+  ; POP_VAR _u;max x
+  ; POP_VAR _y;min y
+  ; POP_VAR _x;min x
   ret
 
 DrawMapFill:;hl = fill data, de = xy, min/max XY in _x,_y,_u,_v
@@ -735,31 +735,32 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   ; ld l, a;w
   call ClipStamp
 
-  push hl;wh
-  push de;xy
+  ; push hl;wh
+  ; push de;xy
+  ld bc, tile_buffer
   call gbdk_SetBkgTiles;returns bc=stamp palette
-  pop de;xy
-  pop hl;wh
-  ld a, [sys_info]
-  and a, SYS_INFO_GBC
-  jp z, .nextMapObject
-  ld a, 1
-  ld [rVBK], a
-  ld a, [bc]
-  bit 7, a
-  jr z, .nonUniformPal
-.uniformPal
-  and a, %01111111;tile
-  ld b, h
-  ld c, l;bc = wh
-  ld hl, _SCRN0
-  call gbdk_SetTilesTo
-  jr .finishPal
-.nonUniformPal
-  call gbdk_SetBkgTiles
-.finishPal
-  xor a
-  ld [rVBK], a
+;   pop de;xy
+;   pop hl;wh
+;   ld a, [sys_info]
+;   and a, SYS_INFO_GBC
+;   jp z, .nextMapObject
+;   ld a, 1
+;   ld [rVBK], a
+;   ld a, [bc]
+;   bit 7, a
+;   jr z, .nonUniformPal
+; .uniformPal
+;   and a, %01111111;tile
+;   ld b, h
+;   ld c, l;bc = wh
+;   ld hl, _SCRN0
+;   call gbdk_SetTilesTo
+;   jr .finishPal
+; .nonUniformPal
+;   call gbdk_SetBkgTiles
+; .finishPal
+;   xor a
+;   ld [rVBK], a
 .nextMapObject
   pop hl
   ret
@@ -768,41 +769,48 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   inc hl
   ret
 
-ClipStamp:;bc = stamp tiles, de = stamp minXY, hl = stamp maxXY, clip min/max XY in _x,_y,_u,_v, returns tilemap/palettemap in tile_buffer, xy in de, wh in hl
+;bc = stamp tiles, de = stamp minXY, hl = stamp maxXY
+;chunk min/max XY in _x,_y,_u,_v
+;returns tilemap/palettemap in tile_buffer, xy in de, wh in hl
+ClipStamp:
   push de;xy
   push bc;stamp tiles
 
-  ld a, [_x]
-  sub a, d
-  jr nc, .clipX
+  ld a, [_x];chunk minX
+  sub a, d;stamp minX
+  jr nc, .setMinX
   xor a
-.clipX
-  ld [_a], a
+.setMinX
+  ld [_a], a;x offset
+  ld b, a
 
-  ld a, [_y]
-  sub a, e
-  jr nc, .clipY
+  ld a, [_y];chunk minY
+  sub a, e;stamp minY
+  jr nc, .setMinY
   xor a
-.clipY
-  ld [_b], a
+.setMinY
+  ld [_b], a;y offset
+  ld c, a
 
-  ld a, [_u];clip maxX
+  ld a, [_u];chunk maxX
   cp a, h;stamp maxX
-  jr nc, .clipWidth
+  jr c, .setClippedWidth;chunk maxX >= stamp maxX
   ld a, h;maxX
-.clipWidth
-  sub a, d;maxX-x
+.setClippedWidth
+  sub a, d;maxX - stamp minX
+  sub a, b;maxX - stamp minX - x offset
   ld [_c], a;clipped width
 
-  ld a, [_v];clip maxY
+  ld a, [_v];chunk maxY
   cp a, l;stamp maxY
-  jr nc, .clipHeight
+  jr c, .setClippedHeight;chunk maxY >= stamp maxY
   ld a, l;maxY
-.clipHeight
-  sub a, e;maxY-y
+.setClippedHeight
+  sub a, e;maxY - stamp minY
+  sub a, c;maxY - stamp minY - y offset
   ld [_d], a;clipped height
 
-.setFullWidth;in hl
+.setFullWidthHeight;in hl
   ld a, h
   sub a, d;x2-x1
   ld d, a;full stamp width

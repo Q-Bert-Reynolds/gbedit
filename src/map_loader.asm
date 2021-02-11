@@ -726,41 +726,43 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   jp z, .nextMapObject;chunk minY == stamp maxY
   jp nc, .nextMapObject;chunk minY > stamp maxY
 
+.clipStamp
   inc bc;stamp tiles
-  ; ld a, h;maxX
-  ; sub a, d;maxX-x
-  ; ld h, a;w
-  ; ld a, l;maxY
-  ; sub a, e;maxY-y
-  ; ld l, a;w
   call ClipStamp
 
-  ; push hl;wh
-  ; push de;xy
+.setTiles
+  push hl;wh
+  push de;xy
   ld bc, tile_buffer
   call gbdk_SetBkgTiles;returns bc=stamp palette
-;   pop de;xy
-;   pop hl;wh
-;   ld a, [sys_info]
-;   and a, SYS_INFO_GBC
-;   jp z, .nextMapObject
-;   ld a, 1
-;   ld [rVBK], a
-;   ld a, [bc]
-;   bit 7, a
-;   jr z, .nonUniformPal
-; .uniformPal
-;   and a, %01111111;tile
-;   ld b, h
-;   ld c, l;bc = wh
-;   ld hl, _SCRN0
-;   call gbdk_SetTilesTo
-;   jr .finishPal
-; .nonUniformPal
-;   call gbdk_SetBkgTiles
-; .finishPal
-;   xor a
-;   ld [rVBK], a
+  pop de;xy
+  pop hl;wh
+
+.setPalettes
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jp z, .nextMapObject
+  ld a, 1
+  ld [rVBK], a
+  ld a, 2
+  ld [rSVBK], a
+  ld bc, tile_buffer
+  ld a, [bc]
+  bit 7, a
+  jr z, .nonUniformPal
+.uniformPal
+  and a, %01111111;tile
+  ld b, h
+  ld c, l;bc = wh
+  ld hl, _SCRN0
+  call gbdk_SetTilesTo
+  jr .finishPal
+.nonUniformPal
+  call gbdk_SetBkgTiles
+.finishPal
+  xor a
+  ld [rVBK], a
+  ld [rSVBK], a
 .nextMapObject
   pop hl
   ret
@@ -815,7 +817,7 @@ ClipStamp:
   sub a, d;x2-x1
   ld d, a;full stamp width
   ld a, l
-  sub a, d;y2-y1
+  sub a, e;y2-y1
   ld e, a;full stamp height
 
 .copyTilesToBuffer
@@ -829,45 +831,92 @@ ClipStamp:
   ld c, l;bc = y clip * width
   pop de;wh
   pop hl;stamp tiles
+  push hl;stamp tiles start
   add hl, bc;stamp tiles + y clip * width
   ld b, 0
   ld a, [_a];x
   ld c, a
-  push hl;stamp tile
   add hl, bc;stamp tiles + y clip * width + x clip
+  push hl;stamp tiles + offset
   ld bc, tile_buffer
   ld a, e;full height
   ld e, d
   ld d, 0;de = full width
   push af;full height
   ld a, [_d];clip height
-.loopRows
+.loopTilemapRows
     push af;rows left
     push hl;stamp tiles
     ld a, [_c];clip width
-  .loopColumns
+  .loopTilemapColumns
       push af;columns left
       ld a, [hli]
       ld [bc], a
       inc bc
       pop af;columns left
       dec a
-      jr nz, .loopColumns
+      jr nz, .loopTilemapColumns
     pop hl;stamp tiles
     add hl, de;next row
     pop af;rows left
     dec a
-    jr nz, .loopRows
+    jr nz, .loopTilemapRows
+
+.checkGBC
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr nz, .copyPaletteToBuffer
+.notGBC
+  pop af;discard full height
+  pop hl;discard stamp tiles address
+  pop hl;discard stamp tiles + offset
+  jp .done
 
 .copyPaletteToBuffer
+  ld a, 2
+  ld [rSVBK], a
   pop af;full height
   call math_Multiply
   ld b, h
   ld c, l;bc = width * height
   pop hl;stamp tiles
-  add hl, bc;palette
+  add hl, bc;palette start = stamp tiles + full width * full height
+  ld a, [hl];check for uniform tile
+  bit 7, a
+  jr z, .nonUniformPal
+.uniformPal
+  pop hl;discard stamp tiles + offset
+  ld [tile_buffer], a
+  jp .finishPalette
 
+.nonUniformPal
+  pop hl;stamp tiles+offset
+  add hl, bc;palette start + offset = stamp tiles + offset + full width * full height
+  ld bc, tile_buffer
+  ld a, [_d];clip height
+.loopPalettemapRows
+    push af;rows left
+    push hl;stamp tiles
+    ld a, [_c];clip width
+  .loopPalettemapColumns
+      push af;columns left
+      ld a, [hli]
+      ld [bc], a
+      inc bc
+      pop af;columns left
+      dec a
+      jr nz, .loopPalettemapColumns
+    pop hl;stamp tiles
+    add hl, de;next row
+    pop af;rows left
+    dec a
+    jr nz, .loopPalettemapRows
 
+.finishPalette
+  xor a
+  ld [rSVBK], a
+
+.done
   pop de;xy
   ld a, [_a]
   add a, d

@@ -16,7 +16,6 @@ RUN_TESTS: MACRO
   ld d, 17
   ld e, 10
   call GetMapCollision
-  ld [_breakpoint], a
 
 ;   call LoadFontTiles
 

@@ -46,7 +46,6 @@ FadeIn::
   ld a, 32;max steps
 .fadeInGBCLoop
     push af;steps left
-    ld [_breakpoint], a
     ld hl, tile_buffer
     ld bc, 16*4;16 palettes * 4 colors / palette
   .loopColors

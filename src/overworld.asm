@@ -245,6 +245,7 @@ MoveUp:
     dec a
     jr nz, .loop
   call FixMapScroll
+  call DrawMapTopEdge
   ret
 
 MoveDown:
@@ -265,6 +266,7 @@ MoveDown:
     dec a
     jr nz, .loop
   call FixMapScroll
+  call DrawMapBottomEdge
   ret
 
 MoveLeft:
@@ -285,6 +287,7 @@ MoveLeft:
     dec a
     jr nz, .loop
   call FixMapScroll
+  call DrawMapLeftEdge
   ret
 
 MoveRight:
@@ -305,6 +308,7 @@ MoveRight:
     dec a
     jr nz, .loop
   call FixMapScroll
+  call DrawMapRightEdge
   ret
 
 StartMenuText:

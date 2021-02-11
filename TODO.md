@@ -1,8 +1,6 @@
 Priority
 
 - map system
-  - trim stamp tiles in a similar way to fills
-  - BUG: occasionally tiles are not being drawn over, perhaps related to collision workaround
   - enter/exit buildings
   - read signs (CheckActions in overworld.asm)
 - make batting results semi-random so we can move on to FX

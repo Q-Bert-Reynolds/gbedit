@@ -837,7 +837,9 @@ ClipStamp:
   ld a, [_a];x
   ld c, a
   add hl, bc;stamp tiles + y clip * width + x clip
+  pop bc;stamp tiles
   push hl;stamp tiles + offset
+  push bc;stamp tiles
   ld bc, tile_buffer
   ld a, e;full height
   ld e, d

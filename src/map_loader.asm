@@ -50,14 +50,14 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     and a, MAP_OBJ_TYPE_MASK
     cp a, MAP_OBJ_STAMP
     jp z, .stamp
-    cp a, MAP_OBJ_STAMP_FILL
-    jp z, .stampFill
     cp a, MAP_OBJ_TILE
     jp z, .tile
+    ; cp a, MAP_OBJ_STAMP_FILL
+    ; jp z, .fill
     ; cp a, MAP_OBJ_TILE_FILL
-    ; jp z, .tileFill
+    ; jp z, .fill
   
-  .tileFill
+  .fill
     inc hl;skip tile
     inc hl;skip palete
     ld a, [_x]
@@ -79,8 +79,8 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     jp .loop
 
   .tile
-    inc hl;skip tile
-    inc hl;skip palete
+    inc hl;skip tile or stamp lower address
+    inc hl;skip palete or stamp upper address
     ld a, [_x]
     cp a, d;x
     jp nz, .loop

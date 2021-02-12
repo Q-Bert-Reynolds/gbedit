@@ -42,6 +42,9 @@ vbl_timer:: DB ;counts to 60
 ;map
 last_map_button_state:: DB
 anim_frame:: DW
+collision_info:: DB
+map_scroll_speed:: DB
+
 
 ;banking
 temp_bank:: DB;only roledex.asm still uses this, should use stack instead
@@ -64,11 +67,6 @@ _w:: DW
 _x:: DW
 _y:: DW
 _z:: DW
-
-_clipX:: DB
-_clipY:: DB
-_clipW:: DB
-_clipH:: DB
 
 ;audio
 rCurrentSFX:: DW

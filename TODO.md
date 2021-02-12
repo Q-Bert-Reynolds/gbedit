@@ -1,8 +1,11 @@
 Priority
 
 - map system
-  - enter/exit buildings
   - read signs (CheckActions in overworld.asm)
+  - jump over ledges
+  - enter/exit buildings
+  - default collision type for chunk
+  - stamp fills
 - make batting results semi-random so we can move on to FX
 
  General
@@ -97,7 +100,6 @@ Map System
 - an chunk index of 0 should fill the chunk with black tiles
 - font tiles should be usable in the editor
 - handle multiple map banks
-- stamp objects should store jump table indices instead of direct references 
 - add diagonal lines to map system, (already implemented in editor)
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things

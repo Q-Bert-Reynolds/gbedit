@@ -239,13 +239,17 @@ MoveUp:
     ld hl, WalkUpAnim
     call AnimateAvatar
   .skipAnim
+    ld b, 76
+    ld c, 63;up
+    call CheckPlayerMovement
+    jr nz, .wait
     call MoveMapUp
+  .wait
     call gbdk_WaitVBL
     pop af;steps left
     dec a
     jr nz, .loop
   call FixMapScroll
-  call DrawMapTopEdge
   ret
 
 MoveDown:
@@ -260,7 +264,12 @@ MoveDown:
     ld hl, WalkDownAnim
     call AnimateAvatar
   .skipAnim
+    ld b, 76
+    ld c, 81;down
+    call CheckPlayerMovement
+    jr nz, .wait
     call MoveMapDown
+  .wait
     call gbdk_WaitVBL
     pop af;steps left
     dec a
@@ -281,13 +290,17 @@ MoveLeft:
     ld hl, WalkLeftAnim
     call AnimateAvatar
   .skipAnim
+    ld b, 63;left
+    ld c, 76
+    call CheckPlayerMovement
+    jr nz, .wait
     call MoveMapLeft
+  .wait
     call gbdk_WaitVBL
     pop af;steps left
     dec a
     jr nz, .loop
   call FixMapScroll
-  call DrawMapLeftEdge
   ret
 
 MoveRight:
@@ -302,7 +315,12 @@ MoveRight:
     ld hl, WalkRightAnim
     call AnimateAvatar
   .skipAnim
+    ld b, 81;right
+    ld c, 76
+    call CheckPlayerMovement
+    jr nz, .wait
     call MoveMapRight
+  .wait
     call gbdk_WaitVBL
     pop af;steps left
     dec a
@@ -402,6 +420,29 @@ ShowPauseMenu::
   call DrawMapToScreen
   WAITPAD_UP
   POP_VAR list_selection
+  ret
+
+CheckPlayerMovement:;bc = screen xy, returns z if no collision
+  call GetMapChunkForOffset
+  call GetMapCollision;NONE and GRASS already handled
+  ld [collision_info], a
+  ret z
+  cp a, MAP_COLLISION_DOOR
+  ret z
+  cp a, MAP_COLLISION_SOLID
+  jr z, .stay
+  cp a, MAP_COLLISION_TEXT
+  jr z, .stay
+.checkWaterMove
+  cp a, MAP_COLLISION_WATER
+  jr z, .stay;TODO: add swimming
+.checkLedgeMove;all other collision types already handled
+  ld a, [last_map_button_state]
+  and a, PADF_UP
+  ret
+.stay
+  ld a, 1
+  or a
   ret
 
 CheckActions:

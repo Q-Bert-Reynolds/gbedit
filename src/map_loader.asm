@@ -24,7 +24,7 @@ SECTION "Map Loader", ROM0
 ; GetMapChunk                  a = jump table index; hl = jump table, returns chunk in hl, index in a
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
-GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
+GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a
   ld a, d
   ld [_x], a
   ld a, e
@@ -122,7 +122,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision
   ld a, [_c]
   cp a, MAP_COLLISION_NONE
   jp z, .loop
-  cp a, MAP_COLLISION_DOOR
+  cp a, MAP_COLLISION_GRASS
   ret
 
 ;HACK: rounds rSCX and rSCY to nearest multiple of 8
@@ -155,11 +155,6 @@ FixMapScroll::
   ret
 
 MoveMapLeft::
-  ld b, 63;left
-  ld c, 76
-  call GetMapChunkForOffset
-  call GetMapCollision
-  ret nz
   ld a, [rSCX]
   sub a, MAP_SCROLL_SPEED
   push af
@@ -184,11 +179,6 @@ MoveMapLeft::
   ret
 
 MoveMapRight::
-  ld b, 81;right
-  ld c, 76
-  call GetMapChunkForOffset
-  call GetMapCollision
-  ret nz
   ld a, [rSCX]
   add a, MAP_SCROLL_SPEED
   push af
@@ -213,11 +203,6 @@ MoveMapRight::
   ret
 
 MoveMapUp::
-  ld b, 76
-  ld c, 63;up
-  call GetMapChunkForOffset
-  call GetMapCollision
-  ret nz
   ld a, [rSCY]
   sub a, MAP_SCROLL_SPEED
   push af
@@ -242,11 +227,6 @@ MoveMapUp::
   ret
 
 MoveMapDown::
-  ld b, 76
-  ld c, 81;down
-  call GetMapChunkForOffset
-  call GetMapCollision
-  ret nz
   ld a, [rSCY]
   add a, MAP_SCROLL_SPEED
   push af
@@ -1027,7 +1007,7 @@ GetMapChunk:;a = jump table index; hl = jump table, returns chunk in hl, index i
   pop bc
   ret
 
-GetMapChunkForOffset:;bc = xy pixel offset (-127,127), returns chunk in hl, tile xy in de
+GetMapChunkForOffset::;bc = xy pixel offset (-127,127), returns chunk in hl, tile xy in de
   call GetCurrentMapChunk
 .testX
   ld a, [rSCX]

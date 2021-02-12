@@ -10,7 +10,7 @@ TestMap::
   call LoadOverworldTiles
   ld hl, MapPalettes
   call SetupMapPalettes
-  ld a, 21
+  xor a
   ld [map_x], a
   ld [map_y], a
   ld hl, InfieldChunk
@@ -18,29 +18,30 @@ TestMap::
   call DrawMapToScreen
   DISPLAY_ON
 
+  ld a, 4
+  ld [map_scroll_speed], a
+
 .loop
     call UpdateInput
-    ld a, [button_state]
-    ld b, a;buttons
   .testUp
+    ld a, [button_state]
     and a, PADF_UP
     jr z, .testDown
     call MoveMapUp
-    jp .testStartA
+    jp .testLeft
   .testDown
-    ld a, b
+    ld a, [button_state]
     and a, PADF_DOWN
     jr z, .testLeft
     call MoveMapDown
-    jp .testStartA
   .testLeft
-    ld a, b
+    ld a, [button_state]
     and a, PADF_LEFT
     jr z, .testRight
     call MoveMapLeft
     jp .testStartA
   .testRight
-    ld a, b
+    ld a, [button_state]
     and a, PADF_RIGHT
     jr z, .testStartA
     call MoveMapRight

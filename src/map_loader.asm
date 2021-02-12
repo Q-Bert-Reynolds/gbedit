@@ -155,8 +155,10 @@ FixMapScroll::
   ret
 
 MoveMapLeft::
+  ld a, [map_scroll_speed]
+  ld b, a
   ld a, [rSCX]
-  sub a, MAP_SCROLL_SPEED
+  sub a, b
   push af
   ld d, a
   jr nc, .noChunkChangeWest
@@ -179,8 +181,10 @@ MoveMapLeft::
   ret
 
 MoveMapRight::
+  ld a, [map_scroll_speed]
+  ld b, a
   ld a, [rSCX]
-  add a, MAP_SCROLL_SPEED
+  add a, b
   push af
   ld d, a
   jr nc, .noChunkChangeEast
@@ -203,8 +207,10 @@ MoveMapRight::
   ret
 
 MoveMapUp::
+  ld a, [map_scroll_speed]
+  ld b, a
   ld a, [rSCY]
-  sub a, MAP_SCROLL_SPEED
+  sub a, b
   push af
   ld e, a
   jr nc, .noChunkChangeNorth
@@ -227,8 +233,10 @@ MoveMapUp::
   ret
 
 MoveMapDown::
+  ld a, [map_scroll_speed]
+  ld b, a
   ld a, [rSCY]
-  add a, MAP_SCROLL_SPEED
+  add a, b
   push af
   ld e, a
   jr nc, .noChunkChangeSouth

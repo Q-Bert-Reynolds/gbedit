@@ -45,7 +45,6 @@ anim_frame:: DW
 collision_info:: DB
 map_scroll_speed:: DB
 
-
 ;banking
 temp_bank:: DB;only roledex.asm still uses this, should use stack instead
 loaded_bank:: DB

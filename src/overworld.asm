@@ -502,6 +502,8 @@ Overworld::
   ;TODO: load song based on location
   PLAY_SONG hurrah_for_our_national_game_data, 1
   
+  ld a, 1
+  ld [map_scroll_speed], a
   xor a
   ld [list_selection], a
   ld hl, MapPalettes

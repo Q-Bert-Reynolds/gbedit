@@ -632,23 +632,23 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
   ld c, a
   ld a, [hli];stamp upper address
   ld b, a;bc = stamp address
-  push hl;columns
+  push hl;maxX
   ld a, [bc];stamp width
   ld h, a
   inc bc
   ld a, [bc];stamp height
   ld c, a;height
   ld b, h;width
-  pop hl;columns
-  ld a, [hli];a = columns, [hl] = rows
+  pop hl;maxX
+  ld a, [hli];a = maxX, [hl] = rows
 .columnLoop
-    push af;columns left
+    push af;maxX
     push de;xy
-    ld a, [hld];a = rows, [hl] = columns
+    ld a, [hld];a = rows, [hl] = maxX
     dec hl;stamp upper address
     dec hl;stamp lower address
   .rowLoop
-      push af;rows left
+      push af;maxY
       push bc;wh
       push de;xy
       push hl;stamp data
@@ -659,8 +659,8 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
       ld a, c;height
       add a, e;y+height
       ld e, a;next y
-      pop af;rows left
-      dec a
+      pop af;maxY
+      cp a, e
       jr nz, .rowLoop
     inc hl
     inc hl
@@ -669,8 +669,8 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
     ld a, b;width
     add a, d;x+width
     ld d, a;next x
-    pop af;columns left
-    dec a
+    pop af;maxX
+    cp a, d
     jr nz, .columnLoop
   inc hl
   ret

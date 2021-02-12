@@ -220,11 +220,11 @@ CenterFieldChunk1::
 .west:    DB CENTERFIELDCHUNK
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
-DB 12;x
-DB 11;y
+DB 12;x1
+DB 11;y1
 DW TreeStamp
-DB 2;columns
-DB 3;rows
+DB 20;x2
+DB 23;y2
 
 DB 0;END CenterFieldChunk1, 18 bytes
 
@@ -687,11 +687,11 @@ DB 14;y
 DW TreeStamp
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
-DB 22;x
-DB 0;y
+DB 22;x1
+DB 0;y1
 DW TreeStamp
-DB 1;columns
-DB 4;rows
+DB 26;x2
+DB 16;y2
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (13)
 DB 31;x
@@ -700,11 +700,11 @@ DB 209;tile
 DB 1;palette
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
-DB 0;x
-DB 14;y
+DB 0;x1
+DB 14;y1
 DW TreeStamp
-DB 6;columns
-DB 1;rows
+DB 24;x2
+DB 18;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (20)
 DB 15;x1
@@ -1537,11 +1537,11 @@ DB 225;tile
 DB 1;palette
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
-DB 22;x
-DB 16;y
+DB 22;x1
+DB 16;y1
 DW TreeStamp
-DB 1;columns
-DB 3;rows
+DB 26;x2
+DB 28;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 20;x

@@ -621,44 +621,47 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
   cp a, d;x
   jr c, .outOfRange;maxX < x
   jr z, .outOfRange;maxX == x
-  ld a, [_x];minX
-  cp a, d
-  jr c, .testY
-  ld d, a
 .testY
   ld a, [_v];maxY
   cp a, e;y
   jr c, .outOfRange;maxY < y
   jr z, .outOfRange;maxY == y
-  ld a, [_y];minY
-  cp a, e
-  jr c, .draw
-  ld e, a
 
 .draw
-  inc hl
-  inc hl;skip stamp address
-  ld a, [hli];columns
+  ld a, [hli];stamp lower address
+  ld c, a
+  ld a, [hli];stamp upper address
+  ld b, a;bc = stamp address
+  push hl;columns
+  ld a, [bc];stamp width
+  ld h, a
+  inc bc
+  ld a, [bc];stamp height
+  ld c, a;height
+  ld b, h;width
+  pop hl;columns
+  ld a, [hli];a = columns, [hl] = rows
 .columnLoop
     push af;columns left
     push de;xy
-    ld a, [hld];rows
-    dec hl
-    dec hl
+    ld a, [hld];a = rows, [hl] = columns
+    dec hl;stamp upper address
+    dec hl;stamp lower address
   .rowLoop
       push af;rows left
+      push bc;wh
       push de;xy
       push hl;stamp data
       call DrawMapStamp;hl = stamp data, de = xy
       pop hl;stamp data
       pop de;xy
+      pop bc;wh
       ld a, c;height
       add a, e;y+height
       ld e, a;next y
       pop af;rows left
       dec a
       jr nz, .rowLoop
-    inc hl
     inc hl
     inc hl
     pop de;xy
@@ -767,12 +770,11 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   ld b, a;bc = stamp address
   push hl;next object address
   ld a, [bc];stamp width
-  add a, d;x+w
-  ld h, a;stamp maxX
+  ld h, a
   inc bc
   ld a, [bc];stamp height
-  add a, e;y+h
-  ld l, a;stamp maxY
+  ld l, a
+  add hl, de;maxXY = wh + xy, assumes l + e < 256
 
 .testMaxX
   ld a, [_x];chunk minX
@@ -801,7 +803,6 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jp z, .nextMapObject
-  push hl;wh
   ld a, 1
   ld [rVBK], a
   ld a, 2
@@ -823,7 +824,6 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   xor a
   ld [rVBK], a
   ld [rSVBK], a
-  pop bc;wh
 .nextMapObject
   pop hl
   ret

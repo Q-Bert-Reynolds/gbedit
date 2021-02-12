@@ -1,11 +1,11 @@
 Priority
 
 - map system
+  - stamp fills
   - read signs (CheckActions in overworld.asm)
   - jump over ledges
   - enter/exit buildings
   - default collision type for chunk
-  - stamp fills
 - make batting results semi-random so we can move on to FX
 
  General
@@ -105,6 +105,7 @@ Map System
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
+- chunk jump table should be ordered the same as Unity's hierarchy
 - draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
 - make the editor a standalone application
 

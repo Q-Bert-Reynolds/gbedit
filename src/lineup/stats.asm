@@ -48,7 +48,8 @@ SetStatScreenColors:;hl = player
 DrawStatScreen::;player in hl
   push hl;player
   DISPLAY_OFF
-  CLEAR_TILES " "
+  ld a, " "
+  call ClearTiles
 
   ld a, 40
   ld [_i], a

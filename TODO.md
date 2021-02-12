@@ -1,6 +1,5 @@
 Priority
 
-- BUG: when starting a new game, there's a brown box when showing Muchacho 
 - map system
   - read signs (CheckActions in overworld.asm)
   - jump over ledges
@@ -19,6 +18,7 @@ Priority
 
 Optimization
 
+- COPY_TILE_BLOCK macro in GBDK.asm should be a subroutine, add HRAM vars to allow for this
 - move most used subroutines to HRAM
 - replace long chains of compares and jumps with jump tables
 - remove use of temp_bank in rolédex to free up RAM
@@ -105,6 +105,7 @@ Map System
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
+- draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
 - make the editor a standalone application
 
 Items

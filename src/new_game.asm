@@ -191,8 +191,6 @@ NewGame::
   ld hl, PaletteUI
   call GBCSetPalette
 
-  ld a, 1
-  ld [rVBK], a
   ld a, NUM_MUCHACHO
   call LoadPlayerBaseData
   ld hl, player_base.sgb_pal
@@ -202,6 +200,10 @@ NewGame::
   ld b, a
   ld a, [sgb_Pal23]
   call SetPalettesDirect
+
+  ld a, 1
+  ld [rVBK], a
+  CLEAR_SCREEN 0
   ld d, 13
   ld e, 4
   ld a, 2

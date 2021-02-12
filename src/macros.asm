@@ -146,20 +146,9 @@ HIDE_ALL_SPRITES: MACRO
   jr nz, .loop\@
 ENDM
 
-CLEAR_TILES: MACRO ;\1 = tile
-  ld a, \1
-  ld bc, 32*32+20*18
-  ld hl, _SCRN0
-  call mem_Set
-ENDM
-
 CLEAR_SCREEN: MACRO ;\1 = tile
-  CLEAR_TILES \1
-  ld a, 166
-  ld [rWX], a
-  ld a, 143
-  ld [rWY], a
-  HIDE_ALL_SPRITES
+  ld a, \1
+  call ClearScreen
 ENDM
 
 CLEAR_BKG_AREA: MACRO ;x, y, w, h, tile

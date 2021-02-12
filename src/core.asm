@@ -6,6 +6,8 @@ SECTION "Core", ROM0
 ; Trampoline                      b = bank, hl = address, can only use de and RAM for args, can't return anything in a
 ; UpdateInput
 ; DrawStateMap
+; ClearTiles                      a = clear tile, display should be off
+; ClearScreen                     a = clear tile, display should be off
 ; SetTiles                        a = draw flags, hl=wh, de=xy, bc=firstTile
 ; CopyToTileBuffer                hl=wh, de=xy, bc=firstTile
 ; SetBkgTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
@@ -239,6 +241,21 @@ DrawStateMap::;a = draw flags
   pop af;bank
   call SetBank
   ret
+
+ClearTiles:: ;a = tile, display should be off
+  ld bc, 32*32+20*18
+  ld hl, _SCRN0
+  call mem_Set
+  ret
+
+ClearScreen:: ;a = tile, display should be off
+  call ClearTiles
+  ld a, 166
+  ld [rWX], a
+  ld a, 143
+  ld [rWY], a
+  HIDE_ALL_SPRITES
+  ret 
 
 SetTiles::;a = draw flags, hl=wh, de=xy, bc=firstTile
   and a, DRAW_FLAGS_WIN

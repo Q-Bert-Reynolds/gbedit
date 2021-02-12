@@ -268,7 +268,7 @@ ENDM
 SECTION "GBDK Vars", WRAM0[_RAM]
 ;ensure OAM buffer starts at $XX00 and is not in switchable WRAM
 oam_buffer:: DS 4*40
-vbl_done:: DB
+vbl_done:: DB;TODO: place in HRAM?
 rand_hi:: DB
 rand_lo:: DB
 

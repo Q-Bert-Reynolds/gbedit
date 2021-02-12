@@ -634,6 +634,7 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
   cp a, e
   jr c, .draw
   ld e, a
+
 .draw
   inc hl
   inc hl;skip stamp address
@@ -795,12 +796,12 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   call gbdk_SetBkgTiles;returns bc=stamp palette
   pop de;xy
   pop hl;wh
-  push hl;wh
 
 .setPalettes
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jp z, .nextMapObject
+  push hl;wh
   ld a, 1
   ld [rVBK], a
   ld a, 2
@@ -822,8 +823,8 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   xor a
   ld [rVBK], a
   ld [rSVBK], a
-.nextMapObject
   pop bc;wh
+.nextMapObject
   pop hl
   ret
 .outOfRange

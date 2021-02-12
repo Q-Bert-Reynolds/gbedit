@@ -664,6 +664,7 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
       jr nz, .rowLoop
     inc hl
     inc hl
+    inc hl
     pop de;xy
     ld a, b;width
     add a, d;x+width
@@ -671,6 +672,7 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
     pop af;columns left
     dec a
     jr nz, .columnLoop
+  inc hl
   ret
 .outOfRange
   ld bc, 4

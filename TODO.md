@@ -1,5 +1,6 @@
 Priority
 
+- BUG: when starting a new game, there's a brown box when showing Muchacho 
 - map system
   - read signs (CheckActions in overworld.asm)
   - jump over ledges

@@ -50,10 +50,33 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     and a, MAP_OBJ_TYPE_MASK
     cp a, MAP_OBJ_STAMP
     jp z, .stamp
-    cp a, MAP_OBJ_FILL
-    jp z, .fill
-    ; cp a, MAP_OBJ_TILE
-    ; jp z, .tile
+    cp a, MAP_OBJ_STAMP_FILL
+    jp z, .stampFill
+    cp a, MAP_OBJ_TILE
+    jp z, .tile
+    ; cp a, MAP_OBJ_TILE_FILL
+    ; jp z, .tileFill
+  
+  .tileFill
+    inc hl;skip tile
+    inc hl;skip palete
+    ld a, [_x]
+    cp a, d;x1
+    jr c, .skip2Bytes
+    ld a, [_y]
+    cp a, e;y1
+    jr c, .skip2Bytes
+    ld a, [hli];x2
+    ld d, a
+    ld a, [hli];y2
+    ld e, a
+    ld a, [_x]
+    cp a, d;x2
+    jp nc, .loop
+    ld a, [_y]
+    cp a, e;y2
+    jp c, .collisonFound
+    jp .loop
 
   .tile
     inc hl;skip tile
@@ -64,6 +87,11 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld a, [_y]
     cp a, e;y
     jp z, .collisonFound
+    jp .loop
+
+  .stampFill
+    ld bc, 4
+    add hl, bc
     jp .loop
 
   .stamp
@@ -87,27 +115,6 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld a, [bc];height
     add a, e;y+height
     ld e, a;y2
-    ld a, [_y]
-    cp a, e;y2
-    jp c, .collisonFound
-    jp .loop
-
-  .fill
-    inc hl;skip tile
-    inc hl;skip palete
-    ld a, [_x]
-    cp a, d;x1
-    jr c, .skip2Bytes
-    ld a, [_y]
-    cp a, e;y1
-    jr c, .skip2Bytes
-    ld a, [hli];x2
-    ld d, a
-    ld a, [hli];y2
-    ld e, a
-    ld a, [_x]
-    cp a, d;x2
-    jp nc, .loop
     ld a, [_y]
     cp a, e;y2
     jp c, .collisonFound
@@ -578,18 +585,23 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     and a, MAP_OBJ_TYPE_MASK
     cp a, MAP_OBJ_STAMP
     jp z, .stamp
-    cp a, MAP_OBJ_FILL
-    jp z, .fill
-    ; cp a, MAP_OBJ_TILE
-    ; jp z, .tile
+    cp a, MAP_OBJ_STAMP_FILL
+    jp z, .stampFill
+    cp a, MAP_OBJ_TILE
+    jp z, .tile
+    ; cp a, MAP_OBJ_TILE_FILL
+    ; jp z, .tileFill
+  .tileFill
+    call DrawMapTileFill
+    jp .loop
   .tile
     call DrawMapTile
     jp .loop
+  .stampFill
+    call DrawMapStampFill
+    jp .loop
   .stamp
     call DrawMapStamp
-    jp .loop
-  .fill
-    call DrawMapFill
     jp .loop
 
 .done
@@ -603,7 +615,65 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   ; POP_VAR _x;min x
   ret
 
-DrawMapFill:;hl = fill data, de = xy, min/max XY in _x,_y,_u,_v
+DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
+.testX
+  ld a, [_u];maxX
+  cp a, d;x
+  jr c, .outOfRange;maxX < x
+  jr z, .outOfRange;maxX == x
+  ld a, [_x];minX
+  cp a, d
+  jr c, .testY
+  ld d, a
+.testY
+  ld a, [_v];maxY
+  cp a, e;y
+  jr c, .outOfRange;maxY < y
+  jr z, .outOfRange;maxY == y
+  ld a, [_y];minY
+  cp a, e
+  jr c, .draw
+  ld e, a
+.draw
+  inc hl
+  inc hl;skip stamp address
+  ld a, [hli];columns
+.columnLoop
+    push af;columns left
+    push de;xy
+    ld a, [hld];rows
+    dec hl
+    dec hl
+  .rowLoop
+      push af;rows left
+      push de;xy
+      push hl;stamp data
+      call DrawMapStamp;hl = stamp data, de = xy
+      pop hl;stamp data
+      pop de;xy
+      ld a, c;height
+      add a, e;y+height
+      ld e, a;next y
+      pop af;rows left
+      dec a
+      jr nz, .rowLoop
+    inc hl
+    inc hl
+    inc hl
+    pop de;xy
+    ld a, b;width
+    add a, d;x+width
+    ld d, a;next x
+    pop af;columns left
+    dec a
+    jr nz, .columnLoop
+  ret
+.outOfRange
+  ld bc, 4
+  add hl, bc
+  ret
+
+DrawMapTileFill:;hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
 .testX
   ld a, [_u];maxX
   cp a, d;x
@@ -677,7 +747,7 @@ DrawMapFill:;hl = fill data, de = xy, min/max XY in _x,_y,_u,_v
   add hl, bc
   ret
 
-DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
+DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in bc
 .testMinX
   ld a, [_u];chunk maxX
   cp a, d;stamp minX
@@ -725,6 +795,7 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   call gbdk_SetBkgTiles;returns bc=stamp palette
   pop de;xy
   pop hl;wh
+  push hl;wh
 
 .setPalettes
   ld a, [sys_info]
@@ -752,9 +823,11 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v
   ld [rVBK], a
   ld [rSVBK], a
 .nextMapObject
+  pop bc;wh
   pop hl
   ret
 .outOfRange
+  ld bc, 0
   inc hl
   inc hl
   ret

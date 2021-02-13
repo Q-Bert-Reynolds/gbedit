@@ -24,7 +24,7 @@ SECTION "Map Loader", ROM0
 ; GetMapChunk                  a = jump table index; hl = jump table, returns chunk in hl, index in a
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
-GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a
+GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
   ld a, d
   ld [_x], a
   ld a, e
@@ -617,8 +617,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     and a, MAP_COLLISION_MASK
     cp a, MAP_COLLISION_TEXT
     jp nz, .loop
-    ld a, [hli]
-    ld [collision_data], a
+    inc hl
     jp .loop
 
 .done

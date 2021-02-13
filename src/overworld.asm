@@ -239,9 +239,7 @@ MoveUp:
     ld hl, WalkUpAnim
     call AnimateAvatar
   .skipAnim
-    ld b, 76
-    ld c, 63;up
-    call CheckPlayerMovement
+    call CheckPlayerCollision
     jr nz, .wait
     call MoveMapUp
   .wait
@@ -264,9 +262,7 @@ MoveDown:
     ld hl, WalkDownAnim
     call AnimateAvatar
   .skipAnim
-    ld b, 76
-    ld c, 81;down
-    call CheckPlayerMovement
+    call CheckPlayerCollision
     jr nz, .wait
     call MoveMapDown
   .wait
@@ -290,9 +286,7 @@ MoveLeft:
     ld hl, WalkLeftAnim
     call AnimateAvatar
   .skipAnim
-    ld b, 63;left
-    ld c, 76
-    call CheckPlayerMovement
+    call CheckPlayerCollision
     jr nz, .wait
     call MoveMapLeft
   .wait
@@ -315,9 +309,7 @@ MoveRight:
     ld hl, WalkRightAnim
     call AnimateAvatar
   .skipAnim
-    ld b, 81;right
-    ld c, 76
-    call CheckPlayerMovement
+    call CheckPlayerCollision
     jr nz, .wait
     call MoveMapRight
   .wait
@@ -422,10 +414,43 @@ ShowPauseMenu::
   POP_VAR list_selection
   ret
 
-CheckPlayerMovement:;bc = screen xy, returns z if no collision
+CheckPlayerCollision:;returns z if no collision
+  ld a, [last_map_button_state]
+  and a, PADF_UP
+  jr nz, .up
+  ld a, [last_map_button_state]
+  and a, PADF_DOWN
+  jr nz, .down
+  ld a, [last_map_button_state]
+  and a, PADF_LEFT
+  jr nz, .left
+  ld a, [last_map_button_state]
+  and a, PADF_RIGHT
+  jr nz, .right
+  xor a
+  ret
+.up
+  ld b, 76
+  ld c, 63;up
+  jr .getChunk
+.down
+  ld b, 76
+  ld c, 81;down
+  jr .getChunk
+.left 
+  ld b, 63;left
+  ld c, 76
+  jr .getChunk
+.right  
+  ld b, 81;right
+  ld c, 76
+.getChunk 
   call GetMapChunkForOffset
   call GetMapCollision;NONE and GRASS already handled
   ld [collision_type], a
+  ld a, [hl]
+  ld [collision_data], a
+  ld a, [collision_type]
   ret z
   cp a, MAP_COLLISION_DOOR
   ret z
@@ -446,6 +471,7 @@ CheckPlayerMovement:;bc = screen xy, returns z if no collision
   ret
 
 CheckActions:
+  call CheckPlayerCollision
   ld a, [collision_type]
   cp a, MAP_COLLISION_TEXT
   ret nz

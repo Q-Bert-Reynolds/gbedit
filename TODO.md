@@ -1,7 +1,6 @@
 Priority
 
 - map system
-  - stamp fills
   - read signs (CheckActions in overworld.asm)
   - jump over ledges
   - enter/exit buildings

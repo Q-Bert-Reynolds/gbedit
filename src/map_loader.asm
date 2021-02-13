@@ -72,27 +72,27 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld e, a
     ld a, [_x]
     cp a, d;x2
-    jp nc, .loop
+    jp nc, .checkExtraData
     ld a, [_y]
     cp a, e;y2
     jp c, .collisonFound
-    jp .loop
+    jp .checkExtraData
 
   .tile
     inc hl;skip tile or stamp lower address
     inc hl;skip palete or stamp upper address
     ld a, [_x]
     cp a, d;x
-    jp nz, .loop
+    jp nz, .checkExtraData
     ld a, [_y]
     cp a, e;y
     jp z, .collisonFound
-    jp .loop
+    jp .checkExtraData
 
   .stampFill
     ld bc, 4
     add hl, bc
-    jp .loop
+    jp .checkExtraData
 
   .stamp
     ld a, [_x]
@@ -111,17 +111,24 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld d, a;x2
     ld a, [_x]
     cp a, d;x2
-    jp nc, .loop
+    jp nc, .checkExtraData
     ld a, [bc];height
     add a, e;y+height
     ld e, a;y2
     ld a, [_y]
     cp a, e;y2
     jp c, .collisonFound
-    jp .loop
+    jp .checkExtraData
 
   .skip2Bytes
     inc hl
+    inc hl
+
+  .checkExtraData
+    ld a, [_c]
+    and a, MAP_OBJ_TYPE_MASK
+    cp a, MAP_COLLISION_TEXT
+    jp nz, .loop
     inc hl
     jp .loop
 
@@ -582,6 +589,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ld e, a
     
     ld a, b;map object type and collision
+    push af;map object type and collision
     and a, MAP_OBJ_TYPE_MASK
     cp a, MAP_OBJ_STAMP
     jp z, .stamp
@@ -593,15 +601,23 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ; jp z, .tileFill
   .tileFill
     call DrawMapTileFill
-    jp .loop
+    jp .checkExtraData
   .tile
     call DrawMapTile
-    jp .loop
+    jp .checkExtraData
   .stampFill
     call DrawMapStampFill
-    jp .loop
+    jp .checkExtraData
   .stamp
     call DrawMapStamp
+    ; jp .checkExtraData
+
+  .checkExtraData
+    pop af;map object type and collision
+    and a, MAP_OBJ_TYPE_MASK
+    cp a, MAP_COLLISION_TEXT
+    jp nz, .loop
+    inc hl
     jp .loop
 
 .done

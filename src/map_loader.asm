@@ -614,10 +614,11 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 
   .checkExtraData
     pop af;map object type and collision
-    and a, MAP_OBJ_TYPE_MASK
+    and a, MAP_COLLISION_MASK
     cp a, MAP_COLLISION_TEXT
     jp nz, .loop
-    inc hl
+    ld a, [hli]
+    ld [collision_data], a
     jp .loop
 
 .done

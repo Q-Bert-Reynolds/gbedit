@@ -42,7 +42,8 @@ vbl_timer:: DB ;counts to 60
 ;map
 last_map_button_state:: DB
 anim_frame:: DW
-collision_info:: DB
+collision_type:: DB
+collision_data:: DB
 map_scroll_speed:: DB
 
 ;banking

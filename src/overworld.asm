@@ -425,7 +425,7 @@ ShowPauseMenu::
 CheckPlayerMovement:;bc = screen xy, returns z if no collision
   call GetMapChunkForOffset
   call GetMapCollision;NONE and GRASS already handled
-  ld [collision_info], a
+  ld [collision_type], a
   ret z
   cp a, MAP_COLLISION_DOOR
   ret z
@@ -446,7 +446,20 @@ CheckPlayerMovement:;bc = screen xy, returns z if no collision
   ret
 
 CheckActions:
-  ;look up position + facing in action map
+  ld a, [collision_type]
+  cp a, MAP_COLLISION_TEXT
+  ret nz
+  ld a, [collision_data]
+  ld b, 0
+  ld c, a
+  ld hl, MapText
+  call str_FromArray
+  ld de, str_buffer
+  call str_Copy
+  ld hl, str_buffer
+  call RevealTextAndWait
+  HIDE_WIN
+  WAITPAD_UP
   ret
 
 ShowPlayerAvatar:

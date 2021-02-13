@@ -1,7 +1,7 @@
 Priority
 
 - map system
-  - read signs (CheckActions in overworld.asm)
+  - BUG: sign by player's house displays incorrect text or collisions are broken
   - jump over ledges
   - enter/exit buildings
   - default collision type for chunk

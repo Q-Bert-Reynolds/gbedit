@@ -1078,9 +1078,9 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, index i
 GetMapChunk:;a = jump table index; hl = jump table, returns chunk in hl, index in a
   push bc
   push af;index
-  add a, a;index * 2
   ld b, 0
   ld c, a
+  add hl, bc
   add hl, bc
   ld a, [hli]
   ld b, a

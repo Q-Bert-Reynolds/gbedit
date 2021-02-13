@@ -1,4 +1,4 @@
-;Overworld.gbmap, 1973 bytes
+;Overworld.gbmap, 5715 bytes
 MapPalettes:: ;64 bytes
   RGB 30, 28, 19
   RGB 31, 31, 31
@@ -40,7 +40,7 @@ MapPalettes:: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
-;Stamps, 298 bytes
+;Stamps, 513 bytes
 TreeStamp:: ;34 bytes
 DB 4;width
 DB 4;height
@@ -55,24 +55,16 @@ DB 1, 1, 1, 1
 DB 1, 1, 1, 1
 DB 2, 2, 2, 2
 
-WaterRock:: ;9 bytes
-DB 3;width
-DB 2;height
+ForestStamp:: ;19 bytes
+DB 4;width
+DB 4;height
 .tiles:
-DB 192, 197, 193
-DB 227, 229, 230
+DB 192, 196, 197, 193
+DB 211, 212, 213, 214
+DB 197, 193, 192, 196
+DB 213, 214, 211, 212
 .palette:
-DB 134
-
-SignStamp:: ;10 bytes
-DB 2;width
-DB 2;height
-.tiles:
-DB 183, 184
-DB 199, 200
-.palettes:
-DB 0, 3
-DB 0, 3
+DB 129
 
 HouseWallBottomRight:: ;6 bytes
 DB 2;width
@@ -90,6 +82,36 @@ DB 176, 177
 .palettes:
 DB 3, 4
 
+HouseRoofUpperLeft:: ;5 bytes
+DB 2;width
+DB 1;height
+.tiles:
+DB 128, 129
+.palette:
+DB 131
+
+HouseRoofUpperRight:: ;5 bytes
+DB 2;width
+DB 1;height
+.tiles:
+DB 133, 134
+.palette:
+DB 131
+
+House:: ;66 bytes
+DB 8;width
+DB 4;height
+.tiles:
+DB 128, 129, 130, 130, 130, 130, 133, 134
+DB 144, 145, 146, 146, 146, 146, 149, 150
+DB 160, 161, 162, 163, 164, 164, 165, 166
+DB 176, 177, 178, 179, 177, 177, 177, 182
+.palettes:
+DB 3, 3, 3, 3, 3, 3, 3, 3
+DB 3, 3, 3, 3, 3, 3, 3, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+
 HouseDoor:: ;7 bytes
 DB 2;width
 DB 2;height
@@ -98,6 +120,67 @@ DB 162, 163
 DB 178, 179
 .palette:
 DB 132
+
+HouseRoofLowerLeft:: ;10 bytes
+DB 2;width
+DB 2;height
+.tiles:
+DB 144, 145
+DB 160, 161
+.palettes:
+DB 3, 4
+DB 3, 4
+
+HouseRoofLowerRight:: ;10 bytes
+DB 2;width
+DB 2;height
+.tiles:
+DB 149, 150
+DB 165, 166
+.palettes:
+DB 3, 3
+DB 4, 3
+
+SignStamp:: ;10 bytes
+DB 2;width
+DB 2;height
+.tiles:
+DB 183, 184
+DB 199, 200
+.palettes:
+DB 0, 3
+DB 0, 3
+
+Business:: ;130 bytes
+DB 8;width
+DB 8;height
+.tiles:
+DB 195, 130, 130, 130, 130, 130, 130, 198
+DB 211, 131, 131, 131, 131, 131, 131, 214
+DB 211, 131, 131, 131, 131, 131, 131, 214
+DB 227, 228, 229, 228, 229, 228, 229, 230
+DB 152, 164, 164, 164, 164, 164, 164, 168
+DB 152, 180, 180, 180, 180, 180, 180, 168
+DB 152, 180, 162, 163, 169, 170, 180, 168
+DB 176, 177, 178, 179, 177, 177, 177, 182
+.palettes:
+DB 3, 3, 3, 3, 3, 3, 3, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 3, 3, 3, 3, 3, 3, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+DB 3, 4, 4, 4, 4, 4, 4, 3
+
+WaterRock:: ;9 bytes
+DB 3;width
+DB 2;height
+.tiles:
+DB 192, 197, 193
+DB 227, 229, 230
+.palette:
+DB 134
 
 HomePlate:: ;84 bytes
 DB 9;width
@@ -143,60 +226,486 @@ DB 203, 204, 254, 254, 254, 254, 254, 254, 233
 .palette:
 DB 133
 
-HouseRoofLowerRight:: ;10 bytes
-DB 2;width
-DB 2;height
-.tiles:
-DB 149, 150
-DB 165, 166
-.palettes:
-DB 3, 3
-DB 4, 3
+ROUTE1WEST_269 EQU 0
+ROUTE1WEST_271 EQU 1
+ROUTE1WEST_270 EQU 2
+ROUTE1WEST_266 EQU 3
+ROUTE1WEST_265 EQU 4
+ROUTE1WEST_259 EQU 5
+ROUTE1WEST_260 EQU 6
+ROUTE1WEST_256 EQU 7
+ROUTE1WEST_255 EQU 8
+ROUTE1WEST_257 EQU 9
+ROUTE1WEST_258 EQU 10
+ROUTE1WEST_254 EQU 11
+ROUTE1WEST_253 EQU 12
+ROUTE1WEST_251 EQU 13
+ROUTE1WEST_252 EQU 14
+ROUTE1WEST_248 EQU 15
+ROUTE1WEST_247 EQU 16
+ROUTE1WEST_249 EQU 17
+ROUTE1WEST_250 EQU 18
+ROUTE1WEST_246 EQU 19
+ROUTE1WEST_245 EQU 20
+ROUTE1WEST_243 EQU 21
+ROUTE1WEST_244 EQU 22
+ROUTE1WEST_240 EQU 23
+ROUTE1WEST_239 EQU 24
+ROUTE1WEST_241 EQU 25
+ROUTE1WEST_242 EQU 26
+ROUTE1WEST_238 EQU 27
+ROUTE1WEST_237 EQU 28
+ROUTE1WEST_235 EQU 29
+ROUTE1WEST_236 EQU 30
+ROUTE1WEST_231 EQU 31
+ROUTE1WEST_232 EQU 32
+ROUTE1WEST_233 EQU 33
+ROUTE1WEST_228 EQU 34
+ROUTE1WEST_227 EQU 35
+ROUTE1WEST_223 EQU 36
+ROUTE1WEST_224 EQU 37
+ROUTE1WEST_226 EQU 38
+ROUTE1WEST_225 EQU 39
+ROUTE1WEST_221 EQU 40
+ROUTE1WEST_220 EQU 41
+ROUTE1WEST_219 EQU 42
+ROUTE1WEST_215 EQU 43
+ROUTE1WEST_216 EQU 44
+ROUTE1WEST_211 EQU 45
+ROUTE1WEST_212 EQU 46
+ROUTE1WEST_210 EQU 47
+ROUTE1WEST_209 EQU 48
+ROUTE1WEST_205 EQU 49
+ROUTE1WEST_207 EQU 50
+ROUTE1WEST_203 EQU 51
+ROUTE1WEST_201 EQU 52
+ROUTE1WEST_197 EQU 53
+ROUTE1WEST_198 EQU 54
+ROUTE1WEST_200 EQU 55
+ROUTE1WEST_199 EQU 56
+ROUTE1WEST_195 EQU 57
+ROUTE1WEST_196 EQU 58
+ROUTE1WEST_194 EQU 59
+ROUTE1WEST_193 EQU 60
+ROUTE1WEST_189 EQU 61
+ROUTE1WEST_190 EQU 62
+ROUTE1WEST_192 EQU 63
+ROUTE1WEST_191 EQU 64
+ROUTE1WEST_183 EQU 65
+ROUTE1WEST_184 EQU 66
+ROUTE1WEST_185 EQU 67
+ROUTE1WEST_188 EQU 68
+ROUTE1WEST_187 EQU 69
+ROUTE1WEST_186 EQU 70
+ROUTE1WEST_177 EQU 71
+ROUTE1WEST_178 EQU 72
+ROUTE1WEST_180 EQU 73
+ROUTE1WEST_179 EQU 74
+ROUTE1WEST_182 EQU 75
+ROUTE1WEST_181 EQU 76
+ROUTE1WEST_176 EQU 77
+ROUTE1WEST_171 EQU 78
+ROUTE1WEST_172 EQU 79
+ROUTE1WEST_173 EQU 80
+ROUTE1WEST_170 EQU 81
+ROUTE1WEST_169 EQU 82
+ROUTE1WEST_168 EQU 83
+CENTERFIELDCHUNK_7 EQU 84
+CENTERFIELDCHUNK_8 EQU 85
+CENTERFIELDCHUNK_6 EQU 86
+CENTERFIELDCHUNK_5 EQU 87
+CENTERFIELDCHUNK_4 EQU 88
+CENTERFIELDCHUNK_3 EQU 89
+CENTERFIELDCHUNK_2 EQU 90
+ROUTE1WEST_162 EQU 91
+ROUTE1WEST_163 EQU 92
+ROUTE1WEST_164 EQU 93
+ROUTE1WEST_167 EQU 94
+ROUTE1WEST_166 EQU 95
+ROUTE1WEST_165 EQU 96
+ROUTE1WEST_159 EQU 97
+ROUTE1WEST_161 EQU 98
+ROUTE1WEST_157 EQU 99
+ROUTE1WEST_156 EQU 100
+ROUTE1WEST_158 EQU 101
+ROUTE1WEST_155 EQU 102
+ROUTE1WEST_154 EQU 103
+ROUTE1WEST_152 EQU 104
+ROUTE1WEST_153 EQU 105
+ROUTE1WEST_150 EQU 106
+ROUTE1WEST_141 EQU 107
+ROUTE1WEST_142 EQU 108
+ROUTE1WEST_144 EQU 109
+ROUTE1WEST_143 EQU 110
+ROUTE1WEST_145 EQU 111
+ROUTE1WEST_149 EQU 112
+ROUTE1WEST_147 EQU 113
+ROUTE1WEST_139 EQU 114
+ROUTE1WEST_138 EQU 115
+ROUTE1WEST_140 EQU 116
+ROUTE1WEST_137 EQU 117
+ROUTE1WEST_133 EQU 118
+ROUTE1WEST_135 EQU 119
+ROUTE1WEST_130 EQU 120
+ROUTE1WEST_131 EQU 121
+ROUTE1WEST_129 EQU 122
+ROUTE1WEST_128 EQU 123
+ROUTE1WEST_124 EQU 124
+ROUTE1WEST_125 EQU 125
+ROUTE1WEST_127 EQU 126
+ROUTE1WEST_126 EQU 127
+ROUTE1WEST_122 EQU 128
+ROUTE1WEST_123 EQU 129
+ROUTE1WEST_121 EQU 130
+ROUTE1WEST_120 EQU 131
+ROUTE1WEST_115 EQU 132
+ROUTE1WEST_114 EQU 133
+ROUTE1WEST_112 EQU 134
+ROUTE1WEST_113 EQU 135
+ROUTE1WEST_111 EQU 136
+ROUTE1WEST_110 EQU 137
+ROUTE1WEST_116 EQU 138
+ROUTE1WEST_117 EQU 139
+ROUTE1WEST_119 EQU 140
+ROUTE1WEST_118 EQU 141
+ROUTE1WEST_106 EQU 142
+ROUTE1WEST_105 EQU 143
+ROUTE1WEST_103 EQU 144
+ROUTE1WEST_104 EQU 145
+ROUTE1WEST_102 EQU 146
+ROUTE1WEST_101 EQU 147
+ROUTE1WEST_95 EQU 148
+ROUTE1WEST_96 EQU 149
+ROUTE1WEST_98 EQU 150
+ROUTE1WEST_97 EQU 151
+ROUTE1WEST_93 EQU 152
+ROUTE1WEST_91 EQU 153
+ROUTE1WEST_89 EQU 154
+ROUTE1WEST_86 EQU 155
+ROUTE1WEST_85 EQU 156
+ROUTE1WEST_88 EQU 157
+ROUTE1WEST_82 EQU 158
+ROUTE1WEST_81 EQU 159
+ROUTE1WEST_79 EQU 160
+ROUTE1WEST_80 EQU 161
+ROUTE1WEST_78 EQU 162
+ROUTE1WEST_77 EQU 163
+ROUTE1WEST_71 EQU 164
+ROUTE1WEST_72 EQU 165
+ROUTE1WEST_74 EQU 166
+ROUTE1WEST_73 EQU 167
+ROUTE1WEST_75 EQU 168
+ROUTE1WEST_76 EQU 169
+ROUTE1WEST_70 EQU 170
+ROUTE1WEST_69 EQU 171
+ROUTE1WEST_67 EQU 172
+ROUTE1WEST_66 EQU 173
+ROUTE1WEST_68 EQU 174
+ROUTE1WEST_65 EQU 175
+ROUTE1WEST_62 EQU 176
+ROUTE1WEST_61 EQU 177
+ROUTE1WEST_63 EQU 178
+ROUTE1WEST_64 EQU 179
+ROUTE1WEST_60 EQU 180
+ROUTE1WEST_59 EQU 181
+ROUTE1WEST_57 EQU 182
+ROUTE1WEST_58 EQU 183
+ROUTE1WEST_51 EQU 184
+ROUTE1WEST_52 EQU 185
+ROUTE1WEST_50 EQU 186
+ROUTE1WEST_49 EQU 187
+ROUTE1WEST_45 EQU 188
+ROUTE1WEST_46 EQU 189
+ROUTE1WEST_48 EQU 190
+ROUTE1WEST_47 EQU 191
+ROUTE1WEST_43 EQU 192
+ROUTE1WEST_44 EQU 193
+ROUTE1WEST_42 EQU 194
+ROUTE1WEST_41 EQU 195
+ROUTE1WEST_35 EQU 196
+ROUTE1WEST_36 EQU 197
+ROUTE1WEST_33 EQU 198
+ROUTE1WEST_34 EQU 199
+ROUTE1WEST_28 EQU 200
+ROUTE1WEST_27 EQU 201
+ROUTE1WEST_29 EQU 202
+ROUTE1WEST_30 EQU 203
+ROUTE1WEST_32 EQU 204
+ROUTE1WEST_31 EQU 205
+ROUTE1WEST_25 EQU 206
+ROUTE1WEST_26 EQU 207
+ROUTE1WEST_24 EQU 208
+ROUTE1WEST_23 EQU 209
+ROUTE1WEST_21 EQU 210
+ROUTE1WEST_22 EQU 211
+ROUTE1WEST_16 EQU 212
+ROUTE1WEST_15 EQU 213
+ROUTE1WEST_17 EQU 214
+ROUTE1WEST_18 EQU 215
+ROUTE1WEST_20 EQU 216
+ROUTE1WEST_19 EQU 217
+ROUTE1WEST_13 EQU 218
+ROUTE1WEST_14 EQU 219
+ROUTE1WEST_12 EQU 220
+ROUTE1WEST_11 EQU 221
+ROUTE1WEST_9 EQU 222
+ROUTE1WEST_10 EQU 223
+ROUTE1WEST_8 EQU 224
+ROUTE1WEST_6 EQU 225
+ROUTE1WEST_7 EQU 226
+ROUTE1WEST_5 EQU 227
+ROUTE1WEST_4 EQU 228
+ROUTE1WEST_3 EQU 229
+ROUTE1WEST_2 EQU 230
+ROUTE1WEST_1 EQU 231
+CENTERFIELDCHUNK_1 EQU 232
+RIGHTFIELDCHUNK EQU 233
+BILLETTOWNSW EQU 234
+BILLETTOWNSEWATER EQU 235
+BILLETTOWNSE EQU 236
+LEFTFIELDCHUNK EQU 237
+INFIELDCHUNK EQU 238
+ROUTE1EAST EQU 239
+BILLETTOWNNW EQU 240
+BILLETTOWNSWWATER EQU 241
+BILLETTOWNNE EQU 242
+CENTERFIELDCHUNK EQU 243
+ROUTE1WEST EQU 244
 
-HouseRoofLowerLeft:: ;10 bytes
-DB 2;width
-DB 2;height
-.tiles:
-DB 144, 145
-DB 160, 161
-.palettes:
-DB 3, 4
-DB 3, 4
-
-HouseRoofUpperLeft:: ;5 bytes
-DB 2;width
-DB 1;height
-.tiles:
-DB 128, 129
-.palette:
-DB 131
-
-HouseRoofUpperRight:: ;5 bytes
-DB 2;width
-DB 1;height
-.tiles:
-DB 133, 134
-.palette:
-DB 131
-
-CENTERFIELDCHUNK_1 EQU 0
-BILLETTOWNSEWATER_1 EQU 1
-RIGHTFIELDCHUNK EQU 2
-BILLETTOWNSW EQU 3
-BILLETTOWNSEWATER EQU 4
-BILLETTOWNSE EQU 5
-LEFTFIELDCHUNK EQU 6
-INFIELDCHUNK EQU 7
-ROUTE1EAST EQU 8
-BILLETTOWNNW EQU 9
-BILLETTOWNSWWATER EQU 10
-BILLETTOWNNE EQU 11
-CENTERFIELDCHUNK EQU 12
-ROUTE1WEST EQU 13
-
-MapOverworldChunks:: ;28 bytes
+MapOverworldChunks:: ;490 bytes
+  DW Route1West269
+  DW Route1West271
+  DW Route1West270
+  DW Route1West266
+  DW Route1West265
+  DW Route1West259
+  DW Route1West260
+  DW Route1West256
+  DW Route1West255
+  DW Route1West257
+  DW Route1West258
+  DW Route1West254
+  DW Route1West253
+  DW Route1West251
+  DW Route1West252
+  DW Route1West248
+  DW Route1West247
+  DW Route1West249
+  DW Route1West250
+  DW Route1West246
+  DW Route1West245
+  DW Route1West243
+  DW Route1West244
+  DW Route1West240
+  DW Route1West239
+  DW Route1West241
+  DW Route1West242
+  DW Route1West238
+  DW Route1West237
+  DW Route1West235
+  DW Route1West236
+  DW Route1West231
+  DW Route1West232
+  DW Route1West233
+  DW Route1West228
+  DW Route1West227
+  DW Route1West223
+  DW Route1West224
+  DW Route1West226
+  DW Route1West225
+  DW Route1West221
+  DW Route1West220
+  DW Route1West219
+  DW Route1West215
+  DW Route1West216
+  DW Route1West211
+  DW Route1West212
+  DW Route1West210
+  DW Route1West209
+  DW Route1West205
+  DW Route1West207
+  DW Route1West203
+  DW Route1West201
+  DW Route1West197
+  DW Route1West198
+  DW Route1West200
+  DW Route1West199
+  DW Route1West195
+  DW Route1West196
+  DW Route1West194
+  DW Route1West193
+  DW Route1West189
+  DW Route1West190
+  DW Route1West192
+  DW Route1West191
+  DW Route1West183
+  DW Route1West184
+  DW Route1West185
+  DW Route1West188
+  DW Route1West187
+  DW Route1West186
+  DW Route1West177
+  DW Route1West178
+  DW Route1West180
+  DW Route1West179
+  DW Route1West182
+  DW Route1West181
+  DW Route1West176
+  DW Route1West171
+  DW Route1West172
+  DW Route1West173
+  DW Route1West170
+  DW Route1West169
+  DW Route1West168
+  DW CenterFieldChunk7
+  DW CenterFieldChunk8
+  DW CenterFieldChunk6
+  DW CenterFieldChunk5
+  DW CenterFieldChunk4
+  DW CenterFieldChunk3
+  DW CenterFieldChunk2
+  DW Route1West162
+  DW Route1West163
+  DW Route1West164
+  DW Route1West167
+  DW Route1West166
+  DW Route1West165
+  DW Route1West159
+  DW Route1West161
+  DW Route1West157
+  DW Route1West156
+  DW Route1West158
+  DW Route1West155
+  DW Route1West154
+  DW Route1West152
+  DW Route1West153
+  DW Route1West150
+  DW Route1West141
+  DW Route1West142
+  DW Route1West144
+  DW Route1West143
+  DW Route1West145
+  DW Route1West149
+  DW Route1West147
+  DW Route1West139
+  DW Route1West138
+  DW Route1West140
+  DW Route1West137
+  DW Route1West133
+  DW Route1West135
+  DW Route1West130
+  DW Route1West131
+  DW Route1West129
+  DW Route1West128
+  DW Route1West124
+  DW Route1West125
+  DW Route1West127
+  DW Route1West126
+  DW Route1West122
+  DW Route1West123
+  DW Route1West121
+  DW Route1West120
+  DW Route1West115
+  DW Route1West114
+  DW Route1West112
+  DW Route1West113
+  DW Route1West111
+  DW Route1West110
+  DW Route1West116
+  DW Route1West117
+  DW Route1West119
+  DW Route1West118
+  DW Route1West106
+  DW Route1West105
+  DW Route1West103
+  DW Route1West104
+  DW Route1West102
+  DW Route1West101
+  DW Route1West95
+  DW Route1West96
+  DW Route1West98
+  DW Route1West97
+  DW Route1West93
+  DW Route1West91
+  DW Route1West89
+  DW Route1West86
+  DW Route1West85
+  DW Route1West88
+  DW Route1West82
+  DW Route1West81
+  DW Route1West79
+  DW Route1West80
+  DW Route1West78
+  DW Route1West77
+  DW Route1West71
+  DW Route1West72
+  DW Route1West74
+  DW Route1West73
+  DW Route1West75
+  DW Route1West76
+  DW Route1West70
+  DW Route1West69
+  DW Route1West67
+  DW Route1West66
+  DW Route1West68
+  DW Route1West65
+  DW Route1West62
+  DW Route1West61
+  DW Route1West63
+  DW Route1West64
+  DW Route1West60
+  DW Route1West59
+  DW Route1West57
+  DW Route1West58
+  DW Route1West51
+  DW Route1West52
+  DW Route1West50
+  DW Route1West49
+  DW Route1West45
+  DW Route1West46
+  DW Route1West48
+  DW Route1West47
+  DW Route1West43
+  DW Route1West44
+  DW Route1West42
+  DW Route1West41
+  DW Route1West35
+  DW Route1West36
+  DW Route1West33
+  DW Route1West34
+  DW Route1West28
+  DW Route1West27
+  DW Route1West29
+  DW Route1West30
+  DW Route1West32
+  DW Route1West31
+  DW Route1West25
+  DW Route1West26
+  DW Route1West24
+  DW Route1West23
+  DW Route1West21
+  DW Route1West22
+  DW Route1West16
+  DW Route1West15
+  DW Route1West17
+  DW Route1West18
+  DW Route1West20
+  DW Route1West19
+  DW Route1West13
+  DW Route1West14
+  DW Route1West12
+  DW Route1West11
+  DW Route1West9
+  DW Route1West10
+  DW Route1West8
+  DW Route1West6
+  DW Route1West7
+  DW Route1West5
+  DW Route1West4
+  DW Route1West3
+  DW Route1West2
+  DW Route1West1
   DW CenterFieldChunk1
-  DW BilletTownSEWater1
   DW RightFieldChunk
   DW BilletTownSW
   DW BilletTownSEWater
@@ -210,14 +719,932 @@ MapOverworldChunks:: ;28 bytes
   DW CenterFieldChunk
   DW Route1West
 
-;Map, 1583 bytes
-CenterFieldChunk1::
+;Map, 4648 bytes
+Route1West269::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_269
+.east:    DB ROUTE1WEST_269
+.south:   DB ROUTE1WEST_219
+.west:    DB ROUTE1WEST_271
+
+DB 0;END Route1West269, 11 bytes
+
+Route1West271::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_271
+.east:    DB ROUTE1WEST_269
+.south:   DB ROUTE1WEST_224
+.west:    DB ROUTE1WEST_270
+
+DB 0;END Route1West271, 11 bytes
+
+Route1West270::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_270
+.east:    DB ROUTE1WEST_271
+.south:   DB ROUTE1WEST_223
+.west:    DB ROUTE1WEST_270
+
+DB 0;END Route1West270, 11 bytes
+
+Route1West266::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_265
+.east:    DB ROUTE1WEST_266
+.south:   DB ROUTE1WEST_259
+.west:    DB ROUTE1WEST_266
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (22)
+DB 18;x1
+DB 10;y1
+DB 254;tile
+DB 5;palette
+DB 25;x2
+DB 28;y2
+
+DB 0;END Route1West266, 18 bytes
+
+Route1West265::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_226
+.east:    DB ROUTE1WEST_265
+.south:   DB ROUTE1WEST_266
+.west:    DB ROUTE1WEST_265
+
+DB 0;END Route1West265, 11 bytes
+
+Route1West259::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_266
+.east:    DB ROUTE1WEST_259
+.south:   DB ROUTE1WEST_260
+.west:    DB ROUTE1WEST_257
+
+DB 0;END Route1West259, 11 bytes
+
+Route1West260::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_259
+.east:    DB ROUTE1WEST_260
+.south:   DB ROUTE1WEST_260
+.west:    DB ROUTE1WEST_258
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (21)
+DB 12;x1
+DB 10;y1
+DB 254;tile
+DB 5;palette
+DB 19;x2
+DB 28;y2
+
+DB 0;END Route1West260, 18 bytes
+
+Route1West256::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_255
+.east:    DB ROUTE1WEST_258
+.south:   DB ROUTE1WEST_256
+.west:    DB ROUTE1WEST_254
+
+DB 0;END Route1West256, 11 bytes
+
+Route1West255::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_255
+.east:    DB ROUTE1WEST_257
+.south:   DB ROUTE1WEST_256
+.west:    DB ROUTE1WEST_253
+
+DB 0;END Route1West255, 11 bytes
+
+Route1West257::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_257
+.east:    DB ROUTE1WEST_259
+.south:   DB ROUTE1WEST_258
+.west:    DB ROUTE1WEST_255
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (20)
+DB 8;x1
+DB 7;y1
+DB 254;tile
+DB 5;palette
+DB 15;x2
+DB 25;y2
+
+DB 0;END Route1West257, 18 bytes
+
+Route1West258::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_257
+.east:    DB ROUTE1WEST_260
+.south:   DB ROUTE1WEST_258
+.west:    DB ROUTE1WEST_256
+
+DB 0;END Route1West258, 11 bytes
+
+Route1West254::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_253
+.east:    DB ROUTE1WEST_256
+.south:   DB ROUTE1WEST_254
+.west:    DB ROUTE1WEST_252
+
+DB 0;END Route1West254, 11 bytes
+
+Route1West253::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_253
+.east:    DB ROUTE1WEST_255
+.south:   DB ROUTE1WEST_254
+.west:    DB ROUTE1WEST_251
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
+DB 6;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 13;x2
+DB 27;y2
+
+DB 0;END Route1West253, 18 bytes
+
+Route1West251::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_251
+.east:    DB ROUTE1WEST_253
+.south:   DB ROUTE1WEST_252
+.west:    DB ROUTE1WEST_249
+
+DB 0;END Route1West251, 11 bytes
+
+Route1West252::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_251
+.east:    DB ROUTE1WEST_254
+.south:   DB ROUTE1WEST_252
+.west:    DB ROUTE1WEST_250
+
+DB 0;END Route1West252, 11 bytes
+
+Route1West248::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_247
+.east:    DB ROUTE1WEST_250
+.south:   DB ROUTE1WEST_248
+.west:    DB ROUTE1WEST_246
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (18)
+DB 3;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 10;x2
+DB 27;y2
+
+DB 0;END Route1West248, 18 bytes
+
+Route1West247::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_247
+.east:    DB ROUTE1WEST_249
+.south:   DB ROUTE1WEST_248
+.west:    DB ROUTE1WEST_245
+
+DB 0;END Route1West247, 11 bytes
+
+Route1West249::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_249
+.east:    DB ROUTE1WEST_251
+.south:   DB ROUTE1WEST_250
+.west:    DB ROUTE1WEST_247
+
+DB 0;END Route1West249, 11 bytes
+
+Route1West250::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_249
+.east:    DB ROUTE1WEST_252
+.south:   DB ROUTE1WEST_250
+.west:    DB ROUTE1WEST_248
+
+DB 0;END Route1West250, 11 bytes
+
+Route1West246::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_245
+.east:    DB ROUTE1WEST_248
+.south:   DB ROUTE1WEST_246
+.west:    DB ROUTE1WEST_244
+
+DB 0;END Route1West246, 11 bytes
+
+Route1West245::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_242
+.east:    DB ROUTE1WEST_247
+.south:   DB ROUTE1WEST_246
+.west:    DB ROUTE1WEST_243
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (17)
+DB 13;x1
+DB 8;y1
+DB 254;tile
+DB 5;palette
+DB 20;x2
+DB 26;y2
+
+DB 0;END Route1West245, 18 bytes
+
+Route1West243::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_240
+.east:    DB ROUTE1WEST_245
+.south:   DB ROUTE1WEST_244
+.west:    DB ROUTE1WEST_243
+
+DB 0;END Route1West243, 11 bytes
+
+Route1West244::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_243
+.east:    DB ROUTE1WEST_246
+.south:   DB ROUTE1WEST_244
+.west:    DB ROUTE1WEST_244
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (23)
+DB 8;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 15;x2
+DB 27;y2
+
+DB 0;END Route1West244, 18 bytes
+
+Route1West240::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_239
+.east:    DB ROUTE1WEST_242
+.south:   DB ROUTE1WEST_243
+.west:    DB ROUTE1WEST_240
+
+DB 0;END Route1West240, 11 bytes
+
+Route1West239::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_233
+.east:    DB ROUTE1WEST_241
+.south:   DB ROUTE1WEST_240
+.west:    DB ROUTE1WEST_239
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (16)
+DB 10;x1
+DB 6;y1
+DB 254;tile
+DB 5;palette
+DB 17;x2
+DB 24;y2
+
+DB 0;END Route1West239, 18 bytes
+
+Route1West241::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_238
+.east:    DB ROUTE1WEST_241
+.south:   DB ROUTE1WEST_242
+.west:    DB ROUTE1WEST_239
+
+DB 0;END Route1West241, 11 bytes
+
+Route1West242::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_241
+.east:    DB ROUTE1WEST_242
+.south:   DB ROUTE1WEST_245
+.west:    DB ROUTE1WEST_240
+
+DB 0;END Route1West242, 11 bytes
+
+Route1West238::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_237
+.east:    DB ROUTE1WEST_238
+.south:   DB ROUTE1WEST_241
+.west:    DB ROUTE1WEST_233
+
+DB 0;END Route1West238, 11 bytes
+
+Route1West237::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB BILLETTOWNSEWATER
+.east:    DB ROUTE1WEST_237
+.south:   DB ROUTE1WEST_238
+.west:    DB ROUTE1WEST_231
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (15)
+DB 7;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 14;x2
+DB 27;y2
+
+DB 0;END Route1West237, 18 bytes
+
+Route1West235::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB CENTERFIELDCHUNK_8
+.east:    DB ROUTE1WEST_235
+.south:   DB ROUTE1WEST_227
+.west:    DB ROUTE1WEST_236
+
+DB 0;END Route1West235, 11 bytes
+
+Route1West236::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB CENTERFIELDCHUNK_7
+.east:    DB ROUTE1WEST_235
+.south:   DB ROUTE1WEST_232
+.west:    DB ROUTE1WEST_236
+
+DB 0;END Route1West236, 11 bytes
+
+Route1West231::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB BILLETTOWNSWWATER
+.east:    DB ROUTE1WEST_237
+.south:   DB ROUTE1WEST_233
+.west:    DB ROUTE1WEST_231
+
+DB 0;END Route1West231, 11 bytes
+
+Route1West232::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_236
+.east:    DB ROUTE1WEST_227
+.south:   DB ROUTE1WEST_232
+.west:    DB ROUTE1WEST_231
+
+DB 0;END Route1West232, 11 bytes
+
+Route1West233::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_231
+.east:    DB ROUTE1WEST_238
+.south:   DB ROUTE1WEST_239
+.west:    DB ROUTE1WEST_233
+
+DB 0;END Route1West233, 11 bytes
+
+Route1West228::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_228
+.east:    DB ROUTE1WEST_228
+.south:   DB ROUTE1WEST_228
+.west:    DB ROUTE1WEST_227
+
+DB 0;END Route1West228, 11 bytes
+
+Route1West227::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB ROUTE1WEST_235
+.east:    DB ROUTE1WEST_228
+.south:   DB ROUTE1WEST_227
+.west:    DB ROUTE1WEST_232
+
+DB 0;END Route1West227, 11 bytes
+
+Route1West223::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_270
+.east:    DB ROUTE1WEST_224
+.south:   DB ROUTE1WEST_225
+.west:    DB ROUTE1WEST_228
+
+DB 0;END Route1West223, 11 bytes
+
+Route1West224::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_271
+.east:    DB ROUTE1WEST_219
+.south:   DB ROUTE1WEST_226
+.west:    DB ROUTE1WEST_223
+
+DB 0;END Route1West224, 11 bytes
+
+Route1West226::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_224
+.east:    DB ROUTE1WEST_221
+.south:   DB ROUTE1WEST_265
+.west:    DB ROUTE1WEST_225
+
+DB 0;END Route1West226, 11 bytes
+
+Route1West225::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_223
+.east:    DB ROUTE1WEST_226
+.south:   DB ROUTE1WEST_225
+.west:    DB ROUTE1WEST_225
+
+DB 0;END Route1West225, 11 bytes
+
+Route1West221::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_219
+.east:    DB ROUTE1WEST_221
+.south:   DB ROUTE1WEST_221
+.west:    DB ROUTE1WEST_226
+
+DB 0;END Route1West221, 11 bytes
+
+Route1West220::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_220
+.east:    DB ROUTE1WEST_215
+.south:   DB ROUTE1WEST_220
+.west:    DB ROUTE1WEST_219
+
+DB 0;END Route1West220, 11 bytes
+
+Route1West219::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_269
+.east:    DB ROUTE1WEST_220
+.south:   DB ROUTE1WEST_221
+.west:    DB ROUTE1WEST_224
+
+DB 0;END Route1West219, 11 bytes
+
+Route1West215::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_215
+.east:    DB ROUTE1WEST_216
+.south:   DB ROUTE1WEST_215
+.west:    DB ROUTE1WEST_220
+
+DB 0;END Route1West215, 11 bytes
+
+Route1West216::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_216
+.east:    DB ROUTE1WEST_209
+.south:   DB ROUTE1WEST_216
+.west:    DB ROUTE1WEST_215
+
+DB 0;END Route1West216, 11 bytes
+
+Route1West211::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_212
+.east:    DB ROUTE1WEST_211
+.south:   DB ROUTE1WEST_211
+.west:    DB ROUTE1WEST_209
+
+DB 0;END Route1West211, 11 bytes
+
+Route1West212::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_207
+.east:    DB ROUTE1WEST_212
+.south:   DB ROUTE1WEST_211
+.west:    DB ROUTE1WEST_210
+
+DB 0;END Route1West212, 11 bytes
+
+Route1West210::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_205
+.east:    DB ROUTE1WEST_212
+.south:   DB ROUTE1WEST_209
+.west:    DB ROUTE1WEST_210
+
+DB 0;END Route1West210, 11 bytes
+
+Route1West209::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_210
+.east:    DB ROUTE1WEST_211
+.south:   DB ROUTE1WEST_209
+.west:    DB ROUTE1WEST_216
+
+DB 0;END Route1West209, 11 bytes
+
+Route1West205::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_205
+.east:    DB ROUTE1WEST_207
+.south:   DB ROUTE1WEST_210
+.west:    DB ROUTE1WEST_205
+
+DB 0;END Route1West205, 11 bytes
+
+Route1West207::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_207
+.east:    DB ROUTE1WEST_201
+.south:   DB ROUTE1WEST_212
+.west:    DB ROUTE1WEST_205
+
+DB 0;END Route1West207, 11 bytes
+
+Route1West203::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_203
+.east:    DB ROUTE1WEST_197
+.south:   DB ROUTE1WEST_203
+.west:    DB ROUTE1WEST_201
+
+DB 0;END Route1West203, 11 bytes
+
+Route1West201::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_201
+.east:    DB ROUTE1WEST_203
+.south:   DB ROUTE1WEST_201
+.west:    DB ROUTE1WEST_207
+
+DB 0;END Route1West201, 11 bytes
+
+Route1West197::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_198
+.east:    DB ROUTE1WEST_199
+.south:   DB ROUTE1WEST_197
+.west:    DB ROUTE1WEST_203
+
+DB 0;END Route1West197, 11 bytes
+
+Route1West198::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_193
+.east:    DB ROUTE1WEST_200
+.south:   DB ROUTE1WEST_197
+.west:    DB ROUTE1WEST_198
+
+DB 0;END Route1West198, 11 bytes
+
+Route1West200::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_195
+.east:    DB ROUTE1WEST_200
+.south:   DB ROUTE1WEST_199
+.west:    DB ROUTE1WEST_198
+
+DB 0;END Route1West200, 11 bytes
+
+Route1West199::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_200
+.east:    DB ROUTE1WEST_199
+.south:   DB ROUTE1WEST_199
+.west:    DB ROUTE1WEST_197
+
+DB 0;END Route1West199, 11 bytes
+
+Route1West195::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_196
+.east:    DB ROUTE1WEST_195
+.south:   DB ROUTE1WEST_200
+.west:    DB ROUTE1WEST_193
+
+DB 0;END Route1West195, 11 bytes
+
+Route1West196::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_191
+.east:    DB ROUTE1WEST_196
+.south:   DB ROUTE1WEST_195
+.west:    DB ROUTE1WEST_194
+
+DB 0;END Route1West196, 11 bytes
+
+Route1West194::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_189
+.east:    DB ROUTE1WEST_196
+.south:   DB ROUTE1WEST_193
+.west:    DB ROUTE1WEST_188
+
+DB 0;END Route1West194, 11 bytes
+
+Route1West193::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_194
+.east:    DB ROUTE1WEST_195
+.south:   DB ROUTE1WEST_198
+.west:    DB ROUTE1WEST_193
+
+DB 0;END Route1West193, 11 bytes
+
+Route1West189::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_190
+.east:    DB ROUTE1WEST_191
+.south:   DB ROUTE1WEST_194
+.west:    DB ROUTE1WEST_185
+
+DB 0;END Route1West189, 11 bytes
+
+Route1West190::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_128
+.east:    DB ROUTE1WEST_192
+.south:   DB ROUTE1WEST_189
+.west:    DB ROUTE1WEST_190
+
+DB 0;END Route1West190, 11 bytes
+
+Route1West192::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_130
+.east:    DB ROUTE1WEST_192
+.south:   DB ROUTE1WEST_191
+.west:    DB ROUTE1WEST_190
+
+DB 0;END Route1West192, 11 bytes
+
+Route1West191::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_192
+.east:    DB ROUTE1WEST_191
+.south:   DB ROUTE1WEST_196
+.west:    DB ROUTE1WEST_189
+
+DB 0;END Route1West191, 11 bytes
+
+Route1West183::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_183
+.east:    DB ROUTE1WEST_185
+.south:   DB ROUTE1WEST_186
+.west:    DB ROUTE1WEST_184
+
+DB 0;END Route1West183, 11 bytes
+
+Route1West184::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_184
+.east:    DB ROUTE1WEST_183
+.south:   DB ROUTE1WEST_187
+.west:    DB ROUTE1WEST_176
+
+DB 0;END Route1West184, 11 bytes
+
+Route1West185::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_185
+.east:    DB ROUTE1WEST_189
+.south:   DB ROUTE1WEST_188
+.west:    DB ROUTE1WEST_183
+
+DB 0;END Route1West185, 11 bytes
+
+Route1West188::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_185
+.east:    DB ROUTE1WEST_194
+.south:   DB ROUTE1WEST_188
+.west:    DB ROUTE1WEST_186
+
+DB 0;END Route1West188, 11 bytes
+
+Route1West187::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_184
+.east:    DB ROUTE1WEST_186
+.south:   DB ROUTE1WEST_187
+.west:    DB ROUTE1WEST_181
+
+DB 0;END Route1West187, 11 bytes
+
+Route1West186::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_183
+.east:    DB ROUTE1WEST_188
+.south:   DB ROUTE1WEST_186
+.west:    DB ROUTE1WEST_187
+
+DB 0;END Route1West186, 11 bytes
+
+Route1West177::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_170
+.east:    DB ROUTE1WEST_181
+.south:   DB ROUTE1WEST_178
+.west:    DB ROUTE1WEST_179
+
+DB 0;END Route1West177, 11 bytes
+
+Route1West178::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_177
+.east:    DB ROUTE1WEST_182
+.south:   DB ROUTE1WEST_178
+.west:    DB ROUTE1WEST_180
+
+DB 0;END Route1West178, 11 bytes
+
+Route1West180::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_179
+.east:    DB ROUTE1WEST_178
+.south:   DB ROUTE1WEST_180
+.west:    DB ROUTE1WEST_180
+
+DB 0;END Route1West180, 11 bytes
+
+Route1West179::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_173
+.east:    DB ROUTE1WEST_177
+.south:   DB ROUTE1WEST_180
+.west:    DB ROUTE1WEST_179
+
+DB 0;END Route1West179, 11 bytes
+
+Route1West182::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_181
+.east:    DB ROUTE1WEST_182
+.south:   DB ROUTE1WEST_182
+.west:    DB ROUTE1WEST_178
+
+DB 0;END Route1West182, 11 bytes
+
+Route1West181::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_176
+.east:    DB ROUTE1WEST_187
+.south:   DB ROUTE1WEST_182
+.west:    DB ROUTE1WEST_177
+
+DB 0;END Route1West181, 11 bytes
+
+Route1West176::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_176
+.east:    DB ROUTE1WEST_184
+.south:   DB ROUTE1WEST_181
+.west:    DB ROUTE1WEST_170
+
+DB 0;END Route1West176, 11 bytes
+
+Route1West171::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_172
+.east:    DB ROUTE1WEST_168
+.south:   DB ROUTE1WEST_173
+.west:    DB ROUTE1WEST_171
+
+DB 0;END Route1West171, 11 bytes
+
+Route1West172::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_140
+.east:    DB ROUTE1WEST_169
+.south:   DB ROUTE1WEST_171
+.west:    DB ROUTE1WEST_172
+
+DB 0;END Route1West172, 11 bytes
+
+Route1West173::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_171
+.east:    DB ROUTE1WEST_170
+.south:   DB ROUTE1WEST_179
+.west:    DB ROUTE1WEST_173
+
+DB 0;END Route1West173, 11 bytes
+
+Route1West170::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_168
+.east:    DB ROUTE1WEST_176
+.south:   DB ROUTE1WEST_177
+.west:    DB ROUTE1WEST_173
+
+DB 0;END Route1West170, 11 bytes
+
+Route1West169::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_138
+.east:    DB ROUTE1WEST_169
+.south:   DB ROUTE1WEST_168
+.west:    DB ROUTE1WEST_172
+
+DB 0;END Route1West169, 11 bytes
+
+Route1West168::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_169
+.east:    DB ROUTE1WEST_168
+.south:   DB ROUTE1WEST_170
+.west:    DB ROUTE1WEST_171
+
+DB 0;END Route1West168, 11 bytes
+
+CenterFieldChunk7::
 .tile:    DB 253
 .palette: DB 1
 .north:   DB CENTERFIELDCHUNK_1
-.east:    DB CENTERFIELDCHUNK_1
-.south:   DB CENTERFIELDCHUNK_1
-.west:    DB CENTERFIELDCHUNK
+.east:    DB CENTERFIELDCHUNK_8
+.south:   DB ROUTE1WEST_236
+.west:    DB RIGHTFIELDCHUNK
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
+DB 26;x
+DB 12;y
+DB 141;tile
+DB 1;palette
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
 DB 12;x1
@@ -226,52 +1653,1992 @@ DW TreeStamp
 DB 20;x2
 DB 23;y2
 
-DB 0;END CenterFieldChunk1, 18 bytes
+DB 0;END CenterFieldChunk7, 23 bytes
 
-BilletTownSEWater1::
-.tile:    DB 188
-.palette: DB 7
-.north:   DB INFIELDCHUNK
-.east:    DB BILLETTOWNSEWATER_1
-.south:   DB BILLETTOWNSEWATER_1
-.west:    DB BILLETTOWNSEWATER
+CenterFieldChunk8::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB CENTERFIELDCHUNK_6
+.east:    DB CENTERFIELDCHUNK_8
+.south:   DB ROUTE1WEST_235
+.west:    DB CENTERFIELDCHUNK_7
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (10)
-DB 0;x1
+DB 0;END CenterFieldChunk8, 11 bytes
+
+CenterFieldChunk6::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB CENTERFIELDCHUNK_4
+.east:    DB CENTERFIELDCHUNK_6
+.south:   DB CENTERFIELDCHUNK_8
+.west:    DB CENTERFIELDCHUNK_1
+
+DB 0;END CenterFieldChunk6, 11 bytes
+
+CenterFieldChunk5::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB ROUTE1WEST_167
+.east:    DB CENTERFIELDCHUNK_3
+.south:   DB CENTERFIELDCHUNK_2
+.west:    DB CENTERFIELDCHUNK_5
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (14)
+DB 22;x
+DB 16;y
+DB 141;tile
+DB 1;palette
+
+DB 0;END CenterFieldChunk5, 16 bytes
+
+CenterFieldChunk4::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB CENTERFIELDCHUNK_3
+.east:    DB CENTERFIELDCHUNK_4
+.south:   DB CENTERFIELDCHUNK_6
+.west:    DB CENTERFIELDCHUNK_2
+
+DB 0;END CenterFieldChunk4, 11 bytes
+
+CenterFieldChunk3::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB ROUTE1WEST_164
+.east:    DB CENTERFIELDCHUNK_3
+.south:   DB CENTERFIELDCHUNK_4
+.west:    DB CENTERFIELDCHUNK_5
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
+DB 8;x
+DB 20;y
+DB 141;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
+DB 9;x
+DB 18;y
+DB 141;tile
+DB 1;palette
+
+DB 0;END CenterFieldChunk3, 21 bytes
+
+CenterFieldChunk2::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB CENTERFIELDCHUNK_5
+.east:    DB CENTERFIELDCHUNK_4
+.south:   DB CENTERFIELDCHUNK_1
+.west:    DB CENTERFIELDCHUNK_2
+
+DB 0;END CenterFieldChunk2, 11 bytes
+
+Route1West162::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_163
+.east:    DB ROUTE1WEST_162
+.south:   DB ROUTE1WEST_164
+.west:    DB ROUTE1WEST_165
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (16)
+DB 12;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 19;x2
+DB 27;y2
+
+DB 0;END Route1West162, 18 bytes
+
+Route1West163::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_158
+.east:    DB ROUTE1WEST_163
+.south:   DB ROUTE1WEST_162
+.west:    DB ROUTE1WEST_166
+
+DB 0;END Route1West163, 11 bytes
+
+Route1West164::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_162
+.east:    DB ROUTE1WEST_164
+.south:   DB CENTERFIELDCHUNK_3
+.west:    DB ROUTE1WEST_167
+
+DB 0;END Route1West164, 11 bytes
+
+Route1West167::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_165
+.east:    DB ROUTE1WEST_164
+.south:   DB CENTERFIELDCHUNK_5
+.west:    DB ROUTE1WEST_167
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (15)
+DB 13;x1
+DB 10;y1
+DB 254;tile
+DB 5;palette
+DB 20;x2
+DB 28;y2
+
+DB 0;END Route1West167, 18 bytes
+
+Route1West166::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_161
+.east:    DB ROUTE1WEST_163
+.south:   DB ROUTE1WEST_165
+.west:    DB ROUTE1WEST_166
+
+DB 0;END Route1West166, 11 bytes
+
+Route1West165::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_166
+.east:    DB ROUTE1WEST_162
+.south:   DB ROUTE1WEST_167
+.west:    DB ROUTE1WEST_165
+
+DB 0;END Route1West165, 11 bytes
+
+Route1West159::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_159
+.east:    DB ROUTE1WEST_150
+.south:   DB ROUTE1WEST_161
+.west:    DB ROUTE1WEST_159
+
+DB 0;END Route1West159, 11 bytes
+
+Route1West161::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_159
+.east:    DB ROUTE1WEST_158
+.south:   DB ROUTE1WEST_166
+.west:    DB ROUTE1WEST_161
+
+DB 0;END Route1West161, 11 bytes
+
+Route1West157::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_154
+.east:    DB ROUTE1WEST_149
+.south:   DB ROUTE1WEST_157
+.west:    DB ROUTE1WEST_156
+
+DB 0;END Route1West157, 11 bytes
+
+Route1West156::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_152
+.east:    DB ROUTE1WEST_157
+.south:   DB ROUTE1WEST_156
+.west:    DB ROUTE1WEST_158
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (17)
+DB 11;x1
+DB 9;y1
+DB 254;tile
+DB 5;palette
+DB 18;x2
+DB 27;y2
+
+DB 0;END Route1West156, 18 bytes
+
+Route1West158::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_150
+.east:    DB ROUTE1WEST_156
+.south:   DB ROUTE1WEST_163
+.west:    DB ROUTE1WEST_161
+
+DB 0;END Route1West158, 11 bytes
+
+Route1West155::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_155
+.east:    DB ROUTE1WEST_142
+.south:   DB ROUTE1WEST_154
+.west:    DB ROUTE1WEST_153
+
+DB 0;END Route1West155, 11 bytes
+
+Route1West154::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_155
+.east:    DB ROUTE1WEST_141
+.south:   DB ROUTE1WEST_157
+.west:    DB ROUTE1WEST_152
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (18)
+DB 10;x1
+DB 12;y1
+DB 254;tile
+DB 5;palette
+DB 17;x2
+DB 30;y2
+
+DB 0;END Route1West154, 18 bytes
+
+Route1West152::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_153
+.east:    DB ROUTE1WEST_154
+.south:   DB ROUTE1WEST_156
+.west:    DB ROUTE1WEST_150
+
+DB 0;END Route1West152, 11 bytes
+
+Route1West153::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_153
+.east:    DB ROUTE1WEST_155
+.south:   DB ROUTE1WEST_152
+.west:    DB ROUTE1WEST_153
+
+DB 0;END Route1West153, 11 bytes
+
+Route1West150::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_150
+.east:    DB ROUTE1WEST_152
+.south:   DB ROUTE1WEST_158
+.west:    DB ROUTE1WEST_159
+
+DB 0;END Route1West150, 11 bytes
+
+Route1West141::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_142
+.east:    DB ROUTE1WEST_143
+.south:   DB ROUTE1WEST_149
+.west:    DB ROUTE1WEST_154
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
+DB 12;x1
+DB 8;y1
+DB 254;tile
+DB 5;palette
+DB 19;x2
+DB 26;y2
+
+DB 0;END Route1West141, 18 bytes
+
+Route1West142::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_142
+.east:    DB ROUTE1WEST_144
+.south:   DB ROUTE1WEST_141
+.west:    DB ROUTE1WEST_155
+
+DB 0;END Route1West142, 11 bytes
+
+Route1West144::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_144
+.east:    DB ROUTE1WEST_144
+.south:   DB ROUTE1WEST_143
+.west:    DB ROUTE1WEST_142
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (20)
+DB 16;x1
 DB 4;y1
-DB 194;tile
-DB 2;palette
+DB 254;tile
+DB 5;palette
+DB 23;x2
+DB 22;y2
+
+DB 0;END Route1West144, 18 bytes
+
+Route1West143::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_144
+.east:    DB ROUTE1WEST_145
+.south:   DB ROUTE1WEST_147
+.west:    DB ROUTE1WEST_141
+
+DB 0;END Route1West143, 11 bytes
+
+Route1West145::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_145
+.east:    DB ROUTE1WEST_101
+.south:   DB ROUTE1WEST_145
+.west:    DB ROUTE1WEST_143
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (21)
+DB 14;x1
+DB 10;y1
+DB 254;tile
+DB 5;palette
+DB 21;x2
+DB 28;y2
+
+DB 0;END Route1West145, 18 bytes
+
+Route1West149::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_141
+.east:    DB ROUTE1WEST_147
+.south:   DB ROUTE1WEST_149
+.west:    DB ROUTE1WEST_157
+
+DB 0;END Route1West149, 11 bytes
+
+Route1West147::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_143
+.east:    DB ROUTE1WEST_147
+.south:   DB ROUTE1WEST_147
+.west:    DB ROUTE1WEST_149
+
+DB 0;END Route1West147, 11 bytes
+
+Route1West139::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_105
+.east:    DB ROUTE1WEST_139
+.south:   DB ROUTE1WEST_139
+.west:    DB ROUTE1WEST_138
+
+DB 0;END Route1West139, 11 bytes
+
+Route1West138::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_103
+.east:    DB ROUTE1WEST_139
+.south:   DB ROUTE1WEST_169
+.west:    DB ROUTE1WEST_140
+
+DB 0;END Route1West138, 11 bytes
+
+Route1West140::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_101
+.east:    DB ROUTE1WEST_138
+.south:   DB ROUTE1WEST_172
+.west:    DB ROUTE1WEST_140
+
+DB 0;END Route1West140, 11 bytes
+
+Route1West137::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_137
+.east:    DB ROUTE1WEST_133
+.south:   DB ROUTE1WEST_137
+.west:    DB ROUTE1WEST_105
+
+DB 0;END Route1West137, 11 bytes
+
+Route1West133::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_133
+.east:    DB ROUTE1WEST_135
+.south:   DB ROUTE1WEST_133
+.west:    DB ROUTE1WEST_137
+
+DB 0;END Route1West133, 11 bytes
+
+Route1West135::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_135
+.east:    DB ROUTE1WEST_124
+.south:   DB ROUTE1WEST_135
+.west:    DB ROUTE1WEST_133
+
+DB 0;END Route1West135, 11 bytes
+
+Route1West130::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_131
+.east:    DB ROUTE1WEST_130
+.south:   DB ROUTE1WEST_192
+.west:    DB ROUTE1WEST_128
+
+DB 0;END Route1West130, 11 bytes
+
+Route1West131::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_126
+.east:    DB ROUTE1WEST_131
+.south:   DB ROUTE1WEST_130
+.west:    DB ROUTE1WEST_129
+
+DB 0;END Route1West131, 11 bytes
+
+Route1West129::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_124
+.east:    DB ROUTE1WEST_131
+.south:   DB ROUTE1WEST_128
+.west:    DB ROUTE1WEST_129
+
+DB 0;END Route1West129, 11 bytes
+
+Route1West128::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_129
+.east:    DB ROUTE1WEST_130
+.south:   DB ROUTE1WEST_190
+.west:    DB ROUTE1WEST_128
+
+DB 0;END Route1West128, 11 bytes
+
+Route1West124::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_125
+.east:    DB ROUTE1WEST_126
+.south:   DB ROUTE1WEST_129
+.west:    DB ROUTE1WEST_135
+
+DB 0;END Route1West124, 11 bytes
+
+Route1West125::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_120
+.east:    DB ROUTE1WEST_127
+.south:   DB ROUTE1WEST_124
+.west:    DB ROUTE1WEST_125
+
+DB 0;END Route1West125, 11 bytes
+
+Route1West127::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_122
+.east:    DB ROUTE1WEST_127
+.south:   DB ROUTE1WEST_126
+.west:    DB ROUTE1WEST_125
+
+DB 0;END Route1West127, 11 bytes
+
+Route1West126::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_127
+.east:    DB ROUTE1WEST_126
+.south:   DB ROUTE1WEST_131
+.west:    DB ROUTE1WEST_124
+
+DB 0;END Route1West126, 11 bytes
+
+Route1West122::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_123
+.east:    DB ROUTE1WEST_122
+.south:   DB ROUTE1WEST_127
+.west:    DB ROUTE1WEST_120
+
+DB 0;END Route1West122, 11 bytes
+
+Route1West123::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_118
+.east:    DB ROUTE1WEST_123
+.south:   DB ROUTE1WEST_122
+.west:    DB ROUTE1WEST_121
+
+DB 0;END Route1West123, 11 bytes
+
+Route1West121::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_116
+.east:    DB ROUTE1WEST_123
+.south:   DB ROUTE1WEST_120
+.west:    DB ROUTE1WEST_121
+
+DB 0;END Route1West121, 11 bytes
+
+Route1West120::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_121
+.east:    DB ROUTE1WEST_122
+.south:   DB ROUTE1WEST_125
+.west:    DB ROUTE1WEST_120
+
+DB 0;END Route1West120, 11 bytes
+
+Route1West115::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_115
+.east:    DB ROUTE1WEST_117
+.south:   DB ROUTE1WEST_114
+.west:    DB ROUTE1WEST_113
+
+DB 0;END Route1West115, 11 bytes
+
+Route1West114::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_115
+.east:    DB ROUTE1WEST_116
+.south:   DB ROUTE1WEST_114
+.west:    DB ROUTE1WEST_112
+
+DB 0;END Route1West114, 11 bytes
+
+Route1West112::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_113
+.east:    DB ROUTE1WEST_114
+.south:   DB ROUTE1WEST_112
+.west:    DB ROUTE1WEST_110
+
+DB 0;END Route1West112, 11 bytes
+
+Route1West113::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_113
+.east:    DB ROUTE1WEST_115
+.south:   DB ROUTE1WEST_112
+.west:    DB ROUTE1WEST_111
+
+DB 0;END Route1West113, 11 bytes
+
+Route1West111::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_111
+.east:    DB ROUTE1WEST_113
+.south:   DB ROUTE1WEST_110
+.west:    DB ROUTE1WEST_82
+
+DB 0;END Route1West111, 11 bytes
+
+Route1West110::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_111
+.east:    DB ROUTE1WEST_112
+.south:   DB ROUTE1WEST_110
+.west:    DB ROUTE1WEST_81
+
+DB 0;END Route1West110, 11 bytes
+
+Route1West116::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_117
+.east:    DB ROUTE1WEST_118
+.south:   DB ROUTE1WEST_121
+.west:    DB ROUTE1WEST_114
+
+DB 0;END Route1West116, 11 bytes
+
+Route1West117::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_117
+.east:    DB ROUTE1WEST_119
+.south:   DB ROUTE1WEST_116
+.west:    DB ROUTE1WEST_115
+
+DB 0;END Route1West117, 11 bytes
+
+Route1West119::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_119
+.east:    DB ROUTE1WEST_119
+.south:   DB ROUTE1WEST_118
+.west:    DB ROUTE1WEST_117
+
+DB 0;END Route1West119, 11 bytes
+
+Route1West118::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_119
+.east:    DB ROUTE1WEST_118
+.south:   DB ROUTE1WEST_123
+.west:    DB ROUTE1WEST_116
+
+DB 0;END Route1West118, 11 bytes
+
+Route1West106::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_106
+.east:    DB ROUTE1WEST_106
+.south:   DB ROUTE1WEST_105
+.west:    DB ROUTE1WEST_104
+
+DB 0;END Route1West106, 11 bytes
+
+Route1West105::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_106
+.east:    DB ROUTE1WEST_137
+.south:   DB ROUTE1WEST_139
+.west:    DB ROUTE1WEST_103
+
+DB 0;END Route1West105, 11 bytes
+
+Route1West103::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_104
+.east:    DB ROUTE1WEST_105
+.south:   DB ROUTE1WEST_138
+.west:    DB ROUTE1WEST_101
+
+DB 0;END Route1West103, 11 bytes
+
+Route1West104::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_97
+.east:    DB ROUTE1WEST_106
+.south:   DB ROUTE1WEST_103
+.west:    DB ROUTE1WEST_102
+
+DB 0;END Route1West104, 11 bytes
+
+Route1West102::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_95
+.east:    DB ROUTE1WEST_104
+.south:   DB ROUTE1WEST_101
+.west:    DB ROUTE1WEST_102
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (23)
+DB 10;x1
+DB 3;y1
+DB 254;tile
+DB 5;palette
+DB 17;x2
+DB 21;y2
+
+DB 0;END Route1West102, 18 bytes
+
+Route1West101::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_102
+.east:    DB ROUTE1WEST_103
+.south:   DB ROUTE1WEST_140
+.west:    DB ROUTE1WEST_145
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (22)
+DB 8;x1
+DB 8;y1
+DB 254;tile
+DB 5;palette
+DB 15;x2
+DB 26;y2
+
+DB 0;END Route1West101, 18 bytes
+
+Route1West95::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_96
+.east:    DB ROUTE1WEST_97
+.south:   DB ROUTE1WEST_102
+.west:    DB ROUTE1WEST_95
+
+DB 0;END Route1West95, 11 bytes
+
+Route1West96::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_77
+.east:    DB ROUTE1WEST_98
+.south:   DB ROUTE1WEST_95
+.west:    DB ROUTE1WEST_96
+
+DB 0;END Route1West96, 11 bytes
+
+Route1West98::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_79
+.east:    DB ROUTE1WEST_98
+.south:   DB ROUTE1WEST_97
+.west:    DB ROUTE1WEST_96
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (25)
+DB 13;x1
+DB 7;y1
+DB 254;tile
+DB 5;palette
+DB 20;x2
+DB 25;y2
+
+DB 0;END Route1West98, 18 bytes
+
+Route1West97::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_98
+.east:    DB ROUTE1WEST_97
+.south:   DB ROUTE1WEST_104
+.west:    DB ROUTE1WEST_95
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (24)
+DB 14;x1
+DB 4;y1
+DB 254;tile
+DB 5;palette
+DB 21;x2
+DB 22;y2
+
+DB 0;END Route1West97, 18 bytes
+
+Route1West93::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_93
+.east:    DB ROUTE1WEST_93
+.south:   DB ROUTE1WEST_93
+.west:    DB ROUTE1WEST_91
+
+DB 0;END Route1West93, 11 bytes
+
+Route1West91::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_91
+.east:    DB ROUTE1WEST_93
+.south:   DB ROUTE1WEST_91
+.west:    DB ROUTE1WEST_89
+
+DB 0;END Route1West91, 11 bytes
+
+Route1West89::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_89
+.east:    DB ROUTE1WEST_91
+.south:   DB ROUTE1WEST_89
+.west:    DB ROUTE1WEST_88
+
+DB 0;END Route1West89, 11 bytes
+
+Route1West86::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_86
+.east:    DB ROUTE1WEST_88
+.south:   DB ROUTE1WEST_85
+.west:    DB ROUTE1WEST_86
+
+DB 0;END Route1West86, 11 bytes
+
+Route1West85::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_86
+.east:    DB ROUTE1WEST_85
+.south:   DB ROUTE1WEST_80
+.west:    DB ROUTE1WEST_85
+
+DB 0;END Route1West85, 11 bytes
+
+Route1West88::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_88
+.east:    DB ROUTE1WEST_89
+.south:   DB ROUTE1WEST_88
+.west:    DB ROUTE1WEST_86
+
+DB 0;END Route1West88, 11 bytes
+
+Route1West82::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_82
+.east:    DB ROUTE1WEST_111
+.south:   DB ROUTE1WEST_81
+.west:    DB ROUTE1WEST_80
+
+DB 0;END Route1West82, 11 bytes
+
+Route1West81::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_82
+.east:    DB ROUTE1WEST_110
+.south:   DB ROUTE1WEST_81
+.west:    DB ROUTE1WEST_79
+
+DB 0;END Route1West81, 11 bytes
+
+Route1West79::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_80
+.east:    DB ROUTE1WEST_81
+.south:   DB ROUTE1WEST_98
+.west:    DB ROUTE1WEST_77
+
+DB 0;END Route1West79, 11 bytes
+
+Route1West80::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_85
+.east:    DB ROUTE1WEST_82
+.south:   DB ROUTE1WEST_79
+.west:    DB ROUTE1WEST_78
+
+DB 0;END Route1West80, 11 bytes
+
+Route1West78::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_78
+.east:    DB ROUTE1WEST_80
+.south:   DB ROUTE1WEST_77
+.west:    DB ROUTE1WEST_76
+
+DB 0;END Route1West78, 11 bytes
+
+Route1West77::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_78
+.east:    DB ROUTE1WEST_79
+.south:   DB ROUTE1WEST_96
+.west:    DB ROUTE1WEST_75
+
+DB 0;END Route1West77, 11 bytes
+
+Route1West71::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_72
+.east:    DB ROUTE1WEST_73
+.south:   DB ROUTE1WEST_71
+.west:    DB ROUTE1WEST_69
+
+DB 0;END Route1West71, 11 bytes
+
+Route1West72::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_72
+.east:    DB ROUTE1WEST_74
+.south:   DB ROUTE1WEST_71
+.west:    DB ROUTE1WEST_70
+
+DB 0;END Route1West72, 11 bytes
+
+Route1West74::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_74
+.east:    DB ROUTE1WEST_76
+.south:   DB ROUTE1WEST_73
+.west:    DB ROUTE1WEST_72
+
+DB 0;END Route1West74, 11 bytes
+
+Route1West73::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_74
+.east:    DB ROUTE1WEST_75
+.south:   DB ROUTE1WEST_73
+.west:    DB ROUTE1WEST_71
+
+DB 0;END Route1West73, 11 bytes
+
+Route1West75::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_76
+.east:    DB ROUTE1WEST_77
+.south:   DB ROUTE1WEST_75
+.west:    DB ROUTE1WEST_73
+
+DB 0;END Route1West75, 11 bytes
+
+Route1West76::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_76
+.east:    DB ROUTE1WEST_78
+.south:   DB ROUTE1WEST_75
+.west:    DB ROUTE1WEST_74
+
+DB 0;END Route1West76, 11 bytes
+
+Route1West70::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_70
+.east:    DB ROUTE1WEST_72
+.south:   DB ROUTE1WEST_69
+.west:    DB ROUTE1WEST_68
+
+DB 0;END Route1West70, 11 bytes
+
+Route1West69::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_70
+.east:    DB ROUTE1WEST_71
+.south:   DB ROUTE1WEST_69
+.west:    DB ROUTE1WEST_67
+
+DB 0;END Route1West69, 11 bytes
+
+Route1West67::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_68
+.east:    DB ROUTE1WEST_69
+.south:   DB ROUTE1WEST_66
+.west:    DB ROUTE1WEST_64
+
+DB 0;END Route1West67, 11 bytes
+
+Route1West66::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_67
+.east:    DB ROUTE1WEST_66
+.south:   DB ROUTE1WEST_66
+.west:    DB ROUTE1WEST_63
+
+DB 0;END Route1West66, 11 bytes
+
+Route1West68::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_68
+.east:    DB ROUTE1WEST_70
+.south:   DB ROUTE1WEST_67
+.west:    DB ROUTE1WEST_65
+
+DB 0;END Route1West68, 11 bytes
+
+Route1West65::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_65
+.east:    DB ROUTE1WEST_68
+.south:   DB ROUTE1WEST_64
+.west:    DB ROUTE1WEST_65
+
+DB 0;END Route1West65, 11 bytes
+
+Route1West62::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_62
+.east:    DB ROUTE1WEST_64
+.south:   DB ROUTE1WEST_61
+.west:    DB ROUTE1WEST_60
+
+DB 0;END Route1West62, 11 bytes
+
+Route1West61::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_62
+.east:    DB ROUTE1WEST_63
+.south:   DB ROUTE1WEST_61
+.west:    DB ROUTE1WEST_59
+
+DB 0;END Route1West61, 11 bytes
+
+Route1West63::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_64
+.east:    DB ROUTE1WEST_66
+.south:   DB ROUTE1WEST_63
+.west:    DB ROUTE1WEST_61
+
+DB 0;END Route1West63, 11 bytes
+
+Route1West64::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_65
+.east:    DB ROUTE1WEST_67
+.south:   DB ROUTE1WEST_63
+.west:    DB ROUTE1WEST_62
+
+DB 0;END Route1West64, 11 bytes
+
+Route1West60::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_60
+.east:    DB ROUTE1WEST_62
+.south:   DB ROUTE1WEST_59
+.west:    DB ROUTE1WEST_58
+
+DB 0;END Route1West60, 11 bytes
+
+Route1West59::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_60
+.east:    DB ROUTE1WEST_61
+.south:   DB ROUTE1WEST_59
+.west:    DB ROUTE1WEST_57
+
+DB 0;END Route1West59, 11 bytes
+
+Route1West57::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_58
+.east:    DB ROUTE1WEST_59
+.south:   DB ROUTE1WEST_57
+.west:    DB ROUTE1WEST_49
+
+DB 0;END Route1West57, 11 bytes
+
+Route1West58::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_58
+.east:    DB ROUTE1WEST_60
+.south:   DB ROUTE1WEST_57
+.west:    DB ROUTE1WEST_51
+
+DB 0;END Route1West58, 11 bytes
+
+Route1West51::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_51
+.east:    DB ROUTE1WEST_58
+.south:   DB ROUTE1WEST_49
+.west:    DB ROUTE1WEST_52
+
+DB 0;END Route1West51, 11 bytes
+
+Route1West52::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_52
+.east:    DB ROUTE1WEST_51
+.south:   DB ROUTE1WEST_50
+.west:    DB ROUTE1WEST_52
+
+DB 0;END Route1West52, 11 bytes
+
+Route1West50::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_52
+.east:    DB ROUTE1WEST_49
+.south:   DB ROUTE1WEST_48
+.west:    DB ROUTE1WEST_50
+
+DB 0;END Route1West50, 11 bytes
+
+Route1West49::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_51
+.east:    DB ROUTE1WEST_57
+.south:   DB ROUTE1WEST_47
+.west:    DB ROUTE1WEST_50
+
+DB 0;END Route1West49, 11 bytes
+
+Route1West45::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_47
+.east:    DB ROUTE1WEST_45
+.south:   DB ROUTE1WEST_43
+.west:    DB ROUTE1WEST_46
+
+DB 0;END Route1West45, 11 bytes
+
+Route1West46::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_48
+.east:    DB ROUTE1WEST_45
+.south:   DB ROUTE1WEST_44
+.west:    DB ROUTE1WEST_46
+
+DB 0;END Route1West46, 11 bytes
+
+Route1West48::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_50
+.east:    DB ROUTE1WEST_47
+.south:   DB ROUTE1WEST_46
+.west:    DB ROUTE1WEST_48
+
+DB 0;END Route1West48, 11 bytes
+
+Route1West47::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_49
+.east:    DB ROUTE1WEST_47
+.south:   DB ROUTE1WEST_45
+.west:    DB ROUTE1WEST_48
+
+DB 0;END Route1West47, 11 bytes
+
+Route1West43::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_45
+.east:    DB ROUTE1WEST_43
+.south:   DB ROUTE1WEST_41
+.west:    DB ROUTE1WEST_44
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (8)
+DB 8;x1
+DB -5;y1
+DW TreeStamp
+DB 24;x2
+DB 11;y2
+
+DB 0;END Route1West43, 18 bytes
+
+Route1West44::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_46
+.east:    DB ROUTE1WEST_43
+.south:   DB ROUTE1WEST_42
+.west:    DB ROUTE1WEST_44
+
+DB 0;END Route1West44, 11 bytes
+
+Route1West42::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_44
+.east:    DB ROUTE1WEST_41
+.south:   DB ROUTE1WEST_36
+.west:    DB ROUTE1WEST_42
+
+DB 0;END Route1West42, 11 bytes
+
+Route1West41::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_43
+.east:    DB ROUTE1WEST_41
+.south:   DB ROUTE1WEST_35
+.west:    DB ROUTE1WEST_42
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (8)
+DB 8;x1
+DB -5;y1
+DW TreeStamp
+DB 24;x2
+DB 11;y2
+
+DB 0;END Route1West41, 18 bytes
+
+Route1West35::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_41
+.east:    DB ROUTE1WEST_35
+.south:   DB ROUTE1WEST_5
+.west:    DB ROUTE1WEST_36
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (7)
+DB 4;x1
+DB 20;y1
+DW TreeStamp
 DB 32;x2
+DB 32;y2
+
+DB 0;END Route1West35, 18 bytes
+
+Route1West36::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_42
+.east:    DB ROUTE1WEST_35
+.south:   DB ROUTE1WEST_7
+.west:    DB ROUTE1WEST_36
+
+DB 0;END Route1West36, 11 bytes
+
+Route1West33::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_34
+.east:    DB ROUTE1WEST_33
+.south:   DB ROUTE1WEST_33
+.west:    DB ROUTE1WEST_4
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 4;x1
+DB 0;y1
+DW TreeStamp
+DB 12;x2
+DB 28;y2
+
+DB 0;END Route1West33, 18 bytes
+
+Route1West34::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_34
+.east:    DB ROUTE1WEST_34
+.south:   DB ROUTE1WEST_33
+.west:    DB ROUTE1WEST_5
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (6)
+DB 4;x1
+DB 0;y1
+DW TreeStamp
+DB 12;x2
+DB 32;y2
+
+DB 0;END Route1West34, 18 bytes
+
+Route1West28::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_31
+.east:    DB ROUTE1WEST_28
+.south:   DB ROUTE1WEST_27
+.west:    DB ROUTE1WEST_30
+
+DB 0;END Route1West28, 11 bytes
+
+Route1West27::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_28
+.east:    DB ROUTE1WEST_27
+.south:   DB ROUTE1WEST_25
+.west:    DB ROUTE1WEST_29
+
+DB 0;END Route1West27, 11 bytes
+
+Route1West29::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_30
+.east:    DB ROUTE1WEST_27
+.south:   DB ROUTE1WEST_26
+.west:    DB ROUTE1WEST_29
+
+DB 0;END Route1West29, 11 bytes
+
+Route1West30::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_32
+.east:    DB ROUTE1WEST_28
+.south:   DB ROUTE1WEST_29
+.west:    DB ROUTE1WEST_30
+
+DB 0;END Route1West30, 11 bytes
+
+Route1West32::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_32
+.east:    DB ROUTE1WEST_31
+.south:   DB ROUTE1WEST_30
+.west:    DB ROUTE1WEST_32
+
+DB 0;END Route1West32, 11 bytes
+
+Route1West31::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_31
+.east:    DB ROUTE1WEST_31
+.south:   DB ROUTE1WEST_28
+.west:    DB ROUTE1WEST_32
+
+DB 0;END Route1West31, 11 bytes
+
+Route1West25::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_27
+.east:    DB ROUTE1WEST_25
+.south:   DB ROUTE1WEST_22
+.west:    DB ROUTE1WEST_26
+
+DB 0;END Route1West25, 11 bytes
+
+Route1West26::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_29
+.east:    DB ROUTE1WEST_25
+.south:   DB ROUTE1WEST_24
+.west:    DB ROUTE1WEST_26
+
+DB 0;END Route1West26, 11 bytes
+
+Route1West24::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_26
+.east:    DB ROUTE1WEST_22
+.south:   DB ROUTE1WEST_23
+.west:    DB ROUTE1WEST_24
+
+DB 0;END Route1West24, 11 bytes
+
+Route1West23::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_24
+.east:    DB ROUTE1WEST_21
+.south:   DB ROUTE1WEST_20
+.west:    DB ROUTE1WEST_23
+
+DB 0;END Route1West23, 11 bytes
+
+Route1West21::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_22
+.east:    DB ROUTE1WEST_21
+.south:   DB ROUTE1WEST_19
+.west:    DB ROUTE1WEST_23
+
+DB 0;END Route1West21, 11 bytes
+
+Route1West22::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_25
+.east:    DB ROUTE1WEST_22
+.south:   DB ROUTE1WEST_21
+.west:    DB ROUTE1WEST_24
+
+DB 0;END Route1West22, 11 bytes
+
+Route1West16::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_19
+.east:    DB ROUTE1WEST_16
+.south:   DB ROUTE1WEST_15
+.west:    DB ROUTE1WEST_18
+
+DB 0;END Route1West16, 11 bytes
+
+Route1West15::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_16
+.east:    DB ROUTE1WEST_15
+.south:   DB ROUTE1WEST_13
+.west:    DB ROUTE1WEST_17
+
+DB 0;END Route1West15, 11 bytes
+
+Route1West17::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_18
+.east:    DB ROUTE1WEST_15
+.south:   DB ROUTE1WEST_14
+.west:    DB ROUTE1WEST_17
+
+DB 0;END Route1West17, 11 bytes
+
+Route1West18::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_20
+.east:    DB ROUTE1WEST_16
+.south:   DB ROUTE1WEST_17
+.west:    DB ROUTE1WEST_18
+
+DB 0;END Route1West18, 11 bytes
+
+Route1West20::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_23
+.east:    DB ROUTE1WEST_19
+.south:   DB ROUTE1WEST_18
+.west:    DB ROUTE1WEST_20
+
+DB 0;END Route1West20, 11 bytes
+
+Route1West19::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_21
+.east:    DB ROUTE1WEST_19
+.south:   DB ROUTE1WEST_16
+.west:    DB ROUTE1WEST_20
+
+DB 0;END Route1West19, 11 bytes
+
+Route1West13::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_15
+.east:    DB ROUTE1WEST_13
+.south:   DB ROUTE1WEST_10
+.west:    DB ROUTE1WEST_14
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (9)
+DB 12;x1
+DB 9;y1
+DW TreeStamp
+DB 28;x2
+DB 25;y2
+
+DB 0;END Route1West13, 18 bytes
+
+Route1West14::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_17
+.east:    DB ROUTE1WEST_13
+.south:   DB ROUTE1WEST_12
+.west:    DB ROUTE1WEST_14
+
+DB 0;END Route1West14, 11 bytes
+
+Route1West12::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_14
+.east:    DB ROUTE1WEST_10
+.south:   DB ROUTE1WEST_11
+.west:    DB ROUTE1WEST_12
+
+DB 0;END Route1West12, 11 bytes
+
+Route1West11::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_12
+.east:    DB ROUTE1WEST_9
+.south:   DB ROUTE1WEST_1
+.west:    DB ROUTE1WEST_11
+
+DB 0;END Route1West11, 11 bytes
+
+Route1West9::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_10
+.east:    DB ROUTE1WEST_6
+.south:   DB ROUTE1WEST_9
+.west:    DB ROUTE1WEST_11
+
+DB 0;END Route1West9, 11 bytes
+
+Route1West10::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_13
+.east:    DB ROUTE1WEST_8
+.south:   DB ROUTE1WEST_9
+.west:    DB ROUTE1WEST_12
+
+DB 0;END Route1West10, 11 bytes
+
+Route1West8::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_8
+.east:    DB ROUTE1WEST_7
+.south:   DB ROUTE1WEST_6
+.west:    DB ROUTE1WEST_10
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (4)
+DB 11;x1
+DB 11;y1
+DW TreeStamp
+DB 27;x2
+DB 27;y2
+
+DB 0;END Route1West8, 18 bytes
+
+Route1West6::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_8
+.east:    DB ROUTE1WEST_3
+.south:   DB ROUTE1WEST_6
+.west:    DB ROUTE1WEST_9
+
+DB 0;END Route1West6, 11 bytes
+
+Route1West7::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_36
+.east:    DB ROUTE1WEST_5
+.south:   DB ROUTE1WEST_3
+.west:    DB ROUTE1WEST_8
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (5)
+DB 12;x1
+DB 10;y1
+DW TreeStamp
+DB 28;x2
+DB 30;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (4)
+DB 14;x1
+DB 12;y1
+DW ForestStamp
+DB 26;x2
+DB 28;y2
+
+DB 0;END Route1West7, 25 bytes
+
+Route1West5::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_35
+.east:    DB ROUTE1WEST_34
+.south:   DB ROUTE1WEST_4
+.west:    DB ROUTE1WEST_7
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (3)
+DB 30;x
+DB 11;y
+DW HouseWallBottomRight
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (1)
+DB 20;x
+DB 11;y
+DW HouseWallBottomLeft
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (10)
+DB 26;x1
+DB 11;y1
+DB 177;tile
+DB 4;palette
+DB 30;x2
+DB 12;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (11)
+DB 22;x1
+DB 11;y1
+DB 177;tile
+DB 4;palette
+DB 24;x2
+DB 12;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (4)
+DB 20;x
+DB 4;y
+DW HouseRoofUpperLeft
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (5)
+DB 30;x
+DB 4;y
+DW HouseRoofUpperRight
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (22)
+DB 31;x1
+DB 9;y1
+DB 168;tile
+DB 3;palette
+DB 32;x2
+DB 11;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (21)
+DB 20;x1
+DB 9;y1
+DB 152;tile
+DB 3;palette
+DB 21;x2
+DB 11;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (18)
+DB 21;x1
+DB 9;y1
+DB 180;tile
+DB 4;palette
+DB 31;x2
+DB 10;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (23)
+DB 25;x1
+DB 8;y1
+DB 147;tile
+DB 4;palette
+DB 27;x2
+DB 9;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (36)
+DB 22;x1
+DB 7;y1
+DB 146;tile
+DB 4;palette
+DB 30;x2
+DB 8;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (26)
+DB 21;x1
+DB 5;y1
+DB 148;tile
+DB 3;palette
+DB 22;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (27)
+DB 20;x1
+DB 5;y1
+DB 144;tile
+DB 3;palette
+DB 21;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (25)
+DB 30;x1
+DB 5;y1
+DB 132;tile
+DB 4;palette
+DB 31;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (37)
+DB 22;x1
+DB 5;y1
+DB 131;tile
+DB 4;palette
+DB 30;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (24)
+DB 31;x1
+DB 5;y1
+DB 150;tile
+DB 4;palette
+DB 32;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (38)
+DB 22;x1
+DB 4;y1
+DB 130;tile
+DB 4;palette
+DB 30;x2
 DB 5;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
-DB 0;x1
-DB 0;y1
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (35)
+DB 26;x1
+DB 10;y1
+DB 190;tile
+DB 4;palette
+DB 31;x2
+DB 11;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (32)
+DB 21;x1
+DB 10;y1
+DB 190;tile
+DB 4;palette
+DB 24;x2
+DB 11;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (34)
+DB 27;x1
+DB 8;y1
+DB 164;tile
+DB 4;palette
+DB 30;x2
+DB 9;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (33)
+DB 22;x1
+DB 8;y1
+DB 164;tile
+DB 4;palette
+DB 25;x2
+DB 9;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (2)
+DB 4;x
+DB 24;y
+DW House
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (4)
+DB 4;x
+DB 12;y
+DW House
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (1)
+DB 24;x
+DB 10;y
+DW HouseDoor
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (5)
+DB 20;x
+DB 7;y
+DW HouseRoofLowerLeft
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (3)
+DB 30;x
+DB 7;y
+DW HouseRoofLowerRight
+
+DB 0;END Route1West5, 175 bytes
+
+Route1West4::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_5
+.east:    DB ROUTE1WEST_33
+.south:   DB ROUTE1WEST_2
+.west:    DB ROUTE1WEST_3
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign (1)
+DB 6;x
+DB 22;y
+DW SignStamp
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (6)
+DB 8;x
+DB 8;y
+DW Business
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (7)
+DB 20;x
+DB 0;y
+DW Business
+
+DB 0;END Route1West4, 26 bytes
+
+Route1West3::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_7
+.east:    DB ROUTE1WEST_4
+.south:   DB ROUTE1WEST_1
+.west:    DB ROUTE1WEST_6
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (3)
+DB 16;x1
+DB 3;y1
+DW TreeStamp
+DB 24;x2
+DB 23;y2
+
+DB 0;END Route1West3, 18 bytes
+
+Route1West2::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_4
+.east:    DB ROUTE1WEST_2
+.south:   DB ROUTE1EAST
+.west:    DB ROUTE1WEST_1
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
+DB 12;x1
+DB 28;y1
 DB 141;tile
 DB 1;palette
-DB 12;x2
-DB 4;y2
+DB 20;x2
+DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
-DB 16;x1
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (13)
+DB 0;x1
+DB 31;y1
+DB 193;tile
+DB 2;palette
+DB 4;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
+DB 24;x1
 DB 0;y1
+DB 167;tile
+DB 2;palette
+DB 28;x2
+DB 24;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (11)
+DB 4;x1
+DB 16;y1
+DB 141;tile
+DB 1;palette
+DB 20;x2
+DB 24;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (3)
+DB 4;x1
+DB 28;y1
+DW TreeStamp
+DB 12;x2
+DB 32;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 20;x1
+DB 0;y1
+DW TreeStamp
+DB 24;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (7)
+DB 24;x1
+DB 23;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 24;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (9)
+DB 0;x1
+DB 15;y1
+DB 193;tile
+DB 2;palette
+DB 12;x2
+DB 16;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (4)
+DB 0;x1
+DB 12;y1
+DW TreeStamp
+DB 4;x2
+DB 24;y2
+
+DB 0;END Route1West2, 74 bytes
+
+Route1West1::
+.tile:    DB 255
+.palette: DB 1
+.north:   DB ROUTE1WEST_3
+.east:    DB ROUTE1WEST_2
+.south:   DB ROUTE1WEST
+.west:    DB ROUTE1WEST_1
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
+DB 28;x1
+DB 28;y1
 DB 141;tile
 DB 1;palette
 DB 32;x2
-DB 4;y2
+DB 32;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 12;x
-DB 0;y
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (12)
+DB 28;x1
+DB 31;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
+DB 24;x1
+DB 0;y1
+DB 167;tile
+DB 2;palette
+DB 28;x2
+DB 24;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 20;x1
+DB 0;y1
+DW TreeStamp
+DB 24;x2
+DB 32;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (4)
+DB 24;x
+DB 28;y
 DW TreeStamp
 
-DB 0;END BilletTownSEWater1, 37 bytes
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (7)
+DB 24;x1
+DB 23;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 24;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (8)
+DB 24;x1
+DB 15;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 16;y2
+
+DB 0;END Route1West1, 58 bytes
+
+CenterFieldChunk1::
+.tile:    DB 253
+.palette: DB 1
+.north:   DB CENTERFIELDCHUNK_2
+.east:    DB CENTERFIELDCHUNK_6
+.south:   DB CENTERFIELDCHUNK_7
+.west:    DB CENTERFIELDCHUNK
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
+DB 26;x
+DB 12;y
+DB 141;tile
+DB 1;palette
+
+DB 0;END CenterFieldChunk1, 16 bytes
 
 RightFieldChunk::
 .tile:    DB 253
 .palette: DB 1
 .north:   DB CENTERFIELDCHUNK
-.east:    DB RIGHTFIELDCHUNK
+.east:    DB CENTERFIELDCHUNK_7
 .south:   DB RIGHTFIELDCHUNK
 .west:    DB INFIELDCHUNK
 
@@ -281,9 +3648,21 @@ DB 22;y
 DB 141;tile
 DB 1;palette
 
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (13)
+DB 25;x
+DB 7;y
+DB 141;tile
+DB 1;palette
+
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (4)
 DB 23;x
 DB 6;y
+DB 141;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
+DB 26;x
+DB 5;y
 DB 141;tile
 DB 1;palette
 
@@ -295,7 +3674,7 @@ DB 5;palette
 DB 32;x2
 DB 28;y2
 
-DB 0;END RightFieldChunk, 28 bytes
+DB 0;END RightFieldChunk, 38 bytes
 
 BilletTownSW::
 .tile:    DB 255
@@ -305,20 +3684,20 @@ BilletTownSW::
 .south:   DB BILLETTOWNSWWATER
 .west:    DB BILLETTOWNSW
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (6)
-DB 31;x1
-DB 9;y1
-DB 194;tile
-DB 2;palette
-DB 32;x2
-DB 32;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (10)
 DB 24;x1
 DB 9;y1
 DB 241;tile
 DB 2;palette
 DB 25;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (6)
+DB 31;x1
+DB 9;y1
+DB 194;tile
+DB 2;palette
+DB 32;x2
 DB 32;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject
@@ -343,6 +3722,12 @@ DB 8;y
 DB 226;tile
 DB 2;palette
 
+DB MAP_OBJ_TILE | MAP_COLLISION_WATER;;GameObject (12)
+DB 24;x
+DB 8;y
+DB 136;tile
+DB 2;palette
+
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (11)
 DB 25;x1
 DB 8;y1
@@ -350,12 +3735,6 @@ DB 242;tile
 DB 2;palette
 DB 31;x2
 DB 9;y2
-
-DB MAP_OBJ_TILE | MAP_COLLISION_WATER;;GameObject (12)
-DB 24;x
-DB 8;y
-DB 136;tile
-DB 2;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
 DB 24;x1
@@ -366,49 +3745,28 @@ DB 32;x2
 DB 4;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 28;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 24;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 20;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 16;x
 DB 12;y
 DW TreeStamp
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 8;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 14;x1
+DB 0;y1
 DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 0;y
-DW TreeStamp
+DB 18;x2
+DB 12;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 18;x
 DB 14;y
 DW TreeStamp
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 16;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 20;x1
+DB 16;y1
 DW TreeStamp
+DB 24;x2
+DB 32;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
 DB 25;x1
@@ -430,14 +3788,14 @@ DB 14;y
 DB 192;tile
 DB 1;palette
 
-DB 0;END BilletTownSW, 125 bytes
+DB 0;END BilletTownSW, 104 bytes
 
 BilletTownSEWater::
 .tile:    DB 188
 .palette: DB 7
 .north:   DB BILLETTOWNSE
-.east:    DB BILLETTOWNSEWATER_1
-.south:   DB BILLETTOWNSEWATER
+.east:    DB BILLETTOWNSEWATER
+.south:   DB ROUTE1WEST_237
 .west:    DB BILLETTOWNSWWATER
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER;;GameObject (10)
@@ -448,14 +3806,6 @@ DB 2;palette
 DB 32;x2
 DB 5;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-DB 16;x1
-DB 0;y1
-DB 167;tile
-DB 1;palette
-DB 21;x2
-DB 4;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
 DB 0;x1
 DB 0;y1
@@ -465,17 +3815,20 @@ DB 12;x2
 DB 4;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+DB 16;x1
+DB 0;y1
+DB 167;tile
+DB 1;palette
+DB 21;x2
+DB 4;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
 DB 21;x1
 DB 0;y1
 DB 141;tile
 DB 1;palette
 DB 32;x2
 DB 4;y2
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 12;x
-DB 0;y
-DW TreeStamp
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Sign (31)
 DB 16;x
@@ -517,7 +3870,14 @@ DB 11;x
 DB 5;y
 DW WaterRock
 
-DB 0;END BilletTownSEWater, 84 bytes
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
+DB 12;x1
+DB -4;y1
+DW TreeStamp
+DB 16;x2
+DB 4;y2
+
+DB 0;END BilletTownSEWater, 86 bytes
 
 BilletTownSE::
 .tile:    DB 255
@@ -555,14 +3915,14 @@ DB 22;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
-DB 9;x
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
+DB 20;x
 DB 21;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
-DB 20;x
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
+DB 9;x
 DB 21;y
 DB 151;tile
 DB 1;palette
@@ -597,11 +3957,6 @@ DB 0;palette
 DB 10;x2
 DB 8;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
-DB 10;x
-DB 6;y
-DW SignStamp
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (5)
 DB 12;x1
 DB 6;y1
@@ -610,23 +3965,10 @@ DB 0;palette
 DB 16;x2
 DB 8;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (4)
-DB 6;x1
-DB 3;y1
-DB 177;tile
-DB 4;palette
-DB 8;x2
-DB 4;y2
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (2)
-DB 14;x
-DB 3;y
-DW HouseWallBottomRight
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House
-DB 4;x
-DB 3;y
-DW HouseWallBottomLeft
+DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
+DB 10;x
+DB 6;y
+DW SignStamp
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (8)
 DB 10;x1
@@ -636,23 +3978,29 @@ DB 4;palette
 DB 14;x2
 DB 4;y2
 
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (4)
+DB 6;x1
+DB 3;y1
+DB 177;tile
+DB 4;palette
+DB 8;x2
+DB 4;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House
+DB 4;x
+DB 3;y
+DW HouseWallBottomLeft
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (2)
+DB 14;x
+DB 3;y
+DW HouseWallBottomRight
+
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
 DB 0;x
 DB 1;y
 DB 151;tile
 DB 1;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 0,0
-DB 4;x
-DB 0;y
-DB 160;tile
-DB 3;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 1,0
-DB 15;x
-DB 0;y
-DB 166;tile
-DB 4;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 0,0
 DB 14;x
@@ -660,26 +4008,23 @@ DB 0;y
 DB 165;tile
 DB 4;palette
 
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 0,0
+DB 4;x
+DB 0;y
+DB 160;tile
+DB 3;palette
+
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 1,0
 DB 5;x
 DB 0;y
 DB 161;tile
 DB 4;palette
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (1)
-DB 12;x
-DB 28;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 12;x
-DB 22;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 12;x
-DB 18;y
-DW TreeStamp
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 1,0
+DB 15;x
+DB 0;y
+DB 166;tile
+DB 4;palette
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 0;x
@@ -699,6 +4044,20 @@ DB 0;y
 DB 209;tile
 DB 1;palette
 
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
+DB 12;x1
+DB -4;y1
+DW TreeStamp
+DB 16;x2
+DB 4;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 12;x1
+DB 18;y1
+DW TreeStamp
+DB 16;x2
+DB 26;y2
+
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
 DB 0;x1
 DB 14;y1
@@ -706,20 +4065,20 @@ DW TreeStamp
 DB 24;x2
 DB 18;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (20)
-DB 15;x1
-DB 1;y1
-DB 168;tile
-DB 3;palette
-DB 16;x2
-DB 3;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (19)
 DB 4;x1
 DB 1;y1
 DB 152;tile
 DB 3;palette
 DB 5;x2
+DB 3;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (20)
+DB 15;x1
+DB 1;y1
+DB 168;tile
+DB 3;palette
+DB 16;x2
 DB 3;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (16)
@@ -738,20 +4097,20 @@ DB 4;palette
 DB 11;x2
 DB 1;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (30)
-DB 5;x1
-DB 2;y1
-DB 190;tile
-DB 4;palette
-DB 8;x2
-DB 3;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (28)
 DB 10;x1
 DB 2;y1
 DB 190;tile
 DB 4;palette
 DB 15;x2
+DB 3;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (30)
+DB 5;x1
+DB 2;y1
+DB 190;tile
+DB 4;palette
+DB 8;x2
 DB 3;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (29)
@@ -781,7 +4140,7 @@ DB 14;y
 DB 193;tile
 DB 1;palette
 
-DB 0;END BilletTownSE, 237 bytes
+DB 0;END BilletTownSE, 236 bytes
 
 LeftFieldChunk::
 .tile:    DB 253
@@ -818,11 +4177,11 @@ InfieldChunk::
 .palette: DB 1
 .north:   DB LEFTFIELDCHUNK
 .east:    DB RIGHTFIELDCHUNK
-.south:   DB BILLETTOWNSEWATER_1
+.south:   DB INFIELDCHUNK
 .west:    DB BILLETTOWNSE
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
-DB 17;x
+DB 16;x
 DB 29;y
 DB 141;tile
 DB 1;palette
@@ -913,7 +4272,7 @@ DB 0;END InfieldChunk, 88 bytes
 Route1East::
 .tile:    DB 255
 .palette: DB 1
-.north:   DB ROUTE1EAST
+.north:   DB ROUTE1WEST_2
 .east:    DB ROUTE1EAST
 .south:   DB BILLETTOWNNE
 .west:    DB ROUTE1WEST
@@ -950,50 +4309,58 @@ DB 1;palette
 DB 16;x2
 DB 24;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
-DB 18;x1
-DB 1;y1
-DB 167;tile
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (8)
+DB 16;x1
+DB 19;y1
+DB 193;tile
 DB 2;palette
-DB 21;x2
-DB 15;y2
+DB 20;x2
+DB 20;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 28;y
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (12)
+DB 0;x1
+DB 11;y1
+DB 193;tile
+DB 2;palette
+DB 2;x2
+DB 12;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (13)
+DB 2;x1
+DB 11;y1
+DB 180;tile
+DB 2;palette
+DB 4;x2
+DB 12;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (7)
+DB 4;x1
+DB 11;y1
+DB 193;tile
+DB 2;palette
+DB 20;x2
+DB 12;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 20;x1
+DB 0;y1
 DW TreeStamp
+DB 24;x2
+DB 32;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 24;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
+DB 0;x1
+DB 16;y1
 DW TreeStamp
+DB 8;x2
+DB 20;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 20;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 0;x
-DB 16;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 16;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 4;x
-DB 16;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Sign (1)
+DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
 DB 2;x
 DB 26;y
 DW SignStamp
 
-DB 0;END Route1East, 81 bytes
+DB 0;END Route1East, 86 bytes
 
 BilletTownNW::
 .tile:    DB 255
@@ -1002,11 +4369,6 @@ BilletTownNW::
 .east:    DB BILLETTOWNNE
 .south:   DB BILLETTOWNSW
 .west:    DB BILLETTOWNNW
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
-DB 30;x
-DB 30;y
-DW SignStamp
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (3)
 DB 24;x1
@@ -1024,10 +4386,10 @@ DB 2;palette
 DB 20;x2
 DB 32;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (1)
-DB 12;x
-DB 26;y
-DW TreeStamp
+DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
+DB 30;x
+DB 30;y
+DW SignStamp
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (5)
 DB 24;x1
@@ -1036,11 +4398,6 @@ DB 167;tile
 DB 2;palette
 DB 32;x2
 DB 30;y2
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (2)
-DB 24;x
-DB 23;y
-DW HouseWallBottomLeft
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (13)
 DB 30;x
@@ -1060,6 +4417,11 @@ DB 22;x
 DB 22;y
 DW SignStamp
 
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (2)
+DB 24;x
+DB 23;y
+DW HouseWallBottomLeft
+
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
 DB 20;x
 DB 21;y
@@ -1076,15 +4438,15 @@ DB 24;x
 DB 19;y
 DW HouseRoofLowerLeft
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (10)
-DB 24;x
-DB 18;y
-DW HouseRoofUpperLeft
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (11)
 DB 30;x
 DB 18;y
 DW HouseRoofUpperRight
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (10)
+DB 24;x
+DB 18;y
+DW HouseRoofUpperLeft
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
 DB 23;x
@@ -1100,64 +4462,44 @@ DB 1;palette
 DB 32;x2
 DB 4;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 16;x1
+DB 12;y1
+DW TreeStamp
+DB 32;x2
+DB 16;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
+DB 24;x1
+DB 4;y1
+DW TreeStamp
+DB 32;x2
+DB 8;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 12;x1
+DB 0;y1
+DW TreeStamp
+DB 24;x2
+DB 8;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (3)
+DB 6;x1
+DB 2;y1
+DW ForestStamp
+DB 22;x2
+DB 14;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 14;x1
+DB 14;y1
+DW TreeStamp
+DB 18;x2
+DB 30;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (1)
+DB 12;x
 DB 28;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 22;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 18;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (11)
-DB 24;x
-DB 12;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 16;x
-DB 12;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 12;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (10)
-DB 28;x
-DB 12;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 8;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (8)
-DB 28;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (9)
-DB 24;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 0;y
 DW TreeStamp
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (30)
@@ -1166,14 +4508,6 @@ DB 21;y1
 DB 168;tile
 DB 3;palette
 DB 32;x2
-DB 23;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (31)
-DB 24;x1
-DB 21;y1
-DB 152;tile
-DB 3;palette
-DB 25;x2
 DB 23;y2
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (30)
@@ -1187,6 +4521,14 @@ DB 25;x
 DB 22;y
 DB 180;tile
 DB 4;palette
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (31)
+DB 24;x1
+DB 21;y1
+DB 152;tile
+DB 3;palette
+DB 25;x2
+DB 23;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (19)
 DB 25;x1
@@ -1218,6 +4560,91 @@ DB 4;palette
 DB 30;x2
 DB 19;y2
 
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 22;x1
+DB 6;y1
+DW ForestStamp
+DB 30;x2
+DB 14;y2
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,1
+DB 31;x
+DB 12;y
+DB 193;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,2
+DB 30;x
+DB 11;y
+DB 211;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,2
+DB 31;x
+DB 11;y
+DB 212;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,3
+DB 30;x
+DB 10;y
+DB 192;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,3
+DB 31;x
+DB 10;y
+DB 196;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,4
+DB 31;x
+DB 9;y
+DB 214;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,4
+DB 30;x
+DB 9;y
+DB 213;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,5
+DB 31;x
+DB 8;y
+DB 193;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,5
+DB 30;x
+DB 8;y
+DB 197;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,6
+DB 31;x
+DB 7;y
+DB 212;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,6
+DB 30;x
+DB 7;y
+DB 211;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,7
+DB 31;x
+DB 6;y
+DB 196;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,7
+DB 30;x
+DB 6;y
+DB 192;tile
+DB 1;palette
+
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (39)
 DB 28;x1
 DB 22;y1
@@ -1225,12 +4652,6 @@ DB 190;tile
 DB 4;palette
 DB 30;x2
 DB 23;y2
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (35)
-DB 26;x
-DB 20;y
-DB 164;tile
-DB 4;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (38)
 DB 28;x1
@@ -1240,20 +4661,21 @@ DB 4;palette
 DB 30;x2
 DB 21;y2
 
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (35)
+DB 26;x
+DB 20;y
+DB 164;tile
+DB 4;palette
+
 DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (2)
 DB 26;x
 DB 22;y
 DW HouseDoor
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 14;y
-DW TreeStamp
-
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
-DB 14;x
+DB 15;x
 DB 28;y
-DB 192;tile
+DB 193;tile
 DB 1;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (14)
@@ -1268,15 +4690,21 @@ DB 0;y
 DB 193;tile
 DB 1;palette
 
-DB 0;END BilletTownNW, 255 bytes
+DB 0;END BilletTownNW, 297 bytes
 
 BilletTownSWWater::
 .tile:    DB 188
 .palette: DB 7
 .north:   DB BILLETTOWNSW
-.east:    DB BILLETTOWNSEWATER_1
-.south:   DB BILLETTOWNSWWATER
+.east:    DB BILLETTOWNSEWATER
+.south:   DB ROUTE1WEST_231
 .west:    DB BILLETTOWNSWWATER
+
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (15)
+DB 24;x
+DB 12;y
+DB 230;tile
+DB 2;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (14)
 DB 0;x1
@@ -1285,12 +4713,6 @@ DB 241;tile
 DB 2;palette
 DB 24;x2
 DB 13;y2
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (15)
-DB 24;x
-DB 12;y
-DB 230;tile
-DB 2;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (13)
 DB 24;x1
@@ -1323,23 +4745,8 @@ DB 32;x2
 DB 4;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 8;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 16;x
 DB 8;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 0;y
 DW TreeStamp
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Sign (39)
@@ -1382,7 +4789,14 @@ DB 14;x
 DB 13;y
 DW WaterRock
 
-DB 0;END BilletTownSWWater, 109 bytes
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 20;x1
+DB 0;y1
+DW TreeStamp
+DB 24;x2
+DB 12;y2
+
+DB 0;END BilletTownSWWater, 101 bytes
 
 BilletTownNE::
 .tile:    DB 255
@@ -1392,12 +4806,6 @@ BilletTownNE::
 .south:   DB BILLETTOWNSE
 .west:    DB BILLETTOWNNW
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 1,1
-DB 15;x
-DB 31;y
-DB 150;tile
-DB 4;palette
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
 DB 20;x1
 DB 16;y1
@@ -1406,11 +4814,11 @@ DB 2;palette
 DB 22;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 0,1
-DB 4;x
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 1,1
+DB 5;x
 DB 31;y
-DB 144;tile
-DB 3;palette
+DB 145;tile
+DB 4;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 0,1
 DB 14;x
@@ -1418,10 +4826,16 @@ DB 31;y
 DB 149;tile
 DB 4;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 1,1
-DB 5;x
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (10) 0,1
+DB 4;x
 DB 31;y
-DB 145;tile
+DB 144;tile
+DB 3;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;House (4) 1,1
+DB 15;x
+DB 31;y
+DB 150;tile
 DB 4;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
@@ -1432,37 +4846,21 @@ DB 1;palette
 DB 20;x2
 DB 30;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (5)
-DB 14;x
-DB 28;y
-DW HouseRoofUpperRight
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (1)
 DB 4;x
 DB 28;y
 DW HouseRoofUpperLeft
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (5)
+DB 14;x
+DB 28;y
+DW HouseRoofUpperRight
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (8)
 DB 2;x
 DB 26;y
 DB 151;tile
 DB 1;palette
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
-DB 4;x1
-DB 20;y1
-DB 167;tile
-DB 2;palette
-DB 8;x2
-DB 24;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (5)
-DB 12;x1
-DB 23;y1
-DB 177;tile
-DB 4;palette
-DB 14;x2
-DB 24;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (1)
 DB 8;x
@@ -1474,6 +4872,22 @@ DB 14;x
 DB 23;y
 DW HouseWallBottomRight
 
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (5)
+DB 12;x1
+DB 23;y1
+DB 177;tile
+DB 4;palette
+DB 14;x2
+DB 24;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
+DB 4;x1
+DB 20;y1
+DB 167;tile
+DB 2;palette
+DB 8;x2
+DB 24;y2
+
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (5)
 DB 8;x
 DB 19;y
@@ -1484,15 +4898,16 @@ DB 14;x
 DB 19;y
 DW HouseRoofLowerRight
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (8)
-DB 14;x
-DB 18;y
-DW HouseRoofUpperRight
-
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (9)
 DB 2;x
 DB 18;y
 DB 151;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
+DB 18;x
+DB 18;y
+DB 171;tile
 DB 1;palette
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (9)
@@ -1500,11 +4915,10 @@ DB 8;x
 DB 18;y
 DW HouseRoofUpperLeft
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
-DB 18;x
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;House (8)
+DB 14;x
 DB 18;y
-DB 171;tile
-DB 1;palette
+DW HouseRoofUpperRight
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
 DB 4;x1
@@ -1530,12 +4944,6 @@ DB 5;palette
 DB 32;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
-DB 31;x
-DB 27;y
-DB 225;tile
-DB 1;palette
-
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
 DB 22;x1
 DB 16;y1
@@ -1543,65 +4951,46 @@ DW TreeStamp
 DB 26;x2
 DB 28;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 12;y
-DW TreeStamp
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
+DB 31;x
+DB 27;y
+DB 225;tile
+DB 1;palette
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 12;x
-DB 12;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (2)
+DB 12;x1
+DB 12;y1
 DW TreeStamp
+DB 28;x2
+DB 16;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 16;x
-DB 12;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 8;x1
+DB 4;y1
 DW TreeStamp
+DB 12;x2
+DB 16;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (12)
-DB 0;x
-DB 12;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (4)
+DB 0;x1
+DB 4;y1
 DW TreeStamp
+DB 4;x2
+DB 16;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (5)
-DB 8;x
-DB 8;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (5)
+DB 24;x1
+DB 4;y1
 DW TreeStamp
+DB 28;x2
+DB 12;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (7)
-DB 0;x
-DB 8;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (3)
+DB 12;x1
+DB 4;y1
 DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (1)
-DB 20;x
-DB 8;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (4)
-DB 8;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (6)
-DB 0;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (2)
-DB 16;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree (3)
-DB 12;x
-DB 4;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 4;y
-DW TreeStamp
+DB 24;x2
+DB 8;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
 DB 20;x
@@ -1615,14 +5004,6 @@ DB 146;tile
 DB 4;palette
 DB 14;x2
 DB 32;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (21)
-DB 15;x1
-DB 29;y1
-DB 150;tile
-DB 4;palette
-DB 16;x2
-DB 31;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (27)
 DB 4;x1
@@ -1640,20 +5021,28 @@ DB 4;palette
 DB 14;x2
 DB 31;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (26)
-DB 5;x1
-DB 29;y1
-DB 148;tile
-DB 3;palette
-DB 6;x2
-DB 31;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (22)
 DB 14;x1
 DB 29;y1
 DB 132;tile
 DB 4;palette
 DB 15;x2
+DB 31;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (21)
+DB 15;x1
+DB 29;y1
+DB 150;tile
+DB 4;palette
+DB 16;x2
+DB 31;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (26)
+DB 5;x1
+DB 29;y1
+DB 148;tile
+DB 3;palette
+DB 6;x2
 DB 31;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (24)
@@ -1664,13 +5053,11 @@ DB 4;palette
 DB 14;x2
 DB 29;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (21)
-DB 8;x1
-DB 21;y1
-DB 152;tile
-DB 3;palette
-DB 9;x2
-DB 23;y2
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (29)
+DB 9;x
+DB 22;y
+DB 180;tile
+DB 4;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (22)
 DB 15;x1
@@ -1680,11 +5067,13 @@ DB 3;palette
 DB 16;x2
 DB 23;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (29)
-DB 9;x
-DB 22;y
-DB 180;tile
-DB 4;palette
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (21)
+DB 8;x1
+DB 21;y1
+DB 152;tile
+DB 3;palette
+DB 9;x2
+DB 23;y2
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (28)
 DB 14;x
@@ -1752,10 +5141,77 @@ DB 1;y
 DB 151;tile
 DB 1;palette
 
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,1
+DB 0;x
+DB 12;y
+DB 192;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,2
+DB 0;x
+DB 11;y
+DB 213;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,2
+DB 1;x
+DB 11;y
+DB 214;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,3
+DB 1;x
+DB 10;y
+DB 193;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,3
+DB 0;x
+DB 10;y
+DB 197;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,5
+DB 0;x
+DB 8;y
+DB 192;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,6
+DB 1;x
+DB 7;y
+DB 214;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,6
+DB 0;x
+DB 7;y
+DB 213;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,7
+DB 1;x
+DB 6;y
+DB 193;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,7
+DB 0;x
+DB 6;y
+DB 197;tile
+DB 1;palette
+
 DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT;;Sign
 DB 6;x
 DB 22;y
 DW SignStamp
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (4)
+DB 10;x1
+DB 6;y1
+DW ForestStamp
+DB 26;x2
+DB 14;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (32)
 DB 12;x1
@@ -1765,12 +5221,6 @@ DB 4;palette
 DB 14;x2
 DB 23;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (34)
-DB 10;x
-DB 20;y
-DB 164;tile
-DB 4;palette
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID;;GameObject (33)
 DB 12;x1
 DB 20;y1
@@ -1779,17 +5229,18 @@ DB 4;palette
 DB 14;x2
 DB 21;y2
 
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID;;GameObject (34)
+DB 10;x
+DB 20;y
+DB 164;tile
+DB 4;palette
+
 DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR;;HouseDoor (1)
 DB 10;x
 DB 22;y
 DW HouseDoor
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 8;x
-DB 12;y
-DW TreeStamp
-
-DB 0;END BilletTownNE, 370 bytes
+DB 0;END BilletTownNE, 397 bytes
 
 CenterFieldChunk::
 .tile:    DB 253
@@ -1811,12 +5262,18 @@ DB 9;y
 DB 141;tile
 DB 1;palette
 
-DB 0;END CenterFieldChunk, 21 bytes
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
+DB 26;x
+DB 7;y
+DB 141;tile
+DB 1;palette
+
+DB 0;END CenterFieldChunk, 26 bytes
 
 Route1West::
 .tile:    DB 255
 .palette: DB 1
-.north:   DB ROUTE1WEST
+.north:   DB ROUTE1WEST_1
 .east:    DB ROUTE1EAST
 .south:   DB BILLETTOWNNW
 .west:    DB ROUTE1WEST
@@ -1838,85 +5295,50 @@ DB 28;x2
 DB 28;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
-DB 18;x1
-DB 1;y1
+DB 24;x1
+DB 0;y1
 DB 167;tile
 DB 2;palette
-DB 21;x2
-DB 15;y2
+DB 28;x2
+DB 24;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 28;y
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (11)
+DB 28;x1
+DB 11;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 12;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree
+DB 20;x1
+DB 0;y1
 DW TreeStamp
+DB 24;x2
+DB 32;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 24;y
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID;;Tree (1)
+DB 24;x1
+DB 16;y1
 DW TreeStamp
+DB 32;x2
+DB 20;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 20;y
-DW TreeStamp
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (14)
+DB 26;x1
+DB 11;y1
+DB 180;tile
+DB 2;palette
+DB 28;x2
+DB 12;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 28;x
-DB 16;y
-DW TreeStamp
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE;;GameObject (9)
+DB 24;x1
+DB 11;y1
+DB 193;tile
+DB 2;palette
+DB 26;x2
+DB 12;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 20;x
-DB 16;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 24;x
-DB 16;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 17;x
-DB 15;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 15;x
-DB 12;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 9;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 5;y
-DW TreeStamp
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID;;Tree
-DB 14;x
-DB 1;y
-DW TreeStamp
-
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
-DB 20;x
-DB 17;y
-DB 192;tile
-DB 1;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (8)
-DB 17;x
-DB 15;y
-DB 192;tile
-DB 1;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (9)
-DB 15;x
-DB 12;y
-DB 192;tile
-DB 1;palette
-
-DB 0;END Route1West, 102 bytes
+DB 0;END Route1West, 67 bytes
 

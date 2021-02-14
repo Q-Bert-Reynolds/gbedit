@@ -39,7 +39,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld b, a;map object type and collision
     and a, MAP_COLLISION_MASK
     ld c, a;collision type
-    ld [_c], a
+    push bc
     
     ld a, [hli];x
     ld d, a
@@ -125,15 +125,16 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     inc hl
 
   .checkExtraData
-    ld a, [_c]
-    and a, MAP_OBJ_TYPE_MASK
+    pop bc
+    ld a, c
     cp a, MAP_COLLISION_TEXT
     jp nz, .loop
     inc hl
     jp .loop
 
 .collisonFound
-  ld a, [_c]
+  pop bc
+  ld a, c
   cp a, MAP_COLLISION_NONE
   jp z, .loop
   cp a, MAP_COLLISION_GRASS

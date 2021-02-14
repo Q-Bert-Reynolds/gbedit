@@ -566,7 +566,7 @@ ENDC
   call FadeOut
 
   ;NOTE: starting xy determines grid alignment!!! should be even
-  xor a
+  ld a, 10
   ld [map_x], a
   ld [map_y], a
   ld a, BILLETTOWNNE

@@ -96,14 +96,15 @@ Team Menu
 Map System
 
 - load/interact characters and items
-- an chunk index of 0 should fill the chunk with black tiles
+- collision types with extra data should check for components instead of layer
+- regions should have their own music, palettes, tiles, etc
+- an chunk index of 0 should fill the chunk with some default tile
 - font tiles should be usable in the editor
 - handle multiple map banks
-- add diagonal lines to map system, (already implemented in editor)
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
-- chunk jump table should be ordered the same as Unity's hierarchy
+- add diagonal lines to map system, (already implemented in editor)
 - draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
 - make the editor a standalone application
 

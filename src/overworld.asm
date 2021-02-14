@@ -462,8 +462,11 @@ CheckPlayerCollision:;returns z if no collision
   cp a, MAP_COLLISION_WATER
   jr z, .stay;TODO: add swimming
 .checkLedgeMove;all other collision types already handled
+  ld a, [collision_data];directions allowed
+  cpl;flip bits
+  ld b, a;directions stopped
   ld a, [last_map_button_state]
-  and a, PADF_UP
+  and a, b
   ret
 .stay
   ld a, 1

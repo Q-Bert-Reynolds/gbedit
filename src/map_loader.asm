@@ -128,7 +128,11 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     pop bc
     ld a, c
     cp a, MAP_COLLISION_TEXT
-    jp nz, .loop
+    jp z, .hasExtraData
+    cp a, MAP_COLLISION_LEDGE
+    jr z, .hasExtraData
+    jp .loop
+  .hasExtraData
     inc hl
     jp .loop
 
@@ -617,7 +621,11 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     pop af;map object type and collision
     and a, MAP_COLLISION_MASK
     cp a, MAP_COLLISION_TEXT
-    jp nz, .loop
+    jp z, .hasExtraData
+    cp a, MAP_COLLISION_LEDGE
+    jr z, .hasExtraData
+    jp .loop
+  .hasExtraData
     inc hl
     jp .loop
 

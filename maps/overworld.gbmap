@@ -1,4 +1,4 @@
-;Overworld.gbmap, 5838 bytes
+;Overworld.gbmap, 5897 bytes
 MapPalettes:: ;64 bytes
   RGB 30, 28, 19
   RGB 31, 31, 31
@@ -90,14 +90,6 @@ DB 178, 179
 .palette:
 DB 132
 
-HouseRoofUpperLeft:: ;5 bytes
-DB 2;width
-DB 1;height
-.tiles:
-DB 128, 129
-.palette:
-DB 131
-
 HouseRoofUpperRight:: ;5 bytes
 DB 2;width
 DB 1;height
@@ -106,15 +98,13 @@ DB 133, 134
 .palette:
 DB 131
 
-HouseRoofLowerLeft:: ;10 bytes
+HouseRoofUpperLeft:: ;5 bytes
 DB 2;width
-DB 2;height
+DB 1;height
 .tiles:
-DB 144, 145
-DB 160, 161
-.palettes:
-DB 3, 4
-DB 3, 4
+DB 128, 129
+.palette:
+DB 131
 
 HouseRoofLowerRight:: ;10 bytes
 DB 2;width
@@ -125,6 +115,16 @@ DB 165, 166
 .palettes:
 DB 3, 3
 DB 4, 3
+
+HouseRoofLowerLeft:: ;10 bytes
+DB 2;width
+DB 2;height
+.tiles:
+DB 144, 145
+DB 160, 161
+.palettes:
+DB 3, 4
+DB 3, 4
 
 ForestStamp:: ;19 bytes
 DB 4;width
@@ -480,8 +480,9 @@ ROUTE1WEST_269 EQU 242
 ROUTE1WEST_270 EQU 243
 ROUTE1WEST_271 EQU 244
 BILLETTOWNSEWATER_1 EQU 245
+BILLETTOWNSEWATER_2 EQU 246
 
-MapOverworldChunks:: ;492 bytes
+MapOverworldChunks:: ;494 bytes
   DW BilletTownSW
   DW BilletTownSE
   DW BilletTownNE
@@ -728,8 +729,9 @@ MapOverworldChunks:: ;492 bytes
   DW Route1West270
   DW Route1West271
   DW BilletTownSEWater1
+  DW BilletTownSEWater2
 
-;Map, 4696 bytes
+;Map, 4753 bytes
 BilletTownSW::
 .tile:    DB 255
 .palette: DB 1
@@ -746,20 +748,20 @@ DB 2;palette
 DB 25;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject
-DB 25;x1
-DB 9;y1
-DB 188;tile
-DB 7;palette
-DB 31;x2
-DB 32;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (6)
 DB 31;x1
 DB 9;y1
 DB 194;tile
 DB 2;palette
 DB 32;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject
+DB 25;x1
+DB 9;y1
+DB 188;tile
+DB 7;palette
+DB 31;x2
 DB 32;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
@@ -770,18 +772,6 @@ DB 2;palette
 DB 21;x2
 DB 15;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
-DB 24;x
-DB 8;y
-DB 136;tile
-DB 2;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (7)
-DB 31;x
-DB 8;y
-DB 226;tile
-DB 2;palette
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (11)
 DB 25;x1
 DB 8;y1
@@ -789,6 +779,18 @@ DB 242;tile
 DB 2;palette
 DB 31;x2
 DB 9;y2
+
+DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (7)
+DB 31;x
+DB 8;y
+DB 226;tile
+DB 2;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
+DB 24;x
+DB 8;y
+DB 136;tile
+DB 2;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
 DB 24;x1
@@ -852,20 +854,20 @@ BilletTownSE::
 .south:   DB BILLETTOWNSEWATER
 .west:    DB BILLETTOWNSW
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
-DB 24;x1
-DB 23;y1
-DB 141;tile
-DB 1;palette
-DB 32;x2
-DB 32;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
 DB 0;x1
 DB 24;y1
 DB 141;tile
 DB 1;palette
 DB 12;x2
+DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
+DB 24;x1
+DB 23;y1
+DB 141;tile
+DB 1;palette
+DB 32;x2
 DB 32;y2
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
@@ -880,14 +882,14 @@ DB 22;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
-DB 20;x
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
+DB 9;x
 DB 21;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
-DB 9;x
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
+DB 20;x
 DB 21;y
 DB 151;tile
 DB 1;palette
@@ -914,14 +916,6 @@ DB 1;palette
 DB 16;x2
 DB 12;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
-DB 12;x1
-DB 6;y1
-DB 240;tile
-DB 0;palette
-DB 16;x2
-DB 8;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (4)
 DB 4;x1
 DB 6;y1
@@ -930,13 +924,18 @@ DB 0;palette
 DB 10;x2
 DB 8;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
-DB 10;x1
-DB 3;y1
-DB 177;tile
-DB 4;palette
-DB 14;x2
-DB 4;y2
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
+DB 12;x1
+DB 6;y1
+DB 240;tile
+DB 0;palette
+DB 16;x2
+DB 8;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House
+DB 4;x
+DB 3;y
+DW HouseWallBottomLeft
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (4)
 DB 6;x1
@@ -946,15 +945,18 @@ DB 4;palette
 DB 8;x2
 DB 4;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House
-DB 4;x
-DB 3;y
-DW HouseWallBottomLeft
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
 DB 14;x
 DB 3;y
 DW HouseWallBottomRight
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+DB 10;x1
+DB 3;y1
+DB 177;tile
+DB 4;palette
+DB 14;x2
+DB 4;y2
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
 DB 0;x
@@ -962,16 +964,22 @@ DB 1;y
 DB 151;tile
 DB 1;palette
 
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,0
+DB 5;x
+DB 0;y
+DB 161;tile
+DB 4;palette
+
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,0
 DB 15;x
 DB 0;y
 DB 166;tile
 DB 4;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,0
-DB 5;x
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
+DB 14;x
 DB 0;y
-DB 161;tile
+DB 165;tile
 DB 4;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,0
@@ -979,12 +987,6 @@ DB 4;x
 DB 0;y
 DB 160;tile
 DB 3;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
-DB 14;x
-DB 0;y
-DB 165;tile
-DB 4;palette
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree
 DB 0;x
@@ -1023,20 +1025,20 @@ DW TreeStamp
 DB 24;x2
 DB 18;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
-DB 4;x1
-DB 1;y1
-DB 152;tile
-DB 3;palette
-DB 5;x2
-DB 3;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (20)
 DB 15;x1
 DB 1;y1
 DB 168;tile
 DB 3;palette
 DB 16;x2
+DB 3;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
+DB 4;x1
+DB 1;y1
+DB 152;tile
+DB 3;palette
+DB 5;x2
 DB 3;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (16)
@@ -1061,14 +1063,6 @@ DB 6;y
 DW SignStamp
 DB 0; DOC HICKORY'S LAB
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
-DB 5;x1
-DB 2;y1
-DB 190;tile
-DB 4;palette
-DB 8;x2
-DB 3;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (28)
 DB 10;x1
 DB 2;y1
@@ -1077,13 +1071,13 @@ DB 4;palette
 DB 15;x2
 DB 3;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (29)
-DB 6;x1
-DB 0;y1
-DB 164;tile
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
+DB 5;x1
+DB 2;y1
+DB 190;tile
 DB 4;palette
-DB 9;x2
-DB 1;y2
+DB 8;x2
+DB 3;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
 DB 11;x1
@@ -1091,6 +1085,14 @@ DB 0;y1
 DB 164;tile
 DB 4;palette
 DB 14;x2
+DB 1;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (29)
+DB 6;x1
+DB 0;y1
+DB 164;tile
+DB 4;palette
+DB 9;x2
 DB 1;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;HouseDoor
@@ -1114,13 +1116,11 @@ BilletTownNE::
 .south:   DB BILLETTOWNSE
 .west:    DB BILLETTOWNNW
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-DB 20;x1
-DB 16;y1
-DB 167;tile
-DB 2;palette
-DB 22;x2
-DB 32;y2
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,1
+DB 14;x
+DB 31;y
+DB 149;tile
+DB 4;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,1
 DB 15;x
@@ -1134,17 +1134,19 @@ DB 31;y
 DB 145;tile
 DB 4;palette
 
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+DB 20;x1
+DB 16;y1
+DB 167;tile
+DB 2;palette
+DB 22;x2
+DB 32;y2
+
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,1
 DB 4;x
 DB 31;y
 DB 144;tile
 DB 3;palette
-
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,1
-DB 14;x
-DB 31;y
-DB 149;tile
-DB 4;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
 DB 19;x1
@@ -1154,15 +1156,15 @@ DB 1;palette
 DB 20;x2
 DB 30;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
-DB 4;x
-DB 28;y
-DW HouseRoofUpperLeft
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
 DB 14;x
 DB 28;y
 DW HouseRoofUpperRight
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
+DB 4;x
+DB 28;y
+DW HouseRoofUpperLeft
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (8)
 DB 2;x
@@ -1170,10 +1172,10 @@ DB 26;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
-DB 8;x
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (6)
+DB 14;x
 DB 23;y
-DW HouseWallBottomLeft
+DW HouseWallBottomRight
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
 DB 12;x1
@@ -1183,10 +1185,10 @@ DB 4;palette
 DB 14;x2
 DB 24;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (6)
-DB 14;x
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
+DB 8;x
 DB 23;y
-DW HouseWallBottomRight
+DW HouseWallBottomLeft
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
 DB 4;x1
@@ -1196,20 +1198,20 @@ DB 2;palette
 DB 8;x2
 DB 24;y2
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
-DB 8;x
-DB 19;y
-DW HouseRoofLowerLeft
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (7)
 DB 14;x
 DB 19;y
 DW HouseRoofLowerRight
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (9)
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
 DB 8;x
+DB 19;y
+DW HouseRoofLowerLeft
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (8)
+DB 14;x
 DB 18;y
-DW HouseRoofUpperLeft
+DW HouseRoofUpperRight
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (9)
 DB 2;x
@@ -1217,10 +1219,10 @@ DB 18;y
 DB 151;tile
 DB 1;palette
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (8)
-DB 14;x
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (9)
+DB 8;x
 DB 18;y
-DW HouseRoofUpperRight
+DW HouseRoofUpperLeft
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
 DB 18;x
@@ -1252,6 +1254,12 @@ DB 5;palette
 DB 32;x2
 DB 32;y2
 
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
+DB 31;x
+DB 27;y
+DB 225;tile
+DB 1;palette
+
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
 DB 22;x1
 DB 16;y1
@@ -1259,17 +1267,11 @@ DW TreeStamp
 DB 26;x2
 DB 28;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
-DB 31;x
-DB 27;y
-DB 225;tile
-DB 1;palette
-
-DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
-DB 0;x1
-DB 4;y1
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
+DB 12;x1
+DB 12;y1
 DW TreeStamp
-DB 4;x2
+DB 28;x2
 DB 16;y2
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
@@ -1279,11 +1281,11 @@ DW TreeStamp
 DB 12;x2
 DB 16;y2
 
-DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
-DB 12;x1
-DB 12;y1
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
+DB 0;x1
+DB 4;y1
 DW TreeStamp
-DB 28;x2
+DB 4;x2
 DB 16;y2
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (5)
@@ -1313,28 +1315,12 @@ DB 4;palette
 DB 14;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (23)
-DB 6;x1
-DB 29;y1
-DB 131;tile
-DB 4;palette
-DB 14;x2
-DB 31;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
 DB 5;x1
 DB 29;y1
 DB 148;tile
 DB 3;palette
 DB 6;x2
-DB 31;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
-DB 14;x1
-DB 29;y1
-DB 132;tile
-DB 4;palette
-DB 15;x2
 DB 31;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (21)
@@ -1345,12 +1331,28 @@ DB 4;palette
 DB 16;x2
 DB 31;y2
 
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
+DB 14;x1
+DB 29;y1
+DB 132;tile
+DB 4;palette
+DB 15;x2
+DB 31;y2
+
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
 DB 4;x1
 DB 29;y1
 DB 144;tile
 DB 3;palette
 DB 5;x2
+DB 31;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (23)
+DB 6;x1
+DB 29;y1
+DB 131;tile
+DB 4;palette
+DB 14;x2
 DB 31;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
@@ -1361,14 +1363,22 @@ DB 4;palette
 DB 14;x2
 DB 29;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (29)
-DB 9;x
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
+DB 14;x
 DB 22;y
 DB 180;tile
 DB 4;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
-DB 14;x
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
+DB 15;x1
+DB 21;y1
+DB 168;tile
+DB 3;palette
+DB 16;x2
+DB 23;y2
+
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (29)
+DB 9;x
 DB 22;y
 DB 180;tile
 DB 4;palette
@@ -1379,14 +1389,6 @@ DB 21;y1
 DB 152;tile
 DB 3;palette
 DB 9;x2
-DB 23;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
-DB 15;x1
-DB 21;y1
-DB 168;tile
-DB 3;palette
-DB 16;x2
 DB 23;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (18)
@@ -1455,16 +1457,16 @@ DB 12;y
 DB 192;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,2
-DB 1;x
-DB 11;y
-DB 214;tile
-DB 1;palette
-
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,2
 DB 0;x
 DB 11;y
 DB 213;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,2
+DB 1;x
+DB 11;y
+DB 214;tile
 DB 1;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,3
@@ -1648,18 +1650,18 @@ DW TreeStamp
 DB 32;x2
 DB 16;y2
 
-DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
-DB 12;x1
-DB 0;y1
-DW TreeStamp
-DB 24;x2
-DB 8;y2
-
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
 DB 24;x1
 DB 4;y1
 DW TreeStamp
 DB 32;x2
+DB 8;y2
+
+DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
+DB 12;x1
+DB 0;y1
+DW TreeStamp
+DB 24;x2
 DB 8;y2
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (3)
@@ -1681,13 +1683,11 @@ DB 12;x
 DB 28;y
 DW TreeStamp
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
-DB 24;x1
-DB 21;y1
-DB 152;tile
-DB 3;palette
-DB 25;x2
-DB 23;y2
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (32)
+DB 25;x
+DB 22;y
+DB 180;tile
+DB 4;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
 DB 31;x1
@@ -1697,17 +1697,19 @@ DB 3;palette
 DB 32;x2
 DB 23;y2
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (32)
-DB 25;x
-DB 22;y
-DB 180;tile
-DB 4;palette
-
 DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (30)
 DB 30;x
 DB 22;y
 DB 180;tile
 DB 4;palette
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
+DB 24;x1
+DB 21;y1
+DB 152;tile
+DB 3;palette
+DB 25;x2
+DB 23;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
 DB 25;x1
@@ -1752,16 +1754,16 @@ DB 12;y
 DB 193;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,2
-DB 31;x
-DB 11;y
-DB 212;tile
-DB 1;palette
-
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,2
 DB 30;x
 DB 11;y
 DB 211;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,2
+DB 31;x
+DB 11;y
+DB 212;tile
 DB 1;palette
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,3
@@ -1812,16 +1814,16 @@ DB 7;y
 DB 211;tile
 DB 1;palette
 
-DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,7
-DB 30;x
-DB 6;y
-DB 192;tile
-DB 1;palette
-
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,7
 DB 31;x
 DB 6;y
 DB 196;tile
+DB 1;palette
+
+DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,7
+DB 30;x
+DB 6;y
+DB 192;tile
 DB 1;palette
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
@@ -1891,6 +1893,11 @@ InfieldChunk::
 .south:   DB BILLETTOWNSEWATER_1
 .west:    DB BILLETTOWNSE
 
+DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;HomePlate
+DB 0;x
+DB 23;y
+DW HomePlate
+
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
 DB 16;x
 DB 29;y
@@ -1902,11 +1909,6 @@ DB 9;x
 DB 10;y
 DB 141;tile
 DB 1;palette
-
-DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;HomePlate
-DB 0;x
-DB 23;y
-DW HomePlate
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
 DB 9;x1
@@ -2013,7 +2015,7 @@ RightFieldChunk::
 .palette: DB 1
 .north:   DB CENTERFIELDCHUNK
 .east:    DB CENTERFIELDCHUNK_7
-.south:   DB RIGHTFIELDCHUNK
+.south:   DB BILLETTOWNSEWATER_2
 .west:    DB INFIELDCHUNK
 
 DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
@@ -2088,12 +2090,6 @@ BilletTownSWWater::
 .south:   DB ROUTE1WEST_231
 .west:    DB BILLETTOWNSWWATER
 
-DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
-DB 24;x
-DB 12;y
-DB 230;tile
-DB 2;palette
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (14)
 DB 0;x1
 DB 12;y1
@@ -2101,6 +2097,12 @@ DB 241;tile
 DB 2;palette
 DB 24;x2
 DB 13;y2
+
+DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
+DB 24;x
+DB 12;y
+DB 230;tile
+DB 2;palette
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
 DB 0;x1
@@ -2203,14 +2205,6 @@ DB 32;x2
 DB 5;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-DB 16;x1
-DB 0;y1
-DB 167;tile
-DB 1;palette
-DB 21;x2
-DB 4;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
 DB 21;x1
 DB 0;y1
 DB 141;tile
@@ -2224,6 +2218,14 @@ DB 0;y1
 DB 141;tile
 DB 1;palette
 DB 12;x2
+DB 4;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+DB 16;x1
+DB 0;y1
+DB 167;tile
+DB 1;palette
+DB 21;x2
 DB 4;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Sign (31)
@@ -2289,13 +2291,14 @@ DB 1;palette
 DB 32;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (7)
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
 DB 24;x1
 DB 27;y1
 DB 193;tile
 DB 2;palette
 DB 28;x2
 DB 28;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
 DB 24;x1
@@ -2312,6 +2315,7 @@ DB 193;tile
 DB 2;palette
 DB 32;x2
 DB 12;y2
+DB 128;direction mask
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
 DB 20;x1
@@ -2342,8 +2346,9 @@ DB 193;tile
 DB 2;palette
 DB 26;x2
 DB 12;y2
+DB 128;direction mask
 
-DB 0;END Route1West, 67 bytes
+DB 0;END Route1West, 70 bytes
 
 Route1East::
 .tile:    DB 255
@@ -2376,6 +2381,7 @@ DB 193;tile
 DB 2;palette
 DB 20;x2
 DB 28;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
 DB 8;x1
@@ -2392,14 +2398,7 @@ DB 193;tile
 DB 2;palette
 DB 20;x2
 DB 20;y2
-
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
-DB 4;x1
-DB 11;y1
-DB 193;tile
-DB 2;palette
-DB 20;x2
-DB 12;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (13)
 DB 2;x1
@@ -2416,6 +2415,16 @@ DB 193;tile
 DB 2;palette
 DB 2;x2
 DB 12;y2
+DB 128;direction mask
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
+DB 4;x1
+DB 11;y1
+DB 193;tile
+DB 2;palette
+DB 20;x2
+DB 12;y2
+DB 128;direction mask
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
 DB 20;x1
@@ -2437,7 +2446,7 @@ DB 26;y
 DW SignStamp
 DB 4; ROUTE 1
 
-DB 0;END Route1East, 87 bytes
+DB 0;END Route1East, 91 bytes
 
 CenterFieldChunk1::
 .tile:    DB 253
@@ -2463,14 +2472,6 @@ Route1West1::
 .south:   DB ROUTE1WEST
 .west:    DB ROUTE1WEST_1
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
-DB 28;x1
-DB 31;y1
-DB 193;tile
-DB 2;palette
-DB 32;x2
-DB 32;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
 DB 28;x1
 DB 28;y1
@@ -2478,6 +2479,15 @@ DB 141;tile
 DB 1;palette
 DB 32;x2
 DB 32;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
+DB 28;x1
+DB 31;y1
+DB 193;tile
+DB 2;palette
+DB 32;x2
+DB 32;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
 DB 24;x1
@@ -2499,13 +2509,14 @@ DW TreeStamp
 DB 24;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (7)
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
 DB 24;x1
 DB 23;y1
 DB 193;tile
 DB 2;palette
 DB 32;x2
 DB 24;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (8)
 DB 24;x1
@@ -2514,8 +2525,9 @@ DB 193;tile
 DB 2;palette
 DB 32;x2
 DB 16;y2
+DB 128;direction mask
 
-DB 0;END Route1West1, 58 bytes
+DB 0;END Route1West1, 61 bytes
 
 Route1West2::
 .tile:    DB 255
@@ -2532,6 +2544,7 @@ DB 193;tile
 DB 2;palette
 DB 4;x2
 DB 32;y2
+DB 128;direction mask
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
 DB 12;x1
@@ -2571,21 +2584,23 @@ DW TreeStamp
 DB 24;x2
 DB 32;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (7)
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
 DB 24;x1
 DB 23;y1
 DB 193;tile
 DB 2;palette
 DB 32;x2
 DB 24;y2
+DB 128;direction mask
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (9)
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (9)
 DB 0;x1
 DB 15;y1
 DB 193;tile
 DB 2;palette
 DB 12;x2
 DB 16;y2
+DB 128;direction mask
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
 DB 0;x1
@@ -2594,7 +2609,7 @@ DW TreeStamp
 DB 4;x2
 DB 24;y2
 
-DB 0;END Route1West2, 74 bytes
+DB 0;END Route1West2, 77 bytes
 
 Route1West3::
 .tile:    DB 255
@@ -2647,23 +2662,15 @@ Route1West5::
 .south:   DB ROUTE1WEST_4
 .west:    DB ROUTE1WEST_7
 
-DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
-DB 20;x
-DB 11;y
-DW HouseWallBottomLeft
-
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (3)
 DB 30;x
 DB 11;y
 DW HouseWallBottomRight
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
-DB 26;x1
-DB 11;y1
-DB 177;tile
-DB 4;palette
-DB 30;x2
-DB 12;y2
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
+DB 20;x
+DB 11;y
+DW HouseWallBottomLeft
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (11)
 DB 22;x1
@@ -2671,6 +2678,14 @@ DB 11;y1
 DB 177;tile
 DB 4;palette
 DB 24;x2
+DB 12;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
+DB 26;x1
+DB 11;y1
+DB 177;tile
+DB 4;palette
+DB 30;x2
 DB 12;y2
 
 DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (4)
@@ -2723,20 +2738,20 @@ DB 4;palette
 DB 30;x2
 DB 8;y2
 
-DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (37)
-DB 22;x1
-DB 5;y1
-DB 131;tile
-DB 4;palette
-DB 30;x2
-DB 7;y2
-
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
 DB 20;x1
 DB 5;y1
 DB 144;tile
 DB 3;palette
 DB 21;x2
+DB 7;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (37)
+DB 22;x1
+DB 5;y1
+DB 131;tile
+DB 4;palette
+DB 30;x2
 DB 7;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
@@ -4988,7 +5003,7 @@ Route1West236::
 .north:   DB CENTERFIELDCHUNK_7
 .east:    DB ROUTE1WEST_235
 .south:   DB ROUTE1WEST_232
-.west:    DB ROUTE1WEST_236
+.west:    DB BILLETTOWNSEWATER_2
 
 DB 0;END Route1West236, 11 bytes
 
@@ -5358,7 +5373,7 @@ BilletTownSEWater1::
 .tile:    DB 188
 .palette: DB 7
 .north:   DB INFIELDCHUNK
-.east:    DB BILLETTOWNSEWATER_1
+.east:    DB BILLETTOWNSEWATER_2
 .south:   DB BILLETTOWNSEWATER_1
 .west:    DB BILLETTOWNSEWATER
 
@@ -5371,11 +5386,11 @@ DB 32;x2
 DB 5;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-DB 24;x1
+DB 16;x1
 DB 0;y1
-DB 141;tile
+DB 167;tile
 DB 1;palette
-DB 32;x2
+DB 21;x2
 DB 4;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
@@ -5387,11 +5402,11 @@ DB 12;x2
 DB 4;y2
 
 DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-DB 16;x1
+DB 24;x1
 DB 0;y1
-DB 167;tile
+DB 141;tile
 DB 1;palette
-DB 21;x2
+DB 32;x2
 DB 4;y2
 
 DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
@@ -5402,4 +5417,51 @@ DB 24;x2
 DB 4;y2
 
 DB 0;END BilletTownSEWater1, 46 bytes
+
+BilletTownSEWater2::
+.tile:    DB 188
+.palette: DB 7
+.north:   DB RIGHTFIELDCHUNK
+.east:    DB ROUTE1WEST_236
+.south:   DB BILLETTOWNSEWATER_2
+.west:    DB BILLETTOWNSEWATER_1
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
+DB 0;x1
+DB 4;y1
+DB 194;tile
+DB 2;palette
+DB 32;x2
+DB 5;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+DB 21;x1
+DB 0;y1
+DB 141;tile
+DB 1;palette
+DB 32;x2
+DB 4;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+DB 0;x1
+DB 0;y1
+DB 141;tile
+DB 1;palette
+DB 16;x2
+DB 4;y2
+
+DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+DB 16;x1
+DB 0;y1
+DB 167;tile
+DB 1;palette
+DB 17;x2
+DB 4;y2
+
+DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (2)
+DB 17;x
+DB 0;y
+DW TreeStamp
+
+DB 0;END BilletTownSEWater2, 44 bytes
 

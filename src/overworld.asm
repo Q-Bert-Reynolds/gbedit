@@ -449,6 +449,9 @@ CheckPlayerCollision:;returns z if no collision
   ld b, a;directions stopped
   ld a, [last_map_button_state]
   and a, b
+  ret z
+  ld a, MAP_COLLISION_SOLID
+  ld [collision_type], a
   ret
 .stay
   ld a, 1

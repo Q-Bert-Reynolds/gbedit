@@ -1,9 +1,8 @@
 Priority
 
 - map system
-  - jump over ledges
   - enter/exit buildings
-  - default collision type for chunk
+  - load/interact characters and items
 - make batting results semi-random so we can move on to FX
 
  General
@@ -95,8 +94,8 @@ Team Menu
 
 Map System
 
-- load/interact characters and items
-- collision types with extra data should check for components instead of layer
+- default collision type for chunk
+- collision types with extra data should check for components instead of layer in editor
 - regions should have their own music, palettes, tiles, etc
 - an chunk index of 0 should fill the chunk with some default tile
 - font tiles should be usable in the editor

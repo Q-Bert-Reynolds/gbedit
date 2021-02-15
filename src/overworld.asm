@@ -24,14 +24,18 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
     call \2
   .checkJump
     pop bc;c = collision
+    push bc
     ld a, c
     cp a, MAP_COLLISION_LEDGE
     jr nz, .waitVBL
+    pop bc
     pop af;steps left
     push af
+    push bc;c = collision
     call AnimateJump
   .waitVBL
     call gbdk_WaitVBL
+    pop bc;c = collision
     pop af;steps left
     dec a
     jr nz, .loop
@@ -277,8 +281,26 @@ SetupAvatarAnimation:;returns step count in a, collision type in c
   add a, a
   ret 
 
+JumpAnimationTable:
+  DB 0,-1,-2,-3,-4,-5,-5,-6,-7,-7,-7,-8,-8,-8,-8,-8
+  DB -8,-8,-8,-8,-8,-7,-7,-6,-6,-5,-5,-4,-3,-2,-1,0
 AnimateJump:;a = frame
-
+  ld [_breakpoint], a
+  ld b, a
+  ld a, MAP_STEP_SIZE*2
+  sub a, b
+  ld b, 0
+  ld c, a;frame
+  ld hl, JumpAnimationTable
+  add hl, bc
+  ld a, [hl];height offset
+  add a, 76
+  ld c, a
+  ld b, 72
+  ld h, 2
+  ld l, 2
+  ld a, 0
+  call MoveSprites
   ret 
 
 StartMenuText:

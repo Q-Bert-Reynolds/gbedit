@@ -71,9 +71,11 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     cp a, e;y1
     jr c, .skip2Bytes
     ld a, [hli];x2
+    inc a
     srl a
     ld d, a
     ld a, [hli];y2
+    inc a
     srl a
     ld e, a
     ld a, [_x]
@@ -107,6 +109,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld a, [hli];stamp upper address
     ld b, a;bc = stamp address
     ld a, [bc];width
+    inc a
     srl a
     inc bc
     add a, d;x+width
@@ -115,6 +118,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     cp a, d;x2
     jp nc, .checkExtraData
     ld a, [bc];height
+    inc a
     srl a
     add a, e;y+height
     ld e, a;y2

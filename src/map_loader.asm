@@ -26,8 +26,10 @@ SECTION "Map Loader", ROM0
 
 GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
   ld a, d
+  srl a
   ld [_x], a
   ld a, e
+  srl a
   ld [_y], a
   ld bc, 6;tile(1)+pal(1)+neighbors(4)
   add hl, bc
@@ -42,8 +44,10 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     push bc
     
     ld a, [hli];x
+    srl a
     ld d, a
     ld a, [hli];y
+    srl a
     ld e, a
     
     ld a, b;map object type and collision
@@ -67,8 +71,10 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     cp a, e;y1
     jr c, .skip2Bytes
     ld a, [hli];x2
+    srl a
     ld d, a
     ld a, [hli];y2
+    srl a
     ld e, a
     ld a, [_x]
     cp a, d;x2
@@ -89,11 +95,6 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     jp z, .collisonFound
     jp .checkExtraData
 
-  .stampFill
-    ld bc, 4
-    add hl, bc
-    jp .checkExtraData
-
   .stamp
     ld a, [_x]
     cp a, d;x
@@ -106,6 +107,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     ld a, [hli];stamp upper address
     ld b, a;bc = stamp address
     ld a, [bc];width
+    srl a
     inc bc
     add a, d;x+width
     ld d, a;x2
@@ -113,6 +115,7 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     cp a, d;x2
     jp nc, .checkExtraData
     ld a, [bc];height
+    srl a
     add a, e;y+height
     ld e, a;y2
     ld a, [_y]

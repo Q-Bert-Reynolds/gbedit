@@ -9,6 +9,7 @@ INCLUDE "maps/overworld.gbmap"
 MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw routine
   ld hl, \1
   call AnimateAvatar
+  call CheckPlayerCollision
   call SetupAvatarAnimation
 .loop
     push af;steps left

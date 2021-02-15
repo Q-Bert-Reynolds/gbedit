@@ -6,6 +6,46 @@ INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
 INCLUDE "maps/overworld.gbmap"
 
+MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw routine
+  ld hl, \1
+  call AnimateAvatar
+  call SetupAvatarAnimation
+.loop
+    push af;steps left
+    push bc;c = collision
+    cp a, MAP_STEP_SIZE/2
+    jr nz, .checkCollision
+    ld hl, \1
+    call AnimateAvatar
+  .checkCollision
+    call CheckPlayerCollision
+    jr nz, .checkJump
+    call \2
+  .checkJump
+    pop bc;c = collision
+    ld a, c
+    cp a, MAP_COLLISION_LEDGE
+    jr nz, .waitVBL
+    pop af;steps left
+    push af
+    call AnimateJump
+  .waitVBL
+    call gbdk_WaitVBL
+    pop af;steps left
+    dec a
+    jr nz, .loop
+  call FixMapScroll
+IF !ISCONST(\3)
+  call \3
+ENDC
+  ret
+ENDM
+
+MoveUp: MOVE_PLAYER WalkUpAnim, MoveMapUp, 0
+MoveDown: MOVE_PLAYER WalkDownAnim, MoveMapDown, DrawMapBottomEdge
+MoveLeft: MOVE_PLAYER WalkLeftAnim, MoveMapLeft, 0
+MoveRight: MOVE_PLAYER WalkRightAnim, MoveMapRight, DrawMapRightEdge  
+
 Look:;a = button_state
   push af
   xor a
@@ -136,7 +176,7 @@ WalkDownAnim:
 WALK_ANIM_FRAMES EQU (WalkDownAnim-WalkUpAnim)/5
 
 AnimateAvatar:;hl = animation
-  ld a, [anim_frame]
+  ld a, [anim_frame];assumes a < 52
   ld b, a
   add a, a;a*2
   add a, a;a*4
@@ -227,99 +267,18 @@ AnimateAvatar:;hl = animation
 
   ret
 
-MoveUp:
-  ld hl, WalkUpAnim
-  call AnimateAvatar
+SetupAvatarAnimation:;returns step count in a, collision type in c
+  ld a, [collision_type]
+  ld c, a
+  cp a, MAP_COLLISION_LEDGE
   ld a, MAP_STEP_SIZE
-.loop
-    push af;steps left
-    ld b, MAP_STEP_SIZE/2
-    cp b
-    jr nz, .skipAnim
-    ld hl, WalkUpAnim
-    call AnimateAvatar
-  .skipAnim
-    call CheckPlayerCollision
-    jr nz, .wait
-    call MoveMapUp
-  .wait
-    call gbdk_WaitVBL
-    pop af;steps left
-    dec a
-    jr nz, .loop
-  call FixMapScroll
-  ret
+  ret nz
+  add a, a
+  ret 
 
-MoveDown:
-  ld hl, WalkDownAnim
-  call AnimateAvatar
-  ld a, MAP_STEP_SIZE
-.loop
-    push af;steps left
-    ld b, MAP_STEP_SIZE/2
-    cp b
-    jr nz, .skipAnim
-    ld hl, WalkDownAnim
-    call AnimateAvatar
-  .skipAnim
-    call CheckPlayerCollision
-    jr nz, .wait
-    call MoveMapDown
-  .wait
-    call gbdk_WaitVBL
-    pop af;steps left
-    dec a
-    jr nz, .loop
-  call FixMapScroll
-  call DrawMapBottomEdge
-  ret
+AnimateJump:;a = frame
 
-MoveLeft:
-  ld hl, WalkLeftAnim
-  call AnimateAvatar
-  ld a, MAP_STEP_SIZE
-.loop
-    push af;steps left
-    ld b, MAP_STEP_SIZE/2
-    cp b
-    jr nz, .skipAnim
-    ld hl, WalkLeftAnim
-    call AnimateAvatar
-  .skipAnim
-    call CheckPlayerCollision
-    jr nz, .wait
-    call MoveMapLeft
-  .wait
-    call gbdk_WaitVBL
-    pop af;steps left
-    dec a
-    jr nz, .loop
-  call FixMapScroll
-  ret
-
-MoveRight:
-  ld hl, WalkRightAnim
-  call AnimateAvatar
-  ld a, MAP_STEP_SIZE
-.loop
-    push af;steps left
-    ld b, MAP_STEP_SIZE/2
-    cp b
-    jr nz, .skipAnim
-    ld hl, WalkRightAnim
-    call AnimateAvatar
-  .skipAnim
-    call CheckPlayerCollision
-    jr nz, .wait
-    call MoveMapRight
-  .wait
-    call gbdk_WaitVBL
-    pop af;steps left
-    dec a
-    jr nz, .loop
-  call FixMapScroll
-  call DrawMapRightEdge
-  ret
+  ret 
 
 StartMenuText:
   DB "ROLéDEX\nLINEUP\nITEM\n%s\nSAVE\nOPTIONS\nEXIT", 0

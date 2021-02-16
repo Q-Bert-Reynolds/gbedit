@@ -1097,7 +1097,7 @@ GetCurrentMapChunk:;returns chunk address in hl, index in a
   call GetMapChunk
   ret
 
-SetCurrentMapChunk:;a = chunk index, returns address in hl, index in a
+SetCurrentMapChunk::;a = chunk index, returns address in hl, index in a
   ld [map_chunk], a
   ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
   call GetMapChunk

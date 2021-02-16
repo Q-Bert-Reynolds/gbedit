@@ -1,7 +1,6 @@
 Priority
 
 - map system
-  - enter/exit buildings
   - handle multiple maps/banks
   - load/interact characters and items
 - make batting results semi-random so we can move on to FX

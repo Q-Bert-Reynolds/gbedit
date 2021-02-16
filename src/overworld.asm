@@ -319,18 +319,19 @@ EnterDoor::
   ld a, [hli]
   ld [map], a
   ld a, [hli]
+  push hl
   call SetCurrentMapChunk
+  pop hl
   ld a, [hli]
-  srl a
-  sla a
-  ld [map_x], a
+  ld [rSCX], a
   ld a, [hli]
-  srl a
-  sla a
-  ld [map_y], a
+  ld [rSCY], a
   ld a, [hl]
   ld [last_map_button_state], a
   call FixMapScroll
+  ld hl, PaletteCalvin
+  ld a, 7
+  call GBCSetPalette
   ld hl, MapOverworldPalettes
   call SetupMapPalettes
   call ShowPlayerAvatar

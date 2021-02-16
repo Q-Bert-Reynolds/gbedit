@@ -20,14 +20,22 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
     call AnimateAvatar
   .checkCollision
     call CheckPlayerCollision
-    jr nz, .checkJump
+    jr nz, .collisionResponse
     call \2
-  .checkJump
+  .collisionResponse
     pop bc;c = collision
     push bc
     ld a, c
     cp a, MAP_COLLISION_LEDGE
+    jr z, .jump
+    cp a, MAP_COLLISION_DOOR
     jr nz, .waitVBL
+  .door
+    pop bc
+    pop af;steps left
+    call EnterDoor
+    jr .waitVBL
+  .jump
     pop bc
     pop af;steps left
     push af
@@ -285,7 +293,6 @@ JumpAnimationTable:
   DB 0,-1,-2,-3,-4,-5,-5,-6,-7,-7,-7,-8,-8,-8,-8,-8
   DB -8,-8,-8,-8,-8,-7,-7,-6,-6,-5,-5,-4,-3,-2,-1,0
 AnimateJump:;a = frame
-  ld [_breakpoint], a
   ld b, a
   ld a, MAP_STEP_SIZE*2
   sub a, b
@@ -302,6 +309,35 @@ AnimateJump:;a = frame
   ld a, 0
   call MoveSprites
   ret 
+
+EnterDoor::
+  TRAMPOLINE FadeOut
+  ; ld a, [collision_data]
+  ; ld h, 0
+  ; ld l, a
+  ; add hl, hl;a*2
+  ; add hl, hl;a*4
+  ; add hl, hl;a*8
+  ; ld bc, MapOverworldDoors;TODO: this should come from current map instead
+  ; add hl, bc
+  ; ld a, [hli]
+  ; ld [map], a
+  ; ld a, [hli]
+  ; ld [map_chunk], a
+  ; call SetCurrentMapChunk
+  ; ld a, [hli]
+  ; ld [map_x], a
+  ; ld a, [hli]
+  ; ld [map_y], a
+  ; ld a, [hl]
+  ; ld [last_map_button_state], a
+  ; call FixMapScroll
+  ld hl, MapOverworldPalettes
+  call SetupMapPalettes
+  ; call ShowPlayerAvatar
+  ; ; call DrawMapToScreen
+  TRAMPOLINE FadeIn
+  ret
 
 StartMenuText:
   DB "ROLéDEX\nLINEUP\nITEM\n%s\nSAVE\nOPTIONS\nEXIT", 0
@@ -428,7 +464,7 @@ CheckPlayerCollision:;returns z if no collision
   ld c, 76
 .getChunk 
   call GetMapChunkForOffset
-  call GetMapCollision;NONE and GRASS already handled
+  call GetMapChunkCollision;NONE and GRASS already handled
   ld [collision_type], a
   ld a, [hl]
   ld [collision_data], a
@@ -466,7 +502,7 @@ CheckActions:
   ld a, [collision_data]
   ld b, 0
   ld c, a
-  ld hl, MapText
+  ld hl, MapOverworldText
   call str_FromArray
   ld de, str_buffer
   call str_Copy
@@ -533,7 +569,7 @@ Overworld::
   ld [map_scroll_speed], a
   xor a
   ld [list_selection], a
-  ld hl, MapPalettes
+  ld hl, MapOverworldPalettes
   call SetupMapPalettes
   call DrawMapToScreen
 

@@ -4,7 +4,7 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
-; GetMapCollision              hl = chunk address, de = xy, returns z if no collision
+; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
 ; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 ; MoveMapLeft
 ; MoveMapRight
@@ -24,7 +24,15 @@ SECTION "Map Loader", ROM0
 ; GetMapChunk                  a = jump table index; hl = jump table, returns chunk in hl, index in a
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
-GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
+MAP_OVERWORLD EQU 0
+
+MapBanks:
+  DB BANK(MapOverworld)
+
+MapAddresses:
+  DW MapOverworld
+
+GetMapChunkCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
   ld a, d
   srl a
   ld [_x], a
@@ -137,6 +145,8 @@ GetMapCollision::;hl = chunk address, de = xy, returns z if no collision, collis
     cp a, MAP_COLLISION_TEXT
     jp z, .hasExtraData
     cp a, MAP_COLLISION_LEDGE
+    jr z, .hasExtraData
+    cp a, MAP_COLLISION_DOOR
     jr z, .hasExtraData
     jp .loop
   .hasExtraData
@@ -630,6 +640,8 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     cp a, MAP_COLLISION_TEXT
     jp z, .hasExtraData
     cp a, MAP_COLLISION_LEDGE
+    jr z, .hasExtraData
+    cp a, MAP_COLLISION_DOOR
     jr z, .hasExtraData
     jp .loop
   .hasExtraData

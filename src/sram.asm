@@ -13,10 +13,10 @@ sram_inventory:: DS MAX_ITEMS*BYTES_PER_ITEM
 sram_money:: DS 3
 sram_players_seen:: DS 151/8+1
 sram_players_sign:: DS 151/8+1
+sram_map:: DB
+sram_map_chunk:: DB
 sram_map_x:: DB
 sram_map_y:: DB
-sram_map_bank:: DB
-sram_map_chunk:: DB
 sram_main_save_end::
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]

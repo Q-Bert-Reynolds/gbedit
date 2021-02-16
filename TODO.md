@@ -2,6 +2,7 @@ Priority
 
 - map system
   - enter/exit buildings
+  - handle multiple maps/banks
   - load/interact characters and items
 - make batting results semi-random so we can move on to FX
 
@@ -94,18 +95,20 @@ Team Menu
 
 Map System
 
+- print errors for more than 255 chunks, text, doors, etc. when exporting a scene
+- map stamps should be referenced from an index to a jump table instead of directly addressed
 - default collision type for chunk
-- collision types with extra data should check for components instead of layer in editor
 - regions should have their own music, palettes, tiles, etc
 - an chunk index of 0 should fill the chunk with some default tile
 - font tiles should be usable in the editor
-- handle multiple map banks
 - random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
 - add diagonal lines to map system, (already implemented in editor)
 - draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
+- door script should have dropdowns for scene and chunk instead of typing in names
 - make the editor a standalone application
+- BUG: if holding more than one directional button, collisions can break
 
 Items
 

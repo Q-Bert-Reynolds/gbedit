@@ -3,6 +3,7 @@ INCLUDE "src/beisbol.inc"
 SECTION "Fade", ROMX, BANK[START_BANK]
 
 FadeIn::
+  DISPLAY_ON
   ld a, [sys_info]
   and a, SYS_INFO_GBC
   jr nz, .fadeInGBC

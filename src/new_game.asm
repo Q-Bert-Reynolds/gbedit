@@ -157,7 +157,6 @@ NewGame::
   call SetCoachPalettes
 
 .fadeInDoc
-  DISPLAY_ON
   call FadeIn
   
   ld hl, HelloThereString
@@ -214,8 +213,6 @@ NewGame::
   ld [rVBK], a
 
 .fadeInMuchacho
-  DISPLAY_ON
-
   call FadeIn
   ld hl, ThisWorldIsString
   call RevealTextAndWait
@@ -500,7 +497,6 @@ ENDC
   call SetCoachPalettes
 
 .fadeInCalvin
-  DISPLAY_ON
   call FadeIn
 
 ;transition to game

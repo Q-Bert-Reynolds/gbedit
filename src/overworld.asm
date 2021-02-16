@@ -33,8 +33,7 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
   .door
     pop bc
     pop af;steps left
-    call EnterDoor
-    jr .waitVBL
+    jp EnterDoor
   .jump
     pop bc
     pop af;steps left
@@ -312,30 +311,30 @@ AnimateJump:;a = frame
 
 EnterDoor::
   TRAMPOLINE FadeOut
-  ; ld a, [collision_data]
-  ; ld h, 0
-  ; ld l, a
-  ; add hl, hl;a*2
-  ; add hl, hl;a*4
-  ; add hl, hl;a*8
-  ; ld bc, MapOverworldDoors;TODO: this should come from current map instead
-  ; add hl, bc
-  ; ld a, [hli]
-  ; ld [map], a
-  ; ld a, [hli]
-  ; ld [map_chunk], a
-  ; call SetCurrentMapChunk
-  ; ld a, [hli]
-  ; ld [map_x], a
-  ; ld a, [hli]
-  ; ld [map_y], a
-  ; ld a, [hl]
-  ; ld [last_map_button_state], a
-  ; call FixMapScroll
+  ld a, [collision_data]
+  ld de, 5
+  call math_Multiply
+  ld bc, MapOverworldDoors;TODO: this should come from current map instead
+  add hl, bc
+  ld a, [hli]
+  ld [map], a
+  ld a, [hli]
+  call SetCurrentMapChunk
+  ld a, [hli]
+  srl a
+  sla a
+  ld [map_x], a
+  ld a, [hli]
+  srl a
+  sla a
+  ld [map_y], a
+  ld a, [hl]
+  ld [last_map_button_state], a
+  call FixMapScroll
   ld hl, MapOverworldPalettes
   call SetupMapPalettes
-  ; call ShowPlayerAvatar
-  ; ; call DrawMapToScreen
+  call ShowPlayerAvatar
+  call DrawMapToScreen
   TRAMPOLINE FadeIn
   ret
 

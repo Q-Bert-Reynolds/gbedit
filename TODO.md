@@ -164,5 +164,8 @@ Design Notes
 - teammates in their 20s and 30s have a small chance of producing a child
 - A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
-- You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make two mound visits in a row.
+- You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make more than one mound visit per inning per pitcher.
+- Pitchers must complete three plate appearances before they can be swapped out.
 - No HP means more errors and bad pitches, slower movement.
+- You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
+- 

@@ -13,6 +13,8 @@ SECTION "Map Loader", ROM0
 ; MoveMapDown
 ; SetupMapPalettes
 ; DrawMapToScreen              draws map to visible background
+; GetMapText                   a = text index, returns text in str_buffer
+; EnterMapDoor                 a = door index
 
 ; ROUTINES THAT EXPECT TO ALREADY BE ON THE CURRENT MAP BANK
 ; DrawMapLeftEdge              draws column of map tile to background off-screen left
@@ -43,12 +45,83 @@ MapAddresses:
   DW MapOverworld
   DW MapCalvinsHouse
 
-GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
-  call GetMapChunkForOffset
-  call GetMapChunkCollision
+GetMapText::;a = text index, returns text in str_buffer
+  ld b, 0
+  ld c, a
+  ld a, [loaded_bank]
+  push af;current bank
+  push bc;index
+  call GetCurrentMap
+  call SetBank
+
+  ld bc, 3
+  add hl, bc;[hl] = lower byte of strings address
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  pop bc;index
+  call str_FromArray
+  ld de, str_buffer
+  call str_Copy
+  ld hl, str_buffer
+
+  pop af;previous bank
+  call SetBank
   ret
 
-GetMapChunkCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
+EnterMapDoor:;a = door index
+  ld b, a;index
+  ld a, [loaded_bank]
+  push af;current bank
+  push bc;index
+  call GetCurrentMap
+  call SetBank
+  ld bc, 5
+  add hl, bc;[hl] = lower byte of doors address
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld b, a
+  pop af;index
+  push bc;doors address
+  ld de, 5
+  call math_Multiply
+  pop bc;doors address
+  add hl, bc
+  ld a, [hli]
+  call SetCurrentMap
+  ld a, [hli]
+  ld [map_chunk], a
+  ld a, [hli]
+  ld [rSCX], a
+  ld a, [hli]
+  ld [rSCY], a
+  ld a, [hl]
+  ld [last_map_button_state], a
+
+  pop af;previous bank
+  call SetBank
+  ret
+
+GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
+  call GetMapChunkForOffset
+  call GetMapChunkCollision
+  pop de;previous bank
+  push af;collision type and flags
+  ld a, [hl];extra data
+  ld b, a
+  ld a, d;previous bank
+  call SetBank
+  pop af;collision type and flags
+  ret
+
+GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
   ld a, d
   srl a
   ld [_x], a

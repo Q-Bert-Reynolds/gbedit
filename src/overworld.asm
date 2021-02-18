@@ -314,20 +314,7 @@ AnimateJump:;a = frame
 EnterDoor::
   TRAMPOLINE FadeOut
   ld a, [collision_data]
-  ld de, 5
-  call math_Multiply
-  ld bc, MapOverworldDoors;TODO: this should come from current map instead
-  add hl, bc
-  ld a, [hli]
-  call SetCurrentMap
-  ld a, [hli]
-  ld [map_chunk], a
-  ld a, [hli]
-  ld [rSCX], a
-  ld a, [hli]
-  ld [rSCY], a
-  ld a, [hl]
-  ld [last_map_button_state], a
+  call EnterMapDoor
   call FixMapScroll
   ld hl, PaletteCalvin
   ld a, 7
@@ -465,7 +452,7 @@ CheckPlayerCollision:;returns z if no collision
 .getChunk 
   call GetScreenCollision;NONE and GRASS already handled
   ld [collision_type], a
-  ld a, [hl]
+  ld a, b
   ld [collision_data], a
   ld a, [collision_type]
   ret z
@@ -499,13 +486,7 @@ CheckActions:
   cp a, MAP_COLLISION_TEXT
   ret nz
   ld a, [collision_data]
-  ld b, 0
-  ld c, a
-  ld hl, MapOverworldText
-  call str_FromArray
-  ld de, str_buffer
-  call str_Copy
-  ld hl, str_buffer
+  call GetMapText
   call RevealTextAndWait
   HIDE_WIN
   WAITPAD_UP

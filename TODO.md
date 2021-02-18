@@ -94,6 +94,7 @@ Team Menu
 
 Map System
 
+- chunks should be exported as tile arrays when more efficient than objects
 - print errors for more than 255 chunks, text, doors, etc. when exporting a scene
 - map stamps should be referenced from an index to a jump table instead of directly addressed
 - default collision type for chunk

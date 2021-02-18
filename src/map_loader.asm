@@ -25,6 +25,7 @@ SECTION "Map Loader", ROM0
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
 
 MAP_OVERWORLD EQU 0
+MAP_CALVINS_HOUSE EQU 1
 
 MapBanks:
   DB BANK(MapOverworld)

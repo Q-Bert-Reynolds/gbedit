@@ -4,7 +4,9 @@ SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 
 INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
-INCLUDE "maps/overworld.gbmap"
+INCLUDE "img/maps/indoors.asm"
+INCLUDE "maps/Overworld.gbmap"
+INCLUDE "maps/CalvinsHouse.gbmap"
 
 MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw routine
   ld hl, \1

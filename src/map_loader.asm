@@ -4,34 +4,49 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
+; ROUTINES THAT SWITCH TO THE CURRENT MAP BANK, DO SOME WORK, AND SWITCH BACK
+; GetScreenCollision              bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
-; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
 ; MoveMapDown
-; SetupMapPalettes             hl = map palette address
+; SetupMapPalettes
+; DrawMapToScreen              draws map to visible background
+
+; ROUTINES THAT EXPECT TO ALREADY BE ON THE CURRENT MAP BANK
 ; DrawMapLeftEdge              draws column of map tile to background off-screen left
 ; DrawMapRightEdge             draws column of map tile to background off-screen right
 ; DrawMapTopEdge               draws row map tiles to background off-screen up
 ; DrawMapBottomEdge            draws row map tiles to background off-screen down
-; DrawMapToScreen              draws map to visible background
 ; DrawMapChunk                 hl = chunk address, de=xy, bc=wh
 ; GetCurrentMapChunk           returns chunk address in hl, index in a
 ; SetCurrentMapChunk           hl = chunk address, returns address in hl, index in a
 ; GetCurrentMapChunkNeighbor   a = direction, returns chunk in hl, index in a
 ; GetMapChunkNeighbor          a = direction, hl = map chunk, returns chunk in hl, index in a
-; GetMapChunk                  a = jump table index; hl = jump table, returns chunk in hl, index in a
+; GetMapChunk                  a = jump table index, returns chunk in hl, index in a
 ; GetMapChunkForOffset         de = xy pixel offset, returns chunk in hl, tile xy in de
+
+; ROUTINES THAT DO NOT REQUIRE BANK SWITCHING
+; SetCurrentMap                a = map index, returns address in hl, bank in a
+; GetCurrentMap                returns address in hl, bank in a
+; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 
 MAP_OVERWORLD EQU 0
 MAP_CALVINS_HOUSE EQU 1
 
 MapBanks:
   DB BANK(MapOverworld)
+  DB BANK(MapCalvinsHouse)
 
 MapAddresses:
   DW MapOverworld
+  DW MapCalvinsHouse
+
+GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
+  call GetMapChunkForOffset
+  call GetMapChunkCollision
+  ret
 
 GetMapChunkCollision::;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
   ld a, d
@@ -295,7 +310,17 @@ MoveMapDown::
   ld [rSCY], a
   ret
 
-SetupMapPalettes::;hl = map palette address
+SetupMapPalettes::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
+  inc hl;[hl] = first byte of palette address
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b;hl = palette address
   ld a, %10000000
   ldh [rBCPS], a
   ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
@@ -304,6 +329,8 @@ SetupMapPalettes::;hl = map palette address
     ldh [rBCPD], a
     dec c
     jr nz, .loop
+  pop af;previous bank
+  call SetBank
   ret
 
 DrawMapLeftEdge:
@@ -460,6 +487,11 @@ DrawMapBottomEdge:
   ret
   
 DrawMapToScreen::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
+  
   ld a, [map_x]
   ld d, a
   sla a
@@ -513,7 +545,7 @@ DrawMapToScreen::
 .testSouth
   ld a, c;h
   cp a, 19;full h
-  ret z
+  jp z, .finish
 .drawSouthChunk
   ld e, 0
   ld a, 19;full h
@@ -529,7 +561,7 @@ DrawMapToScreen::
 .testSouthEast
   ld a, b;w
   cp a, 21;full w
-  ret z
+  jp z, .finish
 .drawSouthEastChunk
   ld d, 0
   ld a, 21;full w
@@ -540,6 +572,9 @@ DrawMapToScreen::
   ld a, MAP_EAST
   call GetMapChunkNeighbor
   call DrawMapChunk
+.finish
+  pop af;previous bank
+  call SetBank
   ret
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
@@ -1092,15 +1127,32 @@ DrawMapTile:;hl = tile data, de = xy, min/max XY in _x,_y,_u,_v
   inc hl
   ret
 
-GetCurrentMapChunk:;returns chunk address in hl, index in a
-  ld a, [map_chunk]
-  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
-  call GetMapChunk
+SetCurrentMap::;a = map index, returns address in hl, bank in a
+  ld [map], a
+  ;fall through
+GetCurrentMap::;returns address in hl, bank in a
+  ld a, [map]
+  ld b, 0
+  ld c, a
+  ld hl, MapAddresses
+  add hl, bc
+  add hl, bc
+  ld a, [hli]
+  ld e, a
+  ld a, [hl]
+  ld d, a
+  ld hl, MapBanks
+  add hl, bc
+  ld a, [hl]
+  ld h, d
+  ld l, e
   ret
 
 SetCurrentMapChunk::;a = chunk index, returns address in hl, index in a
   ld [map_chunk], a
-  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
+  ;fall through
+GetCurrentMapChunk:;returns chunk address in hl, index in a
+  ld a, [map_chunk]
   call GetMapChunk
   ret
 
@@ -1115,13 +1167,22 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, index i
   ld c, a
   add hl, bc
   ld a, [hl];jump table index
-  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
   call GetMapChunk
   pop bc
   ret
 
-GetMapChunk:;a = jump table index; hl = jump table, returns chunk in hl, index in a
+GetMapChunk:;a = jump table index, returns chunk in hl, index in a
   push bc
+  push af;index
+  call GetCurrentMap;should already be in correct bank
+  ld bc, 9
+  add hl, bc;[hl] = lower byte of chunk jump table
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b;hl = chunk jump table address
+  pop af;index
   push af;index
   ld b, 0
   ld c, a

@@ -319,11 +319,9 @@ EnterDoor::
   ld bc, MapOverworldDoors;TODO: this should come from current map instead
   add hl, bc
   ld a, [hli]
-  ld [map], a
+  call SetCurrentMap
   ld a, [hli]
-  push hl
-  call SetCurrentMapChunk
-  pop hl
+  ld [map_chunk], a
   ld a, [hli]
   ld [rSCX], a
   ld a, [hli]
@@ -465,8 +463,7 @@ CheckPlayerCollision:;returns z if no collision
   ld b, 81;right
   ld c, 76
 .getChunk 
-  call GetMapChunkForOffset
-  call GetMapChunkCollision;NONE and GRASS already handled
+  call GetScreenCollision;NONE and GRASS already handled
   ld [collision_type], a
   ld a, [hl]
   ld [collision_data], a
@@ -571,7 +568,7 @@ Overworld::
   ld [map_scroll_speed], a
   xor a
   ld [list_selection], a
-  ld hl, MapOverworldPalettes
+
   call SetupMapPalettes
   call DrawMapToScreen
 

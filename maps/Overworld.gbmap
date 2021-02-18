@@ -1,4 +1,5 @@
-MapOverworld:: ;5915 bytes total
+MapOverworld:: ;5916 bytes total
+  DB MAP_OVERWORLD
   DW MapOverworldPalettes ;64 bytes
   DW MapOverworldText ;73
   DW MapOverworldDoors ;15

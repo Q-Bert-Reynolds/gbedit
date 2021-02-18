@@ -8,13 +8,16 @@ TestMap::
   SET_DEFAULT_PALETTE
   call LoadFontTiles
   call LoadOverworldTiles
-  ld hl, MapOverworldPalettes
+  ld a, MAP_OVERWORLD
+  ld [map], a
   call SetupMapPalettes
-  xor a
+  ld a, 20
   ld [map_x], a
   ld [map_y], a
+  ld a, MAP_OVERWORLD
+  call SetCurrentMap
   ld a, MAP_CHUNK_BILLETTOWNNE
-  call SetCurrentMapChunk
+  ld [map_chunk], a
   call DrawMapToScreen
   DISPLAY_ON
 

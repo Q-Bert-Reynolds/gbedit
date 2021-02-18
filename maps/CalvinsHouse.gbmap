@@ -1,4 +1,5 @@
-MapCalvinsHouse:: ;636 bytes total
+MapCalvinsHouse:: ;637 bytes total
+  DB MAP_CALVINS_HOUSE
   DW MapCalvinsHousePalettes ;64 bytes
   DW MapCalvinsHouseText ;29
   DW MapCalvinsHouseDoors ;15

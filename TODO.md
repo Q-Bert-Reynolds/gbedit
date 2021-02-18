@@ -2,6 +2,8 @@ Priority
 
 - map system
   - handle multiple maps/banks
+  - separate palettes and stamps from object data
+  - reserve bg palette 0 for UI
   - load/interact characters and items
 - make batting results semi-random so we can move on to FX
 
@@ -169,4 +171,3 @@ Design Notes
 - Pitchers must complete three plate appearances before they can be swapped out.
 - No HP means more errors and bad pitches, slower movement.
 - You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
-- 

@@ -565,9 +565,10 @@ ENDC
   ld a, 10
   ld [map_x], a
   ld [map_y], a
+  ld a, MAP_OVERWORLD
+  call SetCurrentMap
   ld a, MAP_CHUNK_BILLETTOWNNE
-  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
-  call SetCurrentMapChunk
+  ld [map_chunk], a
 
   xor a
   ld [seconds], a

@@ -203,7 +203,7 @@ FadeOut::
     ld a, [rBGP]
     and a
     jr nz, .fadeOutDMGLoop
-  ret
+  jp .finish
   
 .fadeOutGBC
   ld hl, tile_buffer
@@ -272,5 +272,6 @@ FadeOut::
     pop af;steps left
     dec a
     jr nz, .fadeOutGBCLoop
+.finish
   DISPLAY_OFF
   ret

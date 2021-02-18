@@ -167,7 +167,6 @@ NewGame::
   call FadeOut
 
 .showMuchacho
-  DISPLAY_OFF
   CLEAR_SCREEN " "
     
 .muchachoTiles
@@ -228,7 +227,6 @@ NewGame::
   call FadeOut
 
 .showCalvin
-  DISPLAY_OFF
   CLEAR_SCREEN " "
 
 .calvinTiles
@@ -262,6 +260,9 @@ NewGame::
   call SetCoachPalettes
 
 .slideInCalvin
+  ld a, DMG_PAL_BDLW
+  ld [rBGP], a
+  ld [rOBP0], a
   ld a, -56
   ld [rSCX], a
   xor a
@@ -376,6 +377,9 @@ ENDC
   call SetCoachPalettes
 
 .slideInNolan
+  ld a, DMG_PAL_BDLW
+  ld [rBGP], a
+  ld [rOBP0], a
   ld a, -56
   ld [rSCX], a
   DISPLAY_ON

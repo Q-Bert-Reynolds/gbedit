@@ -5,7 +5,7 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
 ; ROUTINES THAT SWITCH TO THE CURRENT MAP BANK, DO SOME WORK, AND SWITCH BACK
-; GetScreenCollision              bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
+; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
 ; MoveMapLeft
 ; MoveMapRight
@@ -207,11 +207,15 @@ FixMapScroll::
   ret
 
 MoveMapLeft::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
   ld a, [map_scroll_speed]
   ld b, a
   ld a, [rSCX]
   sub a, b
-  push af
+  push af;new scx
   ld d, a
   jr nc, .noChunkChangeWest
   ld a, MAP_WEST
@@ -228,11 +232,17 @@ MoveMapLeft::
   ld [map_x], a
   call DrawMapLeftEdge
 .move
-  pop af
+  pop af;new scx
   ld [rSCX], a
+  pop af;previous bank
+  call SetBank
   ret
 
 MoveMapRight::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
   ld a, [map_scroll_speed]
   ld b, a
   ld a, [rSCX]
@@ -256,9 +266,15 @@ MoveMapRight::
 .move
   pop af
   ld [rSCX], a
+  pop af;previous bank
+  call SetBank
   ret
 
 MoveMapUp::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
   ld a, [map_scroll_speed]
   ld b, a
   ld a, [rSCY]
@@ -282,9 +298,15 @@ MoveMapUp::
 .move
   pop af
   ld [rSCY], a
+  pop af;previous bank
+  call SetBank
   ret
 
 MoveMapDown::
+  ld a, [loaded_bank]
+  push af;current bank
+  call GetCurrentMap
+  call SetBank
   ld a, [map_scroll_speed]
   ld b, a
   ld a, [rSCY]
@@ -308,6 +330,8 @@ MoveMapDown::
 .move
   pop af
   ld [rSCY], a
+  pop af;previous bank
+  call SetBank
   ret
 
 SetupMapPalettes::
@@ -1131,6 +1155,8 @@ SetCurrentMap::;a = map index, returns address in hl, bank in a
   ld [map], a
   ;fall through
 GetCurrentMap::;returns address in hl, bank in a
+  push bc
+  push de
   ld a, [map]
   ld b, 0
   ld c, a
@@ -1146,16 +1172,21 @@ GetCurrentMap::;returns address in hl, bank in a
   ld a, [hl]
   ld h, d
   ld l, e
+  pop de
+  pop bc
+  ret
+
+GetCurrentMapChunk:;returns chunk address in hl, index in a
+  ld a, [map_chunk]
+  ld hl, MapOverworldChunks
+  call GetMapChunk
   ret
 
 SetCurrentMapChunk::;a = chunk index, returns address in hl, index in a
   ld [map_chunk], a
-  ;fall through
-GetCurrentMapChunk:;returns chunk address in hl, index in a
-  ld a, [map_chunk]
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
   call GetMapChunk
   ret
-
 GetCurrentMapChunkNeighbor:;a = direction, returns chunk in hl, index in a
   push af;dir
   call GetCurrentMapChunk
@@ -1167,6 +1198,7 @@ GetMapChunkNeighbor:;a = direction, hl = map chunk, returns chunk in hl, index i
   ld c, a
   add hl, bc
   ld a, [hl];jump table index
+  ld hl, MapOverworldChunks;TODO: this should be the beginning of the current map bank
   call GetMapChunk
   pop bc
   ret

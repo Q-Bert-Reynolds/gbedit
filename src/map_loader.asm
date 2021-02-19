@@ -11,7 +11,8 @@ SECTION "Map Loader", ROM0
 ; MoveMapRight
 ; MoveMapUp
 ; MoveMapDown
-; SetupMapPalettes
+; SetMapPalettes
+; SetMapTiles
 ; DrawMapToScreen              draws map to visible background
 ; GetMapText                   a = text index, returns text in str_buffer
 ; EnterMapDoor                 a = door index
@@ -44,6 +45,14 @@ MapBanks:
 MapAddresses:
   DW MapOverworld
   DW MapCalvinsHouse
+
+MapTileBanks:
+  DB BANK(_OverworldTiles)
+  DB BANK(_IndoorsTiles)
+
+MapTileAddresses:
+  DW _OverworldTiles
+  DW _IndoorsTiles
 
 GetMapText::;a = text index, returns text in str_buffer
   ld b, 0
@@ -78,6 +87,7 @@ EnterMapDoor:;a = door index
   push bc;index
   call GetCurrentMap
   call SetBank
+  
   ld bc, 5
   add hl, bc;[hl] = lower byte of doors address
   ld a, [hli]
@@ -86,6 +96,7 @@ EnterMapDoor:;a = door index
   ld b, a
   pop af;index
   push bc;doors address
+
   ld de, 5
   call math_Multiply
   pop bc;doors address
@@ -101,8 +112,14 @@ EnterMapDoor:;a = door index
   ld a, [hl]
   ld [last_map_button_state], a
 
+  call SetMapTiles
+  call SetMapPalettes
+
   pop af;previous bank
   call SetBank
+
+  call SetMapPalettes
+  call DrawMapToScreen
   ret
 
 GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
@@ -407,7 +424,7 @@ MoveMapDown::
   call SetBank
   ret
 
-SetupMapPalettes::
+SetMapPalettes::
   ld a, [loaded_bank]
   push af;current bank
   call GetCurrentMap
@@ -427,6 +444,34 @@ SetupMapPalettes::
     dec c
     jr nz, .loop
   pop af;previous bank
+  call SetBank
+  ret
+
+SetMapTiles::
+  ld a, [loaded_bank]
+  push af
+
+  ld a, [map]
+  ld b, 0
+  ld c, a
+  ld hl, MapTileBanks
+  add hl, bc
+  ld a, [hl]
+  call SetBank
+
+  ld hl, MapTileAddresses
+  add hl, bc
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hli]
+  ld h, a
+  ld l, b
+  ld de, $8800
+  ld bc, 128*16;tiles*bytes/tile
+  call mem_CopyVRAM
+
+  pop af
   call SetBank
   ret
 

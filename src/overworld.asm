@@ -319,10 +319,7 @@ EnterDoor::
   ld hl, PaletteCalvin
   ld a, 7
   call GBCSetPalette
-  ld hl, MapOverworldPalettes
-  call SetupMapPalettes
   call ShowPlayerAvatar
-  call DrawMapToScreen
   TRAMPOLINE FadeIn
   ret
 
@@ -407,7 +404,8 @@ ShowPauseMenu::
   ld [rSCY], a
 .returnToPauseMenu
   call LoadAvatarSprites
-  call LoadOverworldTiles
+  call SetMapTiles
+  call SetMapPalettes
   call ShowPlayerAvatar
   call DrawMapToScreen
   POP_VAR list_selection
@@ -515,12 +513,6 @@ LoadAvatarSprites:
   call GBCSetPalette
   ret
 
-LoadOverworldTiles:
-  ld hl, _OverworldTiles
-  ld de, $8800
-  ld bc, _OVERWORLD_TILE_COUNT*16
-  call mem_CopyVRAM
-  ret
 
 CheckRandomAppearance:
   call gbdk_Random
@@ -535,12 +527,14 @@ Overworld::
   SET_DEFAULT_PALETTE
 
   call LoadFontTiles
-  call LoadOverworldTiles
   call LoadAvatarSprites
 
   ld a, PADF_DOWN
   ld [last_map_button_state], a
   call ShowPlayerAvatar
+
+  call SetMapTiles
+  call SetMapPalettes
 
   ;TODO: load song based on location
   PLAY_SONG hurrah_for_our_national_game_data, 1
@@ -550,7 +544,6 @@ Overworld::
   xor a
   ld [list_selection], a
 
-  call SetupMapPalettes
   call DrawMapToScreen
 
   SHOW_BKG

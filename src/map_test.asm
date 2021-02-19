@@ -7,10 +7,10 @@ TestMap::
   PLAY_SONG tessie_data, 1
   SET_DEFAULT_PALETTE
   call LoadFontTiles
-  call LoadOverworldTiles
   ld a, MAP_OVERWORLD
   ld [map], a
-  call SetupMapPalettes
+  call SetMapTiles
+  call SetMapPalettes
   ld a, 20
   ld [map_x], a
   ld [map_y], a

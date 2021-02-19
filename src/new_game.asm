@@ -566,12 +566,12 @@ ENDC
   call FadeOut
 
   ;NOTE: starting xy determines grid alignment!!! should be even
-  ld a, 10
+  ld a, 6
   ld [map_x], a
   ld [map_y], a
-  ld a, MAP_OVERWORLD
+  ld a, MAP_CALVINS_HOUSE
   call SetCurrentMap
-  ld a, MAP_CHUNK_BILLETTOWNNE
+  ld a, MAP_CHUNK_CALVINS_ROOM
   ld [map_chunk], a
 
   xor a

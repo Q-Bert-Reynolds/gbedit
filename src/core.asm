@@ -1182,6 +1182,7 @@ SetPalettesDirect::;a = SGB packet header, bc = paletteA, de = paletteB
   ld a, h;header
   jp sgb_SetPal
 
+;TODO: SGB palette matching should be handled better than this
 GBCSetPalette::;a = palette id, hl = colors
   sla a
   sla a

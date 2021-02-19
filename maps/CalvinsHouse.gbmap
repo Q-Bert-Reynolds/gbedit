@@ -1,9 +1,9 @@
-MapCalvinsHouse:: ;657 bytes total
+MapCalvinsHouse:: ;666 bytes total
   DB MAP_CALVINS_HOUSE
   DW MapCalvinsHousePalettes ;64 bytes
   DW MapCalvinsHouseText ;28
   DW MapCalvinsHouseDoors ;15
-  DW MapCalvinsHouseStamps ;280 bytes
+  DW MapCalvinsHouseStamps ;289 bytes
   DW MapCalvinsHouseChunks ;269 bytes
 
 MapCalvinsHousePalettes: ;64 bytes
@@ -70,7 +70,7 @@ MapCalvinsHouseDoors: ;15 bytes
   DB 0;y
   DB 128;direction
 
-;Stamps, 280 bytes
+;Stamps, 289 bytes
 MapCalvinsHouseStamps:
 MapStampFloor: ;19 bytes
   DB 4;width
@@ -208,6 +208,20 @@ MapStampStool: ;7 bytes
 .palette
   DB 130
 
+MapStampStairsUp: ;18 bytes
+  DB 2;width
+  DB 4;height
+.tiles
+  DB 134, 135
+  DB 150, 151
+  DB 166, 166
+  DB 183, 167
+.palettes
+  DB 4, 4
+  DB 4, 3
+  DB 3, 3
+  DB 3, 3
+
 MapStampBigTV: ;42 bytes
   DB 5;width
   DB 4;height
@@ -221,16 +235,6 @@ MapStampBigTV: ;42 bytes
   DB 0, 4, 5, 4, 0
   DB 0, 5, 4, 4, 0
   DB 2, 2, 2, 2, 2
-
-MapStampStairsUp: ;9 bytes
-  DB 2;width
-  DB 3;height
-.tiles
-  DB 134, 135
-  DB 150, 151
-  DB 166, 167
-.palette
-  DB 132
 
 MapStampExit: ;7 bytes
   DB 4;width
@@ -280,20 +284,20 @@ MapChunkCalvinsRoom:
   DB 25;x2
   DB 25;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (16)
-  DB 8;x1
-  DB 24;y1
-  DB 252;tile
-  DB 5;palette
-  DB 24;x2
-  DB 25;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (15)
   DB 7;x1
   DB 9;y1
   DB 252;tile
   DB 5;palette
   DB 8;x2
+  DB 25;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (16)
+  DB 8;x1
+  DB 24;y1
+  DB 252;tile
+  DB 5;palette
+  DB 24;x2
   DB 25;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Floor
@@ -349,23 +353,23 @@ MapChunkCalvinsRoom:
   DB 142;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball
-  DB 13;x
-  DB 10;y
-  DB 169;tile
-  DB 5;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (4)
   DB 19;x
   DB 10;y
   DB 142;tile
   DB 2;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (1)
-  DB 12;x
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball
+  DB 13;x
+  DB 10;y
+  DB 169;tile
+  DB 5;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (5)
+  DB 20;x
   DB 9;y
-  DB 157;tile
-  DB 2;palette
+  DB 142;tile
+  DB 0;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (2)
   DB 19;x
@@ -373,11 +377,11 @@ MapChunkCalvinsRoom:
   DB 142;tile
   DB 3;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (5)
-  DB 20;x
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (1)
+  DB 12;x
   DB 9;y
-  DB 142;tile
-  DB 0;palette
+  DB 157;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
   DB 16;x
@@ -418,20 +422,20 @@ MapChunkCalvinsHouse:
   DB 24;x2
   DB 24;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
-  DB 24;x1
-  DB 11;y1
-  DB 252;tile
-  DB 5;palette
-  DB 25;x2
-  DB 25;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (13)
   DB 18;x1
   DB 24;y1
   DB 252;tile
   DB 5;palette
   DB 24;x2
+  DB 25;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
+  DB 24;x1
+  DB 11;y1
+  DB 252;tile
+  DB 5;palette
+  DB 25;x2
   DB 25;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (11)
@@ -476,6 +480,13 @@ MapChunkCalvinsHouse:
   DB 16;y
   DW MapStampTable
 
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Rug (6)
+  DB 18;x1
+  DB 16;y1
+  DW MapStampStool
+  DB 20;x2
+  DB 20;y2
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Rug (7)
   DB 12;x1
   DB 16;y1
@@ -483,12 +494,11 @@ MapChunkCalvinsHouse:
   DB 14;x2
   DB 20;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Rug (6)
-  DB 18;x1
-  DB 16;y1
-  DW MapStampStool
-  DB 20;x2
-  DB 20;y2
+  DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;StairsUp
+  DB 22;x
+  DB 10;y
+  DW MapStampStairsUp
+  DB 1;door
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Rug (3)
   DB 8;x1
@@ -501,12 +511,6 @@ MapChunkCalvinsHouse:
   DB 14;x
   DB 9;y
   DW MapStampBigTV
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;StairsUp
-  DB 22;x
-  DB 10;y
-  DW MapStampStairsUp
-  DB 1;door
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Desk (4)
   DB 19;x

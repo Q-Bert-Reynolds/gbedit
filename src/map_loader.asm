@@ -102,24 +102,23 @@ EnterMapDoor:;a = door index
   pop bc;doors address
   add hl, bc
   ld a, [hli]
-  call SetCurrentMap
+  ld [map], a
   ld a, [hli]
   ld [map_chunk], a
   ld a, [hli]
-  ld [rSCX], a
+  ld [map_x], a
   ld a, [hli]
-  ld [rSCY], a
+  ld [map_y], a
   ld a, [hl]
   ld [last_map_button_state], a
 
   call SetMapTiles
   call SetMapPalettes
+  call DrawMapToScreen
 
   pop af;previous bank
   call SetBank
 
-  call SetMapPalettes
-  call DrawMapToScreen
   ret
 
 GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b

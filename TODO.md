@@ -1,7 +1,6 @@
 Priority
 
 - map system
-  - handle multiple maps/banks
   - separate palettes and stamps from object data
   - reserve bg palette 0 for UI
   - load/interact characters and items
@@ -140,6 +139,7 @@ Audio
 
 Super GameBoy
 
+- GBCSetPalette (used to match SGB and GBC palettes) can cause problems with GBC specific palettes
 - use color palette data
 - use additional sprites
 - borders for each city when walking

@@ -313,12 +313,12 @@ AnimateJump:;a = frame
 
 EnterDoor::
   TRAMPOLINE FadeOut
-  ld a, [collision_data]
-  call EnterMapDoor
-  call FixMapScroll
   ld hl, PaletteCalvin
   ld a, 7
   call GBCSetPalette
+  ld a, [collision_data]
+  call EnterMapDoor
+  call FixMapScroll
   call ShowPlayerAvatar
   TRAMPOLINE FadeIn
   ret
@@ -502,7 +502,7 @@ ShowPlayerAvatar:
   SHOW_SPRITES
   ret 
 
-LoadAvatarSprites:
+LoadAvatarSprites:;NOTE: this should be done BEFORE setting GBC map palettes
   ld hl, _AvatarsTiles
   ld de, $8000
   ld bc, _AVATARS_TILE_COUNT*16
@@ -512,7 +512,6 @@ LoadAvatarSprites:
   ld a, 7
   call GBCSetPalette
   ret
-
 
 CheckRandomAppearance:
   call gbdk_Random
@@ -524,7 +523,6 @@ CheckRandomAppearance:
 
 Overworld::
   DISPLAY_OFF
-  SET_DEFAULT_PALETTE
 
   call LoadFontTiles
   call LoadAvatarSprites

@@ -1,10 +1,12 @@
-MapCalvinsHouse:: ;777 bytes total
+MapCalvinsHouse:: ;767 bytes total
   DB MAP_CALVINS_HOUSE
   DW MapCalvinsHousePalettes ;64 bytes
-  DW MapCalvinsHouseText ;112
+  DW MapCalvinsHouseText ;96
   DW MapCalvinsHouseDoors ;15
   DW MapCalvinsHouseStamps ;299 bytes
-  DW MapCalvinsHouseChunks ;286 bytes
+  DW MapCalvinsHouseChunks ;276 bytes
+  DW MapCalvinsHouseSprites ;16 bytes
+  DW MapCalvinsHouseScripts ;3 bytes
 
 MapCalvinsHousePalettes: ;64 bytes
   RGB 30, 28, 19
@@ -47,10 +49,9 @@ MapCalvinsHousePalettes: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
-MapCalvinsHouseText: ;112 bytes
+MapCalvinsHouseText: ;96 bytes
   DB "It's just a bunch\nof trash.",0
   DB "Battery's broken.\nDon't turn it off.",0
-  DB "This is a test.",0
   DB "You can sleep\nwhen you've won.",0
 
 MapCalvinsHouseDoors: ;15 bytes
@@ -257,7 +258,7 @@ MapCalvinsHouseChunks: ;4 bytes
   DW MapChunkCalvinsRoom
   DW MapChunkCalvinsHouse
 
-;Map, 282 bytes
+;Map Chunks, 272 bytes
 MapChunkCalvinsRoom:
 .tile:    DB 252
 .palette: DB 1
@@ -397,38 +398,26 @@ MapChunkCalvinsRoom:
   DB 157;tile
   DB 2;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
-  DB 16;x1
-  DB 19;y1
-  DB 161;tile
-  DB 6;palette
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;TV
   DB 16;x
   DB 16;y
   DW MapStampTV
   DB 1; Battery's broken.\nDon't turn it off.
 
-  DB MAP_OBJ_NONE_FILL | MAP_COLLISION_TEXT ;InvisibleBox
+  DB MAP_OBJ_NONE_FILL | MAP_COLLISION_SCRIPT ;Computer
   DB 10;x1
   DB 10;y1
   DB 12;x2
   DB 12;y2
-  DB 2; This is a test.
-
+  DB 0
+;UseComputer
   DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Bed
   DB 8;x
   DB 20;y
   DW MapStampBed
-  DB 3; You can sleep\nwhen you've won.
+  DB 2; You can sleep\nwhen you've won.
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console (1)
-  DB 16;x1
-  DB 20;y1
-  DB 160;tile
-  DB 6;palette
-
-  DB 0;END CalvinsRoom, 159 bytes
+  DB 0;END CalvinsRoom background objects, 149 bytes
 
 MapChunkCalvinsHouse:
 .tile:    DB 252
@@ -557,5 +546,35 @@ MapChunkCalvinsHouse:
   DW MapStampExit
   DB 2;door
 
-  DB 0;END CalvinsHouse, 123 bytes
+  DB 0;END CalvinsHouse background objects, 123 bytes
+
+
+MapCalvinsHouseSprites: ;4 bytes
+  DW MapSpritesCalvinsRoom
+  DW MapSpritesCalvinsHouse
+
+;Map Sprites, 12 bytes
+MapSpritesCalvinsRoom:
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
+  DB 16;x1
+  DB 19;y1
+  DB 161;tile
+  DB 6;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
+  DB 16;x1
+  DB 20;y1
+  DB 160;tile
+  DB 6;palette
+
+  DB 0;END CalvinsRoom sprite objects, 11 bytes
+
+MapSpritesCalvinsHouse:
+
+  DB 0;END CalvinsHouse sprite objects, 1 bytes
+
+MapCalvinsHouseScripts: ;3 bytes
+  DB BANK(UseComputer)
+  DW UseComputer
 

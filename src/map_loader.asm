@@ -16,6 +16,7 @@ SECTION "Map Loader", ROM0
 ; DrawMapToScreen              draws map to visible background
 ; GetMapText                   a = text index, returns text in str_buffer
 ; EnterMapDoor                 a = door index
+; RunMapScript                 a = script index
 
 ; ROUTINES THAT EXPECT TO ALREADY BE ON THE CURRENT MAP BANK
 ; DrawMapLeftEdge              draws column of map tile to background off-screen left
@@ -119,6 +120,43 @@ EnterMapDoor:;a = door index
   pop af;previous bank
   call SetBank
 
+  ret
+
+RunMapScript::;a = script index
+  ld b, a;index
+  ld a, [loaded_bank]
+  push af;current bank
+  push bc;index
+  call GetCurrentMap
+  call SetBank
+
+  ld bc, 13
+  add hl, bc;[hl] = lower byte of doors address
+  ld a, [hli]
+  ld c, a
+  ld a, [hl]
+  ld b, a
+  pop af;index
+  push bc;scripts address
+
+  ld de, 3
+  call math_Multiply
+  pop bc;scripts address
+  add hl, bc
+  ld a, [hli];bank
+  call SetBank
+  ld a, [hli];lower byte of script address
+  ld b, a
+  ld a, [hli];upper byte of script address
+  ld h, a
+  ld l, b
+  ld de, .return
+  push de
+  jp hl
+.return 
+
+  pop af;previous bank
+  call SetBank
   ret
 
 GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
@@ -254,6 +292,8 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
     pop bc
     ld a, c
     cp a, MAP_COLLISION_TEXT
+    jp z, .hasExtraData
+    cp a, MAP_COLLISION_SCRIPT
     jp z, .hasExtraData
     cp a, MAP_COLLISION_LEDGE
     jr z, .hasExtraData
@@ -827,6 +867,8 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   .checkExtraData
     pop af;map object type and collision
     and a, MAP_COLLISION_MASK
+    cp a, MAP_COLLISION_SCRIPT
+    jp z, .hasExtraData
     cp a, MAP_COLLISION_TEXT
     jp z, .hasExtraData
     cp a, MAP_COLLISION_LEDGE

@@ -1,5 +1,6 @@
 Priority
 
+- using the computer
 - map system
   - reserve bg palette 0 for UI
   - load/interact characters and items

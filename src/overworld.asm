@@ -460,6 +460,8 @@ CheckPlayerCollision:;returns z if no collision
   jr z, .stay
   cp a, MAP_COLLISION_TEXT
   jr z, .stay
+  cp a, MAP_COLLISION_SCRIPT
+  jr z, .stay
 .checkWaterMove
   cp a, MAP_COLLISION_WATER
   jr z, .stay;TODO: add swimming
@@ -482,7 +484,13 @@ CheckActions:
   call CheckPlayerCollision
   ld a, [collision_type]
   cp a, MAP_COLLISION_TEXT
+  jr z, .displayText
+  cp a, MAP_COLLISION_SCRIPT
   ret nz
+.runScript
+  ld a, [collision_data]
+  jp RunMapScript
+.displayText
   ld a, [collision_data]
   call GetMapText
   call RevealTextAndWait
@@ -519,6 +527,14 @@ CheckRandomAppearance:
   xor a, e
   and a, e
   and a, %1000000
+  ret
+
+UseComputerText: DB "USE COMPUTER", 0
+UseComputer:
+  ld hl, UseComputerText
+  call RevealTextAndWait
+  HIDE_WIN
+  WAITPAD_UP
   ret
 
 Overworld::

@@ -59,21 +59,21 @@ MapOverworldDoors: ;15 bytes
 .doorDoorToDocsLab
   DB MAP_OVERWORLD
   DB MAP_CHUNK_BILLETTOWNSW
-  DB 0;x
-  DB 0;y
+  DB 22;x=0
+  DB 22;y=32
   DB 128;direction
 .doorDoorToNolansHouse
   DB MAP_OVERWORLD
   DB MAP_CHUNK_BILLETTOWNSW
-  DB 0;x
-  DB 0;y
+  DB 22;x=0
+  DB 22;y=32
   DB 128;direction
 .doorDoorToCalvinsHouse
   DB MAP_CALVINS_HOUSE
   DB MAP_CHUNK_CALVINS_HOUSE
-  DB 0;x
-  DB 0;y
-  DB 128;direction
+  DB 6;x=16
+  DB 14;y=23
+  DB 64;direction
 
 ;Stamps, 513 bytes
 MapOverworldStamps:

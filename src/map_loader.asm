@@ -169,6 +169,10 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
     jp z, .stamp
     cp a, MAP_OBJ_TILE
     jp z, .tile
+    cp a, MAP_OBJ_NONE
+    jp z, .blankTile
+    cp a, MAP_OBJ_NONE_FILL
+    jp z, .blankFill
     ; cp a, MAP_OBJ_STAMP_FILL
     ; jp z, .fill
     ; cp a, MAP_OBJ_TILE_FILL
@@ -177,6 +181,7 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
   .fill
     inc hl;skip tile
     inc hl;skip palete
+  .blankFill
     ld a, [_x]
     cp a, d;x1
     jr c, .skip2Bytes
@@ -202,6 +207,7 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
   .tile
     inc hl;skip tile or stamp lower address
     inc hl;skip palete or stamp upper address
+  .blankTile
     ld a, [_x]
     cp a, d;x
     jp nz, .checkExtraData
@@ -796,8 +802,15 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jp z, .stampFill
     cp a, MAP_OBJ_TILE
     jp z, .tile
-    ; cp a, MAP_OBJ_TILE_FILL
-    ; jp z, .tileFill
+    cp a, MAP_OBJ_TILE_FILL
+    jp z, .tileFill
+    cp a, MAP_OBJ_NONE
+    jr z, .checkExtraData
+    ; else MAP_OBJ_NONE_FILL
+  .noneFill
+    inc hl
+    inc hl
+    jp .checkExtraData
   .tileFill
     call DrawMapTileFill
     jp .checkExtraData

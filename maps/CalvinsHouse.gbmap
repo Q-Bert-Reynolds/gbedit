@@ -1,10 +1,10 @@
-MapCalvinsHouse:: ;666 bytes total
+MapCalvinsHouse:: ;777 bytes total
   DB MAP_CALVINS_HOUSE
   DW MapCalvinsHousePalettes ;64 bytes
-  DW MapCalvinsHouseText ;28
+  DW MapCalvinsHouseText ;112
   DW MapCalvinsHouseDoors ;15
-  DW MapCalvinsHouseStamps ;289 bytes
-  DW MapCalvinsHouseChunks ;269 bytes
+  DW MapCalvinsHouseStamps ;299 bytes
+  DW MapCalvinsHouseChunks ;286 bytes
 
 MapCalvinsHousePalettes: ;64 bytes
   RGB 30, 28, 19
@@ -47,30 +47,33 @@ MapCalvinsHousePalettes: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
-MapCalvinsHouseText: ;28 bytes
+MapCalvinsHouseText: ;112 bytes
   DB "It's just a bunch\nof trash.",0
+  DB "Battery's broken.\nDon't turn it off.",0
+  DB "This is a test.",0
+  DB "You can sleep\nwhen you've won.",0
 
 MapCalvinsHouseDoors: ;15 bytes
 .doorStairsDown
   DB MAP_CALVINS_HOUSE
   DB MAP_CHUNK_CALVINS_HOUSE
-  DB 0;x
-  DB 0;y
+  DB 14;x=24
+  DB 6;y=16
   DB 128;direction
 .doorStairsUp
   DB MAP_CALVINS_HOUSE
   DB MAP_CHUNK_CALVINS_ROOM
-  DB 0;x
-  DB 0;y
+  DB 14;x=24
+  DB 6;y=16
   DB 128;direction
 .doorExit
   DB MAP_OVERWORLD
-  DB MAP_CHUNK_BILLETTOWNNE
-  DB 0;x
-  DB 0;y
+  DB MAP_CHUNK_BILLETTOWNNW
+  DB 18;x=28
+  DB 16;y=26
   DB 128;direction
 
-;Stamps, 289 bytes
+;Stamps, 299 bytes
 MapCalvinsHouseStamps:
 MapStampFloor: ;19 bytes
   DB 4;width
@@ -120,11 +123,10 @@ MapStampTrashCan: ;7 bytes
 .palette
   DB 130
 
-MapStampStairsDown: ;11 bytes
+MapStampStairsDown: ;9 bytes
   DB 2;width
-  DB 4;height
+  DB 3;height
 .tiles
-  DB 182, 255
   DB 198, 199
   DB 214, 215
   DB 230, 231
@@ -159,34 +161,47 @@ MapStampTV: ;10 bytes
   DB 2;height
 .tiles
   DB 128, 129
-  DB 144, 144
+  DB 144, 145
 .palettes
-  DB 4, 4
-  DB 4, 3
+  DB 0, 0
+  DB 1, 1
 
-MapStampBed: ;26 bytes
+MapStampBed: ;34 bytes
   DB 4;width
-  DB 3;height
+  DB 4;height
 .tiles
-  DB 218, 219, 219, 220
+  DB 203, 219, 219, 220
+  DB 204, 237, 237, 221
   DB 218, 237, 237, 221
   DB 234, 235, 235, 236
 .palettes
-  DB 7, 7, 7, 7
-  DB 7, 7, 7, 7
+  DB 4, 4, 4, 4
+  DB 4, 4, 4, 4
+  DB 4, 4, 4, 4
   DB 3, 3, 3, 3
 
-MapStampPlant: ;14 bytes
+MapStampPlant: ;18 bytes
   DB 2;width
-  DB 3;height
+  DB 4;height
 .tiles
-  DB 136, 137
-  DB 152, 153
+  DB 138, 139
+  DB 154, 155
+  DB 170, 171
   DB 244, 245
 .palettes
   DB 1, 1
+  DB 1, 1
   DB 2, 2
   DB 2, 2
+
+MapStampStool: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 226, 227
+  DB 224, 225
+.palette
+  DB 130
 
 MapStampTable: ;19 bytes
   DB 4;width
@@ -196,15 +211,6 @@ MapStampTable: ;19 bytes
   DB 146, 254, 254, 147
   DB 146, 254, 254, 147
   DB 162, 148, 148, 163
-.palette
-  DB 130
-
-MapStampStool: ;7 bytes
-  DB 2;width
-  DB 2;height
-.tiles
-  DB 226, 227
-  DB 224, 225
 .palette
   DB 130
 
@@ -251,7 +257,7 @@ MapCalvinsHouseChunks: ;4 bytes
   DW MapChunkCalvinsRoom
   DW MapChunkCalvinsHouse
 
-;Map, 265 bytes
+;Map, 282 bytes
 MapChunkCalvinsRoom:
 .tile:    DB 252
 .palette: DB 1
@@ -260,12 +266,20 @@ MapChunkCalvinsRoom:
 .south:   DB MAP_CHUNK_CALVINS_ROOM
 .west:    DB MAP_CHUNK_CALVINS_ROOM
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Wall
-  DB 8;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (7)
+  DB 12;x1
   DB 11;y1
   DB 196;tile
   DB 5;palette
   DB 24;x2
+  DB 12;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+  DB 8;x1
+  DB 11;y1
+  DB 196;tile
+  DB 5;palette
+  DB 10;x2
   DB 12;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
@@ -325,7 +339,7 @@ MapChunkCalvinsRoom:
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;StairsDown
   DB 22;x
-  DB 10;y
+  DB 11;y
   DW MapStampStairsDown
   DB 0;door
 
@@ -342,70 +356,79 @@ MapChunkCalvinsRoom:
   DW MapStampRug
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Bedpost
-  DB 8;x
-  DB 20;y
+  DB 8;x1
+  DB 19;y1
   DB 202;tile
   DB 2;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (3)
-  DB 20;x
-  DB 10;y
-  DB 142;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (4)
-  DB 19;x
-  DB 10;y
+  DB 19;x1
+  DB 10;y1
   DB 142;tile
   DB 2;palette
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (3)
+  DB 20;x1
+  DB 10;y1
+  DB 142;tile
+  DB 1;palette
+
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball
-  DB 13;x
-  DB 10;y
+  DB 13;x1
+  DB 10;y1
   DB 169;tile
   DB 5;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (5)
-  DB 20;x
-  DB 9;y
-  DB 142;tile
-  DB 0;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (2)
-  DB 19;x
-  DB 9;y
+  DB 19;x1
+  DB 9;y1
   DB 142;tile
   DB 3;palette
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (5)
+  DB 20;x1
+  DB 9;y1
+  DB 142;tile
+  DB 0;palette
+
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Ball (1)
-  DB 12;x
-  DB 9;y
+  DB 12;x1
+  DB 9;y1
   DB 157;tile
   DB 2;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
-  DB 16;x
-  DB 18;y
+  DB 16;x1
+  DB 19;y1
   DB 161;tile
   DB 6;palette
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;TV
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;TV
   DB 16;x
   DB 16;y
   DW MapStampTV
+  DB 1; Battery's broken.\nDon't turn it off.
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Bed
+  DB MAP_OBJ_NONE_FILL | MAP_COLLISION_TEXT ;InvisibleBox
+  DB 10;x1
+  DB 10;y1
+  DB 12;x2
+  DB 12;y2
+  DB 2; This is a test.
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Bed
   DB 8;x
-  DB 21;y
+  DB 20;y
   DW MapStampBed
+  DB 3; You can sleep\nwhen you've won.
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console (1)
-  DB 15;x
-  DB 19;y
+  DB 16;x1
+  DB 20;y1
   DB 160;tile
   DB 6;palette
 
-  DB 0;END CalvinsRoom, 142 bytes
+  DB 0;END CalvinsRoom, 159 bytes
 
 MapChunkCalvinsHouse:
 .tile:    DB 252
@@ -430,12 +453,12 @@ MapChunkCalvinsHouse:
   DB 24;x2
   DB 25;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
-  DB 24;x1
-  DB 11;y1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (12)
+  DB 8;x1
+  DB 24;y1
   DB 252;tile
   DB 5;palette
-  DB 25;x2
+  DB 14;x2
   DB 25;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (11)
@@ -446,12 +469,12 @@ MapChunkCalvinsHouse:
   DB 8;x2
   DB 25;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (12)
-  DB 8;x1
-  DB 24;y1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
+  DB 24;x1
+  DB 11;y1
   DB 252;tile
   DB 5;palette
-  DB 14;x2
+  DB 25;x2
   DB 25;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
@@ -472,13 +495,8 @@ MapChunkCalvinsHouse:
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Rug (8)
   DB 22;x
-  DB 21;y
+  DB 20;y
   DW MapStampPlant
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Rug (4)
-  DB 14;x
-  DB 16;y
-  DW MapStampTable
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Rug (6)
   DB 18;x1
@@ -493,6 +511,11 @@ MapChunkCalvinsHouse:
   DW MapStampStool
   DB 14;x2
   DB 20;y2
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Rug (4)
+  DB 14;x
+  DB 16;y
+  DW MapStampTable
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;StairsUp
   DB 22;x
@@ -523,8 +546,8 @@ MapChunkCalvinsHouse:
   DW MapStampWindow
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
-  DB 11;x
-  DB 9;y
+  DB 11;x1
+  DB 9;y1
   DB 169;tile
   DB 5;palette
 

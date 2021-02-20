@@ -1,7 +1,6 @@
 Priority
 
 - map system
-  - separate palettes and stamps from object data
   - reserve bg palette 0 for UI
   - load/interact characters and items
 - make batting results semi-random so we can move on to FX
@@ -95,6 +94,8 @@ Team Menu
 
 Map System
 
+- use Unity's collision trigger property for finer control over GB collisions
+- separate palettes and stamps from object data
 - chunks should be exported as tile arrays when more efficient than objects
 - print errors for more than 255 chunks, text, doors, etc. when exporting a scene
 - map stamps should be referenced from an index to a jump table instead of directly addressed
@@ -107,7 +108,6 @@ Map System
 - animated tiles
 - add diagonal lines to map system, (already implemented in editor)
 - draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
-- door script should have dropdowns for scene and chunk instead of typing in names
 - make the editor a standalone application
 - BUG: if holding more than one directional button, collisions can break
 

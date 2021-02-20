@@ -2,6 +2,7 @@ INCLUDE "src/beisbol.inc"
 
 SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
 
+INCLUDE "src/computer.asm"
 INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
 INCLUDE "img/maps/indoors.asm"
@@ -527,14 +528,6 @@ CheckRandomAppearance:
   xor a, e
   and a, e
   and a, %1000000
-  ret
-
-UseComputerText: DB "USE COMPUTER", 0
-UseComputer:
-  ld hl, UseComputerText
-  call RevealTextAndWait
-  HIDE_WIN
-  WAITPAD_UP
   ret
 
 Overworld::

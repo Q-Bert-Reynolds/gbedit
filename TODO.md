@@ -1,9 +1,8 @@
 Priority
 
+- reserve bg palette 0 for UI
 - using the computer
-- map system
-  - reserve bg palette 0 for UI
-  - load/interact characters and items
+- load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX
 
  General
@@ -48,7 +47,6 @@ Start
 
 Play Ball
 
-- fix UI palette on GBC
 - offers accepted by unsigned players should end game
 - set contact power from move, player, and barrel
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes
@@ -140,6 +138,7 @@ Audio
 
 Super GameBoy
 
+- set tiles to palette 0 when drawing UI boxes (currently only works on GBC)
 - GBCSetPalette (used to match SGB and GBC palettes) can cause problems with GBC specific palettes
 - use color palette data
 - use additional sprites

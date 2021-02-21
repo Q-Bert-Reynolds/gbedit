@@ -114,7 +114,7 @@ FlashNextArrow:: ;a = draw flags, de = xy
   pop de ;xy
   ret
 
-GetUIBoxTiles: ;Entry: de = wh, Affects: hl
+GetUIBoxTiles: ;Entry: de = wh, Affects: hl, fills tile_buffer
   PUSH_VAR _i
   PUSH_VAR _j
 
@@ -199,6 +199,31 @@ DrawUIBox::;a=draw flags, bc = xy, de = wh
   push bc ;xy
   push de ;wh
   call GetUIBoxTiles
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .setTiles
+.isGBC
+  ld a, 1
+  ld [rVBK], a
+  pop bc ;wh
+  pop de ;xy
+  pop af;draw flags
+  push af ;draw flags
+  push de ;xy
+  push bc ;wh
+  and a, DRAW_FLAGS_WIN
+  jr z, .window
+.background
+  ld hl, _SCRN1
+  jr .setPalettes
+.window
+  ld hl, _SCRN0
+.setPalettes
+  xor a
+  call gbdk_SetTilesTo
+  xor a
+  ld [rVBK], a
+.setTiles
   pop hl ;wh
   pop de ;xy
   pop af;draw flags

@@ -3,8 +3,11 @@ TurnedOnComputerText:          DB "%s turned on\nthe PC.", 0
 AccessedMyComputerText:        DB "Accessed my PC.", 0
 AccessedItemStorageSystemText: DB "Accessed Item\nStorage System.", 0
 WhatDoYouWantToDoText:         DB "What do you want\nto do?", 0
-ItemStorageSystemMenuText:        DB "WITHDRAW ITEM\nDEPOSIT ITEM\nTOSS ITEM\nLOG OFF", 0
-
+ItemStorageSystemMenuText:     DB "WITHDRAW ITEM\nDEPOSIT ITEM\nTOSS ITEM\nLOG OFF", 0
+WhatDoYouWantToWithdrawText:   DB "What do you want\nto withdraw?", 0
+WithdrewItemText:              DB "Withdrew\n%s", 0
+WhatDoYouWantToDepositText:    DB "What do you want\nto deposit?", 0
+ItemWasStoredText:             DB "%s was\nstored via PC.", 0
 
 ;BILL's PC
 ; "Accessed BILL's PC."
@@ -31,6 +34,7 @@ UsePublicComputer:
   call ShowTurnedOnComputerText
   HIDE_WIN
   WAITPAD_UP
+  call ShowPlayerAvatar
   ret
 
 UseMyComputer:
@@ -38,6 +42,7 @@ UseMyComputer:
   call AccessMyComputer
   HIDE_WIN
   WAITPAD_UP
+  call ShowPlayerAvatar
   ret
 
 ShowTurnedOnComputerText:
@@ -62,7 +67,7 @@ AccessMyComputer:
   xor a
   ld [rWY], a
   SHOW_WIN
-
+  HIDE_ALL_SPRITES
   xor a
   ld [list_selection], a
 .showItemStorageSystemMenu

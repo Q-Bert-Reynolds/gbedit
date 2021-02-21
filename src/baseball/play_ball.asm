@@ -1181,6 +1181,8 @@ StartGame::
     xor a
     ld [rWY], a
     SHOW_WIN
+    ld a, INVENTORY_MODE_USE
+    ld [inventory_mode], a
     call ShowInventory
     HIDE_WIN
     call SetupGameUI

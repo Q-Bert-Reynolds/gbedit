@@ -1,5 +1,6 @@
 Priority
 
+- BUG: item list draws garbage with fewer than 2 items
 - using the computer
   - withdraw/deposit/toss items
 - load/interact characters and items from map data

@@ -90,17 +90,23 @@ AccessMyComputer:
   .withdraw
     cp a, 1
     jr nz, .deposit
+    ld a, INVENTORY_MODE_WITHDRAW
+    ld [inventory_mode], a
     call ShowInventory
     jp .showItemStorageSystemMenu
 
   .deposit
     cp a, 2
     jr nz, .toss
+    ld a, INVENTORY_MODE_DEPOSIT
+    ld [inventory_mode], a
     call ShowInventory
     jp .showItemStorageSystemMenu
 
   .toss
     cp a, 3
     jp nz, .showItemStorageSystemMenu
+    ld a, INVENTORY_MODE_TOSS
+    ld [inventory_mode], a
     call ShowInventory
     jp .showItemStorageSystemMenu

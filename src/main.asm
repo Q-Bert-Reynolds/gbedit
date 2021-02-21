@@ -178,6 +178,8 @@ Main::
   call CheckSave
   jp z, .finishLoading
   call LoadGame
+  ld a, PADF_DOWN
+  ld [last_map_button_state], a
 .finishLoading
 
 IF TESTS_ENABLED == 1

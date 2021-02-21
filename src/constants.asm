@@ -231,6 +231,7 @@ MAP_WEST             EQU 5
 
 ;sizes
 MAX_ITEMS        EQU 20
+MAX_PC_ITEMS     EQU 50
 BYTES_PER_ITEM   EQU 2
 MAX_MOVES        EQU 4
 NAME_LENGTH      EQU 8

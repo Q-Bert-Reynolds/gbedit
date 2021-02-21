@@ -373,6 +373,8 @@ ShowPauseMenu::
 .item
   cp 3
   jr nz, .user
+  ld a, INVENTORY_MODE_USE
+  ld [inventory_mode], a
   call ShowInventory
   jr .returnToPauseMenu
 .user
@@ -539,9 +541,6 @@ Overworld::
 
   call LoadFontTiles
   call LoadAvatarSprites
-
-  ld a, PADF_DOWN
-  ld [last_map_button_state], a
   call ShowPlayerAvatar
 
   call SetMapTiles

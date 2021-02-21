@@ -17,6 +17,10 @@ TempItems:
 EndTempItems:
   DS MAX_ITEMS*BYTES_PER_ITEM - (EndTempItems-TempItems)
 
+TempPCItems:
+  DB POTION_ITEM,      1
+EndTempPCItems:
+  DS MAX_PC_ITEMS*BYTES_PER_ITEM - (EndTempPCItems-TempPCItems)
 
 TempUserLineup:
   DB NUM_BUBBI,      5, SHORTSTOP,      THROW_RIGHT | BAT_SWITCH
@@ -123,6 +127,11 @@ Seed::
   ld hl, TempItems
   ld de, inventory
   ld bc, MAX_ITEMS*BYTES_PER_ITEM
+  call mem_Copy
+
+  ld hl, TempPCItems
+  ld de, pc_items
+  ld bc, MAX_PC_ITEMS*BYTES_PER_ITEM
   call mem_Copy
 
 .money

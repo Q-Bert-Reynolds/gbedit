@@ -10,6 +10,7 @@ sram_hours:: DW
 sram_minutes:: DB
 sram_seconds:: DB
 sram_inventory:: DS MAX_ITEMS*BYTES_PER_ITEM
+sram_pc_items:: DS MAX_PC_ITEMS*BYTES_PER_ITEM
 sram_money:: DS 3
 sram_players_seen:: DS 151/8+1
 sram_players_sign:: DS 151/8+1
@@ -23,7 +24,6 @@ SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]
 sram_UserLineup:
 
 SECTION "Save/Load Code", ROM0
-
 LoadOptions::
   di
   SWITCH_RAM_MBC5 MAIN_SRAM_BANK

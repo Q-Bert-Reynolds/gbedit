@@ -4,6 +4,20 @@ INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
+GetItemList:;puts inventory or pc_items in hl depending on inventory_mode
+  push af
+  ld a, [inventory_mode]
+  cp a, INVENTORY_MODE_USE
+  jr z, .inventory
+.pc_items
+  ld hl, pc_items
+  jr .done
+.inventory
+  ld hl, inventory
+.done
+  pop af
+  ret 
+
 ShowInventory::
   ld a, [loaded_bank]
   push af
@@ -16,7 +30,7 @@ ShowInventory::
 
 GetInventoryItemID::; a = index of item in list, returns item id in a, item count in [hl]
   push bc
-  ld hl, inventory
+  call GetItemList
   ld b, 0
   ld c, a
   add hl, bc
@@ -220,7 +234,7 @@ DrawItems::
 
 GetInventoryLength::;puts item list len in b
   ld b, 0
-  ld hl, inventory
+  call GetItemList
 .loop
     inc b
     ld a, [hli]
@@ -243,7 +257,7 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
 
 .drawItem
   dec a
-  ld hl, inventory
+  call GetItemList
   ld b, 0
   ld c, a
   add hl, bc
@@ -328,7 +342,18 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   dec a;index
   ld b, a;index
   call GetInventoryItemID;item id in a
+  call GetItemData;returns [item_data]
+
+  ld a, [inventory_mode]
+  cp a, INVENTORY_MODE_TOSS
+  jr z, .tossItem
+  ; cp a, INVENTORY_MODE_WITHDRAW
+  ; jr z, .withdrawItem
+  ; cp a, INVENTORY_MODE_DEPOSIT
+  ; jr z, .depositItem
+
 .checkBike
+  ld a, [item_data.id]
   cp BICYCLE_ITEM
   jr nz, .notBike
 
@@ -338,8 +363,6 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
 
 .notBike
   push bc;index in b
-  call GetItemData;returns [item_data]
-
   ld hl, UseTossText
   ld de, str_buffer
   call str_Copy
@@ -757,7 +780,7 @@ UseItem:;[item_data], a = index, returns exit code in a (-1 = close inventory)
   pop af;index
   ld d, 0
   ld e, a
-  ld hl, inventory
+  call GetItemList
   add hl, de
   add hl, de 
   inc hl
@@ -961,7 +984,7 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   push hl;item name
   ld d, 0
   ld e, b
-  ld hl, inventory
+  call GetItemList
   add hl, de
   add hl, de 
   inc hl

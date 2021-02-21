@@ -925,9 +925,18 @@ MoveOptionsArrow:
 UIShowOptions::
   PUSH_VAR _y
   DISPLAY_OFF
-  CLEAR_BKG_AREA 0,0,20,18," "
-
+  
   call LoadOptions
+  
+  CLEAR_BKG_AREA 0,0,20,18," "
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .testTextSpeed
+  ld a, 1
+  ld [rVBK], a
+  CLEAR_BKG_AREA 0,0,20,18,0
+  xor a
+  ld [rVBK], a
 
 .testTextSpeed; if (a > 2) a = 0;
   ld a, [text_speed]

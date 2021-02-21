@@ -56,12 +56,6 @@ ShowTurnedOnComputerText:
   ret
 
 AccessMyComputer:
-  call CopyBkgToWin
-
-  ld bc, 12
-  ld hl, WhatDoYouWantToDoText
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call DisplayTextAtPos
   ld a, 7
   ld [rWX], a
   xor a
@@ -71,6 +65,13 @@ AccessMyComputer:
   xor a
   ld [list_selection], a
 .showItemStorageSystemMenu
+    call CopyBkgToWin
+    
+    ld bc, 12
+    ld hl, WhatDoYouWantToDoText
+    ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+    call DisplayTextAtPos
+
     ld hl, ItemStorageSystemMenuText
     ld de, str_buffer
     call str_Copy
@@ -86,4 +87,20 @@ AccessMyComputer:
     cp a, 4
     ret z
 
+  .withdraw
+    cp a, 1
+    jr nz, .deposit
+    call ShowInventory
+    jp .showItemStorageSystemMenu
+
+  .deposit
+    cp a, 2
+    jr nz, .toss
+    call ShowInventory
+    jp .showItemStorageSystemMenu
+
+  .toss
+    cp a, 3
+    jp nz, .showItemStorageSystemMenu
+    call ShowInventory
     jp .showItemStorageSystemMenu

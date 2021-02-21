@@ -1175,7 +1175,14 @@ StartGame::
 .itemMenuItemSelected
     cp 2
     jr nz, .runMenuItemSelected
+    call CopyBkgToWin
+    ld a, 7
+    ld [rWX], a
+    xor a
+    ld [rWY], a
+    SHOW_WIN
     call ShowInventory
+    HIDE_WIN
     call SetupGameUI
     call ShowPitcher
     call ShowBatter

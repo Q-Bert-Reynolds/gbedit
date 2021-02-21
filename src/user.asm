@@ -20,7 +20,15 @@ PennantsText: DB "⚾︎PENNANTS⚾︎"
 
 _ShowUserInfo:
   DISPLAY_OFF
-
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  jr z, .loadTiles
+  ld a, 1
+  ld [rVBK], a
+  CLEAR_WIN_AREA 0,0,20,18,0
+  xor a
+  ld [rVBK], a
+.loadTiles
   ld hl, _UserInfoTiles
   ld de, $8800;_VRAM+$1000+_UI_FONT_TILE_COUNT*16
   ld bc, _USER_INFO_TILE_COUNT*16
@@ -122,8 +130,6 @@ _ShowUserInfo:
     jr .loop
     
 .exit
-  HIDE_WIN
-  SHOW_SPRITES
   ret
 
 GetTimePlayedString::;puts time in [str_buffer] in HHH:MM format

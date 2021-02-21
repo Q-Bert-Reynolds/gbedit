@@ -26,6 +26,8 @@ SECTION "Core", ROM0
 ; ScrollXYToTileXY                returns xy in de
 ; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
 ; CopyBkgToWin
+; CopyWinToBuffer
+; CopyBufferToWin
 ; ShowSaveGame
 ; GetZeroPaddedNumber             a = number, returns padded number in str_buffer, affects str_buffer, all registers
 ; SignedRandom                    a = bitmask, returns signed random bytes in d and e
@@ -989,6 +991,48 @@ CopyBkgToWin::
 
 .resetVRAMBank
   xor a
+  ld [rVBK], a
+  ret
+
+CopyWinToBuffer::
+  ld hl, $1412;20,18
+  ld de, 0
+  ld bc, win_buffer
+  call gbdk_GetWinTiles
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  ret z
+  ld a, 2
+  ld [rSVBK], a
+  dec a
+  ld [rVBK], a
+  ld hl, $1412;20,18
+  ld de, 0
+  ld bc, win_buffer
+  call gbdk_GetWinTiles
+  xor a
+  ld [rSVBK], a
+  ld [rVBK], a
+  ret
+
+CopyBufferToWin::
+  ld hl, $1412;20,18
+  ld de, 0
+  ld bc, win_buffer
+  call gbdk_SetWinTiles
+  ld a, [sys_info]
+  and a, SYS_INFO_GBC
+  ret z
+  ld a, 2
+  ld [rSVBK], a
+  dec a
+  ld [rVBK], a
+  ld hl, $1412;20,18
+  ld de, 0
+  ld bc, win_buffer
+  call gbdk_SetWinTiles
+  xor a
+  ld [rSVBK], a
   ld [rVBK], a
   ret
 

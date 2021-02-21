@@ -5,29 +5,11 @@ INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
 ShowInventory::
-  ld a, [game_state]
-  and a, GAME_STATE_PLAY_BALL
-  jr z, .show
-    call CopyBkgToWin
-    ld a, 7
-    ld [rWX], a
-    xor a
-    ld [rWY], a
-    SHOW_WIN
-
-.show
   ld a, [loaded_bank]
   push af
   ld a, ITEM_BANK
   call SetBank
   call _ShowInventory
-
-  ld a, [game_state]
-  and a, GAME_STATE_PLAY_BALL
-  jr z, .exit
-    HIDE_WIN
-
-.exit
   pop af
   call SetBank
   ret

@@ -330,6 +330,12 @@ StartMenuText:
 ShowPauseMenu::
   call CopyBkgToWin
 
+.showPauseMenu
+  ld a, 7
+  ld [rWX], a
+  xor a
+  ld [rWY], a
+  SHOW_WIN
   ld hl, StartMenuText
   ld de, str_buffer
   ld bc, user_name
@@ -339,18 +345,15 @@ ShowPauseMenu::
   xor a
   ld [hl], a;no title
 
-  ld a, 7
-  ld [rWX], a
-  xor a
-  ld [rWY], a
-  SHOW_WIN
-
   ld b, 10;x
   ld c, 0 ;y
   ld d, 10;w
   ld e, 16;h
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
   call ShowListMenu ;returns choice in a
+  push af
+  call CopyWinToBuffer
+  pop af
   ld b, a;choice
   PUSH_VAR list_selection
   ld a, b;choice
@@ -404,13 +407,14 @@ ShowPauseMenu::
   ld a, l
   ld [rSCY], a
 .returnToPauseMenu
+  call CopyBufferToWin
   call LoadAvatarSprites
   call SetMapTiles
   call SetMapPalettes
   call ShowPlayerAvatar
   call DrawMapToScreen
   POP_VAR list_selection
-  jp ShowPauseMenu
+  jp .showPauseMenu
 .exit
   HIDE_WIN
   call DrawMapToScreen

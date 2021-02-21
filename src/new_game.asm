@@ -569,7 +569,7 @@ ENDC
   ld a, 6
   ld [map_x], a
   ld [map_y], a
-  ld a, MAP_CALVINS_HOUSE
+  ld a, MAP_HOUSES
   call SetCurrentMap
   ld a, MAP_CHUNK_CALVINS_ROOM
   ld [map_chunk], a

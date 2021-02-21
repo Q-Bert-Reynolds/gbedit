@@ -1,7 +1,7 @@
 Priority
 
-- reserve bg palette 0 for UI
 - using the computer
+  - withdraw/deposit/toss items
 - load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX
 
@@ -95,6 +95,7 @@ Map System
 
 - use Unity's collision trigger property for finer control over GB collisions
 - separate palettes and stamps from object data
+- palette 0 is used for UI, should not be exported
 - chunks should be exported as tile arrays when more efficient than objects
 - print errors for more than 255 chunks, text, doors, etc. when exporting a scene
 - map stamps should be referenced from an index to a jump table instead of directly addressed

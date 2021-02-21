@@ -7,7 +7,7 @@ INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
 INCLUDE "img/maps/indoors.asm"
 INCLUDE "maps/Overworld.gbmap"
-INCLUDE "maps/CalvinsHouse.gbmap"
+INCLUDE "maps/Houses.gbmap"
 
 MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw routine
   ld hl, \1

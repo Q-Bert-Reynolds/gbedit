@@ -10,6 +10,7 @@ game_state:: DB
 
 ;UI
 list_selection:: DB
+inventory_mode:: DB
 
 ;main save data
 text_speed:: DB

@@ -37,15 +37,15 @@ SECTION "Map Loader", ROM0
 ; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 
 MAP_OVERWORLD EQU 0
-MAP_CALVINS_HOUSE EQU 1
+MAP_HOUSES    EQU 1
 
 MapBanks:
   DB BANK(MapOverworld)
-  DB BANK(MapCalvinsHouse)
+  DB BANK(MapHouses)
 
 MapAddresses:
   DW MapOverworld
-  DW MapCalvinsHouse
+  DW MapHouses
 
 MapTileBanks:
   DB BANK(_OverworldTiles)

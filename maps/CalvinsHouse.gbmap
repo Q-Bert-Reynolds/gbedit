@@ -575,6 +575,6 @@ MapSpritesCalvinsHouse:
   DB 0;END CalvinsHouse sprite objects, 1 bytes
 
 MapCalvinsHouseScripts: ;3 bytes
-  DB BANK(UseComputer)
-  DW UseComputer
+  DB BANK(UseMyComputer)
+  DW UseMyComputer
 

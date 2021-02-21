@@ -341,8 +341,10 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
 .getItem
   dec a;index
   ld b, a;index
+  push bc;index
   call GetInventoryItemID;item id in a
   call GetItemData;returns [item_data]
+  pop bc;index
 
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_TOSS
@@ -382,7 +384,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   jr z, .useItem
 .tossItem
   ld a, [item_data.type]
-  cp ITEM_TYPE_SPECIAL
+  cp a, ITEM_TYPE_SPECIAL
   jr z, .tooImportant
   ld a, b;item index
   call TossItem
@@ -877,11 +879,26 @@ UseSpecialItem:;[item_data], f = playball flag, returns z if can't use now
 
 ShowTownMap:
   HIDE_WIN
+  ld a, [rSCX]
+  ld h, a
+  ld a, [rSCY]
+  ld l, a
+  push hl;screen offset
+  xor a
+  ld [rSCX], a
+  ld [rSCY], a
   call DrawStateMap
+
 .loop
   UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .exit, PADF_A | PADF_B | PADF_START
   jr .loop
 .exit
+
+  pop hl;screen offset
+  ld a, h
+  ld [rSCX], a
+  ld a, l
+  ld [rSCY], a
   SHOW_WIN
   ret
 
@@ -940,24 +957,16 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   ld e, 3;h
   call ShowNumberPicker
   and a
-  jr nz, .askSure
   pop bc;b = item index
+  jr nz, .askSure
   ld a, 1
   ret
   
 .askSure
-  pop bc;item index
   ld c, a;count
   push bc;index/count
   ld a, [item_data.id]
-  sub a, 2;why 2 instead of one?
-  ld b, 0
-  ld c, a
-  ld hl, ItemNames 
-  call str_FromArray;item index in bc
-  push hl;item name
-  ld de, name_buffer
-  call str_Copy
+  call GetItemName
 
   ld hl, IsItOkToTossItemText
   ld de, str_buffer
@@ -973,7 +982,7 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   ld c, 7
   ld a, DRAW_FLAGS_WIN
   call AskYesNo
-  pop hl;item name
+
   pop bc;index/count
   cp a, 1
   jr z, .tossItems
@@ -981,10 +990,9 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   ret
 
 .tossItems
-  push hl;item name
+  call GetItemList
   ld d, 0
   ld e, b
-  call GetItemList
   add hl, de
   add hl, de 
   inc hl
@@ -1008,11 +1016,9 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   call mem_Copy;copies hl to hl-2
   xor a;exit code
 .showText
-  pop hl;item name
   push af;exit code
-  ld de, name_buffer
-  call str_Copy
-
+  ld a, [item_data.id]
+  call GetItemName
   ld hl, ThrewAwayItemText
   ld de, str_buffer
   ld bc, name_buffer

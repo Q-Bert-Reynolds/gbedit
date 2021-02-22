@@ -9,6 +9,8 @@ GetItemList:;puts inventory or pc_items in hl depending on inventory_mode
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_USE
   jr z, .inventory
+  cp a, INVENTORY_MODE_DEPOSIT
+  jr z, .inventory
 .pc_items
   ld hl, pc_items
   jr .done
@@ -197,9 +199,7 @@ DrawItems::
   CLEAR_WIN_AREA 6,3,13,9," "
   ld a, [_b]
   ld b, a
-  dec b
   ld a, [_s]
-  and a
   cp 1
   jr c, .numTooLow
   cp b
@@ -236,11 +236,11 @@ GetInventoryLength::;puts item list len in b
   ld b, 0
   call GetItemList
 .loop
-    inc b
     ld a, [hli]
     inc hl
     and a
     ret z
+    inc b
     jr .loop
 
 DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count

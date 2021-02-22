@@ -106,7 +106,8 @@ OfferPlayerMoneyText:      DB "Offer %s\n$%s/game?",0
 PlayerRejectsOfferText:    DB "%s is\nnot interested.",0
 PlayerAcceptsOfferText:    DB "%s\naccepts!",0
 GivePlayerANicknameText:   DB "Give %s\na nickname?",0
-
+WithrewItemText:           DB "Withrew item.",0
+DepositedItemText:         DB "Deposited item.",0
 
 _ShowInventory:
   ld bc, $0402
@@ -123,6 +124,11 @@ _ShowInventory:
   ld a, 1
   ld [_s], a;current page
   ld a, 3
+  cp a, b
+  jr c, .skip
+  ld a, b
+  inc a
+.skip
   ld [_c], a;number of places the list menu arrow can be
   ld de, $0503
   ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
@@ -144,19 +150,19 @@ _ShowInventory:
     sub a, c;change in _j
     cp b;check if change is same as expected
     jr z, .flashDownArrow
-.scrollItems
+  .scrollItems
     ld a, [_s]
     add a, b
     ld [_s], a
     call DrawItems
-.flashDownArrow
+  .flashDownArrow
     ld a, [vbl_timer]
     cp a, 30
     ld a, " "
     jr c, .drawDown
-.drawDownArrow
+  .drawDownArrow
     ld a, ARROW_DOWN
-.drawDown
+  .drawDown
     ld d, 18
     ld e, 11
     ld bc, name_buffer
@@ -164,7 +170,7 @@ _ShowInventory:
     ld hl, $0101
     ld a, DRAW_FLAGS_WIN | DRAW_FLAGS_PAD_TOP
     call SetTiles
-.checkA
+  .checkA
     ld a, [button_state]
     and a, PADF_A
     jr z, .checkB
@@ -185,7 +191,7 @@ _ShowInventory:
     WAITPAD_UP
     jp .loop
     
-.checkB
+  .checkB
     ld b, 0
     ld a, [button_state]
     and a, PADF_B
@@ -200,9 +206,9 @@ DrawItems::
   ld a, [_b]
   ld b, a
   ld a, [_s]
-  cp 1
+  cp a, 1
   jr c, .numTooLow
-  cp b
+  cp a, b
   jr nc, .numTooHigh
   jr .draw
 .numTooLow
@@ -214,7 +220,6 @@ DrawItems::
   dec a
   ld [_s], a
 .draw
-  inc b
   ld de, $0603
   ld c, 4
 .loop
@@ -246,6 +251,7 @@ GetInventoryLength::;puts item list len in b
 DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   inc e;y++
   push de;xy
+  inc b
   cp a, b;is num last?
   jr c, .drawItem
   jr z, .drawCancel
@@ -336,6 +342,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   push bc;num items,page
   ld a, [_j]
   add a, c
+  inc b
   cp a, b
   jr z, .closeInventory
 .getItem
@@ -349,10 +356,10 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_TOSS
   jr z, .tossItem
-  ; cp a, INVENTORY_MODE_WITHDRAW
-  ; jr z, .withdrawItem
-  ; cp a, INVENTORY_MODE_DEPOSIT
-  ; jr z, .depositItem
+  cp a, INVENTORY_MODE_WITHDRAW
+  jr z, .withdrawItem
+  cp a, INVENTORY_MODE_DEPOSIT
+  jr z, .depositItem
 
 .checkBike
   ld a, [item_data.id]
@@ -398,6 +405,12 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, b;item index
   call UseItem
   jr .exit
+
+.withdrawItem
+  ld hl, WithrewItemText
+  jr .displayText
+.depositItem
+  ld hl, DepositedItemText
   
 .displayText
   call RevealItemTextAndWait

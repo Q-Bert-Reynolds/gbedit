@@ -4,8 +4,7 @@ INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
-GetItemList:;puts inventory or pc_items in hl depending on inventory_mode
-  push af
+GetItemList:;depending on inventory_mode, returns inventory or pc_items in hl, max size in a
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_USE
   jr z, .inventory
@@ -13,11 +12,12 @@ GetItemList:;puts inventory or pc_items in hl depending on inventory_mode
   jr z, .inventory
 .pc_items
   ld hl, pc_items
+  ld a, MAX_PC_ITEMS*BYTES_PER_ITEM
   jr .done
 .inventory
   ld hl, inventory
+  ld a, MAX_ITEMS*BYTES_PER_ITEM
 .done
-  pop af
   ret 
 
 ShowInventory::
@@ -30,9 +30,8 @@ ShowInventory::
   call SetBank
   ret
 
-GetInventoryItemID::; a = index of item in list, returns item id in a, item count in [hl]
+GetItemListID::; hl = item list, a = index of item in list, returns item id in a, item count in [hl]
   push bc
-  call GetItemList
   ld b, 0
   ld c, a
   add hl, bc
@@ -89,6 +88,26 @@ GetItemName::;a = item id, returns item name in [name_buffer]
   call SetBank
   ret 
 
+AddItemToInventory::;b = item id, c = amount, returns z if inventory full, new list length in e
+  push bc;id,amount
+  ld hl, inventory
+  call GetItemListLength
+  ld a, b
+  pop bc
+  cp a, MAX_ITEMS
+  ret z;inventory full
+  ld d, 0
+  ld e, a
+  ld hl, inventory
+  add hl, de
+  add hl, de
+  ld a, b;item id
+  ld [hli], a
+  ld a, c;amount
+  ld [hl], a
+  inc e;increment list length, clear z
+  ret
+
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
 
 UseTossText:               DB "USE\nTOSS",0
@@ -108,6 +127,29 @@ PlayerAcceptsOfferText:    DB "%s\naccepts!",0
 GivePlayerANicknameText:   DB "Give %s\na nickname?",0
 WithrewItemText:           DB "Withrew item.",0
 DepositedItemText:         DB "Deposited item.",0
+HowManyText:               DB "How many?",0
+BagFullText:               DB "You can't hold\nany more items.",0
+ItemStorageSystemFull:     DB "Item storage\nsystem full.",0
+
+AddItemToPC:;b = item id, c = amount, returns z if inventory full, new list length in e
+  push bc;id,amount
+  ld hl, pc_items
+  call GetItemListLength
+  ld a, b
+  pop bc
+  cp a, MAX_PC_ITEMS
+  ret z;pc full
+  ld d, 0
+  ld e, a
+  ld hl, pc_items
+  add hl, de
+  add hl, de
+  ld a, b;item id
+  ld [hli], a
+  ld a, c;amount
+  ld [hl], a
+  inc e;increment list length, clear z
+  ret
 
 _ShowInventory:
   ld bc, $0402
@@ -116,7 +158,8 @@ _ShowInventory:
   call DrawUIBox
   HIDE_SPRITES
 
-  call GetInventoryLength;number of items in b
+  call GetItemList
+  call GetItemListLength;number of items in b
   ld a, b
   ld [_b], a;number of items
   xor a
@@ -239,9 +282,8 @@ DrawItems::
     jr nz, .loop
   ret
 
-GetInventoryLength::;puts item list len in b
+GetItemListLength::;hl = item list address, puts item list len in b
   ld b, 0
-  call GetItemList
 .loop
     ld a, [hli]
     inc hl
@@ -265,9 +307,9 @@ DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
 
 .drawItem
   dec a
-  call GetItemList
   ld b, 0
   ld c, a
+  call GetItemList
   add hl, bc
   add hl, bc
   ld a, [hli];get item id
@@ -346,22 +388,32 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   add a, c
   inc b
   cp a, b
-  jr z, .closeInventory
+  jp z, .closeInventory
 .getItem
   dec a;index
-  ld b, a;index
-  push bc;index
-  call GetInventoryItemID;item id in a
+  push af;index
+  call GetItemList
+  pop af;index
+  push af;index
+  call GetItemListID;item id in a
   call GetItemData;returns [item_data]
-  pop bc;index
+  pop bc;index in b
 
   ld a, [inventory_mode]
+  cp a, INVENTORY_MODE_USE
+  jr z, .checkBike
+  
+  ld hl, HowManyText
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  ld bc, 12
+  call DisplayTextAtPos
+  ld a, [inventory_mode]
   cp a, INVENTORY_MODE_TOSS
-  jr z, .tossItem
+  jp z, .tossItem
   cp a, INVENTORY_MODE_WITHDRAW
-  jr z, .withdrawItem
+  jp z, .withdrawItem
   cp a, INVENTORY_MODE_DEPOSIT
-  jr z, .depositItem
+  jp z, .depositItem
 
 .checkBike
   ld a, [item_data.id]
@@ -409,9 +461,30 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   jr .exit
 
 .withdrawItem
+  ld hl, inventory
+  call GetItemListLength
+  ld a, b
+  cp a, MAX_ITEMS
+  jr c, .pickWithdrawCount
+  ld hl, BagFullText
+  jr .displayText
+.pickWithdrawCount
+  call GetItemList
+  call PickItemCount
   ld hl, WithrewItemText
   jr .displayText
+
 .depositItem
+  ld hl, pc_items
+  call GetItemListLength
+  ld a, b
+  cp a, MAX_PC_ITEMS
+  jr c, .pickDepositCount
+  ld hl, ItemStorageSystemFull
+  jr .displayText
+.pickDepositCount
+  call GetItemList
+  call PickItemCount
   ld hl, DepositedItemText
   
 .displayText
@@ -958,10 +1031,8 @@ TeachMove:;[item_data], returns exit code in b (-1 = exit inventory), item used 
   ld b, -1
   ret 
 
-TossItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)
-.showTossCount
-  push af;index
-  call GetInventoryItemID
+PickItemCount:;hl = item list
+  call GetItemListID
   ld a, [hl];item count
 
   ld h, a;item count
@@ -971,6 +1042,15 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   ld d, 5;w
   ld e, 3;h
   call ShowNumberPicker
+  ret
+
+TossItem:;[item_data], a = index, returns exit code in a (0 = item removed completely)
+.showTossCount
+  push af;index
+  call GetItemList
+  pop af;index
+  push af;index
+  call PickItemCount
   and a
   pop bc;b = item index
   jr nz, .askSure
@@ -1006,30 +1086,7 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
 
 .tossItems
   call GetItemList
-  ld d, 0
-  ld e, b
-  add hl, de
-  add hl, de 
-  inc hl
-  ld a, [hl]
-  sub a, c;item count - toss count
-  jr z, .removeItemCompletely
-  ld [hl], a
-  ld a, 1;exit code
-  jr .showText
-.removeItemCompletely
-  inc hl
-  ld d, h
-  ld e, l
-  dec de
-  dec de
-  ld a, MAX_ITEMS*BYTES_PER_ITEM
-  sub a, b
-  sub a, b
-  ld b, 0
-  ld c, a;items to move down
-  call mem_Copy;copies hl to hl-2
-  xor a;exit code
+  call RemoveItem
 .showText
   push af;exit code
   ld a, [item_data.id]
@@ -1043,6 +1100,35 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   call RevealItemTextAndWait
 
   pop af;exit code (-1 = item removed completely)
+  ret
+
+RemoveItem:;hl = item list, b = index, c = toss count, a = max list size
+  push af;max list size
+  ld d, 0
+  ld e, b
+  add hl, de
+  add hl, de 
+  inc hl
+  ld a, [hl]
+  sub a, c;item count - toss count
+  jr z, .removeItemCompletely
+  ld [hl], a
+  pop af;discard max list size
+  ld a, 1;exit code
+  ret
+.removeItemCompletely
+  inc hl
+  ld d, h
+  ld e, l
+  dec de
+  dec de
+  pop af;max list size
+  sub a, b
+  sub a, b
+  ld b, 0
+  ld c, a;items to move down
+  call mem_Copy;copies hl to hl-2
+  xor a;exit code
   ret
 
 RevealItemTextAndWait:;hl = text

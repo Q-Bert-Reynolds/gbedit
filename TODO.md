@@ -1,10 +1,14 @@
 Priority
 
-- BUG: palettes broken when exiting lineup or roledex
 - using the computer
-  - withdraw/deposit/toss items
+  - withdraw/deposit items
 - load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX
+
+Bugs
+
+- if holding more than one directional button, collisions can break
+- palettes broken when exiting lineup or roledex
 
  General
 
@@ -110,7 +114,6 @@ Map System
 - add diagonal lines to map system, (already implemented in editor)
 - draw map to bkg_buffer then copy to _SCRN0... unsure if it's faster, but it should be tested
 - make the editor a standalone application
-- BUG: if holding more than one directional button, collisions can break
 
 Items
 

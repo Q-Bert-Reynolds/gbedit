@@ -6,6 +6,14 @@ TempItems:
   DB BASEBALL_ITEM,    10
   DB TM01_ITEM,        1
   DB TM06_ITEM,        1
+  DB TM11_ITEM,        1
+  DB TM16_ITEM,        1
+  DB TM21_ITEM,        1
+  DB TM26_ITEM,        1
+  DB TM31_ITEM,        1
+  DB TM36_ITEM,        1
+  DB TM32_ITEM,        1
+  DB TM37_ITEM,        1
   DB SUPER_POTION_ITEM,2
   DB STEROIDS_ITEM,    99
   DB TOWN_MAP_ITEM,    0
@@ -19,6 +27,7 @@ EndTempItems:
 
 TempPCItems:
   DB POTION_ITEM,      1
+  DB TM32_ITEM,        1
 EndTempPCItems:
   DS MAX_PC_ITEMS*BYTES_PER_ITEM - (EndTempPCItems-TempPCItems)
 
@@ -126,12 +135,12 @@ Seed::
 .items
   ld hl, TempItems
   ld de, inventory
-  ld bc, MAX_ITEMS*BYTES_PER_ITEM
+  ld bc, MAX_ITEMS*BYTES_PER_ITEM - (EndTempItems-TempItems)
   call mem_Copy
 
   ld hl, TempPCItems
   ld de, pc_items
-  ld bc, MAX_PC_ITEMS*BYTES_PER_ITEM
+  ld bc, MAX_PC_ITEMS*BYTES_PER_ITEM - (EndTempPCItems-TempPCItems)
   call mem_Copy
 
 .money

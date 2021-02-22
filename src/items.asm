@@ -4,7 +4,7 @@ INCLUDE "data/item_data.asm"
 INCLUDE "data/item_strings.asm"
 
 SECTION "Item Bank 0", ROM0
-GetItemList:;depending on inventory_mode, returns inventory or pc_items in hl, max size in a
+GetItemList:;depending on inventory_mode, returns inventory or pc_items in hl, max items in a
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_USE
   jr z, .inventory
@@ -12,11 +12,11 @@ GetItemList:;depending on inventory_mode, returns inventory or pc_items in hl, m
   jr z, .inventory
 .pc_items
   ld hl, pc_items
-  ld a, MAX_PC_ITEMS*BYTES_PER_ITEM
+  ld a, MAX_PC_ITEMS
   jr .done
 .inventory
   ld hl, inventory
-  ld a, MAX_ITEMS*BYTES_PER_ITEM
+  ld a, MAX_ITEMS
 .done
   ret 
 
@@ -88,24 +88,30 @@ GetItemName::;a = item id, returns item name in [name_buffer]
   call SetBank
   ret 
 
-AddItemToInventory::;b = item id, c = amount, returns z if inventory full, new list length in e
-  push bc;id,amount
+AddItemToInventory::;bc = item id, amount, returns z if inventory full, new list length in e, bc = item id, amount added
+  ld a, [loaded_bank]
+  push af;current bank
+  ld a, ITEM_BANK
+  call SetBank
   ld hl, inventory
-  call GetItemListLength
-  ld a, b
-  pop bc
-  cp a, MAX_ITEMS
-  ret z;inventory full
-  ld d, 0
-  ld e, a
-  ld hl, inventory
-  add hl, de
-  add hl, de
-  ld a, b;item id
-  ld [hli], a
-  ld a, c;amount
-  ld [hl], a
-  inc e;increment list length, clear z
+  ld a, MAX_ITEMS
+  call AddItemToList
+  pop hl;h = previous bank
+  ld a, h;previous bank
+  call SetBank
+  ret
+
+AddItemToPC::;bc = item id, amount, returns z if inventory full, new list length in e, bc = item id, amount added
+  ld a, [loaded_bank]
+  push af;current bank
+  ld a, ITEM_BANK
+  call SetBank
+  ld hl, pc_items
+  ld a, MAX_PC_ITEMS
+  call AddItemToList
+  pop hl;h = previous bank
+  ld a, h;previous bank
+  call SetBank
   ret
 
 SECTION "Item Bank X", ROMX, BANK[ITEM_BANK]
@@ -131,17 +137,34 @@ HowManyText:               DB "How many?",0
 BagFullText:               DB "You can't hold\nany more items.",0
 ItemStorageSystemFull:     DB "Item storage\nsystem full.",0
 
-AddItemToPC:;b = item id, c = amount, returns z if inventory full, new list length in e
+AddItemToList::;a = max items, hl = item list, bc = item id, amount, returns z if inventory full, new list length in e, bc = item id, amount added
+  ld d, a;max items
+  ld a, [hl]
+  and a
+  jr z, .noMatch;inventory empty
+  push hl;item list
+  push de;d=max items
   push bc;id,amount
-  ld hl, pc_items
   call GetItemListLength
-  ld a, b
-  pop bc
-  cp a, MAX_PC_ITEMS
-  ret z;pc full
+  ld d, b;list len
+  ld e, b;list len
+  pop bc;item id, amount to add
+.checkForItemID
+    ld a, [hli];list item id
+    cp a, b;id to add
+    jr z, .foundItemMatch
+    inc hl;skip count
+    dec d;items left to check
+    jr nz, .checkForItemID
+.noMatch
+  pop af;max items
+  pop hl;item list
+  ld d, a;max items
+  ld a, e;list length
+  cp a, d
+  ret z;inventory full
   ld d, 0
   ld e, a
-  ld hl, pc_items
   add hl, de
   add hl, de
   ld a, b;item id
@@ -150,7 +173,30 @@ AddItemToPC:;b = item id, c = amount, returns z if inventory full, new list leng
   ld [hl], a
   inc e;increment list length, clear z
   ret
-
+.foundItemMatch
+  pop af;discard max items
+  pop af;discard item list
+  ;bc = item id,amount, [hl] = item count
+  ld a, [hl]
+  cp a, 99
+  ret z
+  add a, c;list increment amount
+  ld [hl], a
+  sub a, 99
+  jr c, .done
+  jr z, .done
+.tooManyItems
+  ld d, a
+  ld a, c
+  sub a, d
+  ld c, a
+  ld a, 99
+  ld [hl], a
+.done
+  ld a, 1
+  or a
+  ret
+  
 _ShowInventory:
   ld bc, $0402
   ld de, $100B
@@ -403,10 +449,13 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   cp a, INVENTORY_MODE_USE
   jr z, .checkBike
   
+  push bc;index in b
   ld hl, HowManyText
   ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
   ld bc, 12
   call DisplayTextAtPos
+  pop bc;index in b
+
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_TOSS
   jp z, .tossItem
@@ -422,7 +471,7 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
 
   ;TODO: check if cycling allowed
   ld hl, NoCyclingText
-  jr .displayText
+  jp .displayText
 
 .notBike
   push bc;index in b
@@ -461,16 +510,27 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   jr .exit
 
 .withdrawItem
+  push bc;index in b
   ld hl, inventory
-  call GetItemListLength
-  ld a, b
-  cp a, MAX_ITEMS
-  jr c, .pickWithdrawCount
+  call PickItemCount
+.addToInventory
+  pop bc;index,count
+  push bc;index,count
+  ld c, a;count
+  ld a, [item_data.id]
+  ld b, a
+  call AddItemToInventory
+  jr nz, .removeFromPC
+.bagFull
+  pop af;discard index
   ld hl, BagFullText
   jr .displayText
-.pickWithdrawCount
-  call GetItemList
-  call PickItemCount
+.removeFromPC
+  pop af;index
+  ld b, a;index
+  ld hl, pc_items
+  ld a, MAX_PC_ITEMS
+  call RemoveItems
   ld hl, WithrewItemText
   jr .displayText
 
@@ -1031,7 +1091,7 @@ TeachMove:;[item_data], returns exit code in b (-1 = exit inventory), item used 
   ld b, -1
   ret 
 
-PickItemCount:;hl = item list
+PickItemCount:;hl = item list, returns count in a
   call GetItemListID
   ld a, [hl];item count
 
@@ -1086,7 +1146,7 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
 
 .tossItems
   call GetItemList
-  call RemoveItem
+  call RemoveItems
 .showText
   push af;exit code
   ld a, [item_data.id]
@@ -1102,8 +1162,8 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   pop af;exit code (-1 = item removed completely)
   ret
 
-RemoveItem:;hl = item list, b = index, c = toss count, a = max list size
-  push af;max list size
+RemoveItems:;hl = item list, b = index, c = toss count, a = max list length
+  push af;max list length
   ld d, 0
   ld e, b
   add hl, de
@@ -1113,7 +1173,7 @@ RemoveItem:;hl = item list, b = index, c = toss count, a = max list size
   sub a, c;item count - toss count
   jr z, .removeItemCompletely
   ld [hl], a
-  pop af;discard max list size
+  pop af;discard max list length
   ld a, 1;exit code
   ret
 .removeItemCompletely
@@ -1122,7 +1182,8 @@ RemoveItem:;hl = item list, b = index, c = toss count, a = max list size
   ld e, l
   dec de
   dec de
-  pop af;max list size
+  pop af;max list length
+  add a, a
   sub a, b
   sub a, b
   ld b, 0

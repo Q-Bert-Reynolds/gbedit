@@ -1,6 +1,5 @@
 Priority
 
-- BUG: item list draws garbage with fewer than 2 items
 - BUG: palettes broken when exiting lineup or roledex
 - using the computer
   - withdraw/deposit/toss items

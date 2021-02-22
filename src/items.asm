@@ -218,6 +218,8 @@ DrawItems::
 .numTooHigh
   ld a, [_s]
   dec a
+  cp a, 1
+  jr c, .numTooLow
   ld [_s], a
 .draw
   ld de, $0603

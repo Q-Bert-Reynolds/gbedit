@@ -1,7 +1,7 @@
 Priority
 
 - using the computer
-  - deposit items
+  - don't show number picker for special items
   - redraw item list after deposit/withdrawl
 - load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX

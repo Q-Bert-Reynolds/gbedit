@@ -513,7 +513,8 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
 
 .withdrawItem
   push bc;index in b
-  ld hl, inventory
+  ld hl, pc_items
+  ld a, b
   call PickItemCount
 .addToInventory
   pop bc;index,count
@@ -537,17 +538,30 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   jr .displayText
 
 .depositItem
-  ld hl, pc_items
-  call GetItemListLength
+  push bc;index in b
+  ld hl, inventory
   ld a, b
-  cp a, MAX_PC_ITEMS
-  jr c, .pickDepositCount
+  call PickItemCount
+.addToPC
+  pop bc;index,count
+  push bc;index,count
+  ld c, a;count
+  ld a, [item_data.id]
+  ld b, a
+  call AddItemToPC
+  jr nz, .removeFromInventory
+.pcFull
+  pop af;discard index
   ld hl, ItemStorageSystemFull
   jr .displayText
-.pickDepositCount
-  call GetItemList
-  call PickItemCount
+.removeFromInventory
+  pop af;index
+  ld b, a;index
+  ld hl, inventory
+  ld a, MAX_ITEMS
+  call RemoveItems
   ld hl, DepositedItemText
+  jr .displayText
   
 .displayText
   call RevealItemTextAndWait

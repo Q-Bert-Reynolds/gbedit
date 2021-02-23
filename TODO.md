@@ -1,7 +1,9 @@
 Priority
 
 - using the computer
-  - redraw item list after deposit/withdrawl
+  - Bill's PC
+  - Doc's PC
+  - League PC
 - load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX
 
@@ -17,6 +19,7 @@ Bugs
 - give math subroutines more appropriate names
 - big list of "real names" to use in place of ID and OT
 - cut off sprites with the text box using an LCD interrupt (see https://gbdev.io/pandocs/#faux-layer-textbox-status-bar)
+- print stats, records, rolédex
 
 Optimization
 
@@ -176,3 +179,4 @@ Design Notes
 - Pitchers must complete three plate appearances before they can be swapped out.
 - No HP means more errors and bad pitches, slower movement.
 - You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
+- replace "PC" with "server"

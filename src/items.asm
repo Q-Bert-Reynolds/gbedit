@@ -530,8 +530,11 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld hl, pc_items
   ld a, MAX_PC_ITEMS
   call RemoveItems
+  push af;exit code
   ld hl, WithrewItemText
-  jr .displayText
+  call RevealItemTextAndWait
+  pop af;exit code
+  jr .exit
 
 .depositItem
   push bc;index in b
@@ -558,8 +561,11 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld hl, inventory
   ld a, MAX_ITEMS
   call RemoveItems
+  push af;exit code
   ld hl, DepositedItemText
-  jr .displayText
+  call RevealItemTextAndWait
+  pop af;exit code
+  jr .exit
   
 .displayText
   call RevealItemTextAndWait
@@ -1187,7 +1193,7 @@ TossItem:;[item_data], a = index, returns exit code in a (0 = item removed compl
   pop af;exit code (-1 = item removed completely)
   ret
 
-RemoveItems:;hl = item list, b = index, c = toss count, a = max list length
+RemoveItems:;hl = item list, a = max list length, bc = index, toss count, returns exit code in a
   push af;max list length
   ld d, 0
   ld e, b

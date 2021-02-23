@@ -453,15 +453,6 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld a, [inventory_mode]
   cp a, INVENTORY_MODE_USE
   jr z, .checkBike
-  
-  push bc;index in b
-  ld hl, HowManyText
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  ld bc, 12
-  call DisplayTextAtPos
-  pop bc;index in b
-
-  ld a, [inventory_mode]
   cp a, INVENTORY_MODE_TOSS
   jp z, .tossItem
   cp a, INVENTORY_MODE_WITHDRAW
@@ -519,10 +510,12 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld hl, pc_items
   ld a, b
   call PickItemCount
-.addToInventory
   pop bc;index,count
+  and a
+  jp z, .backToItemList
+.addToInventory
   push bc;index,count
-  ld c, a;count
+  ld c, a;amount to withdraw
   ld a, [item_data.id]
   ld b, a
   call AddItemToInventory
@@ -545,10 +538,12 @@ SelectItem::;returns exit code in a (-1 = close inventory, 0 = back to inventory
   ld hl, inventory
   ld a, b
   call PickItemCount
-.addToPC
   pop bc;index,count
+  and a
+  jp z, .backToItemList
+.addToPC
   push bc;index,count
-  ld c, a;count
+  ld c, a;amount to deposit
   ld a, [item_data.id]
   ld b, a
   call AddItemToPC
@@ -1115,7 +1110,17 @@ PickItemCount:;hl = item list, returns count in a
   ld a, [hl];item count
   and a
   ret z;no number picker for zero items
-  ld h, a;item count
+  push af;item count
+  ld a, [inventory_mode]
+  cp a, INVENTORY_MODE_USE
+  jr z, .showNumberPicker
+.showHowManyText
+  ld hl, HowManyText
+  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
+  ld bc, 12
+  call DisplayTextAtPos
+.showNumberPicker
+  pop hl;item count
   ld a, DRAW_FLAGS_WIN
   ld b, 15;x
   ld c, 9;y

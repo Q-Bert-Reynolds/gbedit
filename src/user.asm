@@ -5,7 +5,7 @@ ShowUserInfo::
 
   call _ShowUserInfo
 
-  ld a, OVERWORLD_BANK
+  ld a, WORLD_BANK
   call SetBank
   ret
 

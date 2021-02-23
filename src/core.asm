@@ -357,7 +357,7 @@ ShowRoledex::
 
   call ShowRoledexUI
   
-  ld a, OVERWORLD_BANK
+  ld a, WORLD_BANK
   call SetBank
   ret
 

@@ -38,7 +38,7 @@ ROLEDEX_BANK         EQU 12
 SIM_BANK             EQU 13
 SFX_BANK             EQU 14
 SONG_BANK            EQU 15
-OVERWORLD_BANK       EQU 20
+WORLD_BANK           EQU 20
 MAPS_BANK            EQU 50
 PLAYER_IMG_BANK      EQU 80
 SGB_BANK             EQU 100

@@ -1,14 +1,14 @@
 TESTS_ENABLED    EQU 0
-INTRO_ENABLED    EQU 0
-TITLE_ENABLED    EQU 0
-NEW_GAME_ENABLED EQU 0
+INTRO_ENABLED    EQU 1
+TITLE_ENABLED    EQU 1
+NEW_GAME_ENABLED EQU 1
 WORLD_ENABLED    EQU 1
 PLAY_ENABLED     EQU 1
 
 INCLUDE "src/beisbol.inc"
 
 RUN_TESTS: MACRO
-  ld a, OVERWORLD_BANK
+  ld a, WORLD_BANK
   call SetBank
   call TestMap
 ;   call LoadFontTiles
@@ -226,11 +226,11 @@ ENDC
 
 .mainLoop
 IF WORLD_ENABLED == 1
-  .overworld; walk around, find a game, repeat
+  .world; walk around, find a game, repeat
     ld a, [game_state]
     and a, ~GAME_STATE_PLAY_BALL
     ld [game_state], a
-    ld a, OVERWORLD_BANK
+    ld a, WORLD_BANK
     call SetBank
     call Overworld
 ENDC

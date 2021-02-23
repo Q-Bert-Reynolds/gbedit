@@ -1,12 +1,12 @@
-MapOverworld:: ;6654 bytes total
+MapOverworld:: ;6632 bytes total
   DB MAP_OVERWORLD
   DW MapOverworldPalettes ;64 bytes
-  DW MapOverworldText ;73
+  DW MapOverworldText ;51
   DW MapOverworldDoors ;15
   DW MapOverworldStamps ;510 bytes
   DW MapOverworldChunks ;5250 bytes
   DW MapOverworldSprites ;741 bytes
-  DW MapOverworldScripts ;0 bytes
+  DW MapOverworldScripts ;6 bytes
 
 MapOverworldPalettes: ;64 bytes
   RGB 31, 31, 31
@@ -49,11 +49,9 @@ MapOverworldPalettes: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
-MapOverworldText: ;73 bytes
+MapOverworldText: ;51 bytes
   DB "DOC HICKORY'S LAB",0
-  DB "%R'S\nHOUSE",0
   DB "BILLET TOWN",0
-  DB "%P'S\nHOUSE",0
   DB "ROUTE 1",0
   DB "VETERAN CITY",0
 
@@ -1541,12 +1539,12 @@ MapChunkBilletTownNE:
   DB 193;tile
   DB 1;palette
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SCRIPT ;Sign
   DB 6;x
   DB 22;y
   DW MapStampSignStamp
-  DB 1; %R'S\nHOUSE
-
+  DB 0
+;RivalHouseSign
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
   DB 10;x1
   DB 6;y1
@@ -1861,14 +1859,14 @@ MapChunkBilletTownNW:
   DB 30;x
   DB 30;y
   DW MapStampSignStamp
-  DB 2; BILLET TOWN
+  DB 1; BILLET TOWN
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign (1)
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SCRIPT ;Sign (1)
   DB 22;x
   DB 22;y
   DW MapStampSignStamp
-  DB 3; %P'S\nHOUSE
-
+  DB 1
+;YourHouseSign
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (39)
   DB 28;x1
   DB 22;y1
@@ -2476,7 +2474,7 @@ MapChunkRoute1East:
   DB 2;x
   DB 26;y
   DW MapStampSignStamp
-  DB 4; ROUTE 1
+  DB 2; ROUTE 1
 
   DB 0;END Route1East background objects, 91 bytes
 
@@ -2672,7 +2670,7 @@ MapChunkRoute1West4:
   DB 6;x
   DB 22;y
   DW MapStampSignStamp
-  DB 5; VETERAN CITY
+  DB 3; VETERAN CITY
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;HouseDoor (6)
   DB 8;x
@@ -6736,5 +6734,9 @@ MapSpritesBilletTownSEWater2:
 
   DB 0;END BilletTownSEWater2 sprite objects, 1 bytes
 
-MapOverworldScripts: ;0 bytes
+MapOverworldScripts: ;6 bytes
+  DB BANK(RivalHouseSign)
+  DW RivalHouseSign
+  DB BANK(YourHouseSign)
+  DW YourHouseSign
 

@@ -1,8 +1,9 @@
 INCLUDE "src/beisbol.inc"
 
-SECTION "Overworld", ROMX, BANK[OVERWORLD_BANK]
+SECTION "World", ROMX, BANK[WORLD_BANK]
 
-INCLUDE "src/computer.asm"
+INCLUDE "src/world/computer.asm"
+INCLUDE "src/world/scripts.asm"
 INCLUDE "img/avatars/avatars.asm"
 INCLUDE "img/maps/overworld.asm"
 INCLUDE "img/maps/indoors.asm"

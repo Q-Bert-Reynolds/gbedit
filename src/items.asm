@@ -146,6 +146,7 @@ AddItemToList::;a = max items, hl = item list, bc = item id, amount, returns z i
   push de;d=max items
   push bc;id,amount
   push hl;item list
+  ld c, d;max items
   call GetItemListLength
   ld d, b;list len
   ld e, b;list len
@@ -210,6 +211,7 @@ _ShowInventory:
   HIDE_SPRITES
 
   call GetItemList
+  ld c, a
   call GetItemListLength;number of items in b
   ld a, b
   ld [_b], a;number of items
@@ -333,7 +335,7 @@ DrawItems::
     jr nz, .loop
   ret
 
-GetItemListLength::;hl = item list address, puts item list len in b
+GetItemListLength::;c = max items, hl = item list address, puts item list len in b
   ld b, 0
 .loop
     ld a, [hli]
@@ -341,7 +343,9 @@ GetItemListLength::;hl = item list address, puts item list len in b
     and a
     ret z
     inc b
-    jr .loop
+    dec c
+    jr nz, .loop
+  ret
 
 DrawInventoryEntry::;a = num, de = xy, bc = list len, draw count
   inc e;y++

@@ -27,7 +27,7 @@ EndTempItems:
 
 TempPCItems:
   DB POTION_ITEM,      1
-  DB TM32_ITEM,        1
+  DB TM50_ITEM,        1
 EndTempPCItems:
   DS MAX_PC_ITEMS*BYTES_PER_ITEM - (EndTempPCItems-TempPCItems)
 
@@ -135,12 +135,12 @@ Seed::
 .items
   ld hl, TempItems
   ld de, inventory
-  ld bc, MAX_ITEMS*BYTES_PER_ITEM - (EndTempItems-TempItems)
+  ld bc, MAX_ITEMS*BYTES_PER_ITEM
   call mem_Copy
 
   ld hl, TempPCItems
   ld de, pc_items
-  ld bc, MAX_PC_ITEMS*BYTES_PER_ITEM - (EndTempPCItems-TempPCItems)
+  ld bc, MAX_PC_ITEMS*BYTES_PER_ITEM
   call mem_Copy
 
 .money

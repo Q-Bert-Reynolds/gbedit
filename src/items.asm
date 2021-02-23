@@ -145,9 +145,11 @@ AddItemToList::;a = max items, hl = item list, bc = item id, amount, returns z i
   push hl;item list
   push de;d=max items
   push bc;id,amount
+  push hl;item list
   call GetItemListLength
   ld d, b;list len
   ld e, b;list len
+  pop hl;item list
   pop bc;item id, amount to add
 .checkForItemID
     ld a, [hli];list item id

@@ -151,6 +151,9 @@ AddItemToList::;a = max items, hl = item list, bc = item id, amount, returns z i
   ld e, b;list len
   pop hl;item list
   pop bc;item id, amount to add
+  ld a, c;amount to add
+  and a
+  jr z, .noMatch;0 items to add means special item
 .checkForItemID
     ld a, [hli];list item id
     cp a, b;id to add
@@ -1110,7 +1113,8 @@ TeachMove:;[item_data], returns exit code in b (-1 = exit inventory), item used 
 PickItemCount:;hl = item list, returns count in a
   call GetItemListID
   ld a, [hl];item count
-
+  and a
+  ret z;no number picker for zero items
   ld h, a;item count
   ld a, DRAW_FLAGS_WIN
   ld b, 15;x

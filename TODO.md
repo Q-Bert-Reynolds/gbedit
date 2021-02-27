@@ -4,6 +4,7 @@ Priority
   - Bill's PC
   - Doc's PC
   - League PC
+- map scripts should also have collision check
 - load/interact characters and items from map data
 - make batting results semi-random so we can move on to FX
 
@@ -141,8 +142,8 @@ Rolédex
 
 Audio
 
-- fix title screen SFX and music switching
 - pitch, hit, wiff, catch SFX
+- on/off PC SFX
 
 Super GameBoy
 

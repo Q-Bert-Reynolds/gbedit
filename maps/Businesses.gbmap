@@ -1,0 +1,369 @@
+MapBusinesses:: ;343 bytes total
+  DB MAP_BUSINESSES
+  DW MapBusinessesPalettes ;64 bytes
+  DW MapBusinessesText ;0
+  DW MapBusinessesDoors ;5
+  DW MapBusinessesStamps ;53 bytes
+  DW MapBusinessesChunks ;214 bytes
+  DW MapBusinessesSprites ;6 bytes
+  DW MapBusinessesScripts ;6 bytes
+
+MapBusinessesPalettes: ;64 bytes
+  RGB 31, 31, 31
+  RGB 30, 28, 19
+  RGB 18, 7, 9
+  RGB 0, 0, 0
+
+  RGB 30, 28, 19
+  RGB 16, 23, 13
+  RGB 6, 13, 10
+  RGB 0, 0, 0
+
+  RGB 30, 28, 19
+  RGB 19, 15, 8
+  RGB 11, 7, 6
+  RGB 0, 0, 0
+
+  RGB 30, 28, 19
+  RGB 20, 28, 31
+  RGB 18, 7, 9
+  RGB 0, 0, 0
+
+  RGB 31, 31, 31
+  RGB 20, 28, 31
+  RGB 18, 7, 9
+  RGB 0, 0, 0
+
+  RGB 31, 31, 31
+  RGB 19, 15, 8
+  RGB 6, 13, 10
+  RGB 0, 0, 0
+
+  RGB 31, 31, 31
+  RGB 30, 28, 19
+  RGB 7, 19, 27
+  RGB 0, 0, 0
+
+  RGB 31, 31, 31
+  RGB 20, 28, 31
+  RGB 7, 19, 27
+  RGB 0, 8, 15
+
+MapBusinessesText: ;0 bytes
+
+MapBusinessesDoors: ;5 bytes
+.doorExit
+  DB MAP_OVERWORLD
+  DB MAP_CHUNK_VETERANCITY
+  DB 2;x=12
+  DB 8;y=18
+  DB 128;direction
+
+;Stamps, 53 bytes
+MapBusinessesStamps:
+MapStampCouchVert: ;13 bytes
+  DB 2;width
+  DB 5;height
+.tiles
+  DB 128, 129
+  DB 144, 177
+  DB 160, 161
+  DB 176, 177
+  DB 192, 193
+.palette
+  DB 135
+
+MapStampCouchHoriz: ;18 bytes
+  DB 5;width
+  DB 3;height
+.tiles
+  DB 211, 212, 213, 212, 214
+  DB 227, 228, 229, 228, 230
+  DB 243, 244, 245, 244, 246
+.palette
+  DB 134
+
+MapStampBusinessDoor: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 133, 134
+  DB 149, 150
+.palette
+  DB 130
+
+MapStampComputerStand: ;5 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 240, 241
+.palette
+  DB 130
+
+MapStampPublicComputer: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 208, 209
+  DB 224, 225
+.palettes
+  DB 0, 0
+  DB 6, 6
+
+MAP_CHUNK_VETERANCITYCLINIC EQU 0
+MAP_CHUNK_VETERANCITYCLINIC_1 EQU 1
+
+MapBusinessesChunks: ;4 bytes
+  DW MapChunkVeteranCityClinic
+  DW MapChunkVeteranCityClinic1
+
+;Map Chunks, 210 bytes
+MapChunkVeteranCityClinic:
+.tile:    DB 0
+.palette: DB 1
+.north:   DB MAP_CHUNK_VETERANCITYCLINIC
+.east:    DB MAP_CHUNK_VETERANCITYCLINIC_1
+.south:   DB MAP_CHUNK_VETERANCITYCLINIC
+.west:    DB MAP_CHUNK_VETERANCITYCLINIC
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Border2
+  DB 24;x1
+  DB 24;y1
+  DB 0;tile
+  DB 0;palette
+  DB 32;x2
+  DB 25;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Border3
+  DB 17;x1
+  DB 24;y1
+  DB 0;tile
+  DB 0;palette
+  DB 20;x2
+  DB 25;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Border
+  DB 17;x1
+  DB 10;y1
+  DB 0;tile
+  DB 0;palette
+  DB 18;x2
+  DB 24;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_DOOR ;Exit
+  DB 20;x1
+  DB 24;y1
+  DB 130;tile
+  DB 6;palette
+  DB 24;x2
+  DB 25;y2
+  DB 0;door
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;Floor
+  DB 18;x1
+  DB 10;y1
+  DB 130;tile
+  DB 6;palette
+  DB 32;x2
+  DB 24;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (1)
+  DB 26;x1
+  DB 9;y1
+  DB 148;tile
+  DB 1;palette
+  DB 32;x2
+  DB 10;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (4)
+  DB 18;x1
+  DB 9;y1
+  DB 148;tile
+  DB 1;palette
+  DB 24;x2
+  DB 10;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Floor (6)
+  DB 21;x1
+  DB 9;y1
+  DB 151;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Floor (5)
+  DB 27;x1
+  DB 9;y1
+  DB 151;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (2)
+  DB 26;x1
+  DB 8;y1
+  DB 132;tile
+  DB 1;palette
+  DB 32;x2
+  DB 9;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (3)
+  DB 18;x1
+  DB 8;y1
+  DB 132;tile
+  DB 1;palette
+  DB 24;x2
+  DB 9;y2
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Couch
+  DB 18;x
+  DB 16;y
+  DW MapStampCouchVert
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Couch2
+  DB 27;x
+  DB 14;y
+  DW MapStampCouchHoriz
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;PublicComputer (3)
+  DB 24;x
+  DB 8;y
+  DW MapStampBusinessDoor
+
+  DB 0;END VeteranCityClinic background objects, 100 bytes
+
+MapChunkVeteranCityClinic1:
+.tile:    DB 0
+.palette: DB 1
+.north:   DB MAP_CHUNK_VETERANCITYCLINIC_1
+.east:    DB MAP_CHUNK_VETERANCITYCLINIC_1
+.south:   DB MAP_CHUNK_VETERANCITYCLINIC_1
+.west:    DB MAP_CHUNK_VETERANCITYCLINIC
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
+  DB 0;x1
+  DB 24;y1
+  DB 0;tile
+  DB 0;palette
+  DB 16;x2
+  DB 25;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
+  DB 16;x1
+  DB 10;y1
+  DB 0;tile
+  DB 0;palette
+  DB 17;x2
+  DB 24;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;Floor (1)
+  DB 0;x1
+  DB 10;y1
+  DB 130;tile
+  DB 6;palette
+  DB 16;x2
+  DB 24;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (3)
+  DB 0;x1
+  DB 9;y1
+  DB 148;tile
+  DB 1;palette
+  DB 8;x2
+  DB 10;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (6)
+  DB 10;x1
+  DB 9;y1
+  DB 148;tile
+  DB 1;palette
+  DB 16;x2
+  DB 10;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Floor (7)
+  DB 0;x1
+  DB 9;y1
+  DB 151;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Floor (9)
+  DB 11;x1
+  DB 9;y1
+  DB 151;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Floor (8)
+  DB 5;x1
+  DB 9;y1
+  DB 151;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (4)
+  DB 0;x1
+  DB 8;y1
+  DB 132;tile
+  DB 1;palette
+  DB 8;x2
+  DB 9;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Floor (5)
+  DB 10;x1
+  DB 8;y1
+  DB 132;tile
+  DB 1;palette
+  DB 16;x2
+  DB 9;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Couch2 (2)
+  DB 8;x1
+  DB 22;y1
+  DW MapStampComputerStand
+  DB 16;x2
+  DB 23;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SCRIPT ;PublicComputer
+  DB 8;x1
+  DB 20;y1
+  DW MapStampPublicComputer
+  DB 16;x2
+  DB 22;y2
+  DB 0
+;UsePublicComputer
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Couch2 (1)
+  DB 8;x1
+  DB 18;y1
+  DW MapStampComputerStand
+  DB 16;x2
+  DB 19;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SCRIPT ;PublicComputer (1)
+  DB 8;x1
+  DB 16;y1
+  DW MapStampPublicComputer
+  DB 16;x2
+  DB 18;y2
+  DB 1
+;UsePublicComputer
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;PublicComputer (2)
+  DB 8;x
+  DB 8;y
+  DW MapStampBusinessDoor
+
+  DB 0;END VeteranCityClinic1 background objects, 110 bytes
+
+
+MapBusinessesSprites: ;4 bytes
+  DW MapSpritesVeteranCityClinic
+  DW MapSpritesVeteranCityClinic1
+
+;Map Sprites, 2 bytes
+MapSpritesVeteranCityClinic:
+
+  DB 0;END VeteranCityClinic sprite objects, 1 bytes
+
+MapSpritesVeteranCityClinic1:
+
+  DB 0;END VeteranCityClinic1 sprite objects, 1 bytes
+
+MapBusinessesScripts: ;6 bytes
+  DB BANK(UsePublicComputer)
+  DW UsePublicComputer
+  DB BANK(UsePublicComputer)
+  DW UsePublicComputer
+

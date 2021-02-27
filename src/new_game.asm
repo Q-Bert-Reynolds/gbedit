@@ -582,4 +582,8 @@ ENDC
   ld [minutes], a
   ld [hours], a
   ld [hours+1], a
+  
+  ld hl, game_event_flags
+  ld bc, game_event_flags_end-game_event_flags
+  call mem_Set
   ret

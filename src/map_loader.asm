@@ -36,24 +36,29 @@ SECTION "Map Loader", ROM0
 ; GetCurrentMap                returns address in hl, bank in a
 ; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 
-MAP_OVERWORLD EQU 0
-MAP_HOUSES    EQU 1
+MAP_OVERWORLD  EQU 0
+MAP_HOUSES     EQU 1
+MAP_BUSINESSES EQU 2
 
 MapBanks:
   DB BANK(MapOverworld)
   DB BANK(MapHouses)
+  DB BANK(MapBusinesses)
 
 MapAddresses:
   DW MapOverworld
   DW MapHouses
+  DW MapBusinesses
 
 MapTileBanks:
   DB BANK(_OverworldTiles)
-  DB BANK(_IndoorsTiles)
+  DB BANK(_HousesTiles)
+  DB BANK(_BusinessesTiles)
 
 MapTileAddresses:
   DW _OverworldTiles
-  DW _IndoorsTiles
+  DW _HousesTiles
+  DW _BusinessesTiles
 
 GetMapText::;a = text index, returns text in str_buffer
   ld b, 0
@@ -144,12 +149,14 @@ RunMapScript::;a = script index
   pop bc;scripts address
   add hl, bc
   ld a, [hli];bank
-  call SetBank
+  ld b, a;bank
   ld a, [hli];lower byte of script address
-  ld b, a
+  ld c, a
   ld a, [hli];upper byte of script address
   ld h, a
-  ld l, b
+  ld l, c;hl = script address
+  ld a, b;bank
+  call SetBank
   ld de, .return
   push de
   jp hl

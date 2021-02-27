@@ -1,14 +1,19 @@
 INCLUDE "src/beisbol.inc"
 
-SECTION "World", ROMX, BANK[WORLD_BANK]
+Section "Overworld Map", ROMX, BANK[WORLD_BANK+1]
+INCLUDE "img/maps/overworld.asm"
+INCLUDE "maps/Overworld.gbmap"
 
+Section "Indoor Maps", ROMX, BANK[WORLD_BANK+2]
+INCLUDE "img/maps/houses.asm"
+INCLUDE "img/maps/businesses.asm"
+INCLUDE "maps/Houses.gbmap"
+INCLUDE "maps/Businesses.gbmap"
+
+SECTION "World", ROMX, BANK[WORLD_BANK]
 INCLUDE "src/world/computer.asm"
 INCLUDE "src/world/scripts.asm"
 INCLUDE "img/avatars/avatars.asm"
-INCLUDE "img/maps/overworld.asm"
-INCLUDE "img/maps/indoors.asm"
-INCLUDE "maps/Overworld.gbmap"
-INCLUDE "maps/Houses.gbmap"
 
 MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw routine
   ld hl, \1
@@ -52,7 +57,10 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
     jr nz, .loop
   call FixMapScroll
 IF !ISCONST(\3)
-  call \3
+  call GetCurrentMap
+  ld b, a
+  ld hl, \3
+  call Trampoline
 ENDC
   ret
 ENDM

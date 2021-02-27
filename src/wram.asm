@@ -30,6 +30,9 @@ map:: DB
 map_chunk:: DB
 map_x:: DB
 map_y:: DB
+game_event_flags::
+pc_flags:: DB ;Have you met Bill James? Gotten the Rolédex yet? Beaten the Elite Teams?
+game_event_flags_end::
 
 ;drawing
 sprite_props:: DB

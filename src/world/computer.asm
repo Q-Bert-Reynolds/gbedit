@@ -5,6 +5,7 @@ AccessedBillsPCText:           DB "Accessed BILL's\nPC.", 0
 AccessedPlayerFarmSystemText:  DB "Accessed PLAYER\nstorage system.",0
 WhatText:                      DB "What?",0
 PlayerFarmSystemMenuText:      DB "CALL UP\nRELEASE\nCHANGE FARM\nSEE YA!",0
+FarmTexts:                     DB "AAAA\nAAA\nAA\nHigh A\nLow A\nRookie\nClass B\nClass C",0
 AccessedMyComputerText:        DB "Accessed my PC.", 0
 AccessedItemStorageSystemText: DB "Accessed Item\nStorage System.", 0
 WhatDoYouWantToDoText:         DB "What do you want\nto do?", 0

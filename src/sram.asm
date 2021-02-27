@@ -22,7 +22,19 @@ sram_pc_flags: DB
 sram_main_save_end:
 
 SECTION "Team Save", SRAM, BANK[TEAM_SRAM_BANK]
-sram_UserLineup:
+sram_UserLineup: DS LINEUP_SIZE
+
+SECTION "Farm Save 1", SRAM, BANK[FARM_SRAM_BANK]
+sram_FarmAAAA: DS FARM_SIZE
+sram_FarmAAA: DS FARM_SIZE
+sram_FarmAA: DS FARM_SIZE
+sram_FarmHighA: DS FARM_SIZE
+
+SECTION "Farm Save 2", SRAM, BANK[FARM_SRAM_BANK+1]
+sram_FarmLowA: DS FARM_SIZE
+sram_FarmRookie: DS FARM_SIZE
+sram_FarmClassB: DS FARM_SIZE
+sram_FarmClassC: DS FARM_SIZE
 
 SECTION "Save/Load Code", ROM0
 LoadOptions::

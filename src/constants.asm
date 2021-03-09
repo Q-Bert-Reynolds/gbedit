@@ -249,6 +249,7 @@ PLAYER_STAT_SIZE EQU 64
 LINEUP_SIZE      EQU (PLAYER_DATA_SIZE+PLAYER_STAT_SIZE)*9
 PLAYERS_PER_FARM EQU 20
 FARM_SIZE        EQU (PLAYER_DATA_SIZE+PLAYER_STAT_SIZE)*PLAYERS_PER_FARM
+INPUT_REPEAT     EQU 6;Input read multiple times in a row to reduce switch bounce issues. See: https://gbdev.io/pandocs/#joypad-input
 
 ;audio
 SFX_CH_1 EQU $10

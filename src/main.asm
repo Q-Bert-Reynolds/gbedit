@@ -206,7 +206,7 @@ IF TITLE_ENABLED == 1
 .title ;show title drop, version slide, cycle of players, new game/continue screen
   ld a, TITLE_BANK
   call SetBank
-  call Title ;sets a to 0 if new game pressed
+  call Title ;sets z if new game pressed
   jr nz, .startClock
 ENDC
 

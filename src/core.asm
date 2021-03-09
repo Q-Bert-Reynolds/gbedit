@@ -196,30 +196,31 @@ UpdateTime::
   ld [hours+1], a
   ret
  
-UpdateInput::
+UpdateInput::;https://gbdev.io/pandocs/#joypad-input
   push bc
   push hl
 
   ;copy button_state to last_button_state
-  ld hl, button_state
-  ld a, [hl]
-  ld hl, last_button_state
-  ld [hl], a
+  ld a, [button_state]
+  ld [last_button_state], a
 
   ;read DPad
   ld hl, rP1
-  ld a, P1F_5
+  ld a, P1F_GET_DPAD
   ld [hl], a ;switch to P15
+REPT INPUT_REPEAT;multiple cycles to avoid button bounce
   ld a, [hl] ;load DPad
+ENDR
   and %00001111 ;discard upper nibble
   swap a ;move low nibble to high nibble
   ld b, a ;store DPad in b
 
   ;read A,B,Select,Start
-  ld hl, rP1
-  ld a, P1F_4
+  ld a, P1F_GET_BTN
   ld [hl], a ;switch to P14
+REPT INPUT_REPEAT
   ld a, [hl] ;load buttons
+ENDR
   and %00001111 ;discard upper nibble
   or b ;combine DPad with other buttons
   cpl ;flip bits so 1 means pressed

@@ -547,6 +547,7 @@ CheckRandomAppearance:
 
 Overworld::
   DISPLAY_OFF
+  SET_DEFAULT_PALETTE
 
   call LoadFontTiles
   call LoadAvatarSprites

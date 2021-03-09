@@ -10,6 +10,7 @@ Priority
 
 Bugs
 
+- on hardware, buttons often incorrect
 - if holding more than one directional button, collisions can break
 - palettes broken when exiting lineup or roledex
 
@@ -181,3 +182,4 @@ Design Notes
 - No HP means more errors and bad pitches, slower movement.
 - You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
 - replace "PC" with "server"
+- When a player reaches 0 HP, they're hurt and must come out of the game. The minimum number of players on the field is 6. Below that, and the team must forefeit. Whenever there is no player for a lineup spot, an out is recorded for that batter.

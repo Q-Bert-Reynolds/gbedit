@@ -381,10 +381,14 @@ SGBStartMenuAttrBlk:
   ATTR_BLK 1
   ATTR_BLK_PACKET %111, 0,0,0, 0,0, 20,18 ;UI
 
-NewGameOptionMenuText:
-  db "NEW GAME\nOPTIONS", 0
-NewGameContinueOptionMenuText:
-  db "CONTINUE\nNEW GAME\nOPTIONS", 0
+NewGameContinueMenuText:
+  db "CONTINUE\n";falls through
+NewGameMenuText:
+  db "NEW GAME",0
+OptionsMenuText:
+  db "\nOPTIONS", 0
+ExhibitionMenuText:
+  db "\nEXHIBITION",0
 ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   DISABLE_LCD_INTERRUPT
   DISPLAY_OFF
@@ -420,12 +424,24 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   xor a
   ld hl, name_buffer
   ld [hl], a
-  ld hl, NewGameContinueOptionMenuText
+  ld hl, NewGameContinueMenuText
   ld de, str_buffer
   call str_Copy
+; IF DEF(_DEMO)
+;   ld hl, ExhibitionMenuText
+;   ld de, str_buffer
+;   call str_Append
+; ENDC
+  ld hl, OptionsMenuText
+  ld de, str_buffer
+  call str_Append
   ld bc, 0
   ld d, 15
-  ld e, 8
+; IF DEF(_DEMO)
+;   ld e, 10;extra options height
+; ELSE
+  ld e, 8 ;height
+; ENDC
   ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call ShowListMenu ;y = show_list_menu(0,0,15,8,"","CONTINUE\nNEW GAME\nOPTION",TITLE_BANK);
   cp 1 ;if (y == 1) {
@@ -458,15 +474,27 @@ ShowStartMenu: ; puts choice in a ... 0 = back, >0 = choice
   ld hl, name_buffer
   ld [hl], a
 
-  ld hl, NewGameOptionMenuText ;text
+  ld hl, NewGameMenuText
   ld de, str_buffer
   call str_Copy
+; IF DEF(_DEMO)
+;   ld hl, ExhibitionMenuText
+;   ld de, str_buffer
+;   call str_Append
+; ENDC
+  ld hl, OptionsMenuText
+  ld de, str_buffer
+  call str_Append
 
   xor a
   ld b, a
   ld c, a ;bc=xy
   ld d, 15 ;width
+; IF DEF(_DEMO)
+;   ld e, 8;extra options height
+; ELSE
   ld e, 6 ;height
+; ENDC
   ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_PAD_TOP
   call ShowListMenu; return show_list_menu(0,0,15,6,"","NEW GAME\nOPTION",TITLE_BANK);
   ret

@@ -1,10 +1,10 @@
-MapOverworld:: ;7583 bytes total
+MapOverworld:: ;7642 bytes total
   DB MAP_OVERWORLD
   DW MapOverworldPalettes ;64 bytes
-  DW MapOverworldText ;99
+  DW MapOverworldText ;126
   DW MapOverworldDoors ;25
   DW MapOverworldStamps ;521 bytes
-  DW MapOverworldChunks ;6126 bytes
+  DW MapOverworldChunks ;6158 bytes
   DW MapOverworldSprites ;747 bytes
   DW MapOverworldScripts ;6 bytes
 
@@ -49,12 +49,15 @@ MapOverworldPalettes: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
-MapOverworldText: ;99 bytes
+MapOverworldText: ;126 bytes
   DB "DOC HICKORY'S LAB",0
+  DB "⚾BASEBALL⚾",0
   DB "BILLET TOWN",0
+  DB "éℙℂ¹²³şļçŗ◌⚾țᚠ↵é",0
   DB "ROUTE 1",0
   DB "VETERAN CITY",0
-  DB "VETERAN CITY",0
+  DB "CLINIC",0
+  DB "SHOP",0
   DB "Locked!?",0
   DB "Something\nquippy.",0
   DB "ROUTE 2",0
@@ -133,15 +136,6 @@ MapStampHouseWallBottomLeft: ;6 bytes
 .palettes
   DB 3, 4
 
-MapStampFence: ;5 bytes
-  DB 1;width
-  DB 2;height
-.tiles
-  DB 210
-  DB 240
-.palette
-  DB 130
-
 MapStampSignStamp: ;7 bytes
   DB 2;width
   DB 2;height
@@ -150,6 +144,15 @@ MapStampSignStamp: ;7 bytes
   DB 199, 200
 .palette
   DB 131
+
+MapStampFence: ;5 bytes
+  DB 1;width
+  DB 2;height
+.tiles
+  DB 210
+  DB 240
+.palette
+  DB 130
 
 MapStampHouseDoor: ;7 bytes
   DB 2;width
@@ -160,14 +163,6 @@ MapStampHouseDoor: ;7 bytes
 .palette
   DB 132
 
-MapStampHouseRoofUpperRight: ;5 bytes
-  DB 2;width
-  DB 1;height
-.tiles
-  DB 133, 134
-.palette
-  DB 131
-
 MapStampHouseRoofUpperLeft: ;5 bytes
   DB 2;width
   DB 1;height
@@ -176,15 +171,13 @@ MapStampHouseRoofUpperLeft: ;5 bytes
 .palette
   DB 131
 
-MapStampHouseRoofLowerRight: ;10 bytes
+MapStampHouseRoofUpperRight: ;5 bytes
   DB 2;width
-  DB 2;height
+  DB 1;height
 .tiles
-  DB 149, 150
-  DB 165, 166
-.palettes
-  DB 3, 3
-  DB 4, 3
+  DB 133, 134
+.palette
+  DB 131
 
 MapStampHouseRoofLowerLeft: ;10 bytes
   DB 2;width
@@ -195,6 +188,16 @@ MapStampHouseRoofLowerLeft: ;10 bytes
 .palettes
   DB 3, 4
   DB 3, 4
+
+MapStampHouseRoofLowerRight: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 149, 150
+  DB 165, 166
+.palettes
+  DB 3, 3
+  DB 4, 3
 
 MapStampForest: ;19 bytes
   DB 4;width
@@ -285,12 +288,12 @@ MapStampBusinessFacade: ;66 bytes
 .tiles
   DB 152, 190, 190, 190, 190, 190, 190, 168
   DB 152, 180, 180, 180, 180, 180, 180, 168
-  DB 152, 180, 162, 163,  43,  33, 180, 168
+  DB 152, 164, 162, 163, 164, 164, 164, 168
   DB 176, 177, 178, 179, 177, 177, 177, 182
 .palettes
   DB 3, 4, 4, 4, 4, 4, 4, 3
   DB 3, 4, 4, 4, 4, 4, 4, 3
-  DB 3, 4, 4, 4, 5, 5, 4, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
   DB 3, 4, 4, 4, 4, 4, 4, 3
 
 MapStampBusinessRoof: ;35 bytes
@@ -819,7 +822,7 @@ MapOverworldChunks: ;498 bytes
   DW MapChunkRoute1West174
   DW MapChunkRoute1West175
 
-;Map Chunks, 5628 bytes
+;Map Chunks, 5660 bytes
 MapChunkBilletTownSW:
 .tile:    DB 255
 .palette: DB 1
@@ -828,20 +831,20 @@ MapChunkBilletTownSW:
 .south:   DB MAP_CHUNK_BILLETTOWNSWWATER
 .west:    DB MAP_CHUNK_BILLETTOWNSW
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject
-  DB 25;x1
-  DB 9;y1
-  DB 188;tile
-  DB 7;palette
-  DB 31;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (6)
   DB 31;x1
   DB 9;y1
   DB 194;tile
   DB 2;palette
   DB 32;x2
+  DB 32;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject
+  DB 25;x1
+  DB 9;y1
+  DB 188;tile
+  DB 7;palette
+  DB 31;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
@@ -868,16 +871,16 @@ MapChunkBilletTownSW:
   DB 31;x2
   DB 9;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
-  DB 24;x1
-  DB 8;y1
-  DB 136;tile
-  DB 2;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (7)
   DB 31;x1
   DB 8;y1
   DB 226;tile
+  DB 2;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
+  DB 24;x1
+  DB 8;y1
+  DB 136;tile
   DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
@@ -957,13 +960,7 @@ MapChunkBilletTownSE:
   DB 32;x2
   DB 32;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (18)
-  DB 29;x1
-  DB 31;y1
-  DB 141;tile
-  DB 1;palette
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (4)
   DB 0;x1
   DB 24;y1
   DB 141;tile
@@ -971,7 +968,13 @@ MapChunkBilletTownSE:
   DB 12;x2
   DB 32;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (18)
+  DB 29;x1
+  DB 31;y1
+  DB 141;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (9)
   DB 21;x1
   DB 23;y1
   DB 141;tile
@@ -997,14 +1000,14 @@ MapChunkBilletTownSE:
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
-  DB 9;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
+  DB 20;x1
   DB 21;y1
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
-  DB 20;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
+  DB 9;x1
   DB 21;y1
   DB 151;tile
   DB 1;palette
@@ -1023,12 +1026,6 @@ MapChunkBilletTownSE:
   DB 22;x2
   DB 14;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
-  DB 4;x1
-  DB 11;y1
-  DB 187;tile
-  DB 2;palette
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (14)
   DB 5;x1
   DB 11;y1
@@ -1036,6 +1033,12 @@ MapChunkBilletTownSE:
   DB 2;palette
   DB 16;x2
   DB 12;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
+  DB 4;x1
+  DB 11;y1
+  DB 187;tile
+  DB 2;palette
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (2)
   DB 4;x1
@@ -1052,12 +1055,12 @@ MapChunkBilletTownSE:
   DB 16;x2
   DB 9;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (4)
-  DB 6;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+  DB 10;x1
   DB 3;y1
   DB 177;tile
   DB 4;palette
-  DB 8;x2
+  DB 14;x2
   DB 4;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
@@ -1065,12 +1068,12 @@ MapChunkBilletTownSE:
   DB 3;y
   DW MapStampHouseWallBottomRight
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
-  DB 10;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (4)
+  DB 6;x1
   DB 3;y1
   DB 177;tile
   DB 4;palette
-  DB 14;x2
+  DB 8;x2
   DB 4;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House
@@ -1084,6 +1087,18 @@ MapChunkBilletTownSE:
   DB 151;tile
   DB 1;palette
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
+  DB 14;x1
+  DB 0;y1
+  DB 165;tile
+  DB 4;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,0
+  DB 15;x1
+  DB 0;y1
+  DB 166;tile
+  DB 4;palette
+
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,0
   DB 4;x1
   DB 0;y1
@@ -1094,18 +1109,6 @@ MapChunkBilletTownSE:
   DB 5;x1
   DB 0;y1
   DB 161;tile
-  DB 4;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,0
-  DB 15;x1
-  DB 0;y1
-  DB 166;tile
-  DB 4;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
-  DB 14;x1
-  DB 0;y1
-  DB 165;tile
   DB 4;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (17)
@@ -1159,20 +1162,20 @@ MapChunkBilletTownSE:
   DB 24;x2
   DB 18;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (20)
-  DB 15;x1
-  DB 1;y1
-  DB 168;tile
-  DB 3;palette
-  DB 16;x2
-  DB 3;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
   DB 4;x1
   DB 1;y1
   DB 152;tile
   DB 3;palette
   DB 5;x2
+  DB 3;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (20)
+  DB 15;x1
+  DB 1;y1
+  DB 168;tile
+  DB 3;palette
+  DB 16;x2
   DB 3;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (16)
@@ -1191,12 +1194,11 @@ MapChunkBilletTownSE:
   DB 11;x2
   DB 1;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (2)
-  DB 4;x1
-  DB 6;y1
-  DW MapStampFence
-  DB 10;x2
-  DB 8;y2
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
+  DB 10;x
+  DB 6;y
+  DW MapStampSignStamp
+  DB DOC_HICKORYS_LAB; DOC HICKORY'S LAB
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (1)
   DB 12;x1
@@ -1205,11 +1207,12 @@ MapChunkBilletTownSE:
   DB 16;x2
   DB 8;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
-  DB 10;x
-  DB 6;y
-  DW MapStampSignStamp
-  DB 0; DOC HICKORY'S LAB
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (2)
+  DB 4;x1
+  DB 6;y1
+  DW MapStampFence
+  DB 10;x2
+  DB 8;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (17)
   DB 26;x1
@@ -1227,20 +1230,20 @@ MapChunkBilletTownSE:
   DB 30;x2
   DB 1;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
-  DB 5;x1
-  DB 2;y1
-  DB 164;tile
-  DB 4;palette
-  DB 8;x2
-  DB 3;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (28)
   DB 10;x1
   DB 2;y1
   DB 164;tile
   DB 4;palette
   DB 15;x2
+  DB 3;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
+  DB 5;x1
+  DB 2;y1
+  DB 164;tile
+  DB 4;palette
+  DB 8;x2
   DB 3;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (29)
@@ -1271,7 +1274,15 @@ MapChunkBilletTownSE:
   DB 193;tile
   DB 1;palette
 
-  DB 0;END BilletTownSE background objects, 298 bytes
+  DB MAP_OBJ_TEXT_FILL | MAP_COLLISION_NONE ;GameObject (25)
+  DB 5;x1
+  DB 1;y1
+  DB BASEBALL;string index
+  DB 4;palette
+  DB 15;x2
+  DB 2;y2
+
+  DB 0;END BilletTownSE background objects, 305 bytes
 
 MapChunkBilletTownNE:
 .tile:    DB 255
@@ -1281,25 +1292,17 @@ MapChunkBilletTownNE:
 .south:   DB MAP_CHUNK_BILLETTOWNSE
 .west:    DB MAP_CHUNK_BILLETTOWNNW
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-  DB 20;x1
-  DB 16;y1
-  DB 167;tile
-  DB 2;palette
-  DB 22;x2
-  DB 32;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,1
+  DB 4;x1
+  DB 31;y1
+  DB 144;tile
+  DB 3;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,1
   DB 14;x1
   DB 31;y1
   DB 149;tile
   DB 4;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,1
-  DB 4;x1
-  DB 31;y1
-  DB 144;tile
-  DB 3;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,1
   DB 5;x1
@@ -1313,6 +1316,14 @@ MapChunkBilletTownNE:
   DB 150;tile
   DB 4;palette
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB 20;x1
+  DB 16;y1
+  DB 167;tile
+  DB 2;palette
+  DB 22;x2
+  DB 32;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
   DB 19;x1
   DB 28;y1
@@ -1321,15 +1332,15 @@ MapChunkBilletTownNE:
   DB 20;x2
   DB 30;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
-  DB 14;x
-  DB 28;y
-  DW MapStampHouseRoofUpperRight
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
   DB 4;x
   DB 28;y
   DW MapStampHouseRoofUpperLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
+  DB 14;x
+  DB 28;y
+  DW MapStampHouseRoofUpperRight
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (8)
   DB 2;x1
@@ -1345,19 +1356,6 @@ MapChunkBilletTownNE:
   DB 4;x2
   DB 25;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
-  DB 8;x
-  DB 23;y
-  DW MapStampHouseWallBottomLeft
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
-  DB 4;x1
-  DB 20;y1
-  DB 167;tile
-  DB 2;palette
-  DB 8;x2
-  DB 24;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
   DB 12;x1
   DB 23;y1
@@ -1371,20 +1369,28 @@ MapChunkBilletTownNE:
   DB 23;y
   DW MapStampHouseWallBottomRight
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (7)
-  DB 14;x
-  DB 19;y
-  DW MapStampHouseRoofLowerRight
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
+  DB 8;x
+  DB 23;y
+  DW MapStampHouseWallBottomLeft
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
+  DB 4;x1
+  DB 20;y1
+  DB 167;tile
+  DB 2;palette
+  DB 8;x2
+  DB 24;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
   DB 8;x
   DB 19;y
   DW MapStampHouseRoofLowerLeft
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (8)
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (7)
   DB 14;x
-  DB 18;y
-  DW MapStampHouseRoofUpperRight
+  DB 19;y
+  DW MapStampHouseRoofLowerRight
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (9)
   DB 2;x1
@@ -1397,7 +1403,12 @@ MapChunkBilletTownNE:
   DB 18;y
   DW MapStampHouseRoofUpperLeft
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (8)
+  DB 14;x
+  DB 18;y
+  DW MapStampHouseRoofUpperRight
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (3)
   DB 4;x1
   DB 4;y1
   DB 141;tile
@@ -1405,7 +1416,7 @@ MapChunkBilletTownNE:
   DB 8;x2
   DB 16;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (4)
   DB 8;x1
   DB 0;y1
   DB 141;tile
@@ -1441,18 +1452,18 @@ MapChunkBilletTownNE:
   DB 4;x2
   DB 16;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
-  DB 8;x1
-  DB 4;y1
-  DW MapStampTree
-  DB 12;x2
-  DB 16;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
   DB 12;x1
   DB 12;y1
   DW MapStampTree
   DB 28;x2
+  DB 16;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
+  DB 8;x1
+  DB 4;y1
+  DW MapStampTree
+  DB 12;x2
   DB 16;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (5)
@@ -1482,6 +1493,14 @@ MapChunkBilletTownNE:
   DB 14;x2
   DB 32;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
+  DB 5;x1
+  DB 29;y1
+  DB 148;tile
+  DB 3;palette
+  DB 6;x2
+  DB 31;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (23)
   DB 6;x1
   DB 29;y1
@@ -1498,12 +1517,12 @@ MapChunkBilletTownNE:
   DB 16;x2
   DB 31;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
-  DB 5;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
+  DB 14;x1
   DB 29;y1
-  DB 148;tile
-  DB 3;palette
-  DB 6;x2
+  DB 132;tile
+  DB 4;palette
+  DB 15;x2
   DB 31;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
@@ -1512,14 +1531,6 @@ MapChunkBilletTownNE:
   DB 144;tile
   DB 3;palette
   DB 5;x2
-  DB 31;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
-  DB 14;x1
-  DB 29;y1
-  DB 132;tile
-  DB 4;palette
-  DB 15;x2
   DB 31;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
@@ -1536,13 +1547,11 @@ MapChunkBilletTownNE:
   DB 180;tile
   DB 4;palette
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
-  DB 15;x1
-  DB 21;y1
-  DB 168;tile
-  DB 3;palette
-  DB 16;x2
-  DB 23;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
+  DB 14;x1
+  DB 22;y1
+  DB 180;tile
+  DB 4;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (21)
   DB 8;x1
@@ -1552,11 +1561,13 @@ MapChunkBilletTownNE:
   DB 9;x2
   DB 23;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
-  DB 14;x1
-  DB 22;y1
-  DB 180;tile
-  DB 4;palette
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
+  DB 15;x1
+  DB 21;y1
+  DB 168;tile
+  DB 3;palette
+  DB 16;x2
+  DB 23;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (18)
   DB 9;x1
@@ -1606,14 +1617,14 @@ MapChunkBilletTownNE:
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (11)
-  DB 3;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
+  DB 1;x1
   DB 1;y1
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
-  DB 1;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (11)
+  DB 3;x1
   DB 1;y1
   DB 151;tile
   DB 1;palette
@@ -1753,6 +1764,16 @@ MapChunkBilletTownNW:
   DB 32;x2
   DB 30;y2
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
+  DB 24;x
+  DB 23;y
+  DW MapStampHouseWallBottomLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (13)
+  DB 30;x
+  DB 23;y
+  DW MapStampHouseWallBottomRight
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (6)
   DB 28;x1
   DB 23;y1
@@ -1760,16 +1781,6 @@ MapChunkBilletTownNW:
   DB 4;palette
   DB 30;x2
   DB 24;y2
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (13)
-  DB 30;x
-  DB 23;y
-  DW MapStampHouseWallBottomRight
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
-  DB 24;x
-  DB 23;y
-  DW MapStampHouseWallBottomLeft
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
   DB 20;x1
@@ -1787,15 +1798,15 @@ MapChunkBilletTownNW:
   DB 19;y
   DW MapStampHouseRoofLowerRight
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (11)
-  DB 30;x
-  DB 18;y
-  DW MapStampHouseRoofUpperRight
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (10)
   DB 24;x
   DB 18;y
   DW MapStampHouseRoofUpperLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (11)
+  DB 30;x
+  DB 18;y
+  DW MapStampHouseRoofUpperRight
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
   DB 23;x1
@@ -1803,7 +1814,7 @@ MapChunkBilletTownNW:
   DB 171;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 24;x1
   DB 0;y1
   DB 141;tile
@@ -1851,13 +1862,11 @@ MapChunkBilletTownNW:
   DB 28;y
   DW MapStampTree
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
-  DB 24;x1
-  DB 21;y1
-  DB 152;tile
-  DB 3;palette
-  DB 25;x2
-  DB 23;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (30)
+  DB 30;x1
+  DB 22;y1
+  DB 180;tile
+  DB 4;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
   DB 31;x1
@@ -1873,11 +1882,13 @@ MapChunkBilletTownNW:
   DB 180;tile
   DB 4;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (30)
-  DB 30;x1
-  DB 22;y1
-  DB 180;tile
-  DB 4;palette
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
+  DB 24;x1
+  DB 21;y1
+  DB 152;tile
+  DB 3;palette
+  DB 25;x2
+  DB 23;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
   DB 25;x1
@@ -1958,16 +1969,16 @@ MapChunkBilletTownNW:
   DB 214;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,5
-  DB 31;x1
-  DB 8;y1
-  DB 193;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,5
   DB 30;x1
   DB 8;y1
   DB 197;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,5
+  DB 31;x1
+  DB 8;y1
+  DB 193;tile
   DB 1;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,6
@@ -1994,18 +2005,18 @@ MapChunkBilletTownNW:
   DB 196;tile
   DB 1;palette
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
+  DB 30;x
+  DB 30;y
+  DW MapStampSignStamp
+  DB BILLET_TOWN; BILLET TOWN
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (3)
   DB 24;x1
   DB 30;y1
   DW MapStampFence
   DB 30;x2
   DB 32;y2
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
-  DB 30;x
-  DB 30;y
-  DW MapStampSignStamp
-  DB 1; BILLET TOWN
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SCRIPT ;Sign (1)
   DB 22;x
@@ -2269,7 +2280,15 @@ MapChunkLeftFieldChunk:
   DB 5;x2
   DB 32;y2
 
-  DB 0;END LeftFieldChunk background objects, 28 bytes
+  DB MAP_OBJ_TEXT_FILL | MAP_COLLISION_NONE ;GameObject (24)
+  DB 11;x1
+  DB 1;y1
+  DB ÉℙℂŞĻÇŖțᚠÉ;string index
+  DB 0;palette
+  DB 21;x2
+  DB 5;y2
+
+  DB 0;END LeftFieldChunk background objects, 35 bytes
 
 MapChunkBilletTownSWWater:
 .tile:    DB 188
@@ -2279,6 +2298,12 @@ MapChunkBilletTownSWWater:
 .south:   DB MAP_CHUNK_ROUTE1WEST_231
 .west:    DB MAP_CHUNK_BILLETTOWNSWWATER
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
+  DB 24;x1
+  DB 12;y1
+  DB 230;tile
+  DB 2;palette
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (14)
   DB 0;x1
   DB 12;y1
@@ -2286,12 +2311,6 @@ MapChunkBilletTownSWWater:
   DB 2;palette
   DB 24;x2
   DB 13;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
-  DB 24;x1
-  DB 12;y1
-  DB 230;tile
-  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
   DB 0;x1
@@ -2393,20 +2412,20 @@ MapChunkBilletTownSEWater:
   DB 32;x2
   DB 5;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
-  DB 0;x1
-  DB 0;y1
-  DB 141;tile
-  DB 1;palette
-  DB 12;x2
-  DB 4;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (8)
   DB 21;x1
   DB 0;y1
   DB 141;tile
   DB 1;palette
   DB 32;x2
+  DB 4;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
+  DB 0;x1
+  DB 0;y1
+  DB 141;tile
+  DB 1;palette
+  DB 12;x2
   DB 4;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
@@ -2555,7 +2574,7 @@ MapChunkRoute1East:
 .south:   DB MAP_CHUNK_BILLETTOWNNE
 .west:    DB MAP_CHUNK_ROUTE1WEST
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (11)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (11)
   DB 0;x1
   DB 28;y1
   DB 141;tile
@@ -2563,7 +2582,7 @@ MapChunkRoute1East:
   DB 4;x2
   DB 32;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 12;x1
   DB 28;y1
   DB 141;tile
@@ -2580,7 +2599,7 @@ MapChunkRoute1East:
   DB 28;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 8;x1
   DB 16;y1
   DB 141;tile
@@ -2612,13 +2631,14 @@ MapChunkRoute1East:
   DB 20;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (13)
-  DB 2;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
+  DB 4;x1
   DB 11;y1
-  DB 181;tile
+  DB 193;tile
   DB 2;palette
-  DB 4;x2
+  DB 20;x2
   DB 12;y2
+  DB 128;direction mask
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
   DB 0;x1
@@ -2629,14 +2649,13 @@ MapChunkRoute1East:
   DB 12;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
-  DB 4;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (13)
+  DB 2;x1
   DB 11;y1
-  DB 193;tile
+  DB 181;tile
   DB 2;palette
-  DB 20;x2
+  DB 4;x2
   DB 12;y2
-  DB 128;direction mask
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (4)
   DB 12;x1
@@ -2645,7 +2664,7 @@ MapChunkRoute1East:
   DB 18;x2
   DB 7;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (12)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (12)
   DB 12;x1
   DB 0;y1
   DB 141;tile
@@ -2684,7 +2703,7 @@ MapChunkRoute1East:
   DB 2;x
   DB 26;y
   DW MapStampSignStamp
-  DB 2; ROUTE 1
+  DB ROUTE_1; ROUTE 1
 
   DB 0;END Route1East background objects, 131 bytes
 
@@ -2702,7 +2721,14 @@ MapChunkCenterFieldChunk1:
   DB 141;tile
   DB 1;palette
 
-  DB 0;END CenterFieldChunk1 background objects, 16 bytes
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (3)
+  DB 20;x1
+  DB -1;y1
+  DW MapStampForest
+  DB 28;x2
+  DB 15;y2
+
+  DB 0;END CenterFieldChunk1 background objects, 23 bytes
 
 MapChunkRoute1West1:
 .tile:    DB 255
@@ -2746,17 +2772,17 @@ MapChunkRoute1West1:
   DB 32;x2
   DB 8;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (4)
-  DB 24;x
-  DB 28;y
-  DW MapStampTree
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
   DB 20;x1
   DB 0;y1
   DW MapStampTree
   DB 24;x2
   DB 32;y2
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (4)
+  DB 24;x
+  DB 28;y
+  DW MapStampTree
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
   DB 24;x1
@@ -2786,14 +2812,6 @@ MapChunkRoute1ToVeteranCityWest:
 .south:   DB MAP_CHUNK_ROUTE1EAST
 .west:    DB MAP_CHUNK_ROUTE1WEST_1
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
-  DB 12;x1
-  DB 28;y1
-  DB 141;tile
-  DB 1;palette
-  DB 20;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (13)
   DB 0;x1
   DB 31;y1
@@ -2803,6 +2821,14 @@ MapChunkRoute1ToVeteranCityWest:
   DB 32;y2
   DB 128;direction mask
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (10)
+  DB 12;x1
+  DB 28;y1
+  DB 141;tile
+  DB 1;palette
+  DB 20;x2
+  DB 32;y2
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (5)
   DB 0;x1
   DB 25;y1
@@ -2810,7 +2836,7 @@ MapChunkRoute1ToVeteranCityWest:
   DB 6;x2
   DB 27;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (11)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (11)
   DB 4;x1
   DB 16;y1
   DB 141;tile
@@ -2825,18 +2851,18 @@ MapChunkRoute1ToVeteranCityWest:
   DB 20;x2
   DB 11;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (9)
-  DB 8;x1
-  DB 6;y1
-  DW MapStampRock
-  DB 20;x2
-  DB 8;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (11)
   DB 0;x1
   DB 0;y1
   DW MapStampRock
   DB 4;x2
+  DB 8;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (9)
+  DB 8;x1
+  DB 6;y1
+  DW MapStampRock
+  DB 20;x2
   DB 8;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (10)
@@ -2846,18 +2872,18 @@ MapChunkRoute1ToVeteranCityWest:
   DB 12;x2
   DB 6;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
-  DB 20;x1
-  DB 0;y1
-  DW MapStampTree
-  DB 24;x2
-  DB 32;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (3)
   DB 4;x1
   DB 28;y1
   DW MapStampTree
   DB 12;x2
+  DB 32;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
+  DB 20;x1
+  DB 0;y1
+  DW MapStampTree
+  DB 24;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (9)
@@ -2901,13 +2927,11 @@ MapChunkRoute1West3:
   DB 28;x2
   DB 24;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (1)
-  DB 13;x1
-  DB 13;y1
-  DB 188;tile
-  DB 7;palette
-  DB 23;x2
-  DB 20;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (18)
+  DB 23;x1
+  DB 19;y1
+  DB 227;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
   DB 2;x1
@@ -2917,19 +2941,13 @@ MapChunkRoute1West3:
   DB 4;x2
   DB 20;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (18)
-  DB 23;x1
-  DB 19;y1
-  DB 227;tile
-  DB 2;palette
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (15)
-  DB 23;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (1)
+  DB 13;x1
   DB 13;y1
-  DB 194;tile
-  DB 2;palette
-  DB 24;x2
-  DB 19;y2
+  DB 188;tile
+  DB 7;palette
+  DB 23;x2
+  DB 20;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (14)
   DB 12;x1
@@ -2937,6 +2955,14 @@ MapChunkRoute1West3:
   DB 241;tile
   DB 2;palette
   DB 13;x2
+  DB 19;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (15)
+  DB 23;x1
+  DB 13;y1
+  DB 194;tile
+  DB 2;palette
+  DB 24;x2
   DB 19;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
@@ -2947,13 +2973,11 @@ MapChunkRoute1West3:
   DB 2;x2
   DB 18;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (13)
-  DB 13;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (16)
+  DB 12;x1
   DB 12;y1
-  DB 242;tile
+  DB 136;tile
   DB 2;palette
-  DB 23;x2
-  DB 13;y2
 
   DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (17)
   DB 23;x1
@@ -2961,11 +2985,13 @@ MapChunkRoute1West3:
   DB 226;tile
   DB 2;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (16)
-  DB 12;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (13)
+  DB 13;x1
   DB 12;y1
-  DB 136;tile
+  DB 242;tile
   DB 2;palette
+  DB 23;x2
+  DB 13;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (13)
   DB 12;x
@@ -3023,21 +3049,21 @@ MapChunkRoute1West3:
   DB 28;x2
   DB 20;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
-  DB 28;x1
-  DB 19;y1
-  DB 193;tile
-  DB 2;palette
-  DB 32;x2
-  DB 20;y2
-  DB 128;direction mask
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (25)
   DB 4;x1
   DB 19;y1
   DB 193;tile
   DB 2;palette
   DB 12;x2
+  DB 20;y2
+  DB 128;direction mask
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
+  DB 28;x1
+  DB 19;y1
+  DB 193;tile
+  DB 2;palette
+  DB 32;x2
   DB 20;y2
   DB 128;direction mask
 
@@ -3095,18 +3121,18 @@ MapChunkVeteranCity:
 .south:   DB MAP_CHUNK_ROUTE1TOVETERANCITYWEST
 .west:    DB MAP_CHUNK_ROUTE1WEST_3
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
-  DB 8;x1
-  DB 28;y1
-  DW MapStampRock
-  DB 12;x2
-  DB 32;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (13)
   DB 0;x1
   DB 28;y1
   DW MapStampRock
   DB 4;x2
+  DB 32;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
+  DB 8;x1
+  DB 28;y1
+  DW MapStampRock
+  DB 12;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
@@ -3117,20 +3143,20 @@ MapChunkVeteranCity:
   DB 4;x2
   DB 24;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
-  DB 4;x1
-  DB 16;y1
-  DB 167;tile
-  DB 2;palette
-  DB 20;x2
-  DB 19;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
   DB 20;x1
   DB 8;y1
   DB 167;tile
   DB 2;palette
   DB 32;x2
+  DB 19;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
+  DB 4;x1
+  DB 16;y1
+  DB 167;tile
+  DB 2;palette
+  DB 20;x2
   DB 19;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
@@ -3149,12 +3175,12 @@ MapChunkVeteranCity:
   DB 16;x2
   DB 16;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (5)
-  DB 28;x1
-  DB 0;y1
-  DB 167;tile
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
+  DB 4;x1
+  DB 3;y1
+  DB 156;tile
   DB 2;palette
-  DB 32;x2
+  DB 12;x2
   DB 4;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
@@ -3165,12 +3191,12 @@ MapChunkVeteranCity:
   DB 20;x2
   DB 4;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
-  DB 4;x1
-  DB 3;y1
-  DB 156;tile
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (5)
+  DB 28;x1
+  DB 0;y1
+  DB 167;tile
   DB 2;palette
-  DB 12;x2
+  DB 32;x2
   DB 4;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (1)
@@ -3199,32 +3225,33 @@ MapChunkVeteranCity:
   DW MapStampWildFlowers
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (1)
-  DB 8;x1
-  DB 26;y1
-  DW MapStampFence
-  DB 32;x2
-  DB 28;y2
-
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (1)
   DB 0;x1
   DB 26;y1
   DW MapStampFence
   DB 4;x2
   DB 28;y2
 
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (1)
+  DB 8;x1
+  DB 26;y1
+  DW MapStampFence
+  DB 32;x2
+  DB 28;y2
+
   DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
   DB 6;x
   DB 22;y
   DW MapStampSignStamp
-  DB 3; VETERAN CITY
+  DB VETERAN_CITY; VETERAN CITY
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
-  DB 2;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (11)
+  DB 0;x1
   DB 19;y1
-  DB 181;tile
+  DB 193;tile
   DB 2;palette
-  DB 4;x2
+  DB 2;x2
   DB 20;y2
+  DB 128;direction mask
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (9)
   DB 4;x1
@@ -3235,14 +3262,13 @@ MapChunkVeteranCity:
   DB 20;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (11)
-  DB 0;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
+  DB 2;x1
   DB 19;y1
-  DB 193;tile
+  DB 181;tile
   DB 2;palette
-  DB 2;x2
+  DB 4;x2
   DB 20;y2
-  DB 128;direction mask
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;HouseDoor (7)
   DB 8;x
@@ -3269,6 +3295,14 @@ MapChunkVeteranCity:
   DB 0;y
   DW MapStampBusinessFacade
 
+  DB MAP_OBJ_TEXT_FILL | MAP_COLLISION_NONE ;GameObject (22)
+  DB 9;x1
+  DB 13;y1
+  DB CLINIC;string index
+  DB 0;palette
+  DB 15;x2
+  DB 14;y2
+
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (17)
   DB 4;x1
   DB 7;y1
@@ -3281,17 +3315,13 @@ MapChunkVeteranCity:
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (20)
-  DB 24;x1
-  DB 2;y1
-  DB 36;tile
+  DB MAP_OBJ_TEXT_FILL | MAP_COLLISION_NONE ;GameObject (23)
+  DB 22;x1
+  DB 1;y1
+  DB SHOP;string index
   DB 0;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (21)
-  DB 25;x1
-  DB 2;y1
-  DB 11;tile
-  DB 0;palette
+  DB 26;x2
+  DB 2;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;DoorToVeteranCityClinic
   DB 10;x
@@ -3305,7 +3335,7 @@ MapChunkVeteranCity:
   DW MapStampHouseDoor
   DB 4;door
 
-  DB 0;END VeteranCity background objects, 205 bytes
+  DB 0;END VeteranCity background objects, 209 bytes
 
 MapChunkRoute1West5:
 .tile:    DB 255
@@ -3315,21 +3345,6 @@ MapChunkRoute1West5:
 .south:   DB MAP_CHUNK_VETERANCITY
 .west:    DB MAP_CHUNK_ROUTE1WEST_7
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
-  DB 16;x1
-  DB 28;y1
-  DB 167;tile
-  DB 2;palette
-  DB 20;x2
-  DB 32;y2
-
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (4)
-  DB 4;x1
-  DB 30;y1
-  DW MapStampFence
-  DB 12;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
   DB 28;x1
   DB 28;y1
@@ -3338,28 +3353,20 @@ MapChunkRoute1West5:
   DB 32;x2
   DB 32;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
+  DB 16;x1
+  DB 28;y1
+  DB 167;tile
+  DB 2;palette
+  DB 20;x2
+  DB 32;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (9)
   DB 4;x1
   DB 9;y1
   DB 240;tile
   DB 2;palette
   DB 5;x2
-  DB 12;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
-  DB 26;x1
-  DB 11;y1
-  DB 177;tile
-  DB 4;palette
-  DB 30;x2
-  DB 12;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (11)
-  DB 22;x1
-  DB 11;y1
-  DB 177;tile
-  DB 4;palette
-  DB 24;x2
   DB 12;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (3)
@@ -3372,21 +3379,37 @@ MapChunkRoute1West5:
   DB 11;y
   DW MapStampHouseWallBottomLeft
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (11)
+  DB 22;x1
+  DB 11;y1
+  DB 177;tile
+  DB 4;palette
+  DB 24;x2
+  DB 12;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
+  DB 26;x1
+  DB 11;y1
+  DB 177;tile
+  DB 4;palette
+  DB 30;x2
+  DB 12;y2
+
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (12)
   DB 4;x1
   DB 8;y1
   DB 210;tile
   DB 2;palette
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
-  DB 30;x
-  DB 4;y
-  DW MapStampHouseRoofUpperRight
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (4)
   DB 20;x
   DB 4;y
   DW MapStampHouseRoofUpperLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (5)
+  DB 30;x
+  DB 4;y
+  DW MapStampHouseRoofUpperRight
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (8)
   DB 4;x1
@@ -3435,12 +3458,12 @@ MapChunkRoute1West5:
   DB 30;x2
   DB 8;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
-  DB 20;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
+  DB 31;x1
   DB 5;y1
-  DB 144;tile
-  DB 3;palette
-  DB 21;x2
+  DB 150;tile
+  DB 4;palette
+  DB 32;x2
   DB 7;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (37)
@@ -3449,14 +3472,6 @@ MapChunkRoute1West5:
   DB 131;tile
   DB 4;palette
   DB 30;x2
-  DB 7;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
-  DB 31;x1
-  DB 5;y1
-  DB 150;tile
-  DB 4;palette
-  DB 32;x2
   DB 7;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
@@ -3475,6 +3490,14 @@ MapChunkRoute1West5:
   DB 31;x2
   DB 7;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
+  DB 20;x1
+  DB 5;y1
+  DB 144;tile
+  DB 3;palette
+  DB 21;x2
+  DB 7;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (38)
   DB 22;x1
   DB 4;y1
@@ -3482,6 +3505,13 @@ MapChunkRoute1West5:
   DB 4;palette
   DB 30;x2
   DB 5;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (4)
+  DB 4;x1
+  DB 30;y1
+  DW MapStampFence
+  DB 12;x2
+  DB 32;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (3)
   DB 4;x1
@@ -3494,7 +3524,7 @@ MapChunkRoute1West5:
   DB 18;x
   DB 10;y
   DW MapStampSignStamp
-  DB 4; VETERAN CITY
+  DB VETERAN_CITY; VETERAN CITY
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (8)
   DB 12;x1
@@ -3505,14 +3535,6 @@ MapChunkRoute1West5:
   DB 16;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (35)
-  DB 26;x1
-  DB 10;y1
-  DB 190;tile
-  DB 4;palette
-  DB 31;x2
-  DB 11;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (32)
   DB 21;x1
   DB 10;y1
@@ -3521,13 +3543,13 @@ MapChunkRoute1West5:
   DB 24;x2
   DB 11;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (34)
-  DB 27;x1
-  DB 8;y1
-  DB 164;tile
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (35)
+  DB 26;x1
+  DB 10;y1
+  DB 190;tile
   DB 4;palette
-  DB 30;x2
-  DB 9;y2
+  DB 31;x2
+  DB 11;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
   DB 22;x1
@@ -3535,6 +3557,14 @@ MapChunkRoute1West5:
   DB 164;tile
   DB 4;palette
   DB 25;x2
+  DB 9;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (34)
+  DB 27;x1
+  DB 8;y1
+  DB 164;tile
+  DB 4;palette
+  DB 30;x2
   DB 9;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;ShopRoof
@@ -3556,17 +3586,17 @@ MapChunkRoute1West5:
   DB 24;x
   DB 10;y
   DW MapStampHouseDoor
-  DB 5; Locked!?
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;HouseDoor (3)
-  DB 30;x
-  DB 7;y
-  DW MapStampHouseRoofLowerRight
+  DB LOCKED; Locked!?
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;HouseDoor (5)
   DB 20;x
   DB 7;y
   DW MapStampHouseRoofLowerLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;HouseDoor (3)
+  DB 30;x
+  DB 7;y
+  DW MapStampHouseRoofLowerRight
 
   DB 0;END Route1West5 background objects, 242 bytes
 
@@ -3578,20 +3608,20 @@ MapChunkRoute1West6:
 .south:   DB MAP_CHUNK_ROUTE1WEST_6
 .west:    DB MAP_CHUNK_ROUTE1WEST_9
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (32)
-  DB 0;x1
-  DB 13;y1
-  DB 229;tile
-  DB 2;palette
-  DB 28;x2
-  DB 18;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (25)
   DB 28;x1
   DB 1;y1
   DB 229;tile
   DB 2;palette
   DB 32;x2
+  DB 18;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (32)
+  DB 0;x1
+  DB 13;y1
+  DB 229;tile
+  DB 2;palette
+  DB 28;x2
   DB 18;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
@@ -3625,12 +3655,12 @@ MapChunkRoute1West6:
   DB 32;x2
   DB 20;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (35)
-  DB 10;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (26)
+  DB 18;x1
   DB 7;y1
   DB 193;tile
   DB 2;palette
-  DB 16;x2
+  DB 26;x2
   DB 8;y2
   DB 128;direction mask
 
@@ -3642,22 +3672,14 @@ MapChunkRoute1West6:
   DB 18;x2
   DB 8;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (26)
-  DB 18;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (35)
+  DB 10;x1
   DB 7;y1
   DB 193;tile
   DB 2;palette
-  DB 26;x2
+  DB 16;x2
   DB 8;y2
   DB 128;direction mask
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
-  DB 26;x1
-  DB 1;y1
-  DB 192;tile
-  DB 2;palette
-  DB 28;x2
-  DB 13;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
   DB 0;x1
@@ -3667,11 +3689,13 @@ MapChunkRoute1West6:
   DB 26;x2
   DB 13;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (29)
-  DB 27;x1
-  DB 0;y1
-  DB 195;tile
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
+  DB 26;x1
+  DB 1;y1
+  DB 192;tile
   DB 2;palette
+  DB 28;x2
+  DB 13;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (28)
   DB 28;x1
@@ -3680,6 +3704,12 @@ MapChunkRoute1West6:
   DB 2;palette
   DB 32;x2
   DB 1;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (29)
+  DB 27;x1
+  DB 0;y1
+  DB 195;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (34)
   DB 27;x1
@@ -3716,12 +3746,6 @@ MapChunkRoute1West7:
 .east:    DB MAP_CHUNK_ROUTE1WEST_5
 .south:   DB MAP_CHUNK_ROUTE1WEST_3
 .west:    DB MAP_CHUNK_ROUTE1WEST_8
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign (1)
-  DB 30;x
-  DB 30;y
-  DW MapStampSignStamp
-  DB 6; Something\nquippy.
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
   DB 29;x1
@@ -3789,6 +3813,12 @@ MapChunkRoute1West7:
   DB 7;x2
   DB 24;y2
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign (1)
+  DB 30;x
+  DB 30;y
+  DW MapStampSignStamp
+  DB SOMETHINGQUIPPY; Something\nquippy.
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (6)
   DB 28;x1
   DB 8;y1
@@ -3838,15 +3868,6 @@ MapChunkRoute1West8:
   DB 22;x2
   DB 32;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (37)
-  DB 10;x1
-  DB 27;y1
-  DB 193;tile
-  DB 2;palette
-  DB 12;x2
-  DB 28;y2
-  DB 128;direction mask
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (36)
   DB 12;x1
   DB 27;y1
@@ -3861,6 +3882,15 @@ MapChunkRoute1West8:
   DB 193;tile
   DB 2;palette
   DB 18;x2
+  DB 28;y2
+  DB 128;direction mask
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (37)
+  DB 10;x1
+  DB 27;y1
+  DB 193;tile
+  DB 2;palette
+  DB 12;x2
   DB 28;y2
   DB 128;direction mask
 
@@ -4216,7 +4246,7 @@ MapChunkRoute1West36:
   DB 26;x
   DB 14;y
   DW MapStampSignStamp
-  DB 7; ROUTE 2
+  DB ROUTE_2; ROUTE 2
 
   DB 0;END Route1West36 background objects, 31 bytes
 
@@ -5441,13 +5471,20 @@ MapChunkCenterFieldChunk7:
   DB 1;palette
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
-  DB 12;x1
-  DB 11;y1
-  DW MapStampTree
+  DB 16;x1
+  DB 3;y1
+  DW MapStampForest
   DB 20;x2
   DB 23;y2
 
-  DB 0;END CenterFieldChunk7 background objects, 23 bytes
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (3)
+  DB 20;x1
+  DB -1;y1
+  DW MapStampForest
+  DB 28;x2
+  DB 15;y2
+
+  DB 0;END CenterFieldChunk7 background objects, 30 bytes
 
 MapChunkCenterFieldChunk8:
 .tile:    DB 253
@@ -6387,7 +6424,7 @@ MapChunkBilletTownSEWater1:
   DB 32;x2
   DB 5;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 0;x1
   DB 1;y1
   DB 141;tile
@@ -6403,7 +6440,7 @@ MapChunkBilletTownSEWater1:
   DB 21;x2
   DB 4;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (8)
   DB 24;x1
   DB 0;y1
   DB 141;tile

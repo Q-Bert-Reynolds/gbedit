@@ -222,6 +222,8 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
     ; jp z, .fill
     ; cp a, MAP_OBJ_TILE_FILL
     ; jp z, .fill
+    ; cp a, MAP_OBJ_TEXT_FILL
+    ; jp z, .fill
   
   .fill
     inc hl;skip tile

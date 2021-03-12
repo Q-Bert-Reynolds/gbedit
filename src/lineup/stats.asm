@@ -468,7 +468,7 @@ StatScreenExperienceText:
  DB "EXPERIENCE"
  DB "          "
  DB "NEXT AGE  "
- DB "      ℔ᚠ  ";to yr
+ DB "      țᚠ  ";to yr
 
 DrawPageTwo:
   ;img and name already drawn

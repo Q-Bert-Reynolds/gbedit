@@ -1,5 +1,6 @@
 Priority
 
+- map text objects
 - using the computer
   - Bill's PC
   - Doc's PC
@@ -10,7 +11,8 @@ Priority
 
 Bugs
 
-- on hardware, buttons often incorrect
+- DMG sprite palette incorrect in lineup on hardware (possibly just IPS screen)
+- can't deposit special items
 - if holding more than one directional button, collisions can break
 - palettes broken when exiting lineup or roledex
 

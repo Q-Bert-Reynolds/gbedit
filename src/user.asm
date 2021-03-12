@@ -16,7 +16,7 @@ INCLUDE "img/user_info.asm"
 NameText:  DB "NAME/",0 
 MoneyText: DB "MONEY/$",0
 TimeText:  DB "TIME/"
-PennantsText: DB "⚾︎PENNANTS⚾︎"
+PennantsText: DB "⚾PENNANTS⚾"
 
 _ShowUserInfo:
   DISPLAY_OFF

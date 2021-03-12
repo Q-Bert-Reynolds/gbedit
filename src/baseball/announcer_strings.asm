@@ -55,13 +55,13 @@ HitShallowFlyBallText::       DB "Shallow fly ",0
 HitPopFlyText::               DB "Pop fly ",0
 
 ;outfield location by angle
-OutfieldLocationTexts::       DB "down\nthe 𝕃 line.",0
+OutfieldLocationTexts::       DB "down\nthe ļ line.",0
                               DB "to\nleft field.",0
                               DB "to\nleft center.",0
                               DB "to\ncenter field.",0
                               DB "to\nright center.",0
                               DB "to\nright field.",0
-                              DB "down\nthe ℝ line.",0
+                              DB "down\nthe ŗ line.",0
 
 ;hit to infield - append infield location or "to the" position text
 HitLineDriveText::            DB "Line drive ",0
@@ -71,15 +71,15 @@ HitPopUpText::                DB "Popped up ",0
 HitBuntText::                 DB "Bunted ",0
 
 ;outfield location by angle
-InfieldLocationTexts::        DB "down\nthe 𝟛 line",0
+InfieldLocationTexts::        DB "down\nthe ³ line",0
                               DB "\nto third.",0
-                              DB "\nin the 𝕊-𝟛 hole.",0
+                              DB "\nin the ş-³ hole.",0
                               DB "\nto short.",0
                               DB "\nup the middle.",0
                               DB "\nto second.",0
-                              DB "\nin the 𝟙-𝟚 hole.",0
+                              DB "\nin the ¹-² hole.",0
                               DB "\nto first.",0
-                              DB "down\nthe 𝟙 line",0
+                              DB "down\nthe ¹ line",0
 
 ;append to bunts and popups, replace %s with position
 ToThePositionText::           DB "to the\n%s.",0 
@@ -114,7 +114,7 @@ BallText::                    DB "Ball %s.",0
 WalkText::                    DB "%s on base\nwith a walk.",0
 PassedBallText::              DB "Wild pitch!",0
 WildPitchText::               DB "Passed ball!",0
-HitByPitchText::              DB "That hit 'em, so\n%s is on 𝟙.",0
+HitByPitchText::              DB "That hit 'em, so\n%s is on ¹.",0
 BenchesClearText::            DB "And the benches clear.",0
 
 ;runners on

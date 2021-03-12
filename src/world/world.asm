@@ -463,7 +463,11 @@ CheckPlayerCollision:;returns z if no collision
 .right  
   ld b, 81;right
   ld c, 76
-.getChunk 
+  jr .getChunk
+.center::
+  ld b, 76
+  ld c, 76
+.getChunk
   call GetScreenCollision;NONE and GRASS already handled
   ld [collision_type], a
   ld a, b
@@ -538,6 +542,10 @@ LoadAvatarSprites:;NOTE: this should be done BEFORE setting GBC map palettes
   ret
 
 CheckRandomAppearance:
+  call CheckPlayerCollision.center
+  ld a, [collision_type]
+  and a, MAP_COLLISION_GRASS
+  ret z
   call gbdk_Random
   ld a, d
   xor a, e
@@ -596,7 +604,6 @@ Overworld::
 .move
     ld a, [button_state]
     call Move
-    ; call CheckRandomAppearance
-    ; jr z, .moveLoop
-    jr .moveLoop
+    call CheckRandomAppearance
+    jr z, .moveLoop
     ret

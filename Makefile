@@ -16,7 +16,7 @@ all:
 	
 	rgbasm -D _$(VERSION) -o $(OBJ_DIR)/main.o $(SRC_DIR)/main.asm
 	rgblink -m $(OBJ_DIR)/main.map -n $(SYM_FILE) -o $(ROM_FILE) $(OBJ_DIR)/main.o
-	rgbfix -jvcs -k 01 -l 0x33 -m 0x1B -p 0 -r 03 -t $(GAME_NAME) $(ROM_FILE)
+	rgbfix -jvcs -k 01 -l 0x33 -m 0x1B -p 255 -t $(GAME_NAME) $(ROM_FILE)
 
 ifeq ($(OS), Windows_NT)
 	start "$(ROM_FILE)"

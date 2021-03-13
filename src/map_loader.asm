@@ -222,11 +222,13 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
     ; jp z, .fill
     ; cp a, MAP_OBJ_TILE_FILL
     ; jp z, .fill
+    ; cp a, MAP_OBJ_TEXT
+    ; jp z, .fill
     ; cp a, MAP_OBJ_TEXT_FILL
     ; jp z, .fill
   
   .fill
-    inc hl;skip tile
+    inc hl;skip tile/char/stringID
     inc hl;skip palete
   .blankFill
     ld a, [_x]
@@ -783,15 +785,6 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   and a
   ret z
 
-  ; PUSH_VAR _x;min x
-  ; PUSH_VAR _y;min y
-  ; PUSH_VAR _u;max x
-  ; PUSH_VAR _v;max y
-  ; PUSH_VAR _a;clipped x
-  ; PUSH_VAR _b;clipped y
-  ; PUSH_VAR _c;clipped width
-  ; PUSH_VAR _d;clipped height
-
 .storeMinMax
   ld a, d
   ld [_x], a;minX
@@ -853,6 +846,10 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jp z, .tile
     cp a, MAP_OBJ_TILE_FILL
     jp z, .tileFill
+    cp a, MAP_OBJ_TEXT
+    jp z, .tileFill
+    cp a, MAP_OBJ_TEXT_FILL
+    jp z, .tileFill
     cp a, MAP_OBJ_NONE
     jr z, .checkExtraData
     ; else MAP_OBJ_NONE_FILL
@@ -861,7 +858,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     inc hl
     jp .checkExtraData
   .tileFill
-    call DrawMapTileFill
+    call DrawMapTileFill;also does text
     jp .checkExtraData
   .tile
     call DrawMapTile
@@ -890,14 +887,6 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jp .loop
 
 .done
-  ; POP_VAR _d;clipped height
-  ; POP_VAR _c;clipped width
-  ; POP_VAR _b;clipped y
-  ; POP_VAR _a;clipped x
-  ; POP_VAR _v;max y
-  ; POP_VAR _u;max x
-  ; POP_VAR _y;min y
-  ; POP_VAR _x;min x
   ret
 
 DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
@@ -964,7 +953,8 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
   add hl, bc
   ret
 
-DrawMapTileFill:;hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
+DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
+  ld [_c], a;map obj type
 .testX
   ld a, [_u];maxX
   cp a, d;x
@@ -984,7 +974,7 @@ DrawMapTileFill:;hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
   jr c, .draw
   ld e, a
 .draw
-  ld a, [hli];tile
+  ld a, [hli];tile/char/string
   ld [_a], a
   ld a, [hli];palette
   ld [_b], a
@@ -1013,11 +1003,25 @@ DrawMapTileFill:;hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
   ret z;if height==0
   ld c, a
   push hl;next map object
+  ld a, [_c];map obj type
+  cp a, MAP_OBJ_TEXT_FILL
   ld a, [_a];tile
-  ld hl, _SCRN0
   push de;xy
   push bc;wh
+  jr z, .stringFill
+.singleTile
+  ld hl, _SCRN0
   call gbdk_SetTilesTo
+  jr .palettes
+.stringFill
+  call GetMapText
+  pop hl;wh
+  pop de;xy
+  push de;xy
+  push hl;wh
+  ld bc, str_buffer
+  call gbdk_SetBkgTiles
+.palettes
   pop bc;wh
   pop de;xy
   ld a, [sys_info]

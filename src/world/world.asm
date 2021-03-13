@@ -548,9 +548,8 @@ CheckRandomAppearance:
   ret z
   call gbdk_Random
   ld a, d
-  xor a, e
   and a, e
-  and a, %1000000
+  and a, %10000000
   ret
 
 Overworld::

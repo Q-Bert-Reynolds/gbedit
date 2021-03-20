@@ -1103,10 +1103,12 @@ StartGame::
   
   call SetPlayBallTiles
 
-  ld a, 0;(3 << 4) | (2 << 2) | 1; 3 balls, 2 strikes, 1 out
+  ;EXAMPLE: ld a, (3 << 4) | (2 << 2) | 1 ;3 balls, 2 strikes, 1 out
+  xor a;0 balls, 0 strikes, 0 outs
   ld [balls_strikes_outs], a
   
-  ld bc, 0;(9 << 8) | 5;9th batter on third, 5th batter on first
+  ;EXAMPLE: ld bc, (9 << 8) | 5 ;9th batter on third, 5th batter on first
+  ld bc, 0; nobody on
   ld hl, runners_on_base
   ld a, b
   ld [hli], a

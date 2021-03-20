@@ -60,53 +60,65 @@ INCLUDE "src/memory1.asm"
 ;  $18   OBJ_TRN   Super NES OBJ Mode
 
 SGB_PACKET: MACRO ;\1 = code, \2 = num packets
-  db (\1 << 3) + \2
+  DB (\1 << 3) + \2
 ENDM
 
 ATTR_BLK: MACRO ;\1 = num packets
   SGB_PACKET $4, ((\1 * 6)/16) + 1
-	db \1
+	DB \1
 ENDM
 
 ATTR_BLK_PACKET: MACRO ;\1 = control code, \2\3\4 = palettes, \5\6 = xy, \7\8 = wh
-	db \1 ;bit 2 = outside block, bit 1 = on border, bit 0 = inisde block
-	db (\2 << 4) + (\3 << 2) + \4 ;\2 = outside, \3 = border, \4 = inside
-	db \5, \6, \5+\7-1, \6+\8-1
+	DB \1 ;bit 2 = outside block, bit 1 = on border, bit 0 = inisde block
+	DB (\2 << 4) + (\3 << 2) + \4 ;\2 = outside, \3 = border, \4 = inside
+	DB \5, \6, \5+\7-1, \6+\8-1
 ENDM
 
 MLT_REQ: MACRO ;\1 = player count
   SGB_PACKET $11, 1
-  db \1 - 1
-  ds 14
+  DB \1 - 1
+  DS 14
 ENDM
 
 CHR_TRN: MACRO ;\1 = tile table (0=$00-$7F, 1=$80-$FF), \2 = tile type (0=BG, 1=OBJ)
   SGB_PACKET $13, 1
-  db \1 + (\2 << 1)
-  ds 14
+  DB \1 + (\2 << 1)
+  DS 14
 ENDM
 
 PCT_TRN: MACRO
   SGB_PACKET $14, 1
-  ds 15
+  DS 15
 ENDM
 
 PAL_SET: MACRO ;\1 = Pal0, \2 = Pal1, \3 = Pal2, \4 = Pal3
   SGB_PACKET $0A, 1
-  dw \1, \2, \3, \4
-  ds 7
+  DW \1, \2, \3, \4
+  DS 7
 ENDM
 
 PAL_TRN: MACRO
   SGB_PACKET $0B, 1
-  ds 15
+  DS 15
 ENDM
 
 MASK_EN: MACRO ;\1 = screen mask (0=cancel,1=freeze)
   SGB_PACKET $17, 1
-  db \1
-  ds 14
+  DB \1
+  DS 14
 ENDM 
+
+;\1 = SFX A, \2 = SFX B, \3 = SFX Attributes (below), \4 = Music Score Code (must be zero if not used)
+; Bit 0-1 - Sound Effect A Pitch (0..3=Low..High)
+; Bit 2-3 - Sound Effect A Volume (0..2=High..Low, 3=Mute on)
+; Bit 4-5 - Sound Effect B Pitch (0..3=Low..High)
+; Bit 6-7 - Sound Effect B Volume (0..2=High..Low, 3=Not used)
+SGB_SOUND: MACRO
+  SGB_PACKET $08, 1
+  DB \1, \2, \3, \4
+  4 Music Score Code (must be zero if not used)
+  DS 10
+ENDM
 
 SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
@@ -281,8 +293,35 @@ sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   call SetBank
   reti
 
+sgb_PlaySound:: ;a = sound A, b = sound B, c = attributes
+  push bc
+  push af
+  ld a, [sys_info]
+  and a, SYS_INFO_SGB
+  jr z, .isSGB
+  pop af
+  pop bc
+  ret
+.isSGB
+  ld hl, cmd_buffer
+  ld a, ($08<<3)+1
+  ld [hli], a
+  pop af;sound a
+  ld [hli], a
+  pop bc
+  ld a, b
+  ld [hli], a
+  ld a, c
+  ld [hli], a
+  xor a
+  ld bc, 11
+  call mem_Set
+  ld hl, cmd_buffer
+  call _sgb_PacketTransfer
+  ret
+
 sgb_SetPal:: ;a = packet header, bc = paletteA, de = paletteB
-  ld hl, tile_buffer
+  ld hl, cmd_buffer
   ld [hli], a
 
   ld a, [sys_info]
@@ -292,21 +331,21 @@ sgb_SetPal:: ;a = packet header, bc = paletteA, de = paletteB
   push de;paletteB
   push bc;paletteA
   pop hl;paletteA
-  ld de, tile_buffer+1
+  ld de, cmd_buffer+1
   ld bc, 8
   call mem_Copy
 
   pop hl;paletteB
   inc hl
   inc hl
-  ld de, tile_buffer+9
+  ld de, cmd_buffer+9
   ld bc, 6
   call mem_Copy
 
   xor a
   ld [hli], a
 
-  ld hl, tile_buffer
+  ld hl, cmd_buffer
   call _sgb_PacketTransfer
 
   ret
@@ -322,7 +361,7 @@ sgb_SetBlock::
   push de;xy
   push bc;palettes
 
-  ld hl, tile_buffer
+  ld hl, cmd_buffer
 
   ld a, ($4 << 3) + 1;ATTR_BLK
   ld [hli], a
@@ -362,7 +401,7 @@ sgb_SetBlock::
   ld a, e;y+h
   ld [hl], a
   
-  ld hl, tile_buffer
+  ld hl, cmd_buffer
   jp _sgb_PacketTransfer
 
 ; Copies data from GB VRAM to SNES RAM
@@ -449,16 +488,16 @@ _sgb_PacketTransfer:
     ld a, P1F_4 | P1F_5
     ld [rP1], a               ; P14 = HIGH and P15 = HIGH between pulses
     ld b, 16                  ; Number of bytes per packet
-.sendBytesLoop:
+  .sendBytesLoop:
       ld e, 8                 ; Bits per byte
       ld a, [hli]
       ld d, a                 ; Next byte of the packet
-.sendBitsLoop:
+    .sendBitsLoop:
         bit 0, d
         ld a, P1F_4           ; P14 = HIGH and P15 = LOW (Write 1)
         jr nz, .skip
         ld a, P1F_5           ; P14 = LOW and P15 = HIGH (Write 0)
-.skip:
+      .skip:
         ld [rP1], a           ; We send one bit
         ld a, P1F_4 | P1F_5
         ld [rP1], a           ; P14 = HIGH and P15 = HIGH between pulses

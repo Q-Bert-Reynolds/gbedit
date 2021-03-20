@@ -3290,7 +3290,7 @@ MapChunkVeteranCity:
   DB 9;x1
   DB 13;y1
   DB MAP_TEXT_CLINIC;string index
-  DB 0;palette
+  DB 7;palette
   DB 15;x2
   DB 14;y2
 
@@ -3310,7 +3310,7 @@ MapChunkVeteranCity:
   DB 22;x1
   DB 1;y1
   DB MAP_TEXT_SHOP;string index
-  DB 0;palette
+  DB 7;palette
   DB 26;x2
   DB 2;y2
 
@@ -3590,11 +3590,11 @@ MapChunkRoute1West5:
   DW MapStampHouseRoofLowerRight
 
   DB MAP_OBJ_TEXT_FILL | MAP_COLLISION_NONE ;GameObject (24)
-  DB 24;x1
-  DB 6;y1
+  DB 23;x1
+  DB 7;y1
   DB MAP_TEXT_THEVET;string index
   DB 7;palette
-  DB 27;x2
+  DB 29;x2
   DB 8;y2
 
   DB 0;END Route1West5 background objects, 249 bytes

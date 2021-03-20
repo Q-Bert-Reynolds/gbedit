@@ -955,11 +955,12 @@ DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
 
 DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _x,_y,_u,_v
   ld [_c], a;map obj type
+  ld bc, 0
 .testX
   ld a, [_u];maxX
   cp a, d;x
-  jr c, .outOfRange;maxX < x
-  jr z, .outOfRange;maxX == x
+  jp c, .outOfRange;maxX < x
+  jp z, .outOfRange;maxX == x
   ld a, [_x];minX
   cp a, d
   jr c, .testY
@@ -967,8 +968,8 @@ DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _
 .testY
   ld a, [_v];maxY
   cp a, e;y
-  jr c, .outOfRange;maxY < y
-  jr z, .outOfRange;maxY == y
+  jp c, .outOfRange;maxY < y
+  jp z, .outOfRange;maxY == y
   ld a, [_y];minY
   cp a, e
   jr c, .draw
@@ -1015,11 +1016,11 @@ DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _
   jr .palettes
 .stringFill
   call GetMapText
+  call ClipMapText
   pop hl;wh
   pop de;xy
   push de;xy
   push hl;wh
-  ld bc, str_buffer
   call gbdk_SetBkgTiles
 .palettes
   pop bc;wh
@@ -1041,6 +1042,12 @@ DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _
   ld bc, 4
   add hl, bc
   ret
+
+;str_buffer = text
+;returns clipped text in bc
+ClipMapText::
+  ld bc, str_buffer
+  ret 
 
 DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in bc
 .testMinX

@@ -1,20 +1,23 @@
 Priority
 
-- map text objects
+- SGB crowd SFX (as a test)
 - using the computer
-  - Bill's PC
+  - Bill's PC (will allow roster changes!!!)
   - Doc's PC
   - League PC
-- map scripts should also have collision check
 - load/interact characters and items from map data
+- unsigned player should be pitcher in leadoff spot for random appearances
+  - ghosts should be the rest of the spots
+  - unsigned player always bats, ghosts always run
 - make batting results semi-random so we can move on to FX
 
 Bugs
 
-- DMG sprite palette incorrect in lineup on hardware (possibly just IPS screen)
+- unclipped map text drawn incorrectly most of the time
 - can't deposit special items
 - if holding more than one directional button, collisions can break
 - palettes broken when exiting lineup or roledex
+- color of version name incorrect after returning from new game/continue/options screen
 
  General
 
@@ -51,7 +54,6 @@ Python scripts
 
 Start
 
-- color of version name incorrect after returning from new game/continue/options screen
 - intro home version batter has too many tiles
 - make intro ball movement smooth
 - randomize(ish) scrolling players on title screen
@@ -105,6 +107,8 @@ Team Menu
 
 Map System
 
+- map text should be clipped
+- map scripts should also have collision check
 - use Unity's collision trigger property for finer control over GB collisions
 - separate palettes and stamps from object data
 - palette 0 is used for UI, should not be exported
@@ -153,10 +157,9 @@ Super GameBoy
 - set tiles to palette 0 when drawing UI boxes (currently only works on GBC)
 - GBCSetPalette (used to match SGB and GBC palettes) can cause problems with GBC specific palettes
 - use color palette data
-- use additional sprites
+- use additional sprites (bottom row of tiles will be trashed)
 - borders for each city when walking
 - borders for different fields
-- crowd SFX
 - extra music voices
 - fix LCD interrupt flickering when sending packets
 - use second controller?
@@ -185,3 +188,6 @@ Design Notes
 - You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
 - replace "PC" with "server"
 - When a player reaches 0 HP, they're hurt and must come out of the game. The minimum number of players on the field is 6. Below that, and the team must forefeit. Whenever there is no player for a lineup spot, an out is recorded for that batter.
+- Batting/Pitching sprites should be shown on appropriate stat screens.
+- Main player image should be flipped to show correct handedness.
+- make some players only available on certain hardware (DMG, GBC, SGB 1/2, GBP, GBA, emulators)

@@ -1,4 +1,4 @@
-TESTS_ENABLED    EQU 0
+TESTS_ENABLED    EQU 1
 INTRO_ENABLED    EQU 1
 TITLE_ENABLED    EQU 1
 NEW_GAME_ENABLED EQU 1
@@ -8,36 +8,22 @@ PLAY_ENABLED     EQU 1
 INCLUDE "src/beisbol.inc"
 
 RUN_TESTS: MACRO
-  ld a, WORLD_BANK
-  call SetBank
-  call TestMap
-;   call LoadFontTiles
 
-; POWER = 50
-; REPT 2
-
-; LAUNCH = 30
-; REPT 3
-
-; SPRAY = -45
-; REPT 18
-
-;   ld a, SIM_BANK
-;   call SetBank
-;   TEST_SIM POWER, SPRAY, LAUNCH
-
-;   ; ld a, ANNOUNCER_BANK
-;   ; call SetBank
-;   ; TEST_ANNOUNCER SPRAY
-
-; SPRAY = SPRAY+5
-; ENDR;SPRAY loop
-
-; LAUNCH = LAUNCH+30
-; ENDR;LAUNCH loop
-
-; POWER = POWER+40
-; ENDR;POWER loop
+  DISPLAY_ON
+  xor a
+  ld b, a
+  ld c, %11111111
+.loop
+    push af
+    push bc
+    call sgb_PlaySound
+    ld de, 1000
+    call gbdk_Delay
+    pop bc
+    pop af
+    inc a
+    cp a, $80
+    jp c, .loop
 
 ENDM
 

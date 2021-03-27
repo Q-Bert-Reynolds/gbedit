@@ -5,6 +5,7 @@
 ; V1.0 - 30-Dec-19 : Original Release - NB, based on GBDK 2.96
 ;
 ; Macros:
+;   SETUP_DMA_TRANSFER
 ;   DISPLAY_ON
 ;   DISPLAY_OFF
 ;   SHOW_BKG
@@ -53,6 +54,8 @@ ENDM
 INCLUDE "src/memory1.asm"
   rev_Check_memory1_asm 1.2
 
+HRAM_START = $FF80
+HRAM_LEFT = $FFFE - HRAM_START
 SETUP_DMA_TRANSFER: MACRO
   ld c, _HRAM % $100
   ld b, .DMATransferEnd - .DMATransfer
@@ -74,6 +77,12 @@ SETUP_DMA_TRANSFER: MACRO
   jr nz, .wait
   ret
 .DMATransferEnd
+
+HRAM_START = HRAM_START + (.DMATransferEnd - .DMATransfer)
+HRAM_LEFT = $FFFE - HRAM_START
+PRINTT "DMA Transfer routine setup.\n"
+PRINTT "{HRAM_LEFT} bytes of HRAM left.\n"
+PRINTT "HRAM variables can start at {HRAM_START}\n"
 ENDM
 
 DISPLAY_ON: MACRO
@@ -266,7 +275,7 @@ ENDC
 ENDM
 
 SECTION "GBDK Vars", WRAM0[_RAM]
-;ensure OAM buffer starts at $XX00 and is not in switchable WRAM
+;ensure OAM buffer starts at $XX00 and is not in switchable WRAM, see SETUP_DMA_TRANSFER macro
 oam_buffer:: DS 4*40
 vbl_done:: DB;TODO: place in HRAM?
 rand_hi:: DB

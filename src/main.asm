@@ -1,4 +1,4 @@
-TESTS_ENABLED    EQU 1
+TESTS_ENABLED    EQU 0
 INTRO_ENABLED    EQU 1
 TITLE_ENABLED    EQU 1
 NEW_GAME_ENABLED EQU 1
@@ -17,7 +17,7 @@ RUN_TESTS: MACRO
     push af
     push bc
     call sgb_PlaySound
-    ld de, 1000
+    ld de, 100
     call gbdk_Delay
     pop bc
     pop af

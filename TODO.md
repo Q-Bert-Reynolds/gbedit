@@ -1,11 +1,10 @@
 Priority
 
-- SGB crowd SFX (as a test)
+- load/interact characters and items from map data
 - using the computer
   - Bill's PC (will allow roster changes!!!)
   - Doc's PC
   - League PC
-- load/interact characters and items from map data
 - unsigned player should be pitcher in leadoff spot for random appearances
   - ghosts should be the rest of the spots
   - unsigned player always bats, ghosts always run
@@ -13,11 +12,14 @@ Priority
 
 Bugs
 
+- on GBC/SGB, player colors aren't reset after viewing the move list during a ballgame
+- on SGB, viewing a player on your team during a ballgame crashes the game
 - unclipped map text drawn incorrectly most of the time
 - can't deposit special items
-- if holding more than one directional button, collisions can break
+- if holding more than one directional button, can't hop ledge
 - palettes broken when exiting lineup or roledex
 - color of version name incorrect after returning from new game/continue/options screen
+- SGB sound test doesn't seem to work, test on hardware
 
  General
 
@@ -31,7 +33,7 @@ Bugs
 Optimization
 
 - COPY_TILE_BLOCK macro in GBDK.asm should be a subroutine, add HRAM vars to allow for this
-- move most used subroutines to HRAM
+- utilize remaining HRAM (after DMA routine)
 - replace long chains of compares and jumps with jump tables
 - remove use of temp_bank in rolédex to free up RAM
 - move_data.id could be stored in upper 7 bits (since there are < 128 moves), move_data.use in LSB
@@ -54,10 +56,9 @@ Python scripts
 
 Start
 
-- intro home version batter has too many tiles
+- intro home version batter has too many tiles, is also ugly
 - make intro ball movement smooth
 - randomize(ish) scrolling players on title screen
-- load bedroom map after new game scene ends
 
 Play Ball
 
@@ -118,8 +119,6 @@ Map System
 - default collision type for chunk
 - regions should have their own music, palettes, tiles, etc
 - an chunk index of 0 should fill the chunk with some default tile
-- font tiles should be usable in the editor
-- random encounters should only happen on fields, batting cages, bullpens, etc
 - make legs go behind things
 - animated tiles
 - add diagonal lines to map system, (already implemented in editor)
@@ -140,7 +139,7 @@ Items
  
 Rolédex
 
-- update seen/signed after games, evolutions, and signings
+- update seen/signed after games, transformations, and signings
 - finish player descriptions (some show placeholder pokemon text)
 - fix player descriptions that are longer than 6 lines
 - if player descriptions only span 1 page, garbage text is drawn on the next
@@ -171,23 +170,27 @@ Design Notes
 - player stats should peak at their prime age (~25)
 - after prime age, speed and throw stats begin to decline (bat and field don't)
 - when a player dies (~75), their second type becomes Ghost
-- steroids move a player's age toward their prime age
-- steroids stop working half way between prime and death (~50)
 - rather than selecting a player, you're selecting one of Doc Hicory's three teams - you get to name it
 - play against Doc Hicory (the Billet Town team that neither you nor your rival picked) anytime you want to
 - pitch speed should be a relative speed so that pitches appear faster when the pitcher's Throw stat is higher than the batter's Bat stat
-- trash cans at your rival's house "look like they've taken a beating"
 - each town should have an age limits for their league, you should be able to replay home teams as many times as you want
 - Bill (of Bill's PC fame) is Bill James.
 - teammates in their 20s and 30s have a small chance of producing a child
 - A storm has cut off the path to the weather tower. It's cleared after you beat the game. That's where you meet the weather man, Mike.
 - after becoming the world champions, the northern pass opens... encounter Mike at top of weather research tower
 - You can use items as often as you want, but using an item on your pitcher while they're pitching requires a mound visit. Umps won't let you make more than one mound visit per inning per pitcher.
-- Pitchers must complete three plate appearances before they can be swapped out.
-- No HP means more errors and bad pitches, slower movement.
+- Pitchers must complete a plate appearance before they can be swapped out.
+- Low HP means more errors and bad pitches, slower movement.
 - You get the frozen head of Ted Williams in the equivalent of Pewter City's Museum of Science.
 - replace "PC" with "server"
-- When a player reaches 0 HP, they're hurt and must come out of the game. The minimum number of players on the field is 6. Below that, and the team must forefeit. Whenever there is no player for a lineup spot, an out is recorded for that batter.
+- When a player reaches 0 HP, they're hurt and must come out of the game. The minimum number of players on the field is 7. Below that, and the team must forefeit. Whenever there is no player for a lineup spot, an out is recorded for that batter.
 - Batting/Pitching sprites should be shown on appropriate stat screens.
 - Main player image should be flipped to show correct handedness.
 - make some players only available on certain hardware (DMG, GBC, SGB 1/2, GBP, GBA, emulators)
+- age should be independent of experience and based instead on game time
+  - if 30 minutes of playing is 1 month, you would need to play for 6 hours for your initial team of 5-year-olds to turn 6
+  - experience would be tied to Grade (instead of Level)
+  - steroid use would then affect Grade instead of Age
+  - steroids use should be tracked separately
+  - steroids stop working after they've been taken 20 times
+  - some transformations (Gio to OT, for example) require steroid use

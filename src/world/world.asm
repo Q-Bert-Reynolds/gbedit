@@ -10,7 +10,7 @@ INCLUDE "img/maps/businesses.asm"
 INCLUDE "maps/Houses.gbmap"
 INCLUDE "maps/Businesses.gbmap"
 
-SECTION "World", ROMX, BANK[WORLD_BANK]
+SECTION "World Code", ROMX, BANK[WORLD_BANK]
 INCLUDE "src/world/computer.asm"
 INCLUDE "src/world/scripts.asm"
 INCLUDE "img/avatars/avatars.asm"

@@ -49,6 +49,10 @@ MapHousesPalettes: ;64 bytes
   RGB 7, 19, 27
   RGB 0, 8, 15
 
+MAP_TEXT_ITS_JUST_A_BUNCHOF_TRASH EQU 0
+MAP_TEXT_BATTERYS_BROKENDONT_TURN_IT_OFF EQU 1
+MAP_TEXT_YOU_CAN_SLEEPWHEN_YOUVE_WON EQU 2
+MAP_TEXT_THIS_TRASH_CANIS_REALLY_BEAT_UP EQU 3
 MapHousesText: ;130 bytes
   DB "It's just a bunch\nof trash.",0
   DB "Battery's broken.\nDon't turn it off.",0
@@ -344,7 +348,7 @@ MapChunkCalvinsRoom:
   DB 22;x
   DB 22;y
   DW MapStampTrashCan
-  DB 0; It's just a bunch\nof trash.
+  DB MAP_TEXT_ITS_JUST_A_BUNCHOF_TRASH; It's just a bunch\nof trash.
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;StairsDown
   DB 22;x
@@ -410,7 +414,7 @@ MapChunkCalvinsRoom:
   DB 16;x
   DB 16;y
   DW MapStampTV
-  DB 1; Battery's broken.\nDon't turn it off.
+  DB MAP_TEXT_BATTERYS_BROKENDONT_TURN_IT_OFF; Battery's broken.\nDon't turn it off.
 
   DB MAP_OBJ_NONE_FILL | MAP_COLLISION_SCRIPT ;My PC
   DB 10;x1
@@ -423,7 +427,7 @@ MapChunkCalvinsRoom:
   DB 8;x
   DB 20;y
   DW MapStampBed
-  DB 2; You can sleep\nwhen you've won.
+  DB MAP_TEXT_YOU_CAN_SLEEPWHEN_YOUVE_WON; You can sleep\nwhen you've won.
 
   DB 0;END CalvinsRoom background objects, 149 bytes
 
@@ -623,7 +627,7 @@ MapChunkNolansHouse:
   DB 22;x
   DB 22;y
   DW MapStampTrashCan
-  DB 3; This trash can\nis really beat up.
+  DB MAP_TEXT_THIS_TRASH_CANIS_REALLY_BEAT_UP; This trash can\nis really beat up.
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Rug (4)
   DB 20;x
@@ -686,14 +690,14 @@ MapHousesSprites: ;6 bytes
 MapSpritesCalvinsRoom:
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
-  DB 16;x1
-  DB 19;y1
+  DB 133;x1
+  DB 151;y1
   DB 161;tile
   DB 6;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
-  DB 16;x1
-  DB 20;y1
+  DB 127;x1
+  DB 159;y1
   DB 160;tile
   DB 6;palette
 

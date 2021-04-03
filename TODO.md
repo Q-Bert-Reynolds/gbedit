@@ -1,6 +1,12 @@
 Priority
 
 - load/interact characters and items from map data
+  - remove map sprite arrays from gbmap, add sprites to end of map chunk (after terminating 0)
+  - store each map sprite's bank, address, and current position in 100 byte array (max 20 sprites 5 bytes)
+  - store current map sprite count
+  - check to see if the bank and address are already in the array before adding to 
+  - after moving, iterate through array and oam_ram removing sprites that are far enough off screen
+  - every frame, iterate through array copying sprites to oam_buffer
 - using the computer
   - Bill's PC (will allow roster changes!!!)
   - Doc's PC
@@ -108,7 +114,10 @@ Team Menu
 
 Map System
 
-- map text should be clipped
+- handle different sprite types (ie. tile, stamp, animation, avatar)
+- sprites should be pooled
+  - make an array of map object instances (current position, map chunk, map sprites index)
+- map text should be clipped (or converted to stamps or turned off completely)
 - map scripts should also have collision check
 - use Unity's collision trigger property for finer control over GB collisions
 - separate palettes and stamps from object data

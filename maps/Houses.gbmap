@@ -1,11 +1,10 @@
-MapHouses:: ;923 bytes total
+MapHouses:: ;917 bytes total
   DB MAP_HOUSES
   DW MapHousesPalettes ;64 bytes
   DW MapHousesText ;130
   DW MapHousesDoors ;20
   DW MapHousesStamps ;296 bytes
-  DW MapHousesChunks ;393 bytes
-  DW MapHousesSprites ;19 bytes
+  DW MapHousesChunks ;406 bytes
   DW MapHousesScripts ;3 bytes
 
 MapHousesPalettes: ;64 bytes
@@ -270,7 +269,7 @@ MapHousesChunks: ;6 bytes
   DW MapChunkCalvinsHouse
   DW MapChunkNolansHouse
 
-;Map Chunks, 387 bytes
+;Map Chunks, 400 bytes
 MapChunkCalvinsRoom:
 .tile:    DB 252
 .palette: DB 1
@@ -421,8 +420,8 @@ MapChunkCalvinsRoom:
   DB 10;y1
   DB 12;x2
   DB 12;y2
-  DB 0
-;UseMyComputer
+  DB 0;UseMyComputer
+
   DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Bed
   DB 8;x
   DB 20;y
@@ -430,6 +429,22 @@ MapChunkCalvinsRoom:
   DB MAP_TEXT_YOU_CAN_SLEEPWHEN_YOUVE_WON; You can sleep\nwhen you've won.
 
   DB 0;END CalvinsRoom background objects, 149 bytes
+
+MapSpritesCalvinsRoom:
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
+  DB 133;x1
+  DB 151;y1
+  DB 161;tile
+  DB 6;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
+  DB 127;x1
+  DB 159;y1
+  DB 160;tile
+  DB 6;palette
+
+  DB 0;END CalvinsRoom sprite objects, 11 bytes
 
 MapChunkCalvinsHouse:
 .tile:    DB 252
@@ -560,6 +575,10 @@ MapChunkCalvinsHouse:
 
   DB 0;END CalvinsHouse background objects, 123 bytes
 
+MapSpritesCalvinsHouse:
+
+  DB 0;END CalvinsHouse sprite objects, 1 bytes
+
 MapChunkNolansHouse:
 .tile:    DB 252
 .palette: DB 1
@@ -679,33 +698,6 @@ MapChunkNolansHouse:
   DW MapStampRug
 
   DB 0;END NolansHouse background objects, 115 bytes
-
-
-MapHousesSprites: ;6 bytes
-  DW MapSpritesCalvinsRoom
-  DW MapSpritesCalvinsHouse
-  DW MapSpritesNolansHouse
-
-;Map Sprites, 13 bytes
-MapSpritesCalvinsRoom:
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
-  DB 133;x1
-  DB 151;y1
-  DB 161;tile
-  DB 6;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
-  DB 127;x1
-  DB 159;y1
-  DB 160;tile
-  DB 6;palette
-
-  DB 0;END CalvinsRoom sprite objects, 11 bytes
-
-MapSpritesCalvinsHouse:
-
-  DB 0;END CalvinsHouse sprite objects, 1 bytes
 
 MapSpritesNolansHouse:
 

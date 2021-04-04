@@ -824,10 +824,10 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 .drawMapObjects
   ld bc, 5;pal(1)+neighbors(4)
   add hl, bc;skip pal, neighboring chunks, and collision
-.loop
+.drawTilesLoop
     ld a, [hli];map object type and collision
     and a
-    jp z, .done
+    jp z, .loadSprites
     ld b, a;map object type and collision
 
     ld a, [hli];x
@@ -881,25 +881,136 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jr z, .hasExtraData
     cp a, MAP_COLLISION_DOOR
     jr z, .hasExtraData
-    jp .loop
+    jp .drawTilesLoop
   .hasExtraData
     inc hl
-    jp .loop
+    jp .drawTilesLoop
 
-.done
+.loadSprites;convert coordinates from tiles to pixels
+  ld a, [_x]
+  sla a;*2
+  sla a;*4
+  sla a;*8
+  ld [_x], a
+  ld a, [_y]
+  sla a;*2
+  sla a;*4
+  sla a;*8
+  ld [_y], a
+  ld a, [_u]
+  sla a;*2
+  sla a;*4
+  sla a;*8
+  ld [_u], a
+  ld a, [_v]
+  sla a;*2
+  sla a;*4
+  sla a;*8
+  ld [_v], a
+.loadSpritesLoop
+    ld a, [hl];check done
+    and a
+    ret z
+    push hl; current address
+    
+    inc hl
+    ld a, [hli];x
+    ld d, a
+    ld a, [hli];y
+    ld e, a
+  .testXY
+    call TestMapObjectMinXY
+    jr z, .outOfRange
+    call TestMapObjectMaxXY
+    jr z, .outOfRange
+  .testBankAndAddress
+    ld hl, map_buffer
+    ld a, [loaded_bank]
+    ld b, a;bank
+    ld a, [map_sprite_count]
+    pop de;current sprite address
+    push de;current sprite address
+  .loopMapSprites
+      push af;count
+      ld a, [hli];bank
+      cp a, b;check bank
+      jr nz, .bankMismatch
+      ld a, [hli];lower byte of address
+      cp a, e;compare lower byte
+      jr nz, .addressMismatch
+      ld a, [hl];upper byte of address
+      cp a, d;compare upper byte
+      jr nz, .addressMismatch
+      jr .spriteAlreadyInBuffer
+    .bankMismatch
+      inc hl;skip lower address byte
+    .addressMismatch
+      inc hl;skip upper address byte
+      inc hl;skip x
+      inc hl;skip y
+      pop af;count
+      dec a
+      jr nz, .loopMapSprites
+  .addSpritesToBuffer;hl = next map sprite address
+    ld [_breakpoint], a
+    ld d, h
+    ld e, l
+    ld a, [map_sprite_count]
+    inc a
+    ld [map_sprite_count], a
+    pop hl;current sprite address
+    ld bc, 5
+    call mem_Copy
+    jr .loadSpritesLoop
+  .spriteAlreadyInBuffer
+    pop af;discard count
+    pop de;current sprite address
+    ld hl, 5
+    add hl, de
+    jr .loadSpritesLoop
+  .outOfRange
+    pop de;toss current sprite address
+    inc hl;skip tile
+    inc hl;skip palette
+    jr .loadSpritesLoop
+
+TestMapObjectMinXY:; de = xy, max XY in _u,_v, returns xy in de, sets z if out of range
+.testMinX
+  ld a, [_u];chunk maxX
+  cp a, d;stamp minX
+  jr c, .outOfRange;chunk maxX < stamp minX
+  jr z, .outOfRange;chunk maxX == stamp minX
+.testMinY
+  ld a, [_v];chunk maxY
+  cp a, e;stamp minY
+  jr c, .outOfRange;chunk maxY < stamp minY
+  jr z, .outOfRange;chunk maxY == stamp minY
+.inRange
   ret
+.outOfRange
+  xor a
+  ret 
 
+TestMapObjectMaxXY:; de = xy, min XY in _x,_y, returns xy in de, sets z if out of range
+.testMaxX
+  ld a, [_x];chunk minX
+  cp a, h;stamp maxX
+  jp z, .outOfRange;chunk minX == stamp maxX
+  jp nc, .outOfRange;chunk minX > stamp maxX
+.testMaxY
+  ld a, [_y];chunk minX
+  cp a, l;stamp maxy
+  jp z, .outOfRange;chunk minY == stamp maxY
+  jp nc, .outOfRange;chunk minY > stamp maxY
+.inRange
+  ret
+.outOfRange
+  xor a
+  ret 
+    
 DrawMapStampFill:;hl = stamp fill data, de = xy, min/max XY in _x,_y,_u,_v
-.testX
-  ld a, [_u];maxX
-  cp a, d;x
-  jr c, .outOfRange;maxX < x
-  jr z, .outOfRange;maxX == x
-.testY
-  ld a, [_v];maxY
-  cp a, e;y
-  jr c, .outOfRange;maxY < y
-  jr z, .outOfRange;maxY == y
+  call TestMapObjectMinXY
+  jr z, .outOfRange
 
 .draw
   ld a, [hli];stamp lower address
@@ -1045,21 +1156,13 @@ DrawMapTileFill:;a = map obj type, hl = tile fill data, de = xy, min/max XY in _
 
 ;str_buffer = text
 ;returns clipped text in bc
-ClipMapText::
+ClipMapText::;TODO - there's a bug and a feature listed for this function
   ld bc, str_buffer
   ret 
 
 DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in bc
-.testMinX
-  ld a, [_u];chunk maxX
-  cp a, d;stamp minX
-  jr c, .outOfRange;chunk maxX < stamp minX
-  jr z, .outOfRange;chunk maxX == stamp minX
-.testMinY
-  ld a, [_v];chunk maxY
-  cp a, e;stamp minY
-  jr c, .outOfRange;chunk maxY < stamp minY
-  jr z, .outOfRange;chunk maxY == stamp minY
+  call TestMapObjectMinXY
+  jr z, .outOfRange
 
 .loadStampData
   ld a, [hli];stamp lower address
@@ -1074,16 +1177,8 @@ DrawMapStamp:;hl = stamp data, de = xy, min/max XY in _x,_y,_u,_v, returns wh in
   ld l, a
   add hl, de;maxXY = wh + xy, assumes l + e < 256
 
-.testMaxX
-  ld a, [_x];chunk minX
-  cp a, h;stamp maxX
-  jp z, .nextMapObject;chunk minX == stamp maxX
-  jp nc, .nextMapObject;chunk minX > stamp maxX
-.testMaxY
-  ld a, [_y];chunk minX
-  cp a, l;stamp maxy
-  jp z, .nextMapObject;chunk minY == stamp maxY
-  jp nc, .nextMapObject;chunk minY > stamp maxY
+  call TestMapObjectMaxXY
+  jp z, .nextMapObject
 
 .clipStamp
   inc bc;stamp tiles

@@ -50,6 +50,7 @@ anim_frame:: DW
 collision_type:: DB
 collision_data:: DB
 map_scroll_speed:: DB
+map_sprite_count:: DB
 
 ;banking
 temp_bank:: DB;only roledex.asm still uses this, should use stack instead
@@ -156,7 +157,7 @@ ball_vel_x:: DB;same location used for velocity in simulation
 pitch_target_y::
 ball_vel_y:: DB
 ball_vel_z:: DB
-ball_state:: DB; // 7 = caught, 6 = landed, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
+ball_state:: DB;bits... 7 = caught, 6 = landed, 5 = fair, 4 = inPlay, 3..0 = position player holding ball
 
 SECTION "Buffers", WRAMX
 ;buffers
@@ -164,5 +165,6 @@ tile_buffer:: DS BUFFER_SIZE
 bkg_buffer:: DS BUFFER_SIZE
 win_buffer:: DS BUFFER_SIZE
 cmd_buffer:: DS BUFFER_SIZE/2
+map_buffer:: DS 5*40;bank, address, & position for max 40 sprites... used with map_sprite_count
 str_buffer:: DS 64
 name_buffer:: DS 16

@@ -1,10 +1,7 @@
 Priority
 
 - load/interact characters and items from map data
-  - remove map sprite arrays from gbmap, add sprites to end of map chunk (after terminating 0)
-  - store each map sprite's bank, address, and current position in 100 byte array (max 20 sprites 5 bytes)
-  - store current map sprite count
-  - check to see if the bank and address are already in the array before adding to 
+  - map sprites should be cleared from buffer after going through a door
   - after moving, iterate through array and oam_ram removing sprites that are far enough off screen
   - every frame, iterate through array copying sprites to oam_buffer
 - using the computer

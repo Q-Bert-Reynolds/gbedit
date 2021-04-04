@@ -1,11 +1,10 @@
-MapOverworld:: ;7619 bytes total
+MapOverworld:: ;7121 bytes total
   DB MAP_OVERWORLD
   DW MapOverworldPalettes ;64 bytes
   DW MapOverworldText ;114
   DW MapOverworldDoors ;25
   DW MapOverworldStamps ;521 bytes
-  DW MapOverworldChunks ;6147 bytes
-  DW MapOverworldSprites ;747 bytes
+  DW MapOverworldChunks ;6396 bytes
   DW MapOverworldScripts ;6 bytes
 
 MapOverworldPalettes: ;64 bytes
@@ -833,7 +832,7 @@ MapOverworldChunks: ;498 bytes
   DW MapChunkRoute1West174
   DW MapChunkRoute1West175
 
-;Map Chunks, 5649 bytes
+;Map Chunks, 5898 bytes
 MapChunkBilletTownSW:
 .tile:    DB 255
 .palette: DB 1
@@ -850,20 +849,20 @@ MapChunkBilletTownSW:
   DB 31;x2
   DB 32;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
-  DB 24;x1
-  DB 9;y1
-  DB 241;tile
-  DB 2;palette
-  DB 25;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (6)
   DB 31;x1
   DB 9;y1
   DB 194;tile
   DB 2;palette
   DB 32;x2
+  DB 32;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
+  DB 24;x1
+  DB 9;y1
+  DB 241;tile
+  DB 2;palette
+  DB 25;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject
@@ -873,6 +872,12 @@ MapChunkBilletTownSW:
   DB 2;palette
   DB 21;x2
   DB 15;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
+  DB 24;x1
+  DB 8;y1
+  DB 136;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (11)
   DB 25;x1
@@ -886,12 +891,6 @@ MapChunkBilletTownSW:
   DB 31;x1
   DB 8;y1
   DB 226;tile
-  DB 2;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (12)
-  DB 24;x1
-  DB 8;y1
-  DB 136;tile
   DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
@@ -955,6 +954,10 @@ MapChunkBilletTownSW:
 
   DB 0;END BilletTownSW background objects, 111 bytes
 
+MapSpritesBilletTownSW:
+
+  DB 0;END BilletTownSW sprite objects, 1 bytes
+
 MapChunkBilletTownSE:
 .tile:    DB 255
 .palette: DB 1
@@ -962,14 +965,6 @@ MapChunkBilletTownSE:
 .east:    DB MAP_CHUNK_INFIELDCHUNK
 .south:   DB MAP_CHUNK_BILLETTOWNSEWATER
 .west:    DB MAP_CHUNK_BILLETTOWNSW
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
-  DB 29;x1
-  DB 23;y1
-  DB 253;tile
-  DB 1;palette
-  DB 32;x2
-  DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (9)
   DB 21;x1
@@ -979,6 +974,20 @@ MapChunkBilletTownSE:
   DB 29;x2
   DB 32;y2
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (18)
+  DB 29;x1
+  DB 31;y1
+  DB 141;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
+  DB 29;x1
+  DB 23;y1
+  DB 253;tile
+  DB 1;palette
+  DB 32;x2
+  DB 32;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (4)
   DB 0;x1
   DB 24;y1
@@ -986,12 +995,6 @@ MapChunkBilletTownSE:
   DB 1;palette
   DB 12;x2
   DB 32;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (18)
-  DB 29;x1
-  DB 31;y1
-  DB 141;tile
-  DB 1;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (16)
   DB 30;x1
@@ -1011,14 +1014,14 @@ MapChunkBilletTownSE:
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
-  DB 20;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
+  DB 9;x1
   DB 21;y1
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (6)
-  DB 9;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (2)
+  DB 20;x1
   DB 21;y1
   DB 151;tile
   DB 1;palette
@@ -1037,6 +1040,12 @@ MapChunkBilletTownSE:
   DB 22;x2
   DB 14;y2
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
+  DB 4;x1
+  DB 11;y1
+  DB 187;tile
+  DB 2;palette
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (14)
   DB 5;x1
   DB 11;y1
@@ -1044,12 +1053,6 @@ MapChunkBilletTownSE:
   DB 2;palette
   DB 16;x2
   DB 12;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (15)
-  DB 4;x1
-  DB 11;y1
-  DB 187;tile
-  DB 2;palette
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (2)
   DB 4;x1
@@ -1066,13 +1069,10 @@ MapChunkBilletTownSE:
   DB 16;x2
   DB 9;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
-  DB 10;x1
-  DB 3;y1
-  DB 177;tile
-  DB 4;palette
-  DB 14;x2
-  DB 4;y2
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House
+  DB 4;x
+  DB 3;y
+  DW MapStampHouseWallBottomLeft
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (4)
   DB 6;x1
@@ -1082,10 +1082,13 @@ MapChunkBilletTownSE:
   DB 8;x2
   DB 4;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House
-  DB 4;x
-  DB 3;y
-  DW MapStampHouseWallBottomLeft
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+  DB 10;x1
+  DB 3;y1
+  DB 177;tile
+  DB 4;palette
+  DB 14;x2
+  DB 4;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
   DB 14;x
@@ -1098,22 +1101,10 @@ MapChunkBilletTownSE:
   DB 151;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
-  DB 14;x1
-  DB 0;y1
-  DB 165;tile
-  DB 4;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,0
   DB 15;x1
   DB 0;y1
   DB 166;tile
-  DB 4;palette
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,0
-  DB 5;x1
-  DB 0;y1
-  DB 161;tile
   DB 4;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 0,0
@@ -1122,6 +1113,24 @@ MapChunkBilletTownSE:
   DB 160;tile
   DB 3;palette
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,0
+  DB 5;x1
+  DB 0;y1
+  DB 161;tile
+  DB 4;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,0
+  DB 14;x1
+  DB 0;y1
+  DB 165;tile
+  DB 4;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (17)
+  DB 30;x1
+  DB 22;y1
+  DB 225;tile
+  DB 1;palette
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
   DB 31;x1
   DB 0;y1
@@ -1129,12 +1138,6 @@ MapChunkBilletTownSE:
   DB 1;palette
   DB 32;x2
   DB 23;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (17)
-  DB 30;x1
-  DB 22;y1
-  DB 225;tile
-  DB 1;palette
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree
   DB 0;x
@@ -1189,14 +1192,14 @@ MapChunkBilletTownSE:
   DB 5;x2
   DB 3;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (21)
-  DB 14;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (16)
+  DB 5;x1
   DB 1;y1
   DB 180;tile
   DB 4;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (16)
-  DB 5;x1
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (21)
+  DB 14;x1
   DB 1;y1
   DB 180;tile
   DB 4;palette
@@ -1208,18 +1211,18 @@ MapChunkBilletTownSE:
   DB 16;x2
   DB 8;y2
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
+  DB 10;x
+  DB 6;y
+  DW MapStampSignStamp
+  DB MAP_TEXT_DOC_HICKORYS_LAB; DOC HICKORY'S LAB
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (2)
   DB 4;x1
   DB 6;y1
   DW MapStampFence
   DB 10;x2
   DB 8;y2
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
-  DB 10;x
-  DB 6;y
-  DW MapStampSignStamp
-  DB MAP_TEXT_DOC_HICKORYS_LAB; DOC HICKORY'S LAB
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (17)
   DB 26;x1
@@ -1237,20 +1240,20 @@ MapChunkBilletTownSE:
   DB 30;x2
   DB 1;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
-  DB 5;x1
-  DB 2;y1
-  DB 164;tile
-  DB 4;palette
-  DB 8;x2
-  DB 3;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (28)
   DB 10;x1
   DB 2;y1
   DB 164;tile
   DB 4;palette
   DB 15;x2
+  DB 3;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (30)
+  DB 5;x1
+  DB 2;y1
+  DB 164;tile
+  DB 4;palette
+  DB 8;x2
   DB 3;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (31)
@@ -1283,6 +1286,10 @@ MapChunkBilletTownSE:
 
   DB 0;END BilletTownSE background objects, 294 bytes
 
+MapSpritesBilletTownSE:
+
+  DB 0;END BilletTownSE sprite objects, 1 bytes
+
 MapChunkBilletTownNE:
 .tile:    DB 255
 .palette: DB 1
@@ -1291,10 +1298,24 @@ MapChunkBilletTownNE:
 .south:   DB MAP_CHUNK_BILLETTOWNSE
 .west:    DB MAP_CHUNK_BILLETTOWNNW
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB 20;x1
+  DB 16;y1
+  DB 167;tile
+  DB 2;palette
+  DB 22;x2
+  DB 32;y2
+
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,1
   DB 15;x1
   DB 31;y1
   DB 150;tile
+  DB 4;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,1
+  DB 5;x1
+  DB 31;y1
+  DB 145;tile
   DB 4;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 0,1
@@ -1308,20 +1329,6 @@ MapChunkBilletTownNE:
   DB 31;y1
   DB 144;tile
   DB 3;palette
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-  DB 20;x1
-  DB 16;y1
-  DB 167;tile
-  DB 2;palette
-  DB 22;x2
-  DB 32;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (10) 1,1
-  DB 5;x1
-  DB 31;y1
-  DB 145;tile
-  DB 4;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
   DB 19;x1
@@ -1363,6 +1370,11 @@ MapChunkBilletTownNE:
   DB 8;x2
   DB 24;y2
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (6)
+  DB 14;x
+  DB 23;y
+  DW MapStampHouseWallBottomRight
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
   DB 12;x1
   DB 23;y1
@@ -1376,11 +1388,6 @@ MapChunkBilletTownNE:
   DB 23;y
   DW MapStampHouseWallBottomLeft
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (6)
-  DB 14;x
-  DB 23;y
-  DW MapStampHouseWallBottomRight
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (7)
   DB 14;x
   DB 19;y
@@ -1390,11 +1397,6 @@ MapChunkBilletTownNE:
   DB 8;x
   DB 19;y
   DW MapStampHouseRoofLowerLeft
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (9)
-  DB 8;x
-  DB 18;y
-  DW MapStampHouseRoofUpperLeft
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (8)
   DB 14;x
@@ -1406,6 +1408,11 @@ MapChunkBilletTownNE:
   DB 18;y1
   DB 151;tile
   DB 1;palette
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (9)
+  DB 8;x
+  DB 18;y
+  DW MapStampHouseRoofUpperLeft
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (3)
   DB 4;x1
@@ -1444,13 +1451,6 @@ MapChunkBilletTownNE:
   DB 26;x2
   DB 28;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
-  DB 8;x1
-  DB 4;y1
-  DW MapStampTree
-  DB 12;x2
-  DB 16;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
   DB 12;x1
   DB 12;y1
@@ -1463,6 +1463,13 @@ MapChunkBilletTownNE:
   DB 4;y1
   DW MapStampTree
   DB 4;x2
+  DB 16;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
+  DB 8;x1
+  DB 4;y1
+  DW MapStampTree
+  DB 12;x2
   DB 16;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (5)
@@ -1540,25 +1547,17 @@ MapChunkBilletTownNE:
   DB 14;x2
   DB 29;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
-  DB 14;x1
-  DB 22;y1
-  DB 180;tile
-  DB 4;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (29)
   DB 9;x1
   DB 22;y1
   DB 180;tile
   DB 4;palette
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (21)
-  DB 8;x1
-  DB 21;y1
-  DB 152;tile
-  DB 3;palette
-  DB 9;x2
-  DB 23;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (28)
+  DB 14;x1
+  DB 22;y1
+  DB 180;tile
+  DB 4;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
   DB 15;x1
@@ -1566,6 +1565,14 @@ MapChunkBilletTownNE:
   DB 168;tile
   DB 3;palette
   DB 16;x2
+  DB 23;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (21)
+  DB 8;x1
+  DB 21;y1
+  DB 152;tile
+  DB 3;palette
+  DB 9;x2
   DB 23;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (18)
@@ -1646,16 +1653,16 @@ MapChunkBilletTownNE:
   DB 213;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,3
-  DB 1;x1
-  DB 10;y1
-  DB 193;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,3
   DB 0;x1
   DB 10;y1
   DB 197;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 3,3
+  DB 1;x1
+  DB 10;y1
+  DB 193;tile
   DB 1;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 2,5
@@ -1692,8 +1699,8 @@ MapChunkBilletTownNE:
   DB 6;x
   DB 22;y
   DW MapStampSignStamp
-  DB 0
-;RivalHouseSign
+  DB 0;RivalHouseSign
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
   DB 10;x1
   DB 6;y1
@@ -1717,6 +1724,12 @@ MapChunkBilletTownNE:
   DB 14;x2
   DB 23;y2
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (34)
+  DB 10;x1
+  DB 20;y1
+  DB 164;tile
+  DB 4;palette
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
   DB 12;x1
   DB 20;y1
@@ -1725,12 +1738,6 @@ MapChunkBilletTownNE:
   DB 14;x2
   DB 21;y2
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (34)
-  DB 10;x1
-  DB 20;y1
-  DB 164;tile
-  DB 4;palette
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_DOOR ;DoorToNolan'sHouse
   DB 10;x
   DB 22;y
@@ -1738,6 +1745,10 @@ MapChunkBilletTownNE:
   DB 1;door
 
   DB 0;END BilletTownNE background objects, 408 bytes
+
+MapSpritesBilletTownNE:
+
+  DB 0;END BilletTownNE sprite objects, 1 bytes
 
 MapChunkBilletTownNW:
 .tile:    DB 255
@@ -1763,15 +1774,15 @@ MapChunkBilletTownNW:
   DB 32;x2
   DB 30;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
-  DB 24;x
-  DB 23;y
-  DW MapStampHouseWallBottomLeft
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (13)
   DB 30;x
   DB 23;y
   DW MapStampHouseWallBottomRight
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (2)
+  DB 24;x
+  DB 23;y
+  DW MapStampHouseWallBottomLeft
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (6)
   DB 28;x1
@@ -1797,15 +1808,15 @@ MapChunkBilletTownNW:
   DB 19;y
   DW MapStampHouseRoofLowerRight
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (11)
-  DB 30;x
-  DB 18;y
-  DW MapStampHouseRoofUpperRight
-
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (10)
   DB 24;x
   DB 18;y
   DW MapStampHouseRoofUpperLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (11)
+  DB 30;x
+  DB 18;y
+  DW MapStampHouseRoofUpperRight
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (1)
   DB 23;x1
@@ -1828,18 +1839,18 @@ MapChunkBilletTownNW:
   DB 32;x2
   DB 16;y2
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
-  DB 24;x1
-  DB 4;y1
-  DW MapStampTree
-  DB 32;x2
-  DB 8;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree
   DB 12;x1
   DB 0;y1
   DW MapStampTree
   DB 24;x2
+  DB 8;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (2)
+  DB 24;x1
+  DB 4;y1
+  DW MapStampTree
+  DB 32;x2
   DB 8;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (3)
@@ -1860,6 +1871,12 @@ MapChunkBilletTownNW:
   DB 12;x
   DB 28;y
   DW MapStampTree
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (30)
+  DB 30;x1
+  DB 22;y1
+  DB 180;tile
+  DB 4;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (32)
   DB 25;x1
@@ -1882,12 +1899,6 @@ MapChunkBilletTownNW:
   DB 3;palette
   DB 25;x2
   DB 23;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (30)
-  DB 30;x1
-  DB 22;y1
-  DB 180;tile
-  DB 4;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
   DB 25;x1
@@ -1932,16 +1943,16 @@ MapChunkBilletTownNW:
   DB 193;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,2
-  DB 31;x1
-  DB 11;y1
-  DB 212;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,2
   DB 30;x1
   DB 11;y1
   DB 211;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,2
+  DB 31;x1
+  DB 11;y1
+  DB 212;tile
   DB 1;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,3
@@ -1968,16 +1979,16 @@ MapChunkBilletTownNW:
   DB 214;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,5
-  DB 31;x1
-  DB 8;y1
-  DB 193;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,5
   DB 30;x1
   DB 8;y1
   DB 197;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,5
+  DB 31;x1
+  DB 8;y1
+  DB 193;tile
   DB 1;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,6
@@ -1992,16 +2003,16 @@ MapChunkBilletTownNW:
   DB 212;tile
   DB 1;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,7
-  DB 31;x1
-  DB 6;y1
-  DB 196;tile
-  DB 1;palette
-
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 0,7
   DB 30;x1
   DB 6;y1
   DB 192;tile
+  DB 1;palette
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (4) 1,7
+  DB 31;x1
+  DB 6;y1
+  DB 196;tile
   DB 1;palette
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign
@@ -2021,8 +2032,8 @@ MapChunkBilletTownNW:
   DB 22;x
   DB 22;y
   DW MapStampSignStamp
-  DB 1
-;YourHouseSign
+  DB 1;YourHouseSign
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (4)
   DB 6;x1
   DB 14;y1
@@ -2077,6 +2088,10 @@ MapChunkBilletTownNW:
   DB 1;palette
 
   DB 0;END BilletTownNW background objects, 307 bytes
+
+MapSpritesBilletTownNW:
+
+  DB 0;END BilletTownNW sprite objects, 1 bytes
 
 MapChunkInfieldChunk:
 .tile:    DB 253
@@ -2181,6 +2196,10 @@ MapChunkInfieldChunk:
 
   DB 0;END InfieldChunk background objects, 93 bytes
 
+MapSpritesInfieldChunk:
+
+  DB 0;END InfieldChunk sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk:
 .tile:    DB 253
 .palette: DB 1
@@ -2208,6 +2227,10 @@ MapChunkCenterFieldChunk:
   DB 1;palette
 
   DB 0;END CenterFieldChunk background objects, 26 bytes
+
+MapSpritesCenterFieldChunk:
+
+  DB 0;END CenterFieldChunk sprite objects, 1 bytes
 
 MapChunkRightFieldChunk:
 .tile:    DB 253
@@ -2251,6 +2274,10 @@ MapChunkRightFieldChunk:
 
   DB 0;END RightFieldChunk background objects, 38 bytes
 
+MapSpritesRightFieldChunk:
+
+  DB 0;END RightFieldChunk sprite objects, 1 bytes
+
 MapChunkLeftFieldChunk:
 .tile:    DB 253
 .palette: DB 1
@@ -2281,6 +2308,10 @@ MapChunkLeftFieldChunk:
 
   DB 0;END LeftFieldChunk background objects, 28 bytes
 
+MapSpritesLeftFieldChunk:
+
+  DB 0;END LeftFieldChunk sprite objects, 1 bytes
+
 MapChunkBilletTownSWWater:
 .tile:    DB 188
 .palette: DB 7
@@ -2288,12 +2319,6 @@ MapChunkBilletTownSWWater:
 .east:    DB MAP_CHUNK_BILLETTOWNSEWATER
 .south:   DB MAP_CHUNK_ROUTE1WEST_231
 .west:    DB MAP_CHUNK_BILLETTOWNSWWATER
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
-  DB 24;x1
-  DB 12;y1
-  DB 230;tile
-  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (14)
   DB 0;x1
@@ -2303,13 +2328,11 @@ MapChunkBilletTownSWWater:
   DB 24;x2
   DB 13;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
-  DB 0;x1
-  DB 0;y1
-  DB 167;tile
-  DB 1;palette
-  DB 24;x2
-  DB 12;y2
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (15)
+  DB 24;x1
+  DB 12;y1
+  DB 230;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (13)
   DB 24;x1
@@ -2317,6 +2340,14 @@ MapChunkBilletTownSWWater:
   DB 241;tile
   DB 2;palette
   DB 25;x2
+  DB 12;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
+  DB 0;x1
+  DB 0;y1
+  DB 167;tile
+  DB 1;palette
+  DB 24;x2
   DB 12;y2
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (7)
@@ -2386,6 +2417,10 @@ MapChunkBilletTownSWWater:
   DB 12;y2
 
   DB 0;END BilletTownSWWater background objects, 101 bytes
+
+MapSpritesBilletTownSWWater:
+
+  DB 0;END BilletTownSWWater sprite objects, 1 bytes
 
 MapChunkBilletTownSEWater:
 .tile:    DB 188
@@ -2474,6 +2509,10 @@ MapChunkBilletTownSEWater:
 
   DB 0;END BilletTownSEWater background objects, 84 bytes
 
+MapSpritesBilletTownSEWater:
+
+  DB 0;END BilletTownSEWater sprite objects, 1 bytes
+
 MapChunkRoute1West:
 .tile:    DB 255
 .palette: DB 1
@@ -2557,6 +2596,10 @@ MapChunkRoute1West:
 
   DB 0;END Route1West background objects, 77 bytes
 
+MapSpritesRoute1West:
+
+  DB 0;END Route1West sprite objects, 1 bytes
+
 MapChunkRoute1East:
 .tile:    DB 255
 .palette: DB 3
@@ -2565,20 +2608,20 @@ MapChunkRoute1East:
 .south:   DB MAP_CHUNK_BILLETTOWNNE
 .west:    DB MAP_CHUNK_ROUTE1WEST
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (11)
-  DB 0;x1
-  DB 28;y1
-  DB 141;tile
-  DB 1;palette
-  DB 4;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 12;x1
   DB 28;y1
   DB 141;tile
   DB 1;palette
   DB 20;x2
+  DB 32;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (11)
+  DB 0;x1
+  DB 28;y1
+  DB 141;tile
+  DB 1;palette
+  DB 4;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (6)
@@ -2698,6 +2741,10 @@ MapChunkRoute1East:
 
   DB 0;END Route1East background objects, 131 bytes
 
+MapSpritesRoute1East:
+
+  DB 0;END Route1East sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk1:
 .tile:    DB 253
 .palette: DB 1
@@ -2720,6 +2767,10 @@ MapChunkCenterFieldChunk1:
   DB 15;y2
 
   DB 0;END CenterFieldChunk1 background objects, 23 bytes
+
+MapSpritesCenterFieldChunk1:
+
+  DB 0;END CenterFieldChunk1 sprite objects, 1 bytes
 
 MapChunkRoute1West1:
 .tile:    DB 255
@@ -2763,17 +2814,17 @@ MapChunkRoute1West1:
   DB 32;x2
   DB 8;y2
 
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (4)
+  DB 24;x
+  DB 28;y
+  DW MapStampTree
+
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
   DB 20;x1
   DB 0;y1
   DW MapStampTree
   DB 24;x2
   DB 32;y2
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (4)
-  DB 24;x
-  DB 28;y
-  DW MapStampTree
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (7)
   DB 24;x1
@@ -2795,6 +2846,10 @@ MapChunkRoute1West1:
 
   DB 0;END Route1West1 background objects, 71 bytes
 
+MapSpritesRoute1West1:
+
+  DB 0;END Route1West1 sprite objects, 1 bytes
+
 MapChunkRoute1ToVeteranCityWest:
 .tile:    DB 255
 .palette: DB 1
@@ -2802,6 +2857,14 @@ MapChunkRoute1ToVeteranCityWest:
 .east:    DB MAP_CHUNK_ROUTE1WEST_174
 .south:   DB MAP_CHUNK_ROUTE1EAST
 .west:    DB MAP_CHUNK_ROUTE1WEST_1
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (10)
+  DB 12;x1
+  DB 28;y1
+  DB 141;tile
+  DB 1;palette
+  DB 20;x2
+  DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (13)
   DB 0;x1
@@ -2811,14 +2874,6 @@ MapChunkRoute1ToVeteranCityWest:
   DB 4;x2
   DB 32;y2
   DB 128;direction mask
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (10)
-  DB 12;x1
-  DB 28;y1
-  DB 141;tile
-  DB 1;palette
-  DB 20;x2
-  DB 32;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (5)
   DB 0;x1
@@ -2895,6 +2950,10 @@ MapChunkRoute1ToVeteranCityWest:
 
   DB 0;END Route1ToVeteranCityWest background objects, 97 bytes
 
+MapSpritesRoute1ToVeteranCityWest:
+
+  DB 0;END Route1ToVeteranCityWest sprite objects, 1 bytes
+
 MapChunkRoute1West3:
 .tile:    DB 255
 .palette: DB 1
@@ -2926,6 +2985,12 @@ MapChunkRoute1West3:
   DB 23;x2
   DB 20;y2
 
+  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (18)
+  DB 23;x1
+  DB 19;y1
+  DB 227;tile
+  DB 2;palette
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (19)
   DB 2;x1
   DB 1;y1
@@ -2933,12 +2998,6 @@ MapChunkRoute1West3:
   DB 2;palette
   DB 4;x2
   DB 20;y2
-
-  DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (18)
-  DB 23;x1
-  DB 19;y1
-  DB 227;tile
-  DB 2;palette
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (15)
   DB 23;x1
@@ -2964,6 +3023,14 @@ MapChunkRoute1West3:
   DB 2;x2
   DB 18;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (13)
+  DB 13;x1
+  DB 12;y1
+  DB 242;tile
+  DB 2;palette
+  DB 23;x2
+  DB 13;y2
+
   DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (17)
   DB 23;x1
   DB 12;y1
@@ -2975,14 +3042,6 @@ MapChunkRoute1West3:
   DB 12;y1
   DB 136;tile
   DB 2;palette
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (13)
-  DB 13;x1
-  DB 12;y1
-  DB 242;tile
-  DB 2;palette
-  DB 23;x2
-  DB 13;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (13)
   DB 12;x
@@ -3023,15 +3082,6 @@ MapChunkRoute1West3:
   DB 32;x2
   DB 28;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (25)
-  DB 4;x1
-  DB 19;y1
-  DB 193;tile
-  DB 2;palette
-  DB 12;x2
-  DB 20;y2
-  DB 128;direction mask
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
   DB 24;x1
   DB 19;y1
@@ -3058,6 +3108,15 @@ MapChunkRoute1West3:
   DB 20;y2
   DB 128;direction mask
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (25)
+  DB 4;x1
+  DB 19;y1
+  DB 193;tile
+  DB 2;palette
+  DB 12;x2
+  DB 20;y2
+  DB 128;direction mask
+
   DB MAP_OBJ_TILE | MAP_COLLISION_WATER ;GameObject (33)
   DB 12;x1
   DB 19;y1
@@ -3070,12 +3129,6 @@ MapChunkRoute1West3:
   DB 198;tile
   DB 2;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (31)
-  DB 2;x1
-  DB 0;y1
-  DB 198;tile
-  DB 2;palette
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (29)
   DB 0;x1
   DB 0;y1
@@ -3083,6 +3136,12 @@ MapChunkRoute1West3:
   DB 2;palette
   DB 2;x2
   DB 1;y2
+
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (31)
+  DB 2;x1
+  DB 0;y1
+  DB 198;tile
+  DB 2;palette
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (23)
   DB 3;x1
@@ -3104,6 +3163,10 @@ MapChunkRoute1West3:
 
   DB 0;END Route1West3 background objects, 188 bytes
 
+MapSpritesRoute1West3:
+
+  DB 0;END Route1West3 sprite objects, 1 bytes
+
 MapChunkVeteranCity:
 .tile:    DB 255
 .palette: DB 1
@@ -3112,18 +3175,18 @@ MapChunkVeteranCity:
 .south:   DB MAP_CHUNK_ROUTE1TOVETERANCITYWEST
 .west:    DB MAP_CHUNK_ROUTE1WEST_3
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (13)
-  DB 0;x1
-  DB 28;y1
-  DW MapStampRock
-  DB 4;x2
-  DB 32;y2
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
   DB 8;x1
   DB 28;y1
   DW MapStampRock
   DB 12;x2
+  DB 32;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (13)
+  DB 0;x1
+  DB 28;y1
+  DW MapStampRock
+  DB 4;x2
   DB 32;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (2)
@@ -3134,14 +3197,6 @@ MapChunkVeteranCity:
   DB 4;x2
   DB 24;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
-  DB 20;x1
-  DB 8;y1
-  DB 167;tile
-  DB 2;palette
-  DB 32;x2
-  DB 19;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (3)
   DB 4;x1
   DB 16;y1
@@ -3150,13 +3205,13 @@ MapChunkVeteranCity:
   DB 20;x2
   DB 19;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
-  DB 8;x1
-  DB 12;y1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (4)
+  DB 20;x1
+  DB 8;y1
   DB 167;tile
   DB 2;palette
-  DB 10;x2
-  DB 16;y2
+  DB 32;x2
+  DB 19;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
   DB 12;x1
@@ -3166,13 +3221,13 @@ MapChunkVeteranCity:
   DB 16;x2
   DB 16;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (5)
-  DB 28;x1
-  DB 0;y1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+  DB 8;x1
+  DB 12;y1
   DB 167;tile
   DB 2;palette
-  DB 32;x2
-  DB 4;y2
+  DB 10;x2
+  DB 16;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (9)
   DB 4;x1
@@ -3188,6 +3243,14 @@ MapChunkVeteranCity:
   DB 167;tile
   DB 2;palette
   DB 20;x2
+  DB 4;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (5)
+  DB 28;x1
+  DB 0;y1
+  DB 167;tile
+  DB 2;palette
+  DB 32;x2
   DB 4;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;House (1)
@@ -3328,6 +3391,10 @@ MapChunkVeteranCity:
 
   DB 0;END VeteranCity background objects, 209 bytes
 
+MapSpritesVeteranCity:
+
+  DB 0;END VeteranCity sprite objects, 1 bytes
+
 MapChunkRoute1West5:
 .tile:    DB 255
 .palette: DB 1
@@ -3344,6 +3411,13 @@ MapChunkRoute1West5:
   DB 20;x2
   DB 32;y2
 
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (4)
+  DB 4;x1
+  DB 30;y1
+  DW MapStampFence
+  DB 12;x2
+  DB 32;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
   DB 28;x1
   DB 28;y1
@@ -3352,11 +3426,6 @@ MapChunkRoute1West5:
   DB 32;x2
   DB 32;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
-  DB 20;x
-  DB 11;y
-  DW MapStampHouseWallBottomLeft
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (10)
   DB 26;x1
   DB 11;y1
@@ -3364,6 +3433,16 @@ MapChunkRoute1West5:
   DB 4;palette
   DB 30;x2
   DB 12;y2
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (1)
+  DB 20;x
+  DB 11;y
+  DW MapStampHouseWallBottomLeft
+
+  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (3)
+  DB 30;x
+  DB 11;y
+  DW MapStampHouseWallBottomRight
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (9)
   DB 4;x1
@@ -3380,11 +3459,6 @@ MapChunkRoute1West5:
   DB 4;palette
   DB 24;x2
   DB 12;y2
-
-  DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;House (3)
-  DB 30;x
-  DB 11;y
-  DW MapStampHouseWallBottomRight
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;GameObject (12)
   DB 4;x1
@@ -3409,20 +3483,20 @@ MapChunkRoute1West5:
   DB 12;x2
   DB 4;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
-  DB 31;x1
-  DB 9;y1
-  DB 168;tile
-  DB 3;palette
-  DB 32;x2
-  DB 11;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (21)
   DB 20;x1
   DB 9;y1
   DB 152;tile
   DB 3;palette
   DB 21;x2
+  DB 11;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (22)
+  DB 31;x1
+  DB 9;y1
+  DB 168;tile
+  DB 3;palette
+  DB 32;x2
   DB 11;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (18)
@@ -3449,12 +3523,20 @@ MapChunkRoute1West5:
   DB 30;x2
   DB 8;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
-  DB 21;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
+  DB 31;x1
   DB 5;y1
-  DB 148;tile
-  DB 3;palette
-  DB 22;x2
+  DB 150;tile
+  DB 4;palette
+  DB 32;x2
+  DB 7;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (37)
+  DB 22;x1
+  DB 5;y1
+  DB 131;tile
+  DB 4;palette
+  DB 30;x2
   DB 7;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
@@ -3473,20 +3555,12 @@ MapChunkRoute1West5:
   DB 31;x2
   DB 7;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (37)
-  DB 22;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
+  DB 21;x1
   DB 5;y1
-  DB 131;tile
-  DB 4;palette
-  DB 30;x2
-  DB 7;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (24)
-  DB 31;x1
-  DB 5;y1
-  DB 150;tile
-  DB 4;palette
-  DB 32;x2
+  DB 148;tile
+  DB 3;palette
+  DB 22;x2
   DB 7;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (38)
@@ -3496,13 +3570,6 @@ MapChunkRoute1West5:
   DB 4;palette
   DB 30;x2
   DB 5;y2
-
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (4)
-  DB 4;x1
-  DB 30;y1
-  DW MapStampFence
-  DB 12;x2
-  DB 32;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (3)
   DB 4;x1
@@ -3542,20 +3609,20 @@ MapChunkRoute1West5:
   DB 24;x2
   DB 11;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (34)
-  DB 27;x1
-  DB 8;y1
-  DB 164;tile
-  DB 4;palette
-  DB 30;x2
-  DB 9;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
   DB 22;x1
   DB 8;y1
   DB 164;tile
   DB 4;palette
   DB 25;x2
+  DB 9;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (34)
+  DB 27;x1
+  DB 8;y1
+  DB 164;tile
+  DB 4;palette
+  DB 30;x2
   DB 9;y2
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;ShopRoof
@@ -3598,6 +3665,10 @@ MapChunkRoute1West5:
   DB 8;y2
 
   DB 0;END Route1West5 background objects, 249 bytes
+
+MapSpritesRoute1West5:
+
+  DB 0;END Route1West5 sprite objects, 1 bytes
 
 MapChunkRoute1West6:
 .tile:    DB 255
@@ -3654,12 +3725,12 @@ MapChunkRoute1West6:
   DB 32;x2
   DB 20;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (26)
-  DB 18;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (35)
+  DB 10;x1
   DB 7;y1
   DB 193;tile
   DB 2;palette
-  DB 26;x2
+  DB 16;x2
   DB 8;y2
   DB 128;direction mask
 
@@ -3671,22 +3742,14 @@ MapChunkRoute1West6:
   DB 18;x2
   DB 8;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (35)
-  DB 10;x1
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (26)
+  DB 18;x1
   DB 7;y1
   DB 193;tile
   DB 2;palette
-  DB 16;x2
+  DB 26;x2
   DB 8;y2
   DB 128;direction mask
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
-  DB 0;x1
-  DB 12;y1
-  DB 197;tile
-  DB 2;palette
-  DB 26;x2
-  DB 13;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
   DB 26;x1
@@ -3694,6 +3757,14 @@ MapChunkRoute1West6:
   DB 192;tile
   DB 2;palette
   DB 28;x2
+  DB 13;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (33)
+  DB 0;x1
+  DB 12;y1
+  DB 197;tile
+  DB 2;palette
+  DB 26;x2
   DB 13;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (28)
@@ -3738,6 +3809,10 @@ MapChunkRoute1West6:
 
   DB 0;END Route1West6 background objects, 124 bytes
 
+MapSpritesRoute1West6:
+
+  DB 0;END Route1West6 sprite objects, 1 bytes
+
 MapChunkRoute1West7:
 .tile:    DB 255
 .palette: DB 1
@@ -3746,19 +3821,25 @@ MapChunkRoute1West7:
 .south:   DB MAP_CHUNK_ROUTE1WEST_3
 .west:    DB MAP_CHUNK_ROUTE1WEST_8
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
-  DB 29;x1
-  DB 10;y1
-  DB 240;tile
-  DB 2;palette
-  DB 30;x2
-  DB 28;y2
+  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign (1)
+  DB 30;x
+  DB 30;y
+  DW MapStampSignStamp
+  DB MAP_TEXT_SOMETHINGQUIPPY; Something\nquippy.
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (14)
   DB 10;x1
   DB 8;y1
   DW MapStampRock
   DB 14;x2
+  DB 28;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (8)
+  DB 29;x1
+  DB 10;y1
+  DB 240;tile
+  DB 2;palette
+  DB 30;x2
   DB 28;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (26)
@@ -3812,12 +3893,6 @@ MapChunkRoute1West7:
   DB 7;x2
   DB 24;y2
 
-  DB MAP_OBJ_STAMP | MAP_COLLISION_TEXT ;Sign (1)
-  DB 30;x
-  DB 30;y
-  DW MapStampSignStamp
-  DB MAP_TEXT_SOMETHINGQUIPPY; Something\nquippy.
-
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (6)
   DB 28;x1
   DB 8;y1
@@ -3844,6 +3919,10 @@ MapChunkRoute1West7:
 
   DB 0;END Route1West7 background objects, 100 bytes
 
+MapSpritesRoute1West7:
+
+  DB 0;END Route1West7 sprite objects, 1 bytes
+
 MapChunkRoute1West8:
 .tile:    DB 255
 .palette: DB 1
@@ -3852,13 +3931,6 @@ MapChunkRoute1West8:
 .south:   DB MAP_CHUNK_ROUTE1WEST_6
 .west:    DB MAP_CHUNK_ROUTE1WEST_10
 
-  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
-  DB 18;x1
-  DB 24;y1
-  DW MapStampRock
-  DB 22;x2
-  DB 32;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (15)
   DB 10;x1
   DB 28;y1
@@ -3866,6 +3938,22 @@ MapChunkRoute1West8:
   DB 1;palette
   DB 18;x2
   DB 32;y2
+
+  DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
+  DB 18;x1
+  DB 24;y1
+  DW MapStampRock
+  DB 22;x2
+  DB 32;y2
+
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (36)
+  DB 14;x1
+  DB 27;y1
+  DB 193;tile
+  DB 2;palette
+  DB 18;x2
+  DB 28;y2
+  DB 128;direction mask
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (36)
   DB 12;x1
@@ -3884,16 +3972,11 @@ MapChunkRoute1West8:
   DB 28;y2
   DB 128;direction mask
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (36)
-  DB 14;x1
-  DB 27;y1
-  DB 193;tile
-  DB 2;palette
-  DB 18;x2
-  DB 28;y2
-  DB 128;direction mask
-
   DB 0;END Route1West8 background objects, 48 bytes
+
+MapSpritesRoute1West8:
+
+  DB 0;END Route1West8 sprite objects, 1 bytes
 
 MapChunkRoute1West9:
 .tile:    DB 255
@@ -3905,6 +3988,10 @@ MapChunkRoute1West9:
 
   DB 0;END Route1West9 background objects, 11 bytes
 
+MapSpritesRoute1West9:
+
+  DB 0;END Route1West9 sprite objects, 1 bytes
+
 MapChunkRoute1West10:
 .tile:    DB 255
 .palette: DB 1
@@ -3914,6 +4001,10 @@ MapChunkRoute1West10:
 .west:    DB MAP_CHUNK_ROUTE1WEST_12
 
   DB 0;END Route1West10 background objects, 11 bytes
+
+MapSpritesRoute1West10:
+
+  DB 0;END Route1West10 sprite objects, 1 bytes
 
 MapChunkRoute1West11:
 .tile:    DB 255
@@ -3925,6 +4016,10 @@ MapChunkRoute1West11:
 
   DB 0;END Route1West11 background objects, 11 bytes
 
+MapSpritesRoute1West11:
+
+  DB 0;END Route1West11 sprite objects, 1 bytes
+
 MapChunkRoute1West12:
 .tile:    DB 255
 .palette: DB 1
@@ -3934,6 +4029,10 @@ MapChunkRoute1West12:
 .west:    DB MAP_CHUNK_ROUTE1WEST_12
 
   DB 0;END Route1West12 background objects, 11 bytes
+
+MapSpritesRoute1West12:
+
+  DB 0;END Route1West12 sprite objects, 1 bytes
 
 MapChunkRoute1West13:
 .tile:    DB 255
@@ -3945,6 +4044,10 @@ MapChunkRoute1West13:
 
   DB 0;END Route1West13 background objects, 11 bytes
 
+MapSpritesRoute1West13:
+
+  DB 0;END Route1West13 sprite objects, 1 bytes
+
 MapChunkRoute1West14:
 .tile:    DB 255
 .palette: DB 1
@@ -3954,6 +4057,10 @@ MapChunkRoute1West14:
 .west:    DB MAP_CHUNK_ROUTE1WEST_14
 
   DB 0;END Route1West14 background objects, 11 bytes
+
+MapSpritesRoute1West14:
+
+  DB 0;END Route1West14 sprite objects, 1 bytes
 
 MapChunkRoute1West15:
 .tile:    DB 255
@@ -3965,6 +4072,10 @@ MapChunkRoute1West15:
 
   DB 0;END Route1West15 background objects, 11 bytes
 
+MapSpritesRoute1West15:
+
+  DB 0;END Route1West15 sprite objects, 1 bytes
+
 MapChunkRoute1West16:
 .tile:    DB 255
 .palette: DB 1
@@ -3974,6 +4085,10 @@ MapChunkRoute1West16:
 .west:    DB MAP_CHUNK_ROUTE1WEST_18
 
   DB 0;END Route1West16 background objects, 11 bytes
+
+MapSpritesRoute1West16:
+
+  DB 0;END Route1West16 sprite objects, 1 bytes
 
 MapChunkRoute1West17:
 .tile:    DB 255
@@ -3985,6 +4100,10 @@ MapChunkRoute1West17:
 
   DB 0;END Route1West17 background objects, 11 bytes
 
+MapSpritesRoute1West17:
+
+  DB 0;END Route1West17 sprite objects, 1 bytes
+
 MapChunkRoute1West18:
 .tile:    DB 255
 .palette: DB 1
@@ -3994,6 +4113,10 @@ MapChunkRoute1West18:
 .west:    DB MAP_CHUNK_ROUTE1WEST_18
 
   DB 0;END Route1West18 background objects, 11 bytes
+
+MapSpritesRoute1West18:
+
+  DB 0;END Route1West18 sprite objects, 1 bytes
 
 MapChunkRoute1West19:
 .tile:    DB 255
@@ -4005,6 +4128,10 @@ MapChunkRoute1West19:
 
   DB 0;END Route1West19 background objects, 11 bytes
 
+MapSpritesRoute1West19:
+
+  DB 0;END Route1West19 sprite objects, 1 bytes
+
 MapChunkRoute1West20:
 .tile:    DB 255
 .palette: DB 1
@@ -4014,6 +4141,10 @@ MapChunkRoute1West20:
 .west:    DB MAP_CHUNK_ROUTE1WEST_20
 
   DB 0;END Route1West20 background objects, 11 bytes
+
+MapSpritesRoute1West20:
+
+  DB 0;END Route1West20 sprite objects, 1 bytes
 
 MapChunkRoute1West21:
 .tile:    DB 255
@@ -4025,6 +4156,10 @@ MapChunkRoute1West21:
 
   DB 0;END Route1West21 background objects, 11 bytes
 
+MapSpritesRoute1West21:
+
+  DB 0;END Route1West21 sprite objects, 1 bytes
+
 MapChunkRoute1West22:
 .tile:    DB 255
 .palette: DB 1
@@ -4034,6 +4169,10 @@ MapChunkRoute1West22:
 .west:    DB MAP_CHUNK_ROUTE1WEST_24
 
   DB 0;END Route1West22 background objects, 11 bytes
+
+MapSpritesRoute1West22:
+
+  DB 0;END Route1West22 sprite objects, 1 bytes
 
 MapChunkRoute1West23:
 .tile:    DB 255
@@ -4045,6 +4184,10 @@ MapChunkRoute1West23:
 
   DB 0;END Route1West23 background objects, 11 bytes
 
+MapSpritesRoute1West23:
+
+  DB 0;END Route1West23 sprite objects, 1 bytes
+
 MapChunkRoute1West24:
 .tile:    DB 255
 .palette: DB 1
@@ -4054,6 +4197,10 @@ MapChunkRoute1West24:
 .west:    DB MAP_CHUNK_ROUTE1WEST_24
 
   DB 0;END Route1West24 background objects, 11 bytes
+
+MapSpritesRoute1West24:
+
+  DB 0;END Route1West24 sprite objects, 1 bytes
 
 MapChunkRoute1West25:
 .tile:    DB 255
@@ -4065,6 +4212,10 @@ MapChunkRoute1West25:
 
   DB 0;END Route1West25 background objects, 11 bytes
 
+MapSpritesRoute1West25:
+
+  DB 0;END Route1West25 sprite objects, 1 bytes
+
 MapChunkRoute1West26:
 .tile:    DB 255
 .palette: DB 1
@@ -4074,6 +4225,10 @@ MapChunkRoute1West26:
 .west:    DB MAP_CHUNK_ROUTE1WEST_26
 
   DB 0;END Route1West26 background objects, 11 bytes
+
+MapSpritesRoute1West26:
+
+  DB 0;END Route1West26 sprite objects, 1 bytes
 
 MapChunkRoute1West27:
 .tile:    DB 255
@@ -4085,6 +4240,10 @@ MapChunkRoute1West27:
 
   DB 0;END Route1West27 background objects, 11 bytes
 
+MapSpritesRoute1West27:
+
+  DB 0;END Route1West27 sprite objects, 1 bytes
+
 MapChunkRoute1West28:
 .tile:    DB 255
 .palette: DB 1
@@ -4094,6 +4253,10 @@ MapChunkRoute1West28:
 .west:    DB MAP_CHUNK_ROUTE1WEST_30
 
   DB 0;END Route1West28 background objects, 11 bytes
+
+MapSpritesRoute1West28:
+
+  DB 0;END Route1West28 sprite objects, 1 bytes
 
 MapChunkRoute1West29:
 .tile:    DB 255
@@ -4105,6 +4268,10 @@ MapChunkRoute1West29:
 
   DB 0;END Route1West29 background objects, 11 bytes
 
+MapSpritesRoute1West29:
+
+  DB 0;END Route1West29 sprite objects, 1 bytes
+
 MapChunkRoute1West30:
 .tile:    DB 255
 .palette: DB 1
@@ -4114,6 +4281,10 @@ MapChunkRoute1West30:
 .west:    DB MAP_CHUNK_ROUTE1WEST_30
 
   DB 0;END Route1West30 background objects, 11 bytes
+
+MapSpritesRoute1West30:
+
+  DB 0;END Route1West30 sprite objects, 1 bytes
 
 MapChunkRoute1West31:
 .tile:    DB 255
@@ -4125,6 +4296,10 @@ MapChunkRoute1West31:
 
   DB 0;END Route1West31 background objects, 11 bytes
 
+MapSpritesRoute1West31:
+
+  DB 0;END Route1West31 sprite objects, 1 bytes
+
 MapChunkRoute1West32:
 .tile:    DB 255
 .palette: DB 1
@@ -4134,6 +4309,10 @@ MapChunkRoute1West32:
 .west:    DB MAP_CHUNK_ROUTE1WEST_32
 
   DB 0;END Route1West32 background objects, 11 bytes
+
+MapSpritesRoute1West32:
+
+  DB 0;END Route1West32 sprite objects, 1 bytes
 
 MapChunkRoute1West33:
 .tile:    DB 255
@@ -4168,6 +4347,10 @@ MapChunkRoute1West33:
 
   DB 0;END Route1West33 background objects, 33 bytes
 
+MapSpritesRoute1West33:
+
+  DB 0;END Route1West33 sprite objects, 1 bytes
+
 MapChunkRoute1West34:
 .tile:    DB 255
 .palette: DB 1
@@ -4201,6 +4384,10 @@ MapChunkRoute1West34:
 
   DB 0;END Route1West34 background objects, 33 bytes
 
+MapSpritesRoute1West34:
+
+  DB 0;END Route1West34 sprite objects, 1 bytes
+
 MapChunkRoute1West35:
 .tile:    DB 255
 .palette: DB 1
@@ -4217,6 +4404,10 @@ MapChunkRoute1West35:
   DB 32;y2
 
   DB 0;END Route1West35 background objects, 18 bytes
+
+MapSpritesRoute1West35:
+
+  DB 0;END Route1West35 sprite objects, 1 bytes
 
 MapChunkRoute1West36:
 .tile:    DB 255
@@ -4249,6 +4440,10 @@ MapChunkRoute1West36:
 
   DB 0;END Route1West36 background objects, 31 bytes
 
+MapSpritesRoute1West36:
+
+  DB 0;END Route1West36 sprite objects, 1 bytes
+
 MapChunkRoute1West41:
 .tile:    DB 255
 .palette: DB 1
@@ -4258,6 +4453,10 @@ MapChunkRoute1West41:
 .west:    DB MAP_CHUNK_ROUTE1WEST_42
 
   DB 0;END Route1West41 background objects, 11 bytes
+
+MapSpritesRoute1West41:
+
+  DB 0;END Route1West41 sprite objects, 1 bytes
 
 MapChunkRoute1West42:
 .tile:    DB 255
@@ -4269,6 +4468,10 @@ MapChunkRoute1West42:
 
   DB 0;END Route1West42 background objects, 11 bytes
 
+MapSpritesRoute1West42:
+
+  DB 0;END Route1West42 sprite objects, 1 bytes
+
 MapChunkRoute1West43:
 .tile:    DB 255
 .palette: DB 1
@@ -4278,6 +4481,10 @@ MapChunkRoute1West43:
 .west:    DB MAP_CHUNK_ROUTE1WEST_44
 
   DB 0;END Route1West43 background objects, 11 bytes
+
+MapSpritesRoute1West43:
+
+  DB 0;END Route1West43 sprite objects, 1 bytes
 
 MapChunkRoute1West44:
 .tile:    DB 255
@@ -4289,6 +4496,10 @@ MapChunkRoute1West44:
 
   DB 0;END Route1West44 background objects, 11 bytes
 
+MapSpritesRoute1West44:
+
+  DB 0;END Route1West44 sprite objects, 1 bytes
+
 MapChunkRoute1West45:
 .tile:    DB 255
 .palette: DB 1
@@ -4298,6 +4509,10 @@ MapChunkRoute1West45:
 .west:    DB MAP_CHUNK_ROUTE1WEST_46
 
   DB 0;END Route1West45 background objects, 11 bytes
+
+MapSpritesRoute1West45:
+
+  DB 0;END Route1West45 sprite objects, 1 bytes
 
 MapChunkRoute1West46:
 .tile:    DB 255
@@ -4309,6 +4524,10 @@ MapChunkRoute1West46:
 
   DB 0;END Route1West46 background objects, 11 bytes
 
+MapSpritesRoute1West46:
+
+  DB 0;END Route1West46 sprite objects, 1 bytes
+
 MapChunkRoute1West47:
 .tile:    DB 255
 .palette: DB 1
@@ -4318,6 +4537,10 @@ MapChunkRoute1West47:
 .west:    DB MAP_CHUNK_ROUTE1WEST_48
 
   DB 0;END Route1West47 background objects, 11 bytes
+
+MapSpritesRoute1West47:
+
+  DB 0;END Route1West47 sprite objects, 1 bytes
 
 MapChunkRoute1West48:
 .tile:    DB 255
@@ -4329,6 +4552,10 @@ MapChunkRoute1West48:
 
   DB 0;END Route1West48 background objects, 11 bytes
 
+MapSpritesRoute1West48:
+
+  DB 0;END Route1West48 sprite objects, 1 bytes
+
 MapChunkRoute1West49:
 .tile:    DB 255
 .palette: DB 1
@@ -4338,6 +4565,10 @@ MapChunkRoute1West49:
 .west:    DB MAP_CHUNK_ROUTE1WEST_50
 
   DB 0;END Route1West49 background objects, 11 bytes
+
+MapSpritesRoute1West49:
+
+  DB 0;END Route1West49 sprite objects, 1 bytes
 
 MapChunkRoute1West50:
 .tile:    DB 255
@@ -4349,6 +4580,10 @@ MapChunkRoute1West50:
 
   DB 0;END Route1West50 background objects, 11 bytes
 
+MapSpritesRoute1West50:
+
+  DB 0;END Route1West50 sprite objects, 1 bytes
+
 MapChunkRoute1West51:
 .tile:    DB 255
 .palette: DB 1
@@ -4358,6 +4593,10 @@ MapChunkRoute1West51:
 .west:    DB MAP_CHUNK_ROUTE1WEST_52
 
   DB 0;END Route1West51 background objects, 11 bytes
+
+MapSpritesRoute1West51:
+
+  DB 0;END Route1West51 sprite objects, 1 bytes
 
 MapChunkRoute1West52:
 .tile:    DB 255
@@ -4369,6 +4608,10 @@ MapChunkRoute1West52:
 
   DB 0;END Route1West52 background objects, 11 bytes
 
+MapSpritesRoute1West52:
+
+  DB 0;END Route1West52 sprite objects, 1 bytes
+
 MapChunkRoute1West57:
 .tile:    DB 255
 .palette: DB 1
@@ -4378,6 +4621,10 @@ MapChunkRoute1West57:
 .west:    DB MAP_CHUNK_ROUTE1WEST_49
 
   DB 0;END Route1West57 background objects, 11 bytes
+
+MapSpritesRoute1West57:
+
+  DB 0;END Route1West57 sprite objects, 1 bytes
 
 MapChunkRoute1West58:
 .tile:    DB 255
@@ -4389,6 +4636,10 @@ MapChunkRoute1West58:
 
   DB 0;END Route1West58 background objects, 11 bytes
 
+MapSpritesRoute1West58:
+
+  DB 0;END Route1West58 sprite objects, 1 bytes
+
 MapChunkRoute1West59:
 .tile:    DB 255
 .palette: DB 1
@@ -4398,6 +4649,10 @@ MapChunkRoute1West59:
 .west:    DB MAP_CHUNK_ROUTE1WEST_57
 
   DB 0;END Route1West59 background objects, 11 bytes
+
+MapSpritesRoute1West59:
+
+  DB 0;END Route1West59 sprite objects, 1 bytes
 
 MapChunkRoute1West60:
 .tile:    DB 255
@@ -4409,6 +4664,10 @@ MapChunkRoute1West60:
 
   DB 0;END Route1West60 background objects, 11 bytes
 
+MapSpritesRoute1West60:
+
+  DB 0;END Route1West60 sprite objects, 1 bytes
+
 MapChunkRoute1West61:
 .tile:    DB 255
 .palette: DB 1
@@ -4418,6 +4677,10 @@ MapChunkRoute1West61:
 .west:    DB MAP_CHUNK_ROUTE1WEST_59
 
   DB 0;END Route1West61 background objects, 11 bytes
+
+MapSpritesRoute1West61:
+
+  DB 0;END Route1West61 sprite objects, 1 bytes
 
 MapChunkRoute1West62:
 .tile:    DB 255
@@ -4429,6 +4692,10 @@ MapChunkRoute1West62:
 
   DB 0;END Route1West62 background objects, 11 bytes
 
+MapSpritesRoute1West62:
+
+  DB 0;END Route1West62 sprite objects, 1 bytes
+
 MapChunkRoute1West63:
 .tile:    DB 255
 .palette: DB 1
@@ -4438,6 +4705,10 @@ MapChunkRoute1West63:
 .west:    DB MAP_CHUNK_ROUTE1WEST_61
 
   DB 0;END Route1West63 background objects, 11 bytes
+
+MapSpritesRoute1West63:
+
+  DB 0;END Route1West63 sprite objects, 1 bytes
 
 MapChunkRoute1West64:
 .tile:    DB 255
@@ -4449,6 +4720,10 @@ MapChunkRoute1West64:
 
   DB 0;END Route1West64 background objects, 11 bytes
 
+MapSpritesRoute1West64:
+
+  DB 0;END Route1West64 sprite objects, 1 bytes
+
 MapChunkRoute1West65:
 .tile:    DB 255
 .palette: DB 1
@@ -4458,6 +4733,10 @@ MapChunkRoute1West65:
 .west:    DB MAP_CHUNK_ROUTE1WEST_65
 
   DB 0;END Route1West65 background objects, 11 bytes
+
+MapSpritesRoute1West65:
+
+  DB 0;END Route1West65 sprite objects, 1 bytes
 
 MapChunkRoute1West66:
 .tile:    DB 255
@@ -4469,6 +4748,10 @@ MapChunkRoute1West66:
 
   DB 0;END Route1West66 background objects, 11 bytes
 
+MapSpritesRoute1West66:
+
+  DB 0;END Route1West66 sprite objects, 1 bytes
+
 MapChunkRoute1West67:
 .tile:    DB 255
 .palette: DB 1
@@ -4478,6 +4761,10 @@ MapChunkRoute1West67:
 .west:    DB MAP_CHUNK_ROUTE1WEST_64
 
   DB 0;END Route1West67 background objects, 11 bytes
+
+MapSpritesRoute1West67:
+
+  DB 0;END Route1West67 sprite objects, 1 bytes
 
 MapChunkRoute1West68:
 .tile:    DB 255
@@ -4489,6 +4776,10 @@ MapChunkRoute1West68:
 
   DB 0;END Route1West68 background objects, 11 bytes
 
+MapSpritesRoute1West68:
+
+  DB 0;END Route1West68 sprite objects, 1 bytes
+
 MapChunkRoute1West69:
 .tile:    DB 255
 .palette: DB 1
@@ -4498,6 +4789,10 @@ MapChunkRoute1West69:
 .west:    DB MAP_CHUNK_ROUTE1WEST_67
 
   DB 0;END Route1West69 background objects, 11 bytes
+
+MapSpritesRoute1West69:
+
+  DB 0;END Route1West69 sprite objects, 1 bytes
 
 MapChunkRoute1West70:
 .tile:    DB 255
@@ -4509,6 +4804,10 @@ MapChunkRoute1West70:
 
   DB 0;END Route1West70 background objects, 11 bytes
 
+MapSpritesRoute1West70:
+
+  DB 0;END Route1West70 sprite objects, 1 bytes
+
 MapChunkRoute1West71:
 .tile:    DB 255
 .palette: DB 1
@@ -4518,6 +4817,10 @@ MapChunkRoute1West71:
 .west:    DB MAP_CHUNK_ROUTE1WEST_69
 
   DB 0;END Route1West71 background objects, 11 bytes
+
+MapSpritesRoute1West71:
+
+  DB 0;END Route1West71 sprite objects, 1 bytes
 
 MapChunkRoute1West72:
 .tile:    DB 255
@@ -4529,6 +4832,10 @@ MapChunkRoute1West72:
 
   DB 0;END Route1West72 background objects, 11 bytes
 
+MapSpritesRoute1West72:
+
+  DB 0;END Route1West72 sprite objects, 1 bytes
+
 MapChunkRoute1West73:
 .tile:    DB 255
 .palette: DB 1
@@ -4538,6 +4845,10 @@ MapChunkRoute1West73:
 .west:    DB MAP_CHUNK_ROUTE1WEST_71
 
   DB 0;END Route1West73 background objects, 11 bytes
+
+MapSpritesRoute1West73:
+
+  DB 0;END Route1West73 sprite objects, 1 bytes
 
 MapChunkRoute1West74:
 .tile:    DB 255
@@ -4549,6 +4860,10 @@ MapChunkRoute1West74:
 
   DB 0;END Route1West74 background objects, 11 bytes
 
+MapSpritesRoute1West74:
+
+  DB 0;END Route1West74 sprite objects, 1 bytes
+
 MapChunkRoute1West75:
 .tile:    DB 255
 .palette: DB 1
@@ -4558,6 +4873,10 @@ MapChunkRoute1West75:
 .west:    DB MAP_CHUNK_ROUTE1WEST_73
 
   DB 0;END Route1West75 background objects, 11 bytes
+
+MapSpritesRoute1West75:
+
+  DB 0;END Route1West75 sprite objects, 1 bytes
 
 MapChunkRoute1West76:
 .tile:    DB 255
@@ -4569,6 +4888,10 @@ MapChunkRoute1West76:
 
   DB 0;END Route1West76 background objects, 11 bytes
 
+MapSpritesRoute1West76:
+
+  DB 0;END Route1West76 sprite objects, 1 bytes
+
 MapChunkRoute1West77:
 .tile:    DB 255
 .palette: DB 1
@@ -4578,6 +4901,10 @@ MapChunkRoute1West77:
 .west:    DB MAP_CHUNK_ROUTE1WEST_75
 
   DB 0;END Route1West77 background objects, 11 bytes
+
+MapSpritesRoute1West77:
+
+  DB 0;END Route1West77 sprite objects, 1 bytes
 
 MapChunkRoute1West78:
 .tile:    DB 255
@@ -4589,6 +4916,10 @@ MapChunkRoute1West78:
 
   DB 0;END Route1West78 background objects, 11 bytes
 
+MapSpritesRoute1West78:
+
+  DB 0;END Route1West78 sprite objects, 1 bytes
+
 MapChunkRoute1West79:
 .tile:    DB 255
 .palette: DB 1
@@ -4598,6 +4929,10 @@ MapChunkRoute1West79:
 .west:    DB MAP_CHUNK_ROUTE1WEST_77
 
   DB 0;END Route1West79 background objects, 11 bytes
+
+MapSpritesRoute1West79:
+
+  DB 0;END Route1West79 sprite objects, 1 bytes
 
 MapChunkRoute1West80:
 .tile:    DB 255
@@ -4609,6 +4944,10 @@ MapChunkRoute1West80:
 
   DB 0;END Route1West80 background objects, 11 bytes
 
+MapSpritesRoute1West80:
+
+  DB 0;END Route1West80 sprite objects, 1 bytes
+
 MapChunkRoute1West81:
 .tile:    DB 255
 .palette: DB 1
@@ -4618,6 +4957,10 @@ MapChunkRoute1West81:
 .west:    DB MAP_CHUNK_ROUTE1WEST_79
 
   DB 0;END Route1West81 background objects, 11 bytes
+
+MapSpritesRoute1West81:
+
+  DB 0;END Route1West81 sprite objects, 1 bytes
 
 MapChunkRoute1West82:
 .tile:    DB 255
@@ -4629,6 +4972,10 @@ MapChunkRoute1West82:
 
   DB 0;END Route1West82 background objects, 11 bytes
 
+MapSpritesRoute1West82:
+
+  DB 0;END Route1West82 sprite objects, 1 bytes
+
 MapChunkRoute1West85:
 .tile:    DB 255
 .palette: DB 1
@@ -4638,6 +4985,10 @@ MapChunkRoute1West85:
 .west:    DB MAP_CHUNK_ROUTE1WEST_85
 
   DB 0;END Route1West85 background objects, 11 bytes
+
+MapSpritesRoute1West85:
+
+  DB 0;END Route1West85 sprite objects, 1 bytes
 
 MapChunkRoute1West86:
 .tile:    DB 255
@@ -4649,6 +5000,10 @@ MapChunkRoute1West86:
 
   DB 0;END Route1West86 background objects, 11 bytes
 
+MapSpritesRoute1West86:
+
+  DB 0;END Route1West86 sprite objects, 1 bytes
+
 MapChunkRoute1West88:
 .tile:    DB 255
 .palette: DB 1
@@ -4658,6 +5013,10 @@ MapChunkRoute1West88:
 .west:    DB MAP_CHUNK_ROUTE1WEST_86
 
   DB 0;END Route1West88 background objects, 11 bytes
+
+MapSpritesRoute1West88:
+
+  DB 0;END Route1West88 sprite objects, 1 bytes
 
 MapChunkRoute1West89:
 .tile:    DB 255
@@ -4669,6 +5028,10 @@ MapChunkRoute1West89:
 
   DB 0;END Route1West89 background objects, 11 bytes
 
+MapSpritesRoute1West89:
+
+  DB 0;END Route1West89 sprite objects, 1 bytes
+
 MapChunkRoute1West91:
 .tile:    DB 255
 .palette: DB 1
@@ -4678,6 +5041,10 @@ MapChunkRoute1West91:
 .west:    DB MAP_CHUNK_ROUTE1WEST_89
 
   DB 0;END Route1West91 background objects, 11 bytes
+
+MapSpritesRoute1West91:
+
+  DB 0;END Route1West91 sprite objects, 1 bytes
 
 MapChunkRoute1West93:
 .tile:    DB 255
@@ -4689,6 +5056,10 @@ MapChunkRoute1West93:
 
   DB 0;END Route1West93 background objects, 11 bytes
 
+MapSpritesRoute1West93:
+
+  DB 0;END Route1West93 sprite objects, 1 bytes
+
 MapChunkRoute1West95:
 .tile:    DB 255
 .palette: DB 1
@@ -4699,6 +5070,10 @@ MapChunkRoute1West95:
 
   DB 0;END Route1West95 background objects, 11 bytes
 
+MapSpritesRoute1West95:
+
+  DB 0;END Route1West95 sprite objects, 1 bytes
+
 MapChunkRoute1West96:
 .tile:    DB 255
 .palette: DB 1
@@ -4708,6 +5083,10 @@ MapChunkRoute1West96:
 .west:    DB MAP_CHUNK_ROUTE1WEST_96
 
   DB 0;END Route1West96 background objects, 11 bytes
+
+MapSpritesRoute1West96:
+
+  DB 0;END Route1West96 sprite objects, 1 bytes
 
 MapChunkRoute1West97:
 .tile:    DB 255
@@ -4727,6 +5106,10 @@ MapChunkRoute1West97:
 
   DB 0;END Route1West97 background objects, 18 bytes
 
+MapSpritesRoute1West97:
+
+  DB 0;END Route1West97 sprite objects, 1 bytes
+
 MapChunkRoute1West98:
 .tile:    DB 255
 .palette: DB 1
@@ -4744,6 +5127,10 @@ MapChunkRoute1West98:
   DB 25;y2
 
   DB 0;END Route1West98 background objects, 18 bytes
+
+MapSpritesRoute1West98:
+
+  DB 0;END Route1West98 sprite objects, 1 bytes
 
 MapChunkRoute1West101:
 .tile:    DB 255
@@ -4763,6 +5150,10 @@ MapChunkRoute1West101:
 
   DB 0;END Route1West101 background objects, 18 bytes
 
+MapSpritesRoute1West101:
+
+  DB 0;END Route1West101 sprite objects, 1 bytes
+
 MapChunkRoute1West102:
 .tile:    DB 255
 .palette: DB 1
@@ -4781,6 +5172,10 @@ MapChunkRoute1West102:
 
   DB 0;END Route1West102 background objects, 18 bytes
 
+MapSpritesRoute1West102:
+
+  DB 0;END Route1West102 sprite objects, 1 bytes
+
 MapChunkRoute1West103:
 .tile:    DB 255
 .palette: DB 1
@@ -4790,6 +5185,10 @@ MapChunkRoute1West103:
 .west:    DB MAP_CHUNK_ROUTE1WEST_101
 
   DB 0;END Route1West103 background objects, 11 bytes
+
+MapSpritesRoute1West103:
+
+  DB 0;END Route1West103 sprite objects, 1 bytes
 
 MapChunkRoute1West104:
 .tile:    DB 255
@@ -4801,6 +5200,10 @@ MapChunkRoute1West104:
 
   DB 0;END Route1West104 background objects, 11 bytes
 
+MapSpritesRoute1West104:
+
+  DB 0;END Route1West104 sprite objects, 1 bytes
+
 MapChunkRoute1West105:
 .tile:    DB 255
 .palette: DB 1
@@ -4810,6 +5213,10 @@ MapChunkRoute1West105:
 .west:    DB MAP_CHUNK_ROUTE1WEST_103
 
   DB 0;END Route1West105 background objects, 11 bytes
+
+MapSpritesRoute1West105:
+
+  DB 0;END Route1West105 sprite objects, 1 bytes
 
 MapChunkRoute1West106:
 .tile:    DB 255
@@ -4821,6 +5228,10 @@ MapChunkRoute1West106:
 
   DB 0;END Route1West106 background objects, 11 bytes
 
+MapSpritesRoute1West106:
+
+  DB 0;END Route1West106 sprite objects, 1 bytes
+
 MapChunkRoute1West110:
 .tile:    DB 255
 .palette: DB 1
@@ -4830,6 +5241,10 @@ MapChunkRoute1West110:
 .west:    DB MAP_CHUNK_ROUTE1WEST_81
 
   DB 0;END Route1West110 background objects, 11 bytes
+
+MapSpritesRoute1West110:
+
+  DB 0;END Route1West110 sprite objects, 1 bytes
 
 MapChunkRoute1West111:
 .tile:    DB 255
@@ -4841,6 +5256,10 @@ MapChunkRoute1West111:
 
   DB 0;END Route1West111 background objects, 11 bytes
 
+MapSpritesRoute1West111:
+
+  DB 0;END Route1West111 sprite objects, 1 bytes
+
 MapChunkRoute1West112:
 .tile:    DB 255
 .palette: DB 1
@@ -4850,6 +5269,10 @@ MapChunkRoute1West112:
 .west:    DB MAP_CHUNK_ROUTE1WEST_110
 
   DB 0;END Route1West112 background objects, 11 bytes
+
+MapSpritesRoute1West112:
+
+  DB 0;END Route1West112 sprite objects, 1 bytes
 
 MapChunkRoute1West113:
 .tile:    DB 255
@@ -4861,6 +5284,10 @@ MapChunkRoute1West113:
 
   DB 0;END Route1West113 background objects, 11 bytes
 
+MapSpritesRoute1West113:
+
+  DB 0;END Route1West113 sprite objects, 1 bytes
+
 MapChunkRoute1West114:
 .tile:    DB 255
 .palette: DB 1
@@ -4870,6 +5297,10 @@ MapChunkRoute1West114:
 .west:    DB MAP_CHUNK_ROUTE1WEST_112
 
   DB 0;END Route1West114 background objects, 11 bytes
+
+MapSpritesRoute1West114:
+
+  DB 0;END Route1West114 sprite objects, 1 bytes
 
 MapChunkRoute1West115:
 .tile:    DB 255
@@ -4881,6 +5312,10 @@ MapChunkRoute1West115:
 
   DB 0;END Route1West115 background objects, 11 bytes
 
+MapSpritesRoute1West115:
+
+  DB 0;END Route1West115 sprite objects, 1 bytes
+
 MapChunkRoute1West116:
 .tile:    DB 255
 .palette: DB 1
@@ -4890,6 +5325,10 @@ MapChunkRoute1West116:
 .west:    DB MAP_CHUNK_ROUTE1WEST_114
 
   DB 0;END Route1West116 background objects, 11 bytes
+
+MapSpritesRoute1West116:
+
+  DB 0;END Route1West116 sprite objects, 1 bytes
 
 MapChunkRoute1West117:
 .tile:    DB 255
@@ -4901,6 +5340,10 @@ MapChunkRoute1West117:
 
   DB 0;END Route1West117 background objects, 11 bytes
 
+MapSpritesRoute1West117:
+
+  DB 0;END Route1West117 sprite objects, 1 bytes
+
 MapChunkRoute1West118:
 .tile:    DB 255
 .palette: DB 1
@@ -4910,6 +5353,10 @@ MapChunkRoute1West118:
 .west:    DB MAP_CHUNK_ROUTE1WEST_116
 
   DB 0;END Route1West118 background objects, 11 bytes
+
+MapSpritesRoute1West118:
+
+  DB 0;END Route1West118 sprite objects, 1 bytes
 
 MapChunkRoute1West119:
 .tile:    DB 255
@@ -4921,6 +5368,10 @@ MapChunkRoute1West119:
 
   DB 0;END Route1West119 background objects, 11 bytes
 
+MapSpritesRoute1West119:
+
+  DB 0;END Route1West119 sprite objects, 1 bytes
+
 MapChunkRoute1West120:
 .tile:    DB 255
 .palette: DB 1
@@ -4930,6 +5381,10 @@ MapChunkRoute1West120:
 .west:    DB MAP_CHUNK_ROUTE1WEST_120
 
   DB 0;END Route1West120 background objects, 11 bytes
+
+MapSpritesRoute1West120:
+
+  DB 0;END Route1West120 sprite objects, 1 bytes
 
 MapChunkRoute1West121:
 .tile:    DB 255
@@ -4941,6 +5396,10 @@ MapChunkRoute1West121:
 
   DB 0;END Route1West121 background objects, 11 bytes
 
+MapSpritesRoute1West121:
+
+  DB 0;END Route1West121 sprite objects, 1 bytes
+
 MapChunkRoute1West122:
 .tile:    DB 255
 .palette: DB 1
@@ -4950,6 +5409,10 @@ MapChunkRoute1West122:
 .west:    DB MAP_CHUNK_ROUTE1WEST_120
 
   DB 0;END Route1West122 background objects, 11 bytes
+
+MapSpritesRoute1West122:
+
+  DB 0;END Route1West122 sprite objects, 1 bytes
 
 MapChunkRoute1West123:
 .tile:    DB 255
@@ -4961,6 +5424,10 @@ MapChunkRoute1West123:
 
   DB 0;END Route1West123 background objects, 11 bytes
 
+MapSpritesRoute1West123:
+
+  DB 0;END Route1West123 sprite objects, 1 bytes
+
 MapChunkRoute1West124:
 .tile:    DB 255
 .palette: DB 1
@@ -4970,6 +5437,10 @@ MapChunkRoute1West124:
 .west:    DB MAP_CHUNK_ROUTE1WEST_135
 
   DB 0;END Route1West124 background objects, 11 bytes
+
+MapSpritesRoute1West124:
+
+  DB 0;END Route1West124 sprite objects, 1 bytes
 
 MapChunkRoute1West125:
 .tile:    DB 255
@@ -4981,6 +5452,10 @@ MapChunkRoute1West125:
 
   DB 0;END Route1West125 background objects, 11 bytes
 
+MapSpritesRoute1West125:
+
+  DB 0;END Route1West125 sprite objects, 1 bytes
+
 MapChunkRoute1West126:
 .tile:    DB 255
 .palette: DB 1
@@ -4990,6 +5465,10 @@ MapChunkRoute1West126:
 .west:    DB MAP_CHUNK_ROUTE1WEST_124
 
   DB 0;END Route1West126 background objects, 11 bytes
+
+MapSpritesRoute1West126:
+
+  DB 0;END Route1West126 sprite objects, 1 bytes
 
 MapChunkRoute1West127:
 .tile:    DB 255
@@ -5001,6 +5480,10 @@ MapChunkRoute1West127:
 
   DB 0;END Route1West127 background objects, 11 bytes
 
+MapSpritesRoute1West127:
+
+  DB 0;END Route1West127 sprite objects, 1 bytes
+
 MapChunkRoute1West128:
 .tile:    DB 255
 .palette: DB 1
@@ -5010,6 +5493,10 @@ MapChunkRoute1West128:
 .west:    DB MAP_CHUNK_ROUTE1WEST_128
 
   DB 0;END Route1West128 background objects, 11 bytes
+
+MapSpritesRoute1West128:
+
+  DB 0;END Route1West128 sprite objects, 1 bytes
 
 MapChunkRoute1West129:
 .tile:    DB 255
@@ -5021,6 +5508,10 @@ MapChunkRoute1West129:
 
   DB 0;END Route1West129 background objects, 11 bytes
 
+MapSpritesRoute1West129:
+
+  DB 0;END Route1West129 sprite objects, 1 bytes
+
 MapChunkRoute1West130:
 .tile:    DB 255
 .palette: DB 1
@@ -5030,6 +5521,10 @@ MapChunkRoute1West130:
 .west:    DB MAP_CHUNK_ROUTE1WEST_128
 
   DB 0;END Route1West130 background objects, 11 bytes
+
+MapSpritesRoute1West130:
+
+  DB 0;END Route1West130 sprite objects, 1 bytes
 
 MapChunkRoute1West131:
 .tile:    DB 255
@@ -5041,6 +5536,10 @@ MapChunkRoute1West131:
 
   DB 0;END Route1West131 background objects, 11 bytes
 
+MapSpritesRoute1West131:
+
+  DB 0;END Route1West131 sprite objects, 1 bytes
+
 MapChunkRoute1West133:
 .tile:    DB 255
 .palette: DB 1
@@ -5050,6 +5549,10 @@ MapChunkRoute1West133:
 .west:    DB MAP_CHUNK_ROUTE1WEST_137
 
   DB 0;END Route1West133 background objects, 11 bytes
+
+MapSpritesRoute1West133:
+
+  DB 0;END Route1West133 sprite objects, 1 bytes
 
 MapChunkRoute1West135:
 .tile:    DB 255
@@ -5061,6 +5564,10 @@ MapChunkRoute1West135:
 
   DB 0;END Route1West135 background objects, 11 bytes
 
+MapSpritesRoute1West135:
+
+  DB 0;END Route1West135 sprite objects, 1 bytes
+
 MapChunkRoute1West137:
 .tile:    DB 255
 .palette: DB 1
@@ -5070,6 +5577,10 @@ MapChunkRoute1West137:
 .west:    DB MAP_CHUNK_ROUTE1WEST_105
 
   DB 0;END Route1West137 background objects, 11 bytes
+
+MapSpritesRoute1West137:
+
+  DB 0;END Route1West137 sprite objects, 1 bytes
 
 MapChunkRoute1West138:
 .tile:    DB 255
@@ -5081,6 +5592,10 @@ MapChunkRoute1West138:
 
   DB 0;END Route1West138 background objects, 11 bytes
 
+MapSpritesRoute1West138:
+
+  DB 0;END Route1West138 sprite objects, 1 bytes
+
 MapChunkRoute1West139:
 .tile:    DB 255
 .palette: DB 1
@@ -5091,6 +5606,10 @@ MapChunkRoute1West139:
 
   DB 0;END Route1West139 background objects, 11 bytes
 
+MapSpritesRoute1West139:
+
+  DB 0;END Route1West139 sprite objects, 1 bytes
+
 MapChunkRoute1West140:
 .tile:    DB 255
 .palette: DB 1
@@ -5100,6 +5619,10 @@ MapChunkRoute1West140:
 .west:    DB MAP_CHUNK_ROUTE1WEST_140
 
   DB 0;END Route1West140 background objects, 11 bytes
+
+MapSpritesRoute1West140:
+
+  DB 0;END Route1West140 sprite objects, 1 bytes
 
 MapChunkRoute1West141:
 .tile:    DB 255
@@ -5119,6 +5642,10 @@ MapChunkRoute1West141:
 
   DB 0;END Route1West141 background objects, 18 bytes
 
+MapSpritesRoute1West141:
+
+  DB 0;END Route1West141 sprite objects, 1 bytes
+
 MapChunkRoute1West142:
 .tile:    DB 255
 .palette: DB 1
@@ -5129,6 +5656,10 @@ MapChunkRoute1West142:
 
   DB 0;END Route1West142 background objects, 11 bytes
 
+MapSpritesRoute1West142:
+
+  DB 0;END Route1West142 sprite objects, 1 bytes
+
 MapChunkRoute1West143:
 .tile:    DB 255
 .palette: DB 1
@@ -5138,6 +5669,10 @@ MapChunkRoute1West143:
 .west:    DB MAP_CHUNK_ROUTE1WEST_141
 
   DB 0;END Route1West143 background objects, 11 bytes
+
+MapSpritesRoute1West143:
+
+  DB 0;END Route1West143 sprite objects, 1 bytes
 
 MapChunkRoute1West144:
 .tile:    DB 255
@@ -5157,6 +5692,10 @@ MapChunkRoute1West144:
 
   DB 0;END Route1West144 background objects, 18 bytes
 
+MapSpritesRoute1West144:
+
+  DB 0;END Route1West144 sprite objects, 1 bytes
+
 MapChunkRoute1West145:
 .tile:    DB 255
 .palette: DB 1
@@ -5175,6 +5714,10 @@ MapChunkRoute1West145:
 
   DB 0;END Route1West145 background objects, 18 bytes
 
+MapSpritesRoute1West145:
+
+  DB 0;END Route1West145 sprite objects, 1 bytes
+
 MapChunkRoute1West147:
 .tile:    DB 255
 .palette: DB 1
@@ -5184,6 +5727,10 @@ MapChunkRoute1West147:
 .west:    DB MAP_CHUNK_ROUTE1WEST_149
 
   DB 0;END Route1West147 background objects, 11 bytes
+
+MapSpritesRoute1West147:
+
+  DB 0;END Route1West147 sprite objects, 1 bytes
 
 MapChunkRoute1West149:
 .tile:    DB 255
@@ -5195,6 +5742,10 @@ MapChunkRoute1West149:
 
   DB 0;END Route1West149 background objects, 11 bytes
 
+MapSpritesRoute1West149:
+
+  DB 0;END Route1West149 sprite objects, 1 bytes
+
 MapChunkRoute1West150:
 .tile:    DB 255
 .palette: DB 1
@@ -5204,6 +5755,10 @@ MapChunkRoute1West150:
 .west:    DB MAP_CHUNK_ROUTE1WEST_159
 
   DB 0;END Route1West150 background objects, 11 bytes
+
+MapSpritesRoute1West150:
+
+  DB 0;END Route1West150 sprite objects, 1 bytes
 
 MapChunkRoute1West152:
 .tile:    DB 255
@@ -5215,6 +5770,10 @@ MapChunkRoute1West152:
 
   DB 0;END Route1West152 background objects, 11 bytes
 
+MapSpritesRoute1West152:
+
+  DB 0;END Route1West152 sprite objects, 1 bytes
+
 MapChunkRoute1West153:
 .tile:    DB 255
 .palette: DB 1
@@ -5224,6 +5783,10 @@ MapChunkRoute1West153:
 .west:    DB MAP_CHUNK_ROUTE1WEST_153
 
   DB 0;END Route1West153 background objects, 11 bytes
+
+MapSpritesRoute1West153:
+
+  DB 0;END Route1West153 sprite objects, 1 bytes
 
 MapChunkRoute1West154:
 .tile:    DB 255
@@ -5243,6 +5806,10 @@ MapChunkRoute1West154:
 
   DB 0;END Route1West154 background objects, 18 bytes
 
+MapSpritesRoute1West154:
+
+  DB 0;END Route1West154 sprite objects, 1 bytes
+
 MapChunkRoute1West155:
 .tile:    DB 255
 .palette: DB 1
@@ -5252,6 +5819,10 @@ MapChunkRoute1West155:
 .west:    DB MAP_CHUNK_ROUTE1WEST_153
 
   DB 0;END Route1West155 background objects, 11 bytes
+
+MapSpritesRoute1West155:
+
+  DB 0;END Route1West155 sprite objects, 1 bytes
 
 MapChunkRoute1West156:
 .tile:    DB 255
@@ -5271,6 +5842,10 @@ MapChunkRoute1West156:
 
   DB 0;END Route1West156 background objects, 18 bytes
 
+MapSpritesRoute1West156:
+
+  DB 0;END Route1West156 sprite objects, 1 bytes
+
 MapChunkRoute1West157:
 .tile:    DB 255
 .palette: DB 1
@@ -5280,6 +5855,10 @@ MapChunkRoute1West157:
 .west:    DB MAP_CHUNK_ROUTE1WEST_156
 
   DB 0;END Route1West157 background objects, 11 bytes
+
+MapSpritesRoute1West157:
+
+  DB 0;END Route1West157 sprite objects, 1 bytes
 
 MapChunkRoute1West158:
 .tile:    DB 255
@@ -5291,6 +5870,10 @@ MapChunkRoute1West158:
 
   DB 0;END Route1West158 background objects, 11 bytes
 
+MapSpritesRoute1West158:
+
+  DB 0;END Route1West158 sprite objects, 1 bytes
+
 MapChunkRoute1West159:
 .tile:    DB 255
 .palette: DB 1
@@ -5301,6 +5884,10 @@ MapChunkRoute1West159:
 
   DB 0;END Route1West159 background objects, 11 bytes
 
+MapSpritesRoute1West159:
+
+  DB 0;END Route1West159 sprite objects, 1 bytes
+
 MapChunkRoute1West161:
 .tile:    DB 255
 .palette: DB 1
@@ -5310,6 +5897,10 @@ MapChunkRoute1West161:
 .west:    DB MAP_CHUNK_ROUTE1WEST_161
 
   DB 0;END Route1West161 background objects, 11 bytes
+
+MapSpritesRoute1West161:
+
+  DB 0;END Route1West161 sprite objects, 1 bytes
 
 MapChunkRoute1West162:
 .tile:    DB 255
@@ -5329,6 +5920,10 @@ MapChunkRoute1West162:
 
   DB 0;END Route1West162 background objects, 18 bytes
 
+MapSpritesRoute1West162:
+
+  DB 0;END Route1West162 sprite objects, 1 bytes
+
 MapChunkRoute1West163:
 .tile:    DB 255
 .palette: DB 1
@@ -5338,6 +5933,10 @@ MapChunkRoute1West163:
 .west:    DB MAP_CHUNK_ROUTE1WEST_166
 
   DB 0;END Route1West163 background objects, 11 bytes
+
+MapSpritesRoute1West163:
+
+  DB 0;END Route1West163 sprite objects, 1 bytes
 
 MapChunkRoute1West164:
 .tile:    DB 255
@@ -5349,6 +5948,10 @@ MapChunkRoute1West164:
 
   DB 0;END Route1West164 background objects, 11 bytes
 
+MapSpritesRoute1West164:
+
+  DB 0;END Route1West164 sprite objects, 1 bytes
+
 MapChunkRoute1West165:
 .tile:    DB 255
 .palette: DB 1
@@ -5359,6 +5962,10 @@ MapChunkRoute1West165:
 
   DB 0;END Route1West165 background objects, 11 bytes
 
+MapSpritesRoute1West165:
+
+  DB 0;END Route1West165 sprite objects, 1 bytes
+
 MapChunkRoute1West166:
 .tile:    DB 255
 .palette: DB 1
@@ -5368,6 +5975,10 @@ MapChunkRoute1West166:
 .west:    DB MAP_CHUNK_ROUTE1WEST_166
 
   DB 0;END Route1West166 background objects, 11 bytes
+
+MapSpritesRoute1West166:
+
+  DB 0;END Route1West166 sprite objects, 1 bytes
 
 MapChunkRoute1West167:
 .tile:    DB 255
@@ -5387,6 +5998,10 @@ MapChunkRoute1West167:
 
   DB 0;END Route1West167 background objects, 18 bytes
 
+MapSpritesRoute1West167:
+
+  DB 0;END Route1West167 sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk2:
 .tile:    DB 253
 .palette: DB 1
@@ -5396,6 +6011,10 @@ MapChunkCenterFieldChunk2:
 .west:    DB MAP_CHUNK_CENTERFIELDCHUNK_2
 
   DB 0;END CenterFieldChunk2 background objects, 11 bytes
+
+MapSpritesCenterFieldChunk2:
+
+  DB 0;END CenterFieldChunk2 sprite objects, 1 bytes
 
 MapChunkCenterFieldChunk3:
 .tile:    DB 253
@@ -5419,6 +6038,10 @@ MapChunkCenterFieldChunk3:
 
   DB 0;END CenterFieldChunk3 background objects, 21 bytes
 
+MapSpritesCenterFieldChunk3:
+
+  DB 0;END CenterFieldChunk3 sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk4:
 .tile:    DB 253
 .palette: DB 1
@@ -5428,6 +6051,10 @@ MapChunkCenterFieldChunk4:
 .west:    DB MAP_CHUNK_CENTERFIELDCHUNK_2
 
   DB 0;END CenterFieldChunk4 background objects, 11 bytes
+
+MapSpritesCenterFieldChunk4:
+
+  DB 0;END CenterFieldChunk4 sprite objects, 1 bytes
 
 MapChunkCenterFieldChunk5:
 .tile:    DB 253
@@ -5445,6 +6072,10 @@ MapChunkCenterFieldChunk5:
 
   DB 0;END CenterFieldChunk5 background objects, 16 bytes
 
+MapSpritesCenterFieldChunk5:
+
+  DB 0;END CenterFieldChunk5 sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk6:
 .tile:    DB 253
 .palette: DB 1
@@ -5454,6 +6085,10 @@ MapChunkCenterFieldChunk6:
 .west:    DB MAP_CHUNK_CENTERFIELDCHUNK_1
 
   DB 0;END CenterFieldChunk6 background objects, 11 bytes
+
+MapSpritesCenterFieldChunk6:
+
+  DB 0;END CenterFieldChunk6 sprite objects, 1 bytes
 
 MapChunkCenterFieldChunk7:
 .tile:    DB 253
@@ -5485,6 +6120,10 @@ MapChunkCenterFieldChunk7:
 
   DB 0;END CenterFieldChunk7 background objects, 30 bytes
 
+MapSpritesCenterFieldChunk7:
+
+  DB 0;END CenterFieldChunk7 sprite objects, 1 bytes
+
 MapChunkCenterFieldChunk8:
 .tile:    DB 253
 .palette: DB 1
@@ -5494,6 +6133,10 @@ MapChunkCenterFieldChunk8:
 .west:    DB MAP_CHUNK_CENTERFIELDCHUNK_7
 
   DB 0;END CenterFieldChunk8 background objects, 11 bytes
+
+MapSpritesCenterFieldChunk8:
+
+  DB 0;END CenterFieldChunk8 sprite objects, 1 bytes
 
 MapChunkRoute1West168:
 .tile:    DB 255
@@ -5505,6 +6148,10 @@ MapChunkRoute1West168:
 
   DB 0;END Route1West168 background objects, 11 bytes
 
+MapSpritesRoute1West168:
+
+  DB 0;END Route1West168 sprite objects, 1 bytes
+
 MapChunkRoute1West169:
 .tile:    DB 255
 .palette: DB 1
@@ -5514,6 +6161,10 @@ MapChunkRoute1West169:
 .west:    DB MAP_CHUNK_ROUTE1WEST_172
 
   DB 0;END Route1West169 background objects, 11 bytes
+
+MapSpritesRoute1West169:
+
+  DB 0;END Route1West169 sprite objects, 1 bytes
 
 MapChunkRoute1West170:
 .tile:    DB 255
@@ -5525,6 +6176,10 @@ MapChunkRoute1West170:
 
   DB 0;END Route1West170 background objects, 11 bytes
 
+MapSpritesRoute1West170:
+
+  DB 0;END Route1West170 sprite objects, 1 bytes
+
 MapChunkRoute1West171:
 .tile:    DB 255
 .palette: DB 1
@@ -5534,6 +6189,10 @@ MapChunkRoute1West171:
 .west:    DB MAP_CHUNK_ROUTE1WEST_171
 
   DB 0;END Route1West171 background objects, 11 bytes
+
+MapSpritesRoute1West171:
+
+  DB 0;END Route1West171 sprite objects, 1 bytes
 
 MapChunkRoute1West172:
 .tile:    DB 255
@@ -5545,6 +6204,10 @@ MapChunkRoute1West172:
 
   DB 0;END Route1West172 background objects, 11 bytes
 
+MapSpritesRoute1West172:
+
+  DB 0;END Route1West172 sprite objects, 1 bytes
+
 MapChunkRoute1West173:
 .tile:    DB 255
 .palette: DB 1
@@ -5554,6 +6217,10 @@ MapChunkRoute1West173:
 .west:    DB MAP_CHUNK_ROUTE1WEST_173
 
   DB 0;END Route1West173 background objects, 11 bytes
+
+MapSpritesRoute1West173:
+
+  DB 0;END Route1West173 sprite objects, 1 bytes
 
 MapChunkRoute1West176:
 .tile:    DB 255
@@ -5565,6 +6232,10 @@ MapChunkRoute1West176:
 
   DB 0;END Route1West176 background objects, 11 bytes
 
+MapSpritesRoute1West176:
+
+  DB 0;END Route1West176 sprite objects, 1 bytes
+
 MapChunkRoute1West177:
 .tile:    DB 255
 .palette: DB 1
@@ -5574,6 +6245,10 @@ MapChunkRoute1West177:
 .west:    DB MAP_CHUNK_ROUTE1WEST_179
 
   DB 0;END Route1West177 background objects, 11 bytes
+
+MapSpritesRoute1West177:
+
+  DB 0;END Route1West177 sprite objects, 1 bytes
 
 MapChunkRoute1West178:
 .tile:    DB 255
@@ -5585,6 +6260,10 @@ MapChunkRoute1West178:
 
   DB 0;END Route1West178 background objects, 11 bytes
 
+MapSpritesRoute1West178:
+
+  DB 0;END Route1West178 sprite objects, 1 bytes
+
 MapChunkRoute1West179:
 .tile:    DB 255
 .palette: DB 1
@@ -5594,6 +6273,10 @@ MapChunkRoute1West179:
 .west:    DB MAP_CHUNK_ROUTE1WEST_179
 
   DB 0;END Route1West179 background objects, 11 bytes
+
+MapSpritesRoute1West179:
+
+  DB 0;END Route1West179 sprite objects, 1 bytes
 
 MapChunkRoute1West180:
 .tile:    DB 255
@@ -5605,6 +6288,10 @@ MapChunkRoute1West180:
 
   DB 0;END Route1West180 background objects, 11 bytes
 
+MapSpritesRoute1West180:
+
+  DB 0;END Route1West180 sprite objects, 1 bytes
+
 MapChunkRoute1West181:
 .tile:    DB 255
 .palette: DB 1
@@ -5614,6 +6301,10 @@ MapChunkRoute1West181:
 .west:    DB MAP_CHUNK_ROUTE1WEST_177
 
   DB 0;END Route1West181 background objects, 11 bytes
+
+MapSpritesRoute1West181:
+
+  DB 0;END Route1West181 sprite objects, 1 bytes
 
 MapChunkRoute1West182:
 .tile:    DB 255
@@ -5625,6 +6316,10 @@ MapChunkRoute1West182:
 
   DB 0;END Route1West182 background objects, 11 bytes
 
+MapSpritesRoute1West182:
+
+  DB 0;END Route1West182 sprite objects, 1 bytes
+
 MapChunkRoute1West183:
 .tile:    DB 255
 .palette: DB 1
@@ -5634,6 +6329,10 @@ MapChunkRoute1West183:
 .west:    DB MAP_CHUNK_ROUTE1WEST_184
 
   DB 0;END Route1West183 background objects, 11 bytes
+
+MapSpritesRoute1West183:
+
+  DB 0;END Route1West183 sprite objects, 1 bytes
 
 MapChunkRoute1West184:
 .tile:    DB 255
@@ -5645,6 +6344,10 @@ MapChunkRoute1West184:
 
   DB 0;END Route1West184 background objects, 11 bytes
 
+MapSpritesRoute1West184:
+
+  DB 0;END Route1West184 sprite objects, 1 bytes
+
 MapChunkRoute1West185:
 .tile:    DB 255
 .palette: DB 1
@@ -5654,6 +6357,10 @@ MapChunkRoute1West185:
 .west:    DB MAP_CHUNK_ROUTE1WEST_183
 
   DB 0;END Route1West185 background objects, 11 bytes
+
+MapSpritesRoute1West185:
+
+  DB 0;END Route1West185 sprite objects, 1 bytes
 
 MapChunkRoute1West186:
 .tile:    DB 255
@@ -5665,6 +6372,10 @@ MapChunkRoute1West186:
 
   DB 0;END Route1West186 background objects, 11 bytes
 
+MapSpritesRoute1West186:
+
+  DB 0;END Route1West186 sprite objects, 1 bytes
+
 MapChunkRoute1West187:
 .tile:    DB 255
 .palette: DB 1
@@ -5674,6 +6385,10 @@ MapChunkRoute1West187:
 .west:    DB MAP_CHUNK_ROUTE1WEST_181
 
   DB 0;END Route1West187 background objects, 11 bytes
+
+MapSpritesRoute1West187:
+
+  DB 0;END Route1West187 sprite objects, 1 bytes
 
 MapChunkRoute1West188:
 .tile:    DB 255
@@ -5685,6 +6400,10 @@ MapChunkRoute1West188:
 
   DB 0;END Route1West188 background objects, 11 bytes
 
+MapSpritesRoute1West188:
+
+  DB 0;END Route1West188 sprite objects, 1 bytes
+
 MapChunkRoute1West189:
 .tile:    DB 255
 .palette: DB 1
@@ -5694,6 +6413,10 @@ MapChunkRoute1West189:
 .west:    DB MAP_CHUNK_ROUTE1WEST_185
 
   DB 0;END Route1West189 background objects, 11 bytes
+
+MapSpritesRoute1West189:
+
+  DB 0;END Route1West189 sprite objects, 1 bytes
 
 MapChunkRoute1West190:
 .tile:    DB 255
@@ -5705,6 +6428,10 @@ MapChunkRoute1West190:
 
   DB 0;END Route1West190 background objects, 11 bytes
 
+MapSpritesRoute1West190:
+
+  DB 0;END Route1West190 sprite objects, 1 bytes
+
 MapChunkRoute1West191:
 .tile:    DB 255
 .palette: DB 1
@@ -5714,6 +6441,10 @@ MapChunkRoute1West191:
 .west:    DB MAP_CHUNK_ROUTE1WEST_189
 
   DB 0;END Route1West191 background objects, 11 bytes
+
+MapSpritesRoute1West191:
+
+  DB 0;END Route1West191 sprite objects, 1 bytes
 
 MapChunkRoute1West192:
 .tile:    DB 255
@@ -5725,6 +6456,10 @@ MapChunkRoute1West192:
 
   DB 0;END Route1West192 background objects, 11 bytes
 
+MapSpritesRoute1West192:
+
+  DB 0;END Route1West192 sprite objects, 1 bytes
+
 MapChunkRoute1West193:
 .tile:    DB 255
 .palette: DB 1
@@ -5734,6 +6469,10 @@ MapChunkRoute1West193:
 .west:    DB MAP_CHUNK_ROUTE1WEST_193
 
   DB 0;END Route1West193 background objects, 11 bytes
+
+MapSpritesRoute1West193:
+
+  DB 0;END Route1West193 sprite objects, 1 bytes
 
 MapChunkRoute1West194:
 .tile:    DB 255
@@ -5745,6 +6484,10 @@ MapChunkRoute1West194:
 
   DB 0;END Route1West194 background objects, 11 bytes
 
+MapSpritesRoute1West194:
+
+  DB 0;END Route1West194 sprite objects, 1 bytes
+
 MapChunkRoute1West195:
 .tile:    DB 255
 .palette: DB 1
@@ -5754,6 +6497,10 @@ MapChunkRoute1West195:
 .west:    DB MAP_CHUNK_ROUTE1WEST_193
 
   DB 0;END Route1West195 background objects, 11 bytes
+
+MapSpritesRoute1West195:
+
+  DB 0;END Route1West195 sprite objects, 1 bytes
 
 MapChunkRoute1West196:
 .tile:    DB 255
@@ -5765,6 +6512,10 @@ MapChunkRoute1West196:
 
   DB 0;END Route1West196 background objects, 11 bytes
 
+MapSpritesRoute1West196:
+
+  DB 0;END Route1West196 sprite objects, 1 bytes
+
 MapChunkRoute1West197:
 .tile:    DB 255
 .palette: DB 1
@@ -5774,6 +6525,10 @@ MapChunkRoute1West197:
 .west:    DB MAP_CHUNK_ROUTE1WEST_203
 
   DB 0;END Route1West197 background objects, 11 bytes
+
+MapSpritesRoute1West197:
+
+  DB 0;END Route1West197 sprite objects, 1 bytes
 
 MapChunkRoute1West198:
 .tile:    DB 255
@@ -5785,6 +6540,10 @@ MapChunkRoute1West198:
 
   DB 0;END Route1West198 background objects, 11 bytes
 
+MapSpritesRoute1West198:
+
+  DB 0;END Route1West198 sprite objects, 1 bytes
+
 MapChunkRoute1West199:
 .tile:    DB 255
 .palette: DB 1
@@ -5794,6 +6553,10 @@ MapChunkRoute1West199:
 .west:    DB MAP_CHUNK_ROUTE1WEST_197
 
   DB 0;END Route1West199 background objects, 11 bytes
+
+MapSpritesRoute1West199:
+
+  DB 0;END Route1West199 sprite objects, 1 bytes
 
 MapChunkRoute1West200:
 .tile:    DB 255
@@ -5805,6 +6568,10 @@ MapChunkRoute1West200:
 
   DB 0;END Route1West200 background objects, 11 bytes
 
+MapSpritesRoute1West200:
+
+  DB 0;END Route1West200 sprite objects, 1 bytes
+
 MapChunkRoute1West201:
 .tile:    DB 255
 .palette: DB 1
@@ -5814,6 +6581,10 @@ MapChunkRoute1West201:
 .west:    DB MAP_CHUNK_ROUTE1WEST_207
 
   DB 0;END Route1West201 background objects, 11 bytes
+
+MapSpritesRoute1West201:
+
+  DB 0;END Route1West201 sprite objects, 1 bytes
 
 MapChunkRoute1West203:
 .tile:    DB 255
@@ -5825,6 +6596,10 @@ MapChunkRoute1West203:
 
   DB 0;END Route1West203 background objects, 11 bytes
 
+MapSpritesRoute1West203:
+
+  DB 0;END Route1West203 sprite objects, 1 bytes
+
 MapChunkRoute1West205:
 .tile:    DB 255
 .palette: DB 1
@@ -5834,6 +6609,10 @@ MapChunkRoute1West205:
 .west:    DB MAP_CHUNK_ROUTE1WEST_205
 
   DB 0;END Route1West205 background objects, 11 bytes
+
+MapSpritesRoute1West205:
+
+  DB 0;END Route1West205 sprite objects, 1 bytes
 
 MapChunkRoute1West207:
 .tile:    DB 255
@@ -5845,6 +6624,10 @@ MapChunkRoute1West207:
 
   DB 0;END Route1West207 background objects, 11 bytes
 
+MapSpritesRoute1West207:
+
+  DB 0;END Route1West207 sprite objects, 1 bytes
+
 MapChunkRoute1West209:
 .tile:    DB 255
 .palette: DB 1
@@ -5854,6 +6637,10 @@ MapChunkRoute1West209:
 .west:    DB MAP_CHUNK_ROUTE1WEST_216
 
   DB 0;END Route1West209 background objects, 11 bytes
+
+MapSpritesRoute1West209:
+
+  DB 0;END Route1West209 sprite objects, 1 bytes
 
 MapChunkRoute1West210:
 .tile:    DB 255
@@ -5865,6 +6652,10 @@ MapChunkRoute1West210:
 
   DB 0;END Route1West210 background objects, 11 bytes
 
+MapSpritesRoute1West210:
+
+  DB 0;END Route1West210 sprite objects, 1 bytes
+
 MapChunkRoute1West211:
 .tile:    DB 255
 .palette: DB 1
@@ -5874,6 +6665,10 @@ MapChunkRoute1West211:
 .west:    DB MAP_CHUNK_ROUTE1WEST_209
 
   DB 0;END Route1West211 background objects, 11 bytes
+
+MapSpritesRoute1West211:
+
+  DB 0;END Route1West211 sprite objects, 1 bytes
 
 MapChunkRoute1West212:
 .tile:    DB 255
@@ -5885,6 +6680,10 @@ MapChunkRoute1West212:
 
   DB 0;END Route1West212 background objects, 11 bytes
 
+MapSpritesRoute1West212:
+
+  DB 0;END Route1West212 sprite objects, 1 bytes
+
 MapChunkRoute1West215:
 .tile:    DB 255
 .palette: DB 1
@@ -5894,6 +6693,10 @@ MapChunkRoute1West215:
 .west:    DB MAP_CHUNK_ROUTE1WEST_220
 
   DB 0;END Route1West215 background objects, 11 bytes
+
+MapSpritesRoute1West215:
+
+  DB 0;END Route1West215 sprite objects, 1 bytes
 
 MapChunkRoute1West216:
 .tile:    DB 255
@@ -5905,6 +6708,10 @@ MapChunkRoute1West216:
 
   DB 0;END Route1West216 background objects, 11 bytes
 
+MapSpritesRoute1West216:
+
+  DB 0;END Route1West216 sprite objects, 1 bytes
+
 MapChunkRoute1West219:
 .tile:    DB 255
 .palette: DB 1
@@ -5914,6 +6721,10 @@ MapChunkRoute1West219:
 .west:    DB MAP_CHUNK_ROUTE1WEST_224
 
   DB 0;END Route1West219 background objects, 11 bytes
+
+MapSpritesRoute1West219:
+
+  DB 0;END Route1West219 sprite objects, 1 bytes
 
 MapChunkRoute1West220:
 .tile:    DB 255
@@ -5925,6 +6736,10 @@ MapChunkRoute1West220:
 
   DB 0;END Route1West220 background objects, 11 bytes
 
+MapSpritesRoute1West220:
+
+  DB 0;END Route1West220 sprite objects, 1 bytes
+
 MapChunkRoute1West221:
 .tile:    DB 255
 .palette: DB 1
@@ -5934,6 +6749,10 @@ MapChunkRoute1West221:
 .west:    DB MAP_CHUNK_ROUTE1WEST_226
 
   DB 0;END Route1West221 background objects, 11 bytes
+
+MapSpritesRoute1West221:
+
+  DB 0;END Route1West221 sprite objects, 1 bytes
 
 MapChunkRoute1West223:
 .tile:    DB 255
@@ -5945,6 +6764,10 @@ MapChunkRoute1West223:
 
   DB 0;END Route1West223 background objects, 11 bytes
 
+MapSpritesRoute1West223:
+
+  DB 0;END Route1West223 sprite objects, 1 bytes
+
 MapChunkRoute1West224:
 .tile:    DB 255
 .palette: DB 1
@@ -5954,6 +6777,10 @@ MapChunkRoute1West224:
 .west:    DB MAP_CHUNK_ROUTE1WEST_223
 
   DB 0;END Route1West224 background objects, 11 bytes
+
+MapSpritesRoute1West224:
+
+  DB 0;END Route1West224 sprite objects, 1 bytes
 
 MapChunkRoute1West225:
 .tile:    DB 255
@@ -5965,6 +6792,10 @@ MapChunkRoute1West225:
 
   DB 0;END Route1West225 background objects, 11 bytes
 
+MapSpritesRoute1West225:
+
+  DB 0;END Route1West225 sprite objects, 1 bytes
+
 MapChunkRoute1West226:
 .tile:    DB 255
 .palette: DB 1
@@ -5974,6 +6805,10 @@ MapChunkRoute1West226:
 .west:    DB MAP_CHUNK_ROUTE1WEST_225
 
   DB 0;END Route1West226 background objects, 11 bytes
+
+MapSpritesRoute1West226:
+
+  DB 0;END Route1West226 sprite objects, 1 bytes
 
 MapChunkRoute1West227:
 .tile:    DB 188
@@ -5985,6 +6820,10 @@ MapChunkRoute1West227:
 
   DB 0;END Route1West227 background objects, 11 bytes
 
+MapSpritesRoute1West227:
+
+  DB 0;END Route1West227 sprite objects, 1 bytes
+
 MapChunkRoute1West228:
 .tile:    DB 188
 .palette: DB 7
@@ -5994,6 +6833,10 @@ MapChunkRoute1West228:
 .west:    DB MAP_CHUNK_ROUTE1WEST_227
 
   DB 0;END Route1West228 background objects, 11 bytes
+
+MapSpritesRoute1West228:
+
+  DB 0;END Route1West228 sprite objects, 1 bytes
 
 MapChunkRoute1West231:
 .tile:    DB 188
@@ -6005,6 +6848,10 @@ MapChunkRoute1West231:
 
   DB 0;END Route1West231 background objects, 11 bytes
 
+MapSpritesRoute1West231:
+
+  DB 0;END Route1West231 sprite objects, 1 bytes
+
 MapChunkRoute1West232:
 .tile:    DB 188
 .palette: DB 7
@@ -6014,6 +6861,10 @@ MapChunkRoute1West232:
 .west:    DB MAP_CHUNK_ROUTE1WEST_231
 
   DB 0;END Route1West232 background objects, 11 bytes
+
+MapSpritesRoute1West232:
+
+  DB 0;END Route1West232 sprite objects, 1 bytes
 
 MapChunkRoute1West233:
 .tile:    DB 188
@@ -6025,6 +6876,10 @@ MapChunkRoute1West233:
 
   DB 0;END Route1West233 background objects, 11 bytes
 
+MapSpritesRoute1West233:
+
+  DB 0;END Route1West233 sprite objects, 1 bytes
+
 MapChunkRoute1West235:
 .tile:    DB 188
 .palette: DB 7
@@ -6035,6 +6890,10 @@ MapChunkRoute1West235:
 
   DB 0;END Route1West235 background objects, 11 bytes
 
+MapSpritesRoute1West235:
+
+  DB 0;END Route1West235 sprite objects, 1 bytes
+
 MapChunkRoute1West236:
 .tile:    DB 188
 .palette: DB 7
@@ -6044,6 +6903,10 @@ MapChunkRoute1West236:
 .west:    DB MAP_CHUNK_BILLETTOWNSEWATER_2
 
   DB 0;END Route1West236 background objects, 11 bytes
+
+MapSpritesRoute1West236:
+
+  DB 0;END Route1West236 sprite objects, 1 bytes
 
 MapChunkRoute1West237:
 .tile:    DB 188
@@ -6063,6 +6926,10 @@ MapChunkRoute1West237:
 
   DB 0;END Route1West237 background objects, 18 bytes
 
+MapSpritesRoute1West237:
+
+  DB 0;END Route1West237 sprite objects, 1 bytes
+
 MapChunkRoute1West238:
 .tile:    DB 188
 .palette: DB 7
@@ -6072,6 +6939,10 @@ MapChunkRoute1West238:
 .west:    DB MAP_CHUNK_ROUTE1WEST_233
 
   DB 0;END Route1West238 background objects, 11 bytes
+
+MapSpritesRoute1West238:
+
+  DB 0;END Route1West238 sprite objects, 1 bytes
 
 MapChunkRoute1West239:
 .tile:    DB 188
@@ -6091,6 +6962,10 @@ MapChunkRoute1West239:
 
   DB 0;END Route1West239 background objects, 18 bytes
 
+MapSpritesRoute1West239:
+
+  DB 0;END Route1West239 sprite objects, 1 bytes
+
 MapChunkRoute1West240:
 .tile:    DB 188
 .palette: DB 7
@@ -6100,6 +6975,10 @@ MapChunkRoute1West240:
 .west:    DB MAP_CHUNK_ROUTE1WEST_240
 
   DB 0;END Route1West240 background objects, 11 bytes
+
+MapSpritesRoute1West240:
+
+  DB 0;END Route1West240 sprite objects, 1 bytes
 
 MapChunkRoute1West241:
 .tile:    DB 188
@@ -6111,6 +6990,10 @@ MapChunkRoute1West241:
 
   DB 0;END Route1West241 background objects, 11 bytes
 
+MapSpritesRoute1West241:
+
+  DB 0;END Route1West241 sprite objects, 1 bytes
+
 MapChunkRoute1West242:
 .tile:    DB 188
 .palette: DB 7
@@ -6121,6 +7004,10 @@ MapChunkRoute1West242:
 
   DB 0;END Route1West242 background objects, 11 bytes
 
+MapSpritesRoute1West242:
+
+  DB 0;END Route1West242 sprite objects, 1 bytes
+
 MapChunkRoute1West243:
 .tile:    DB 188
 .palette: DB 7
@@ -6130,6 +7017,10 @@ MapChunkRoute1West243:
 .west:    DB MAP_CHUNK_ROUTE1WEST_243
 
   DB 0;END Route1West243 background objects, 11 bytes
+
+MapSpritesRoute1West243:
+
+  DB 0;END Route1West243 sprite objects, 1 bytes
 
 MapChunkRoute1West244:
 .tile:    DB 188
@@ -6149,6 +7040,10 @@ MapChunkRoute1West244:
 
   DB 0;END Route1West244 background objects, 18 bytes
 
+MapSpritesRoute1West244:
+
+  DB 0;END Route1West244 sprite objects, 1 bytes
+
 MapChunkRoute1West245:
 .tile:    DB 188
 .palette: DB 7
@@ -6167,6 +7062,10 @@ MapChunkRoute1West245:
 
   DB 0;END Route1West245 background objects, 18 bytes
 
+MapSpritesRoute1West245:
+
+  DB 0;END Route1West245 sprite objects, 1 bytes
+
 MapChunkRoute1West246:
 .tile:    DB 188
 .palette: DB 7
@@ -6177,6 +7076,10 @@ MapChunkRoute1West246:
 
   DB 0;END Route1West246 background objects, 11 bytes
 
+MapSpritesRoute1West246:
+
+  DB 0;END Route1West246 sprite objects, 1 bytes
+
 MapChunkRoute1West247:
 .tile:    DB 188
 .palette: DB 7
@@ -6186,6 +7089,10 @@ MapChunkRoute1West247:
 .west:    DB MAP_CHUNK_ROUTE1WEST_245
 
   DB 0;END Route1West247 background objects, 11 bytes
+
+MapSpritesRoute1West247:
+
+  DB 0;END Route1West247 sprite objects, 1 bytes
 
 MapChunkRoute1West248:
 .tile:    DB 188
@@ -6205,6 +7112,10 @@ MapChunkRoute1West248:
 
   DB 0;END Route1West248 background objects, 18 bytes
 
+MapSpritesRoute1West248:
+
+  DB 0;END Route1West248 sprite objects, 1 bytes
+
 MapChunkRoute1West249:
 .tile:    DB 188
 .palette: DB 7
@@ -6214,6 +7125,10 @@ MapChunkRoute1West249:
 .west:    DB MAP_CHUNK_ROUTE1WEST_247
 
   DB 0;END Route1West249 background objects, 11 bytes
+
+MapSpritesRoute1West249:
+
+  DB 0;END Route1West249 sprite objects, 1 bytes
 
 MapChunkRoute1West250:
 .tile:    DB 188
@@ -6225,6 +7140,10 @@ MapChunkRoute1West250:
 
   DB 0;END Route1West250 background objects, 11 bytes
 
+MapSpritesRoute1West250:
+
+  DB 0;END Route1West250 sprite objects, 1 bytes
+
 MapChunkRoute1West251:
 .tile:    DB 188
 .palette: DB 7
@@ -6235,6 +7154,10 @@ MapChunkRoute1West251:
 
   DB 0;END Route1West251 background objects, 11 bytes
 
+MapSpritesRoute1West251:
+
+  DB 0;END Route1West251 sprite objects, 1 bytes
+
 MapChunkRoute1West252:
 .tile:    DB 188
 .palette: DB 7
@@ -6244,6 +7167,10 @@ MapChunkRoute1West252:
 .west:    DB MAP_CHUNK_ROUTE1WEST_250
 
   DB 0;END Route1West252 background objects, 11 bytes
+
+MapSpritesRoute1West252:
+
+  DB 0;END Route1West252 sprite objects, 1 bytes
 
 MapChunkRoute1West253:
 .tile:    DB 188
@@ -6263,6 +7190,10 @@ MapChunkRoute1West253:
 
   DB 0;END Route1West253 background objects, 18 bytes
 
+MapSpritesRoute1West253:
+
+  DB 0;END Route1West253 sprite objects, 1 bytes
+
 MapChunkRoute1West254:
 .tile:    DB 188
 .palette: DB 7
@@ -6272,6 +7203,10 @@ MapChunkRoute1West254:
 .west:    DB MAP_CHUNK_ROUTE1WEST_252
 
   DB 0;END Route1West254 background objects, 11 bytes
+
+MapSpritesRoute1West254:
+
+  DB 0;END Route1West254 sprite objects, 1 bytes
 
 MapChunkRoute1West255:
 .tile:    DB 188
@@ -6283,6 +7218,10 @@ MapChunkRoute1West255:
 
   DB 0;END Route1West255 background objects, 11 bytes
 
+MapSpritesRoute1West255:
+
+  DB 0;END Route1West255 sprite objects, 1 bytes
+
 MapChunkRoute1West256:
 .tile:    DB 188
 .palette: DB 7
@@ -6292,6 +7231,10 @@ MapChunkRoute1West256:
 .west:    DB MAP_CHUNK_ROUTE1WEST_254
 
   DB 0;END Route1West256 background objects, 11 bytes
+
+MapSpritesRoute1West256:
+
+  DB 0;END Route1West256 sprite objects, 1 bytes
 
 MapChunkRoute1West257:
 .tile:    DB 188
@@ -6311,6 +7254,10 @@ MapChunkRoute1West257:
 
   DB 0;END Route1West257 background objects, 18 bytes
 
+MapSpritesRoute1West257:
+
+  DB 0;END Route1West257 sprite objects, 1 bytes
+
 MapChunkRoute1West258:
 .tile:    DB 188
 .palette: DB 7
@@ -6321,6 +7268,10 @@ MapChunkRoute1West258:
 
   DB 0;END Route1West258 background objects, 11 bytes
 
+MapSpritesRoute1West258:
+
+  DB 0;END Route1West258 sprite objects, 1 bytes
+
 MapChunkRoute1West259:
 .tile:    DB 188
 .palette: DB 7
@@ -6330,6 +7281,10 @@ MapChunkRoute1West259:
 .west:    DB MAP_CHUNK_ROUTE1WEST_257
 
   DB 0;END Route1West259 background objects, 11 bytes
+
+MapSpritesRoute1West259:
+
+  DB 0;END Route1West259 sprite objects, 1 bytes
 
 MapChunkRoute1West260:
 .tile:    DB 188
@@ -6349,6 +7304,10 @@ MapChunkRoute1West260:
 
   DB 0;END Route1West260 background objects, 18 bytes
 
+MapSpritesRoute1West260:
+
+  DB 0;END Route1West260 sprite objects, 1 bytes
+
 MapChunkRoute1West265:
 .tile:    DB 188
 .palette: DB 7
@@ -6358,6 +7317,10 @@ MapChunkRoute1West265:
 .west:    DB MAP_CHUNK_ROUTE1WEST_265
 
   DB 0;END Route1West265 background objects, 11 bytes
+
+MapSpritesRoute1West265:
+
+  DB 0;END Route1West265 sprite objects, 1 bytes
 
 MapChunkRoute1West266:
 .tile:    DB 188
@@ -6377,6 +7340,10 @@ MapChunkRoute1West266:
 
   DB 0;END Route1West266 background objects, 18 bytes
 
+MapSpritesRoute1West266:
+
+  DB 0;END Route1West266 sprite objects, 1 bytes
+
 MapChunkRoute1West269:
 .tile:    DB 255
 .palette: DB 1
@@ -6386,6 +7353,10 @@ MapChunkRoute1West269:
 .west:    DB MAP_CHUNK_ROUTE1WEST_271
 
   DB 0;END Route1West269 background objects, 11 bytes
+
+MapSpritesRoute1West269:
+
+  DB 0;END Route1West269 sprite objects, 1 bytes
 
 MapChunkRoute1West270:
 .tile:    DB 255
@@ -6397,6 +7368,10 @@ MapChunkRoute1West270:
 
   DB 0;END Route1West270 background objects, 11 bytes
 
+MapSpritesRoute1West270:
+
+  DB 0;END Route1West270 sprite objects, 1 bytes
+
 MapChunkRoute1West271:
 .tile:    DB 255
 .palette: DB 1
@@ -6406,6 +7381,10 @@ MapChunkRoute1West271:
 .west:    DB MAP_CHUNK_ROUTE1WEST_270
 
   DB 0;END Route1West271 background objects, 11 bytes
+
+MapSpritesRoute1West271:
+
+  DB 0;END Route1West271 sprite objects, 1 bytes
 
 MapChunkBilletTownSEWater1:
 .tile:    DB 188
@@ -6423,6 +7402,14 @@ MapChunkBilletTownSEWater1:
   DB 32;x2
   DB 5;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB 16;x1
+  DB 0;y1
+  DB 167;tile
+  DB 1;palette
+  DB 21;x2
+  DB 4;y2
+
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 0;x1
   DB 1;y1
@@ -6437,14 +7424,6 @@ MapChunkBilletTownSEWater1:
   DB 141;tile
   DB 1;palette
   DB 32;x2
-  DB 4;y2
-
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-  DB 16;x1
-  DB 0;y1
-  DB 167;tile
-  DB 1;palette
-  DB 21;x2
   DB 4;y2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (7)
@@ -6463,6 +7442,10 @@ MapChunkBilletTownSEWater1:
   DB 4;y2
 
   DB 0;END BilletTownSEWater1 background objects, 53 bytes
+
+MapSpritesBilletTownSEWater1:
+
+  DB 0;END BilletTownSEWater1 sprite objects, 1 bytes
 
 MapChunkBilletTownSEWater2:
 .tile:    DB 188
@@ -6488,14 +7471,6 @@ MapChunkBilletTownSEWater2:
   DB 17;x2
   DB 4;y2
 
-  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
-  DB 21;x1
-  DB 0;y1
-  DB 141;tile
-  DB 1;palette
-  DB 32;x2
-  DB 4;y2
-
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (6)
   DB 0;x1
   DB 0;y1
@@ -6504,12 +7479,24 @@ MapChunkBilletTownSEWater2:
   DB 16;x2
   DB 4;y2
 
+  DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
+  DB 21;x1
+  DB 0;y1
+  DB 141;tile
+  DB 1;palette
+  DB 32;x2
+  DB 4;y2
+
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;Tree (2)
   DB 17;x
   DB 0;y
   DW MapStampTree
 
   DB 0;END BilletTownSEWater2 background objects, 44 bytes
+
+MapSpritesBilletTownSEWater2:
+
+  DB 0;END BilletTownSEWater2 sprite objects, 1 bytes
 
 MapChunkRoute1West174:
 .tile:    DB 255
@@ -6529,6 +7516,10 @@ MapChunkRoute1West174:
 
   DB 0;END Route1West174 background objects, 18 bytes
 
+MapSpritesRoute1West174:
+
+  DB 0;END Route1West174 sprite objects, 1 bytes
+
 MapChunkRoute1West175:
 .tile:    DB 255
 .palette: DB 1
@@ -6546,1251 +7537,6 @@ MapChunkRoute1West175:
   DB 28;y2
 
   DB 0;END Route1West175 background objects, 18 bytes
-
-
-MapOverworldSprites: ;498 bytes
-  DW MapSpritesBilletTownSW
-  DW MapSpritesBilletTownSE
-  DW MapSpritesBilletTownNE
-  DW MapSpritesBilletTownNW
-  DW MapSpritesInfieldChunk
-  DW MapSpritesCenterFieldChunk
-  DW MapSpritesRightFieldChunk
-  DW MapSpritesLeftFieldChunk
-  DW MapSpritesBilletTownSWWater
-  DW MapSpritesBilletTownSEWater
-  DW MapSpritesRoute1West
-  DW MapSpritesRoute1East
-  DW MapSpritesCenterFieldChunk1
-  DW MapSpritesRoute1West1
-  DW MapSpritesRoute1ToVeteranCityWest
-  DW MapSpritesRoute1West3
-  DW MapSpritesVeteranCity
-  DW MapSpritesRoute1West5
-  DW MapSpritesRoute1West6
-  DW MapSpritesRoute1West7
-  DW MapSpritesRoute1West8
-  DW MapSpritesRoute1West9
-  DW MapSpritesRoute1West10
-  DW MapSpritesRoute1West11
-  DW MapSpritesRoute1West12
-  DW MapSpritesRoute1West13
-  DW MapSpritesRoute1West14
-  DW MapSpritesRoute1West15
-  DW MapSpritesRoute1West16
-  DW MapSpritesRoute1West17
-  DW MapSpritesRoute1West18
-  DW MapSpritesRoute1West19
-  DW MapSpritesRoute1West20
-  DW MapSpritesRoute1West21
-  DW MapSpritesRoute1West22
-  DW MapSpritesRoute1West23
-  DW MapSpritesRoute1West24
-  DW MapSpritesRoute1West25
-  DW MapSpritesRoute1West26
-  DW MapSpritesRoute1West27
-  DW MapSpritesRoute1West28
-  DW MapSpritesRoute1West29
-  DW MapSpritesRoute1West30
-  DW MapSpritesRoute1West31
-  DW MapSpritesRoute1West32
-  DW MapSpritesRoute1West33
-  DW MapSpritesRoute1West34
-  DW MapSpritesRoute1West35
-  DW MapSpritesRoute1West36
-  DW MapSpritesRoute1West41
-  DW MapSpritesRoute1West42
-  DW MapSpritesRoute1West43
-  DW MapSpritesRoute1West44
-  DW MapSpritesRoute1West45
-  DW MapSpritesRoute1West46
-  DW MapSpritesRoute1West47
-  DW MapSpritesRoute1West48
-  DW MapSpritesRoute1West49
-  DW MapSpritesRoute1West50
-  DW MapSpritesRoute1West51
-  DW MapSpritesRoute1West52
-  DW MapSpritesRoute1West57
-  DW MapSpritesRoute1West58
-  DW MapSpritesRoute1West59
-  DW MapSpritesRoute1West60
-  DW MapSpritesRoute1West61
-  DW MapSpritesRoute1West62
-  DW MapSpritesRoute1West63
-  DW MapSpritesRoute1West64
-  DW MapSpritesRoute1West65
-  DW MapSpritesRoute1West66
-  DW MapSpritesRoute1West67
-  DW MapSpritesRoute1West68
-  DW MapSpritesRoute1West69
-  DW MapSpritesRoute1West70
-  DW MapSpritesRoute1West71
-  DW MapSpritesRoute1West72
-  DW MapSpritesRoute1West73
-  DW MapSpritesRoute1West74
-  DW MapSpritesRoute1West75
-  DW MapSpritesRoute1West76
-  DW MapSpritesRoute1West77
-  DW MapSpritesRoute1West78
-  DW MapSpritesRoute1West79
-  DW MapSpritesRoute1West80
-  DW MapSpritesRoute1West81
-  DW MapSpritesRoute1West82
-  DW MapSpritesRoute1West85
-  DW MapSpritesRoute1West86
-  DW MapSpritesRoute1West88
-  DW MapSpritesRoute1West89
-  DW MapSpritesRoute1West91
-  DW MapSpritesRoute1West93
-  DW MapSpritesRoute1West95
-  DW MapSpritesRoute1West96
-  DW MapSpritesRoute1West97
-  DW MapSpritesRoute1West98
-  DW MapSpritesRoute1West101
-  DW MapSpritesRoute1West102
-  DW MapSpritesRoute1West103
-  DW MapSpritesRoute1West104
-  DW MapSpritesRoute1West105
-  DW MapSpritesRoute1West106
-  DW MapSpritesRoute1West110
-  DW MapSpritesRoute1West111
-  DW MapSpritesRoute1West112
-  DW MapSpritesRoute1West113
-  DW MapSpritesRoute1West114
-  DW MapSpritesRoute1West115
-  DW MapSpritesRoute1West116
-  DW MapSpritesRoute1West117
-  DW MapSpritesRoute1West118
-  DW MapSpritesRoute1West119
-  DW MapSpritesRoute1West120
-  DW MapSpritesRoute1West121
-  DW MapSpritesRoute1West122
-  DW MapSpritesRoute1West123
-  DW MapSpritesRoute1West124
-  DW MapSpritesRoute1West125
-  DW MapSpritesRoute1West126
-  DW MapSpritesRoute1West127
-  DW MapSpritesRoute1West128
-  DW MapSpritesRoute1West129
-  DW MapSpritesRoute1West130
-  DW MapSpritesRoute1West131
-  DW MapSpritesRoute1West133
-  DW MapSpritesRoute1West135
-  DW MapSpritesRoute1West137
-  DW MapSpritesRoute1West138
-  DW MapSpritesRoute1West139
-  DW MapSpritesRoute1West140
-  DW MapSpritesRoute1West141
-  DW MapSpritesRoute1West142
-  DW MapSpritesRoute1West143
-  DW MapSpritesRoute1West144
-  DW MapSpritesRoute1West145
-  DW MapSpritesRoute1West147
-  DW MapSpritesRoute1West149
-  DW MapSpritesRoute1West150
-  DW MapSpritesRoute1West152
-  DW MapSpritesRoute1West153
-  DW MapSpritesRoute1West154
-  DW MapSpritesRoute1West155
-  DW MapSpritesRoute1West156
-  DW MapSpritesRoute1West157
-  DW MapSpritesRoute1West158
-  DW MapSpritesRoute1West159
-  DW MapSpritesRoute1West161
-  DW MapSpritesRoute1West162
-  DW MapSpritesRoute1West163
-  DW MapSpritesRoute1West164
-  DW MapSpritesRoute1West165
-  DW MapSpritesRoute1West166
-  DW MapSpritesRoute1West167
-  DW MapSpritesCenterFieldChunk2
-  DW MapSpritesCenterFieldChunk3
-  DW MapSpritesCenterFieldChunk4
-  DW MapSpritesCenterFieldChunk5
-  DW MapSpritesCenterFieldChunk6
-  DW MapSpritesCenterFieldChunk7
-  DW MapSpritesCenterFieldChunk8
-  DW MapSpritesRoute1West168
-  DW MapSpritesRoute1West169
-  DW MapSpritesRoute1West170
-  DW MapSpritesRoute1West171
-  DW MapSpritesRoute1West172
-  DW MapSpritesRoute1West173
-  DW MapSpritesRoute1West176
-  DW MapSpritesRoute1West177
-  DW MapSpritesRoute1West178
-  DW MapSpritesRoute1West179
-  DW MapSpritesRoute1West180
-  DW MapSpritesRoute1West181
-  DW MapSpritesRoute1West182
-  DW MapSpritesRoute1West183
-  DW MapSpritesRoute1West184
-  DW MapSpritesRoute1West185
-  DW MapSpritesRoute1West186
-  DW MapSpritesRoute1West187
-  DW MapSpritesRoute1West188
-  DW MapSpritesRoute1West189
-  DW MapSpritesRoute1West190
-  DW MapSpritesRoute1West191
-  DW MapSpritesRoute1West192
-  DW MapSpritesRoute1West193
-  DW MapSpritesRoute1West194
-  DW MapSpritesRoute1West195
-  DW MapSpritesRoute1West196
-  DW MapSpritesRoute1West197
-  DW MapSpritesRoute1West198
-  DW MapSpritesRoute1West199
-  DW MapSpritesRoute1West200
-  DW MapSpritesRoute1West201
-  DW MapSpritesRoute1West203
-  DW MapSpritesRoute1West205
-  DW MapSpritesRoute1West207
-  DW MapSpritesRoute1West209
-  DW MapSpritesRoute1West210
-  DW MapSpritesRoute1West211
-  DW MapSpritesRoute1West212
-  DW MapSpritesRoute1West215
-  DW MapSpritesRoute1West216
-  DW MapSpritesRoute1West219
-  DW MapSpritesRoute1West220
-  DW MapSpritesRoute1West221
-  DW MapSpritesRoute1West223
-  DW MapSpritesRoute1West224
-  DW MapSpritesRoute1West225
-  DW MapSpritesRoute1West226
-  DW MapSpritesRoute1West227
-  DW MapSpritesRoute1West228
-  DW MapSpritesRoute1West231
-  DW MapSpritesRoute1West232
-  DW MapSpritesRoute1West233
-  DW MapSpritesRoute1West235
-  DW MapSpritesRoute1West236
-  DW MapSpritesRoute1West237
-  DW MapSpritesRoute1West238
-  DW MapSpritesRoute1West239
-  DW MapSpritesRoute1West240
-  DW MapSpritesRoute1West241
-  DW MapSpritesRoute1West242
-  DW MapSpritesRoute1West243
-  DW MapSpritesRoute1West244
-  DW MapSpritesRoute1West245
-  DW MapSpritesRoute1West246
-  DW MapSpritesRoute1West247
-  DW MapSpritesRoute1West248
-  DW MapSpritesRoute1West249
-  DW MapSpritesRoute1West250
-  DW MapSpritesRoute1West251
-  DW MapSpritesRoute1West252
-  DW MapSpritesRoute1West253
-  DW MapSpritesRoute1West254
-  DW MapSpritesRoute1West255
-  DW MapSpritesRoute1West256
-  DW MapSpritesRoute1West257
-  DW MapSpritesRoute1West258
-  DW MapSpritesRoute1West259
-  DW MapSpritesRoute1West260
-  DW MapSpritesRoute1West265
-  DW MapSpritesRoute1West266
-  DW MapSpritesRoute1West269
-  DW MapSpritesRoute1West270
-  DW MapSpritesRoute1West271
-  DW MapSpritesBilletTownSEWater1
-  DW MapSpritesBilletTownSEWater2
-  DW MapSpritesRoute1West174
-  DW MapSpritesRoute1West175
-
-;Map Sprites, 249 bytes
-MapSpritesBilletTownSW:
-
-  DB 0;END BilletTownSW sprite objects, 1 bytes
-
-MapSpritesBilletTownSE:
-
-  DB 0;END BilletTownSE sprite objects, 1 bytes
-
-MapSpritesBilletTownNE:
-
-  DB 0;END BilletTownNE sprite objects, 1 bytes
-
-MapSpritesBilletTownNW:
-
-  DB 0;END BilletTownNW sprite objects, 1 bytes
-
-MapSpritesInfieldChunk:
-
-  DB 0;END InfieldChunk sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk:
-
-  DB 0;END CenterFieldChunk sprite objects, 1 bytes
-
-MapSpritesRightFieldChunk:
-
-  DB 0;END RightFieldChunk sprite objects, 1 bytes
-
-MapSpritesLeftFieldChunk:
-
-  DB 0;END LeftFieldChunk sprite objects, 1 bytes
-
-MapSpritesBilletTownSWWater:
-
-  DB 0;END BilletTownSWWater sprite objects, 1 bytes
-
-MapSpritesBilletTownSEWater:
-
-  DB 0;END BilletTownSEWater sprite objects, 1 bytes
-
-MapSpritesRoute1West:
-
-  DB 0;END Route1West sprite objects, 1 bytes
-
-MapSpritesRoute1East:
-
-  DB 0;END Route1East sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk1:
-
-  DB 0;END CenterFieldChunk1 sprite objects, 1 bytes
-
-MapSpritesRoute1West1:
-
-  DB 0;END Route1West1 sprite objects, 1 bytes
-
-MapSpritesRoute1ToVeteranCityWest:
-
-  DB 0;END Route1ToVeteranCityWest sprite objects, 1 bytes
-
-MapSpritesRoute1West3:
-
-  DB 0;END Route1West3 sprite objects, 1 bytes
-
-MapSpritesVeteranCity:
-
-  DB 0;END VeteranCity sprite objects, 1 bytes
-
-MapSpritesRoute1West5:
-
-  DB 0;END Route1West5 sprite objects, 1 bytes
-
-MapSpritesRoute1West6:
-
-  DB 0;END Route1West6 sprite objects, 1 bytes
-
-MapSpritesRoute1West7:
-
-  DB 0;END Route1West7 sprite objects, 1 bytes
-
-MapSpritesRoute1West8:
-
-  DB 0;END Route1West8 sprite objects, 1 bytes
-
-MapSpritesRoute1West9:
-
-  DB 0;END Route1West9 sprite objects, 1 bytes
-
-MapSpritesRoute1West10:
-
-  DB 0;END Route1West10 sprite objects, 1 bytes
-
-MapSpritesRoute1West11:
-
-  DB 0;END Route1West11 sprite objects, 1 bytes
-
-MapSpritesRoute1West12:
-
-  DB 0;END Route1West12 sprite objects, 1 bytes
-
-MapSpritesRoute1West13:
-
-  DB 0;END Route1West13 sprite objects, 1 bytes
-
-MapSpritesRoute1West14:
-
-  DB 0;END Route1West14 sprite objects, 1 bytes
-
-MapSpritesRoute1West15:
-
-  DB 0;END Route1West15 sprite objects, 1 bytes
-
-MapSpritesRoute1West16:
-
-  DB 0;END Route1West16 sprite objects, 1 bytes
-
-MapSpritesRoute1West17:
-
-  DB 0;END Route1West17 sprite objects, 1 bytes
-
-MapSpritesRoute1West18:
-
-  DB 0;END Route1West18 sprite objects, 1 bytes
-
-MapSpritesRoute1West19:
-
-  DB 0;END Route1West19 sprite objects, 1 bytes
-
-MapSpritesRoute1West20:
-
-  DB 0;END Route1West20 sprite objects, 1 bytes
-
-MapSpritesRoute1West21:
-
-  DB 0;END Route1West21 sprite objects, 1 bytes
-
-MapSpritesRoute1West22:
-
-  DB 0;END Route1West22 sprite objects, 1 bytes
-
-MapSpritesRoute1West23:
-
-  DB 0;END Route1West23 sprite objects, 1 bytes
-
-MapSpritesRoute1West24:
-
-  DB 0;END Route1West24 sprite objects, 1 bytes
-
-MapSpritesRoute1West25:
-
-  DB 0;END Route1West25 sprite objects, 1 bytes
-
-MapSpritesRoute1West26:
-
-  DB 0;END Route1West26 sprite objects, 1 bytes
-
-MapSpritesRoute1West27:
-
-  DB 0;END Route1West27 sprite objects, 1 bytes
-
-MapSpritesRoute1West28:
-
-  DB 0;END Route1West28 sprite objects, 1 bytes
-
-MapSpritesRoute1West29:
-
-  DB 0;END Route1West29 sprite objects, 1 bytes
-
-MapSpritesRoute1West30:
-
-  DB 0;END Route1West30 sprite objects, 1 bytes
-
-MapSpritesRoute1West31:
-
-  DB 0;END Route1West31 sprite objects, 1 bytes
-
-MapSpritesRoute1West32:
-
-  DB 0;END Route1West32 sprite objects, 1 bytes
-
-MapSpritesRoute1West33:
-
-  DB 0;END Route1West33 sprite objects, 1 bytes
-
-MapSpritesRoute1West34:
-
-  DB 0;END Route1West34 sprite objects, 1 bytes
-
-MapSpritesRoute1West35:
-
-  DB 0;END Route1West35 sprite objects, 1 bytes
-
-MapSpritesRoute1West36:
-
-  DB 0;END Route1West36 sprite objects, 1 bytes
-
-MapSpritesRoute1West41:
-
-  DB 0;END Route1West41 sprite objects, 1 bytes
-
-MapSpritesRoute1West42:
-
-  DB 0;END Route1West42 sprite objects, 1 bytes
-
-MapSpritesRoute1West43:
-
-  DB 0;END Route1West43 sprite objects, 1 bytes
-
-MapSpritesRoute1West44:
-
-  DB 0;END Route1West44 sprite objects, 1 bytes
-
-MapSpritesRoute1West45:
-
-  DB 0;END Route1West45 sprite objects, 1 bytes
-
-MapSpritesRoute1West46:
-
-  DB 0;END Route1West46 sprite objects, 1 bytes
-
-MapSpritesRoute1West47:
-
-  DB 0;END Route1West47 sprite objects, 1 bytes
-
-MapSpritesRoute1West48:
-
-  DB 0;END Route1West48 sprite objects, 1 bytes
-
-MapSpritesRoute1West49:
-
-  DB 0;END Route1West49 sprite objects, 1 bytes
-
-MapSpritesRoute1West50:
-
-  DB 0;END Route1West50 sprite objects, 1 bytes
-
-MapSpritesRoute1West51:
-
-  DB 0;END Route1West51 sprite objects, 1 bytes
-
-MapSpritesRoute1West52:
-
-  DB 0;END Route1West52 sprite objects, 1 bytes
-
-MapSpritesRoute1West57:
-
-  DB 0;END Route1West57 sprite objects, 1 bytes
-
-MapSpritesRoute1West58:
-
-  DB 0;END Route1West58 sprite objects, 1 bytes
-
-MapSpritesRoute1West59:
-
-  DB 0;END Route1West59 sprite objects, 1 bytes
-
-MapSpritesRoute1West60:
-
-  DB 0;END Route1West60 sprite objects, 1 bytes
-
-MapSpritesRoute1West61:
-
-  DB 0;END Route1West61 sprite objects, 1 bytes
-
-MapSpritesRoute1West62:
-
-  DB 0;END Route1West62 sprite objects, 1 bytes
-
-MapSpritesRoute1West63:
-
-  DB 0;END Route1West63 sprite objects, 1 bytes
-
-MapSpritesRoute1West64:
-
-  DB 0;END Route1West64 sprite objects, 1 bytes
-
-MapSpritesRoute1West65:
-
-  DB 0;END Route1West65 sprite objects, 1 bytes
-
-MapSpritesRoute1West66:
-
-  DB 0;END Route1West66 sprite objects, 1 bytes
-
-MapSpritesRoute1West67:
-
-  DB 0;END Route1West67 sprite objects, 1 bytes
-
-MapSpritesRoute1West68:
-
-  DB 0;END Route1West68 sprite objects, 1 bytes
-
-MapSpritesRoute1West69:
-
-  DB 0;END Route1West69 sprite objects, 1 bytes
-
-MapSpritesRoute1West70:
-
-  DB 0;END Route1West70 sprite objects, 1 bytes
-
-MapSpritesRoute1West71:
-
-  DB 0;END Route1West71 sprite objects, 1 bytes
-
-MapSpritesRoute1West72:
-
-  DB 0;END Route1West72 sprite objects, 1 bytes
-
-MapSpritesRoute1West73:
-
-  DB 0;END Route1West73 sprite objects, 1 bytes
-
-MapSpritesRoute1West74:
-
-  DB 0;END Route1West74 sprite objects, 1 bytes
-
-MapSpritesRoute1West75:
-
-  DB 0;END Route1West75 sprite objects, 1 bytes
-
-MapSpritesRoute1West76:
-
-  DB 0;END Route1West76 sprite objects, 1 bytes
-
-MapSpritesRoute1West77:
-
-  DB 0;END Route1West77 sprite objects, 1 bytes
-
-MapSpritesRoute1West78:
-
-  DB 0;END Route1West78 sprite objects, 1 bytes
-
-MapSpritesRoute1West79:
-
-  DB 0;END Route1West79 sprite objects, 1 bytes
-
-MapSpritesRoute1West80:
-
-  DB 0;END Route1West80 sprite objects, 1 bytes
-
-MapSpritesRoute1West81:
-
-  DB 0;END Route1West81 sprite objects, 1 bytes
-
-MapSpritesRoute1West82:
-
-  DB 0;END Route1West82 sprite objects, 1 bytes
-
-MapSpritesRoute1West85:
-
-  DB 0;END Route1West85 sprite objects, 1 bytes
-
-MapSpritesRoute1West86:
-
-  DB 0;END Route1West86 sprite objects, 1 bytes
-
-MapSpritesRoute1West88:
-
-  DB 0;END Route1West88 sprite objects, 1 bytes
-
-MapSpritesRoute1West89:
-
-  DB 0;END Route1West89 sprite objects, 1 bytes
-
-MapSpritesRoute1West91:
-
-  DB 0;END Route1West91 sprite objects, 1 bytes
-
-MapSpritesRoute1West93:
-
-  DB 0;END Route1West93 sprite objects, 1 bytes
-
-MapSpritesRoute1West95:
-
-  DB 0;END Route1West95 sprite objects, 1 bytes
-
-MapSpritesRoute1West96:
-
-  DB 0;END Route1West96 sprite objects, 1 bytes
-
-MapSpritesRoute1West97:
-
-  DB 0;END Route1West97 sprite objects, 1 bytes
-
-MapSpritesRoute1West98:
-
-  DB 0;END Route1West98 sprite objects, 1 bytes
-
-MapSpritesRoute1West101:
-
-  DB 0;END Route1West101 sprite objects, 1 bytes
-
-MapSpritesRoute1West102:
-
-  DB 0;END Route1West102 sprite objects, 1 bytes
-
-MapSpritesRoute1West103:
-
-  DB 0;END Route1West103 sprite objects, 1 bytes
-
-MapSpritesRoute1West104:
-
-  DB 0;END Route1West104 sprite objects, 1 bytes
-
-MapSpritesRoute1West105:
-
-  DB 0;END Route1West105 sprite objects, 1 bytes
-
-MapSpritesRoute1West106:
-
-  DB 0;END Route1West106 sprite objects, 1 bytes
-
-MapSpritesRoute1West110:
-
-  DB 0;END Route1West110 sprite objects, 1 bytes
-
-MapSpritesRoute1West111:
-
-  DB 0;END Route1West111 sprite objects, 1 bytes
-
-MapSpritesRoute1West112:
-
-  DB 0;END Route1West112 sprite objects, 1 bytes
-
-MapSpritesRoute1West113:
-
-  DB 0;END Route1West113 sprite objects, 1 bytes
-
-MapSpritesRoute1West114:
-
-  DB 0;END Route1West114 sprite objects, 1 bytes
-
-MapSpritesRoute1West115:
-
-  DB 0;END Route1West115 sprite objects, 1 bytes
-
-MapSpritesRoute1West116:
-
-  DB 0;END Route1West116 sprite objects, 1 bytes
-
-MapSpritesRoute1West117:
-
-  DB 0;END Route1West117 sprite objects, 1 bytes
-
-MapSpritesRoute1West118:
-
-  DB 0;END Route1West118 sprite objects, 1 bytes
-
-MapSpritesRoute1West119:
-
-  DB 0;END Route1West119 sprite objects, 1 bytes
-
-MapSpritesRoute1West120:
-
-  DB 0;END Route1West120 sprite objects, 1 bytes
-
-MapSpritesRoute1West121:
-
-  DB 0;END Route1West121 sprite objects, 1 bytes
-
-MapSpritesRoute1West122:
-
-  DB 0;END Route1West122 sprite objects, 1 bytes
-
-MapSpritesRoute1West123:
-
-  DB 0;END Route1West123 sprite objects, 1 bytes
-
-MapSpritesRoute1West124:
-
-  DB 0;END Route1West124 sprite objects, 1 bytes
-
-MapSpritesRoute1West125:
-
-  DB 0;END Route1West125 sprite objects, 1 bytes
-
-MapSpritesRoute1West126:
-
-  DB 0;END Route1West126 sprite objects, 1 bytes
-
-MapSpritesRoute1West127:
-
-  DB 0;END Route1West127 sprite objects, 1 bytes
-
-MapSpritesRoute1West128:
-
-  DB 0;END Route1West128 sprite objects, 1 bytes
-
-MapSpritesRoute1West129:
-
-  DB 0;END Route1West129 sprite objects, 1 bytes
-
-MapSpritesRoute1West130:
-
-  DB 0;END Route1West130 sprite objects, 1 bytes
-
-MapSpritesRoute1West131:
-
-  DB 0;END Route1West131 sprite objects, 1 bytes
-
-MapSpritesRoute1West133:
-
-  DB 0;END Route1West133 sprite objects, 1 bytes
-
-MapSpritesRoute1West135:
-
-  DB 0;END Route1West135 sprite objects, 1 bytes
-
-MapSpritesRoute1West137:
-
-  DB 0;END Route1West137 sprite objects, 1 bytes
-
-MapSpritesRoute1West138:
-
-  DB 0;END Route1West138 sprite objects, 1 bytes
-
-MapSpritesRoute1West139:
-
-  DB 0;END Route1West139 sprite objects, 1 bytes
-
-MapSpritesRoute1West140:
-
-  DB 0;END Route1West140 sprite objects, 1 bytes
-
-MapSpritesRoute1West141:
-
-  DB 0;END Route1West141 sprite objects, 1 bytes
-
-MapSpritesRoute1West142:
-
-  DB 0;END Route1West142 sprite objects, 1 bytes
-
-MapSpritesRoute1West143:
-
-  DB 0;END Route1West143 sprite objects, 1 bytes
-
-MapSpritesRoute1West144:
-
-  DB 0;END Route1West144 sprite objects, 1 bytes
-
-MapSpritesRoute1West145:
-
-  DB 0;END Route1West145 sprite objects, 1 bytes
-
-MapSpritesRoute1West147:
-
-  DB 0;END Route1West147 sprite objects, 1 bytes
-
-MapSpritesRoute1West149:
-
-  DB 0;END Route1West149 sprite objects, 1 bytes
-
-MapSpritesRoute1West150:
-
-  DB 0;END Route1West150 sprite objects, 1 bytes
-
-MapSpritesRoute1West152:
-
-  DB 0;END Route1West152 sprite objects, 1 bytes
-
-MapSpritesRoute1West153:
-
-  DB 0;END Route1West153 sprite objects, 1 bytes
-
-MapSpritesRoute1West154:
-
-  DB 0;END Route1West154 sprite objects, 1 bytes
-
-MapSpritesRoute1West155:
-
-  DB 0;END Route1West155 sprite objects, 1 bytes
-
-MapSpritesRoute1West156:
-
-  DB 0;END Route1West156 sprite objects, 1 bytes
-
-MapSpritesRoute1West157:
-
-  DB 0;END Route1West157 sprite objects, 1 bytes
-
-MapSpritesRoute1West158:
-
-  DB 0;END Route1West158 sprite objects, 1 bytes
-
-MapSpritesRoute1West159:
-
-  DB 0;END Route1West159 sprite objects, 1 bytes
-
-MapSpritesRoute1West161:
-
-  DB 0;END Route1West161 sprite objects, 1 bytes
-
-MapSpritesRoute1West162:
-
-  DB 0;END Route1West162 sprite objects, 1 bytes
-
-MapSpritesRoute1West163:
-
-  DB 0;END Route1West163 sprite objects, 1 bytes
-
-MapSpritesRoute1West164:
-
-  DB 0;END Route1West164 sprite objects, 1 bytes
-
-MapSpritesRoute1West165:
-
-  DB 0;END Route1West165 sprite objects, 1 bytes
-
-MapSpritesRoute1West166:
-
-  DB 0;END Route1West166 sprite objects, 1 bytes
-
-MapSpritesRoute1West167:
-
-  DB 0;END Route1West167 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk2:
-
-  DB 0;END CenterFieldChunk2 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk3:
-
-  DB 0;END CenterFieldChunk3 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk4:
-
-  DB 0;END CenterFieldChunk4 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk5:
-
-  DB 0;END CenterFieldChunk5 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk6:
-
-  DB 0;END CenterFieldChunk6 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk7:
-
-  DB 0;END CenterFieldChunk7 sprite objects, 1 bytes
-
-MapSpritesCenterFieldChunk8:
-
-  DB 0;END CenterFieldChunk8 sprite objects, 1 bytes
-
-MapSpritesRoute1West168:
-
-  DB 0;END Route1West168 sprite objects, 1 bytes
-
-MapSpritesRoute1West169:
-
-  DB 0;END Route1West169 sprite objects, 1 bytes
-
-MapSpritesRoute1West170:
-
-  DB 0;END Route1West170 sprite objects, 1 bytes
-
-MapSpritesRoute1West171:
-
-  DB 0;END Route1West171 sprite objects, 1 bytes
-
-MapSpritesRoute1West172:
-
-  DB 0;END Route1West172 sprite objects, 1 bytes
-
-MapSpritesRoute1West173:
-
-  DB 0;END Route1West173 sprite objects, 1 bytes
-
-MapSpritesRoute1West176:
-
-  DB 0;END Route1West176 sprite objects, 1 bytes
-
-MapSpritesRoute1West177:
-
-  DB 0;END Route1West177 sprite objects, 1 bytes
-
-MapSpritesRoute1West178:
-
-  DB 0;END Route1West178 sprite objects, 1 bytes
-
-MapSpritesRoute1West179:
-
-  DB 0;END Route1West179 sprite objects, 1 bytes
-
-MapSpritesRoute1West180:
-
-  DB 0;END Route1West180 sprite objects, 1 bytes
-
-MapSpritesRoute1West181:
-
-  DB 0;END Route1West181 sprite objects, 1 bytes
-
-MapSpritesRoute1West182:
-
-  DB 0;END Route1West182 sprite objects, 1 bytes
-
-MapSpritesRoute1West183:
-
-  DB 0;END Route1West183 sprite objects, 1 bytes
-
-MapSpritesRoute1West184:
-
-  DB 0;END Route1West184 sprite objects, 1 bytes
-
-MapSpritesRoute1West185:
-
-  DB 0;END Route1West185 sprite objects, 1 bytes
-
-MapSpritesRoute1West186:
-
-  DB 0;END Route1West186 sprite objects, 1 bytes
-
-MapSpritesRoute1West187:
-
-  DB 0;END Route1West187 sprite objects, 1 bytes
-
-MapSpritesRoute1West188:
-
-  DB 0;END Route1West188 sprite objects, 1 bytes
-
-MapSpritesRoute1West189:
-
-  DB 0;END Route1West189 sprite objects, 1 bytes
-
-MapSpritesRoute1West190:
-
-  DB 0;END Route1West190 sprite objects, 1 bytes
-
-MapSpritesRoute1West191:
-
-  DB 0;END Route1West191 sprite objects, 1 bytes
-
-MapSpritesRoute1West192:
-
-  DB 0;END Route1West192 sprite objects, 1 bytes
-
-MapSpritesRoute1West193:
-
-  DB 0;END Route1West193 sprite objects, 1 bytes
-
-MapSpritesRoute1West194:
-
-  DB 0;END Route1West194 sprite objects, 1 bytes
-
-MapSpritesRoute1West195:
-
-  DB 0;END Route1West195 sprite objects, 1 bytes
-
-MapSpritesRoute1West196:
-
-  DB 0;END Route1West196 sprite objects, 1 bytes
-
-MapSpritesRoute1West197:
-
-  DB 0;END Route1West197 sprite objects, 1 bytes
-
-MapSpritesRoute1West198:
-
-  DB 0;END Route1West198 sprite objects, 1 bytes
-
-MapSpritesRoute1West199:
-
-  DB 0;END Route1West199 sprite objects, 1 bytes
-
-MapSpritesRoute1West200:
-
-  DB 0;END Route1West200 sprite objects, 1 bytes
-
-MapSpritesRoute1West201:
-
-  DB 0;END Route1West201 sprite objects, 1 bytes
-
-MapSpritesRoute1West203:
-
-  DB 0;END Route1West203 sprite objects, 1 bytes
-
-MapSpritesRoute1West205:
-
-  DB 0;END Route1West205 sprite objects, 1 bytes
-
-MapSpritesRoute1West207:
-
-  DB 0;END Route1West207 sprite objects, 1 bytes
-
-MapSpritesRoute1West209:
-
-  DB 0;END Route1West209 sprite objects, 1 bytes
-
-MapSpritesRoute1West210:
-
-  DB 0;END Route1West210 sprite objects, 1 bytes
-
-MapSpritesRoute1West211:
-
-  DB 0;END Route1West211 sprite objects, 1 bytes
-
-MapSpritesRoute1West212:
-
-  DB 0;END Route1West212 sprite objects, 1 bytes
-
-MapSpritesRoute1West215:
-
-  DB 0;END Route1West215 sprite objects, 1 bytes
-
-MapSpritesRoute1West216:
-
-  DB 0;END Route1West216 sprite objects, 1 bytes
-
-MapSpritesRoute1West219:
-
-  DB 0;END Route1West219 sprite objects, 1 bytes
-
-MapSpritesRoute1West220:
-
-  DB 0;END Route1West220 sprite objects, 1 bytes
-
-MapSpritesRoute1West221:
-
-  DB 0;END Route1West221 sprite objects, 1 bytes
-
-MapSpritesRoute1West223:
-
-  DB 0;END Route1West223 sprite objects, 1 bytes
-
-MapSpritesRoute1West224:
-
-  DB 0;END Route1West224 sprite objects, 1 bytes
-
-MapSpritesRoute1West225:
-
-  DB 0;END Route1West225 sprite objects, 1 bytes
-
-MapSpritesRoute1West226:
-
-  DB 0;END Route1West226 sprite objects, 1 bytes
-
-MapSpritesRoute1West227:
-
-  DB 0;END Route1West227 sprite objects, 1 bytes
-
-MapSpritesRoute1West228:
-
-  DB 0;END Route1West228 sprite objects, 1 bytes
-
-MapSpritesRoute1West231:
-
-  DB 0;END Route1West231 sprite objects, 1 bytes
-
-MapSpritesRoute1West232:
-
-  DB 0;END Route1West232 sprite objects, 1 bytes
-
-MapSpritesRoute1West233:
-
-  DB 0;END Route1West233 sprite objects, 1 bytes
-
-MapSpritesRoute1West235:
-
-  DB 0;END Route1West235 sprite objects, 1 bytes
-
-MapSpritesRoute1West236:
-
-  DB 0;END Route1West236 sprite objects, 1 bytes
-
-MapSpritesRoute1West237:
-
-  DB 0;END Route1West237 sprite objects, 1 bytes
-
-MapSpritesRoute1West238:
-
-  DB 0;END Route1West238 sprite objects, 1 bytes
-
-MapSpritesRoute1West239:
-
-  DB 0;END Route1West239 sprite objects, 1 bytes
-
-MapSpritesRoute1West240:
-
-  DB 0;END Route1West240 sprite objects, 1 bytes
-
-MapSpritesRoute1West241:
-
-  DB 0;END Route1West241 sprite objects, 1 bytes
-
-MapSpritesRoute1West242:
-
-  DB 0;END Route1West242 sprite objects, 1 bytes
-
-MapSpritesRoute1West243:
-
-  DB 0;END Route1West243 sprite objects, 1 bytes
-
-MapSpritesRoute1West244:
-
-  DB 0;END Route1West244 sprite objects, 1 bytes
-
-MapSpritesRoute1West245:
-
-  DB 0;END Route1West245 sprite objects, 1 bytes
-
-MapSpritesRoute1West246:
-
-  DB 0;END Route1West246 sprite objects, 1 bytes
-
-MapSpritesRoute1West247:
-
-  DB 0;END Route1West247 sprite objects, 1 bytes
-
-MapSpritesRoute1West248:
-
-  DB 0;END Route1West248 sprite objects, 1 bytes
-
-MapSpritesRoute1West249:
-
-  DB 0;END Route1West249 sprite objects, 1 bytes
-
-MapSpritesRoute1West250:
-
-  DB 0;END Route1West250 sprite objects, 1 bytes
-
-MapSpritesRoute1West251:
-
-  DB 0;END Route1West251 sprite objects, 1 bytes
-
-MapSpritesRoute1West252:
-
-  DB 0;END Route1West252 sprite objects, 1 bytes
-
-MapSpritesRoute1West253:
-
-  DB 0;END Route1West253 sprite objects, 1 bytes
-
-MapSpritesRoute1West254:
-
-  DB 0;END Route1West254 sprite objects, 1 bytes
-
-MapSpritesRoute1West255:
-
-  DB 0;END Route1West255 sprite objects, 1 bytes
-
-MapSpritesRoute1West256:
-
-  DB 0;END Route1West256 sprite objects, 1 bytes
-
-MapSpritesRoute1West257:
-
-  DB 0;END Route1West257 sprite objects, 1 bytes
-
-MapSpritesRoute1West258:
-
-  DB 0;END Route1West258 sprite objects, 1 bytes
-
-MapSpritesRoute1West259:
-
-  DB 0;END Route1West259 sprite objects, 1 bytes
-
-MapSpritesRoute1West260:
-
-  DB 0;END Route1West260 sprite objects, 1 bytes
-
-MapSpritesRoute1West265:
-
-  DB 0;END Route1West265 sprite objects, 1 bytes
-
-MapSpritesRoute1West266:
-
-  DB 0;END Route1West266 sprite objects, 1 bytes
-
-MapSpritesRoute1West269:
-
-  DB 0;END Route1West269 sprite objects, 1 bytes
-
-MapSpritesRoute1West270:
-
-  DB 0;END Route1West270 sprite objects, 1 bytes
-
-MapSpritesRoute1West271:
-
-  DB 0;END Route1West271 sprite objects, 1 bytes
-
-MapSpritesBilletTownSEWater1:
-
-  DB 0;END BilletTownSEWater1 sprite objects, 1 bytes
-
-MapSpritesBilletTownSEWater2:
-
-  DB 0;END BilletTownSEWater2 sprite objects, 1 bytes
-
-MapSpritesRoute1West174:
-
-  DB 0;END Route1West174 sprite objects, 1 bytes
 
 MapSpritesRoute1West175:
 

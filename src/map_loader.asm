@@ -4,7 +4,7 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
-; ROUTINES THAT SWITCH TO THE CURRENT MAP BANK, DO SOME WORK, AND SWITCH BACK
+; ROUTINES THAT SWITCH TO A BANK, DO SOME WORK, AND SWITCH BACK
 ; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
 ; MoveMapLeft
@@ -17,6 +17,7 @@ SECTION "Map Loader", ROM0
 ; GetMapText                   a = text index, returns text in str_buffer
 ; EnterMapDoor                 a = door index
 ; RunMapScript                 a = script index
+; CopyMapSpritesToOAMBuffer    iterates through map sprites, copying values to oam_buffer
 
 ; ROUTINES THAT EXPECT TO ALREADY BE ON THE CURRENT MAP BANK
 ; DrawMapLeftEdge              draws column of map tile to background off-screen left
@@ -86,7 +87,7 @@ GetMapText::;a = text index, returns text in str_buffer
   call SetBank
   ret
 
-EnterMapDoor:;a = door index
+EnterMapDoor::;a = door index
   ld b, a;index
   ld a, [loaded_bank]
   push af;current bank
@@ -163,6 +164,54 @@ RunMapScript::;a = script index
 .return 
 
   pop af;previous bank
+  call SetBank
+  ret
+
+CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_buffer
+  ld a, [loaded_bank]
+  push af;current bank
+  ld hl, oam_buffer+16;4 sprites for user avatar * 4 bytes per sprite
+  ld de, map_buffer
+  ld a, [map_sprite_count]
+.loopMapSprites
+    push af;count
+    ld a, [de];bank
+    inc de
+    call SetBank
+    ld a, [de];lower address
+    ld c, a
+    inc de
+    ld a, [de];upper address
+    ld b, a
+    inc de
+    push bc;map sprite address
+    ld a, [rSCX]
+    ld b, a;bg scroll x
+    ld a, [de];x
+    sub a, b;x-scroll x
+    ld b, a;x-scroll x
+    inc de
+    ld a, [rSCY]
+    ld c, a;bg scroll y
+    ld a, [de];y
+    sub a, c;y-scroll y
+    inc de
+    ld [hli], a;y
+    ld a, b;x
+    ld [hli], a
+    pop bc;map sprite address, map object type/collision flags
+    inc bc;initial x 
+    inc bc;initial y
+    inc bc;tile
+    ld a, [bc];tile
+    ld [hli], a;tile
+    inc bc;palette
+    ld a, [bc]
+    ld [hli], a
+    pop af;count
+    dec a
+    jr nz, .loopMapSprites
+  pop af;bank
   call SetBank
   ret
 
@@ -952,15 +1001,22 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
       dec a
       jr nz, .loopMapSprites
   .addSpritesToBuffer;hl = next map sprite address
-    ld [_breakpoint], a
-    ld d, h
-    ld e, l
     ld a, [map_sprite_count]
     inc a
     ld [map_sprite_count], a
-    pop hl;current sprite address
-    ld bc, 5
-    call mem_Copy
+    pop de;current sprite address
+    ld a, [loaded_bank]
+    ld [hli], a;bank
+    ld a, e
+    ld [hli], a;lower byte
+    ld a, d
+    ld [hli], a;upper byte
+    inc de
+    ld a, [de];x
+    ld [hli], a;x
+    inc de
+    ld a, [de];y
+    ld [hli], a;y
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer
     pop af;discard count

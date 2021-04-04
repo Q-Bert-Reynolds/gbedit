@@ -50,6 +50,7 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
     push bc;c = collision
     call AnimateJump
   .waitVBL
+    call CopyMapSpritesToOAMBuffer
     call gbdk_WaitVBL
     pop bc;c = collision
     pop af;steps left

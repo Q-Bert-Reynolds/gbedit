@@ -3,7 +3,6 @@ Priority
 - load/interact characters and items from map data
   - map sprites should be cleared from buffer after going through a door
   - after moving, iterate through array and oam_ram removing sprites that are far enough off screen
-  - every frame, iterate through array copying sprites to oam_buffer
 - using the computer
   - Bill's PC (will allow roster changes!!!)
   - Doc's PC

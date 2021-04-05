@@ -188,18 +188,20 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     ld a, [rSCX]
     ld b, a;bg scroll x
     ld a, [de];x
-    sub a, b;x-scroll x
-    ld b, a;x-scroll x
+    add a, 8;x+8
+    sub a, b;x+8-scroll x
+    ld b, a;x+8-scroll x
     inc de
     ld a, [rSCY]
     ld c, a;bg scroll y
     ld a, [de];y
-    sub a, c;y-scroll y
+    add a, 10;y+10... why isn't this 8? exporter?
+    sub a, c;y+10-scroll y
     inc de
     ld [hli], a;y
     ld a, b;x
     ld [hli], a
-    pop bc;map sprite address, map object type/collision flags
+    pop bc;map sprite address, [map object type/collision flags]
     inc bc;initial x 
     inc bc;initial y
     inc bc;tile
@@ -967,16 +969,18 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ld d, a
     ld a, [hli];y
     ld e, a
-  .testXY
-    call TestMapObjectMinXY
-    jr z, .outOfRange
-    call TestMapObjectMaxXY
-    jr z, .outOfRange
+  ; .testXY
+  ;   call TestMapObjectMinXY
+  ;   jr z, .outOfRange
+  ;   call TestMapObjectMaxXY
+  ;   jr z, .outOfRange
   .testBankAndAddress
     ld hl, map_buffer
     ld a, [loaded_bank]
     ld b, a;bank
     ld a, [map_sprite_count]
+    and a
+    jr z, .addSpritesToBuffer
     pop de;current sprite address
     push de;current sprite address
   .loopMapSprites
@@ -1000,6 +1004,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
       pop af;count
       dec a
       jr nz, .loopMapSprites
+
   .addSpritesToBuffer;hl = next map sprite address
     ld a, [map_sprite_count]
     inc a

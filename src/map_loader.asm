@@ -555,14 +555,25 @@ SetMapPalettes::
   ld a, [hl]
   ld h, a
   ld l, b;hl = palette address
-  ld a, %10000000
+  push hl;palette address
+  ld a, BCPSF_AUTOINC
   ldh [rBCPS], a
   ld c, 8*2*4;8 palettes * 2B / color * 4 colors / palette
-.loop
+.bgLoop
     ld a, [hli]
     ldh [rBCPD], a
     dec c
-    jr nz, .loop
+    jr nz, .bgLoop
+
+  pop hl;palette address
+  ld a, OCPSF_AUTOINC
+  ldh [rOCPS], a
+  ld c, 7*2*4;7 palettes * 2B / color * 4 colors / palette
+.spriteLoop
+    ld a, [hli]
+    ldh [rOCPD], a
+    dec c
+    jr nz, .spriteLoop
   pop af;previous bank
   call SetBank
   ret

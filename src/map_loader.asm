@@ -1036,6 +1036,11 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     inc de
     ld a, [de];y
     ld [hli], a;y
+    ld h, d
+    ld l, e
+    inc hl;pal
+    inc hl;tile
+    inc hl;next
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer
     pop af;discard count

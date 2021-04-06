@@ -57,6 +57,7 @@ MOVE_PLAYER: MACRO;\1 = animation address, \2 = map move routine, \3 = map draw 
     dec a
     jr nz, .loop
   call FixMapScroll
+  call CopyMapSpritesToOAMBuffer
 IF !ISCONST(\3)
   call GetCurrentMap
   ld b, a

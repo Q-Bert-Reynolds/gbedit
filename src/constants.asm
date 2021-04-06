@@ -237,6 +237,8 @@ MAP_NORTH            EQU 2;skip tile & pal
 MAP_EAST             EQU 3
 MAP_SOUTH            EQU 4
 MAP_WEST             EQU 5
+MAP_SPRITE_SIZE      EQU 5;bytes... bank, address, position
+MAP_BUFFER_SIZE      EQU 36 * MAP_SPRITE_SIZE;max 40 sprites - 4 sprites used by user avatar
 
 ;sizes
 MAX_ITEMS        EQU 20

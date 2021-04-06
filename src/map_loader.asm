@@ -17,6 +17,7 @@ SECTION "Map Loader", ROM0
 ; GetMapText                   a = text index, returns text in str_buffer
 ; EnterMapDoor                 a = door index
 ; RunMapScript                 a = script index
+; ClearMapSprites              removes map sprites from screen and buffer
 ; CopyMapSpritesToOAMBuffer    iterates through map sprites, copying values to oam_buffer
 
 ; ROUTINES THAT EXPECT TO ALREADY BE ON THE CURRENT MAP BANK
@@ -121,8 +122,9 @@ EnterMapDoor::;a = door index
 
   call SetMapTiles
   call SetMapPalettes
+  call ClearMapSprites
   call DrawMapToScreen
-
+  
   pop af;previous bank
   call SetBank
 
@@ -136,7 +138,7 @@ RunMapScript::;a = script index
   call GetCurrentMap
   call SetBank
 
-  ld bc, 13
+  ld bc, 11
   add hl, bc;[hl] = lower byte of doors address
   ld a, [hli]
   ld c, a
@@ -165,6 +167,17 @@ RunMapScript::;a = script index
 
   pop af;previous bank
   call SetBank
+  ret
+
+ClearMapSprites::
+  xor a
+  ld hl, oam_buffer+4*4
+  ld bc, 36*4
+  call mem_Set
+  xor a
+  ld hl, map_buffer
+  ld bc, MAP_BUFFER_SIZE
+  call mem_Set
   ret
 
 CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_buffer
@@ -824,6 +837,7 @@ DrawMapToScreen::
 .finish
   pop af;previous bank
   call SetBank
+  call CopyMapSpritesToOAMBuffer
   ret
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh

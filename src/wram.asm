@@ -164,7 +164,7 @@ SECTION "Buffers", WRAMX
 tile_buffer:: DS BUFFER_SIZE
 bkg_buffer:: DS BUFFER_SIZE
 win_buffer:: DS BUFFER_SIZE
-map_buffer:: DS 5*36;bank, address, & position for max 36 sprites... used with map_sprite_count
+map_buffer:: DS MAP_BUFFER_SIZE
 cmd_buffer:: DS BUFFER_SIZE/2
 str_buffer:: DS 64
 name_buffer:: DS 16

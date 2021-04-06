@@ -3,6 +3,7 @@ Priority
 - load/interact characters and items from map data
   - map sprites should be cleared from buffer after going through a door
   - after moving, iterate through array and oam_ram removing sprites that are far enough off screen
+  - handle sprite collisions
 - using the computer
   - Bill's PC (will allow roster changes!!!)
   - Doc's PC
@@ -64,6 +65,7 @@ Start
 
 Play Ball
 
+- transition animation should also set tile palettes
 - offers accepted by unsigned players should end game
 - set contact power from move, player, and barrel
 - if opposing pitcher is ahead - throw more balls, behind - throw more strikes

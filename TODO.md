@@ -1,7 +1,6 @@
 Priority
 
 - load/interact characters and items from map data
-  - after moving, iterate through array and oam_ram removing sprites that are far enough off screen
   - handle sprite collisions
 - using the computer
   - Bill's PC (will allow roster changes!!!)

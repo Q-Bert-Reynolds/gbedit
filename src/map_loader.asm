@@ -186,6 +186,8 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
   ld hl, oam_buffer+16;4 sprites for user avatar * 4 bytes per sprite
   ld de, map_buffer
   ld a, [map_sprite_count]
+  and a
+  ret z
 .loopMapSprites
     push af;count
     ld a, [de];bank
@@ -204,12 +206,18 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     add a, 8;x+8
     sub a, b;x+8-scroll x
     ld b, a;x+8-scroll x
+    BETWEEN 192, 224
+    jr nz, .removeSprite
     inc de
     ld a, [rSCY]
     ld c, a;bg scroll y
     ld a, [de];y
     add a, 10;y+10... why isn't this 8? exporter?
     sub a, c;y+10-scroll y
+    ld c, a
+    BETWEEN 192, 224
+    ld a, c
+    jr nz, .offScreenY
     inc de
     ld [hli], a;y
     ld a, b;x
@@ -225,10 +233,36 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     ld [hli], a
     pop af;count
     dec a
-    jr nz, .loopMapSprites
+    jp nz, .loopMapSprites
+.clearRemainingOAM;TODO: set the rest of OAM to 0
+
+.exit
   pop af;bank
   call SetBank
   ret
+.offScreenY
+  dec de;[x]
+.removeSprite
+  pop bc;discard map sprite address
+  push hl;OAM
+  dec de;[upper map sprite address]
+  dec de;[lower map sprite address]
+  dec de;[bank], sprite to be removed
+.removeLoop
+    ld hl, 5
+    ld bc, 5
+    add hl, de;next sprite
+    push hl;next sprite
+    call mem_Copy
+    pop de;last sprite
+    ld a, [de]
+    and a
+    jr nz, .removeLoop
+  pop hl;OAM
+  pop af;sprites left
+  dec a
+  jp nz, .loopMapSprites
+  jp .clearRemainingOAM
 
 GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
   ld a, [loaded_bank]
@@ -994,11 +1028,14 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ld d, a
     ld a, [hli];y
     ld e, a
+
+  ;TODO: figure out why clipping doesn't work correctly
   ; .testXY
   ;   call TestMapObjectMinXY
   ;   jr z, .outOfRange
   ;   call TestMapObjectMaxXY
   ;   jr z, .outOfRange
+
   .testBankAndAddress
     ld hl, map_buffer
     ld a, [loaded_bank]
@@ -1049,8 +1086,8 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ld [hli], a;y
     ld h, d
     ld l, e
-    inc hl;pal
     inc hl;tile
+    inc hl;pal
     inc hl;next
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer
@@ -1061,8 +1098,9 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     jr .loadSpritesLoop
   .outOfRange
     pop de;toss current sprite address
-    inc hl;skip tile
-    inc hl;skip palette
+    inc hl;tile
+    inc hl;palette
+    inc hl;next
     jr .loadSpritesLoop
 
 TestMapObjectMinXY:; de = xy, max XY in _u,_v, returns xy in de, sets z if out of range

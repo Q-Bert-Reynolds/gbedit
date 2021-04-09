@@ -7,6 +7,7 @@ SECTION "Map Loader", ROM0
 ; ROUTINES THAT SWITCH TO A BANK, DO SOME WORK, AND SWITCH BACK
 ; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
+; GetSpriteCollision           returns z if no collision
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
@@ -175,7 +176,8 @@ ClearMapSprites::
   ld bc, 36*4
   call mem_Set
   xor a
-  ld hl, map_buffer
+  ld [map_sprite_count], a
+  ld hl, map_sprite_buffer
   ld bc, MAP_BUFFER_SIZE
   call mem_Set
   ret
@@ -184,22 +186,12 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
   ld a, [loaded_bank]
   push af;current bank
   ld hl, oam_buffer+16;4 sprites for user avatar * 4 bytes per sprite
-  ld de, map_buffer
+  ld de, map_sprite_buffer
   ld a, [map_sprite_count]
   and a
   ret z
 .loopMapSprites
     push af;count
-    ld a, [de];bank
-    inc de
-    call SetBank
-    ld a, [de];lower address
-    ld c, a
-    inc de
-    ld a, [de];upper address
-    ld b, a
-    inc de
-    push bc;map sprite address
     ld a, [rSCX]
     ld b, a;bg scroll x
     ld a, [de];x
@@ -216,13 +208,21 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     sub a, c;y+10-scroll y
     ld c, a
     BETWEEN 192, 224
-    ld a, c
     jr nz, .offScreenY
     inc de
+    ld a, c;y
     ld [hli], a;y
     ld a, b;x
     ld [hli], a
-    pop bc;map sprite address, [map object type/collision flags]
+    ld a, [de];bank
+    inc de
+    call SetBank
+    ld a, [de];lower address
+    ld c, a
+    inc de
+    ld a, [de];upper address
+    ld b, a;bc = map sprite address, [bc] = map object type/collision flags
+    inc de;next map sprite buffer address
     inc bc;initial x 
     inc bc;initial y
     inc bc;tile
@@ -241,13 +241,9 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
   call SetBank
   ret
 .offScreenY
-  dec de;[x]
+  dec de;x
 .removeSprite
-  pop bc;discard map sprite address
   push hl;OAM
-  dec de;[upper map sprite address]
-  dec de;[lower map sprite address]
-  dec de;[bank], sprite to be removed
 .removeLoop
     ld hl, 5
     ld bc, 5
@@ -419,6 +415,26 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
   cp a, MAP_COLLISION_NONE
   jp z, .loop
   cp a, MAP_COLLISION_GRASS
+  ret
+
+GetSpriteCollision::;de = xy, returns z if no collision, collision type in a, extra data in [hl]
+  PUSH_VAR loaded_bank
+  ld a, [map_sprite_count]
+  and a
+  ret z
+  ld hl, map_sprite_buffer
+.loop
+    ld a, [hli];bank
+    call SetBank
+    ld a, [hli];lower byte of address
+    ld c, a
+    ld a, [hli];upper byte of address
+    ld b, a
+    push bc;jump address
+
+.finish
+  POP_VAR loaded_bank
+  call SetBank
   ret
 
 ;HACK: rounds rSCX and rSCY to nearest multiple of 8
@@ -1037,9 +1053,7 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
   ;   jr z, .outOfRange
 
   .testBankAndAddress
-    ld hl, map_buffer
-    ld a, [loaded_bank]
-    ld b, a;bank
+    ld hl, map_sprite_buffer
     ld a, [map_sprite_count]
     and a
     jr z, .addSpritesToBuffer
@@ -1047,48 +1061,49 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     push de;current sprite address
   .loopMapSprites
       push af;count
+      inc hl;skip x
+      inc hl;skip y
+      ld a, [loaded_bank]
+      ld b, a;bank
       ld a, [hli];bank
       cp a, b;check bank
       jr nz, .bankMismatch
       ld a, [hli];lower byte of address
       cp a, e;compare lower byte
       jr nz, .addressMismatch
-      ld a, [hl];upper byte of address
+      ld a, [hli];upper byte of address
       cp a, d;compare upper byte
       jr nz, .addressMismatch
       jr .spriteAlreadyInBuffer
     .bankMismatch
       inc hl;skip lower address byte
-    .addressMismatch
       inc hl;skip upper address byte
-      inc hl;skip x
-      inc hl;skip y
+    .addressMismatch
       pop af;count
       dec a
       jr nz, .loopMapSprites
 
-  .addSpritesToBuffer;hl = next map sprite address
+  .addSpritesToBuffer;hl = next map sprite buffer address
     ld a, [map_sprite_count]
     inc a
     ld [map_sprite_count], a
     pop de;current sprite address
+    inc de;skip obj/collision type
+    ld a, [de];x
+    ld [hli], a;x
+    inc de
+    ld a, [de];y
+    ld [hli], a;y
+    dec de;x
+    dec de;current sprite address
     ld a, [loaded_bank]
     ld [hli], a;bank
     ld a, e
     ld [hli], a;lower byte
     ld a, d
     ld [hli], a;upper byte
-    inc de
-    ld a, [de];x
-    ld [hli], a;x
-    inc de
-    ld a, [de];y
-    ld [hli], a;y
-    ld h, d
-    ld l, e
-    inc hl;tile
-    inc hl;pal
-    inc hl;next
+    ld hl, 5
+    add hl, de
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer
     pop af;discard count

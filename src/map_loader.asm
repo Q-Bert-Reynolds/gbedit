@@ -208,9 +208,9 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     sub a, c;y+10-scroll y
     ld c, a
     BETWEEN 192, 224
+    ld a, c;y
     jr nz, .offScreenY
     inc de
-    ld a, c;y
     ld [hli], a;y
     ld a, b;x
     ld [hli], a
@@ -1054,6 +1054,8 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
 
   .testBankAndAddress
     ld hl, map_sprite_buffer
+    ld a, [loaded_bank]
+    ld b, a;bank
     ld a, [map_sprite_count]
     and a
     jr z, .addSpritesToBuffer
@@ -1063,22 +1065,20 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
       push af;count
       inc hl;skip x
       inc hl;skip y
-      ld a, [loaded_bank]
-      ld b, a;bank
       ld a, [hli];bank
       cp a, b;check bank
       jr nz, .bankMismatch
       ld a, [hli];lower byte of address
       cp a, e;compare lower byte
       jr nz, .addressMismatch
-      ld a, [hli];upper byte of address
+      ld a, [hl];upper byte of address
       cp a, d;compare upper byte
       jr nz, .addressMismatch
       jr .spriteAlreadyInBuffer
     .bankMismatch
       inc hl;skip lower address byte
-      inc hl;skip upper address byte
     .addressMismatch
+      inc hl;skip upper address byte
       pop af;count
       dec a
       jr nz, .loopMapSprites
@@ -1088,21 +1088,21 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     inc a
     ld [map_sprite_count], a
     pop de;current sprite address
+    push de
     inc de;skip obj/collision type
     ld a, [de];x
     ld [hli], a;x
     inc de
     ld a, [de];y
     ld [hli], a;y
-    dec de;x
-    dec de;current sprite address
     ld a, [loaded_bank]
     ld [hli], a;bank
     ld a, e
     ld [hli], a;lower byte
     ld a, d
     ld [hli], a;upper byte
-    ld hl, 5
+    pop hl;current sprite address
+    ld de, 5
     add hl, de
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer

@@ -432,13 +432,13 @@ MapChunkCalvinsRoom:
 
 MapSpritesCalvinsRoom:
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Console
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Console
   DB 133;x1
   DB 151;y1
   DB 161;tile
   DB 6;palette
 
-  DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
+  DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;Controller
   DB 127;x1
   DB 159;y1
   DB 160;tile

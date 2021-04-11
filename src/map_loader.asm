@@ -6,8 +6,8 @@ INCLUDE "src/beisbol.inc"
 SECTION "Map Loader", ROM0
 ; ROUTINES THAT SWITCH TO A BANK, DO SOME WORK, AND SWITCH BACK
 ; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
-; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision
-; GetSpriteCollision           returns z if no collision
+; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
+; GetSpriteCollision           de = pixel xy, returns z if no collision, collision type in a, extra data in [hl]
 ; MoveMapLeft
 ; MoveMapRight
 ; MoveMapUp
@@ -176,7 +176,6 @@ ClearMapSprites::
   ld bc, 36*4
   call mem_Set
   xor a
-  ld [map_sprite_count], a
   ld hl, map_sprite_buffer
   ld bc, MAP_BUFFER_SIZE
   call mem_Set
@@ -192,6 +191,16 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
   ret z
 .loopMapSprites
     push af;count
+    ld a, [de];bank
+    inc de
+    call SetBank
+    ld a, [de];lower address
+    ld c, a
+    inc de
+    ld a, [de];upper address
+    ld b, a
+    inc de
+    push bc;map sprite address
     ld a, [rSCX]
     ld b, a;bg scroll x
     ld a, [de];x
@@ -208,21 +217,13 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
     sub a, c;y+10-scroll y
     ld c, a
     BETWEEN 192, 224
-    ld a, c;y
+    ld a, c
     jr nz, .offScreenY
     inc de
     ld [hli], a;y
     ld a, b;x
     ld [hli], a
-    ld a, [de];bank
-    inc de
-    call SetBank
-    ld a, [de];lower address
-    ld c, a
-    inc de
-    ld a, [de];upper address
-    ld b, a;bc = map sprite address, [bc] = map object type/collision flags
-    inc de;next map sprite buffer address
+    pop bc;map sprite address, [map object type/collision flags]
     inc bc;initial x 
     inc bc;initial y
     inc bc;tile
@@ -241,9 +242,13 @@ CopyMapSpritesToOAMBuffer::;iterates through map sprites, copying values to oam_
   call SetBank
   ret
 .offScreenY
-  dec de;x
+  dec de;[x]
 .removeSprite
+  pop bc;discard map sprite address
   push hl;OAM
+  dec de;[upper map sprite address]
+  dec de;[lower map sprite address]
+  dec de;[bank], sprite to be removed
 .removeLoop
     ld hl, 5
     ld bc, 5
@@ -277,6 +282,12 @@ GetScreenCollision::;bc = xy pixel offset (-127,127), returns z if no collision,
   ret
 
 GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
+  push hl
+  push de
+  call GetSpriteCollision
+  pop de
+  pop hl
+  ret nz;return early if sprite collision found
   ld a, d
   srl a
   ld [_x], a
@@ -418,23 +429,71 @@ GetMapChunkCollision:;hl = chunk address, de = xy, returns z if no collision, co
   ret
 
 GetSpriteCollision::;de = xy, returns z if no collision, collision type in a, extra data in [hl]
-  PUSH_VAR loaded_bank
   ld a, [map_sprite_count]
   and a
-  ret z
+  ret z;done if no sprites in buffer
+
+.truncateXY
+  ld a, [rSCX]
+  ld b, a;x offset
+  ld a, d
+  sub a, b;x - xOff
+  swap a;x
+  and a, %00001111
+  ld [_x], a;_x = x/16
+  ld a, [rSCY]
+  ld c, a;y offset
+  ld a, e;y
+  sub a, c;y - yOff
+  and a, %00001111
+  ld [_y], a;_y = y/16
+
+  PUSH_VAR loaded_bank
   ld hl, map_sprite_buffer
+  ld a, [map_sprite_count]
 .loop
+    push af;count
     ld a, [hli];bank
     call SetBank
     ld a, [hli];lower byte of address
     ld c, a
     ld a, [hli];upper byte of address
     ld b, a
-    push bc;jump address
-
-.finish
+    ld a, [bc];collision type
+    push af
+    ld a, [hli];x
+    swap a
+    and a, %00001111
+    ld d, a
+    ld a, [_x]
+    cp a, d
+    jr nz, .xMismatch
+    ld a, [hli];y
+    swap a
+    and a, %00001111
+    ld e, a;de = xy
+    cp a, e
+    jr nz, .yMismatch
+    jr .matchFound
+  .xMismatch
+    inc hl
+  .yMismatch
+    pop af;discard collision type
+    pop af;count
+    dec a
+    jr nz, .loop
+.noMatchFound
   POP_VAR loaded_bank
   call SetBank
+  xor a
+  ret
+.matchFound
+  pop bc;collision type
+  pop af;discard count
+  POP_VAR loaded_bank
+  call SetBank
+  or a
+  ld a, b;collision type
   ret
 
 ;HACK: rounds rSCX and rSCY to nearest multiple of 8
@@ -1063,8 +1122,6 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     push de;current sprite address
   .loopMapSprites
       push af;count
-      inc hl;skip x
-      inc hl;skip y
       ld a, [hli];bank
       cp a, b;check bank
       jr nz, .bankMismatch
@@ -1079,31 +1136,34 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
       inc hl;skip lower address byte
     .addressMismatch
       inc hl;skip upper address byte
+      inc hl;skip x
+      inc hl;skip y
       pop af;count
       dec a
       jr nz, .loopMapSprites
 
-  .addSpritesToBuffer;hl = next map sprite buffer address
+  .addSpritesToBuffer;hl = next map sprite address
     ld a, [map_sprite_count]
     inc a
     ld [map_sprite_count], a
     pop de;current sprite address
-    push de
-    inc de;skip obj/collision type
-    ld a, [de];x
-    ld [hli], a;x
-    inc de
-    ld a, [de];y
-    ld [hli], a;y
     ld a, [loaded_bank]
     ld [hli], a;bank
     ld a, e
     ld [hli], a;lower byte
     ld a, d
     ld [hli], a;upper byte
-    pop hl;current sprite address
-    ld de, 5
-    add hl, de
+    inc de
+    ld a, [de];x
+    ld [hli], a;x
+    inc de
+    ld a, [de];y
+    ld [hli], a;y
+    ld h, d
+    ld l, e
+    inc hl;tile
+    inc hl;pal
+    inc hl;next
     jr .loadSpritesLoop
   .spriteAlreadyInBuffer
     pop af;discard count

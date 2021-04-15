@@ -165,6 +165,7 @@ IncrementOuts::;increments outs, returns outs in a
   ld [balls_strikes_outs], a
   ld [runners_on_base], a
   ld [runners_on_base+1], a
+  TRAMPOLINE NextBatter
   TRAMPOLINE NextFrame
   TRAMPOLINE DrawCountOutsInning
   ld a, 3

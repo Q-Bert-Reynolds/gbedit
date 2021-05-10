@@ -1,7 +1,7 @@
-TESTS_ENABLED    EQU 0
-INTRO_ENABLED    EQU 0
-TITLE_ENABLED    EQU 0
-NEW_GAME_ENABLED EQU 0
+TESTS_ENABLED    EQU 1
+INTRO_ENABLED    EQU 1
+TITLE_ENABLED    EQU 1
+NEW_GAME_ENABLED EQU 1
 WORLD_ENABLED    EQU 1
 PLAY_ENABLED     EQU 1
 
@@ -10,21 +10,9 @@ INCLUDE "src/beisbol.inc"
 RUN_TESTS: MACRO
 
   DISPLAY_ON
-  xor a
-  ld b, a
-  ld c, %11111111
-.loop
-    push af
-    push bc
-    call sgb_PlaySound
-    ld de, 100
-    call gbdk_Delay
-    pop bc
-    pop af
-    inc a
-    cp a, $80
-    jp c, .loop
-
+  ld a, SIM_BANK
+  call SetBank
+  TEST_SIM 250, -15, 10
 ENDM
 
 TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down

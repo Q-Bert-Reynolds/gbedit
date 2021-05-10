@@ -574,7 +574,7 @@ ENDC
   ld [last_map_button_state], a
   ld a, MAP_HOUSES
   call SetCurrentMap
-  ld a, MAP_CHUNK_CALVINS_ROOM
+  ld a, MAP_HOUSES_CHUNK_CALVINS_ROOM
   ld [map_chunk], a
 
   xor a

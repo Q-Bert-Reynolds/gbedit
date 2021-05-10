@@ -16,7 +16,7 @@ TestMap::
   ld [map_y], a
   ld a, MAP_OVERWORLD
   call SetCurrentMap
-  ld a, MAP_CHUNK_BILLETTOWNNE
+  ld a, MAP_OVERWORLD_CHUNK_BILLETTOWNNE
   ld [map_chunk], a
   call DrawMapToScreen
   DISPLAY_ON

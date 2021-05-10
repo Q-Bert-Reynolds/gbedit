@@ -2,7 +2,10 @@ INCLUDE "src/beisbol.inc"
 
 Section "Overworld Map", ROMX, BANK[WORLD_BANK+1]
 INCLUDE "img/maps/overworld.asm"
+INCLUDE "img/maps/forest.asm"
+INCLUDE "maps/Mountains.gbmap"
 INCLUDE "maps/Overworld.gbmap"
+INCLUDE "maps/VeteranPark.gbmap"
 
 Section "Indoor Maps", ROMX, BANK[WORLD_BANK+2]
 INCLUDE "img/maps/houses.asm"
@@ -606,5 +609,6 @@ Overworld::
     ld a, [button_state]
     call Move
     call CheckRandomAppearance
+    jp .moveLoop
     jr z, .moveLoop
     ret

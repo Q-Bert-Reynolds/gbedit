@@ -1,9 +1,8 @@
-MapBusinesses:: ;339 bytes total
+MapBusinesses:: ;286 bytes total
   DB MAP_BUSINESSES
   DW MapBusinessesPalettes ;64 bytes
   DW MapBusinessesText ;0
   DW MapBusinessesDoors ;5
-  DW MapBusinessesStamps ;53 bytes
   DW MapBusinessesChunks ;216 bytes
   DW MapBusinessesScripts ;6 bytes
 
@@ -53,77 +52,26 @@ MapBusinessesText: ;0 bytes
 MapBusinessesDoors: ;5 bytes
 .doorExit
   DB MAP_OVERWORLD
-  DB MAP_CHUNK_VETERANCITY
+  DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_43
   DB 2;x=12
   DB 8;y=18
   DB 128;direction
 
-;Stamps, 53 bytes
-MapBusinessesStamps:
-MapStampCouchVert: ;13 bytes
-  DB 2;width
-  DB 5;height
-.tiles
-  DB 128, 129
-  DB 144, 177
-  DB 160, 161
-  DB 176, 177
-  DB 192, 193
-.palette
-  DB 135
-
-MapStampCouchHoriz: ;18 bytes
-  DB 5;width
-  DB 3;height
-.tiles
-  DB 211, 212, 213, 212, 214
-  DB 227, 228, 229, 228, 230
-  DB 243, 244, 245, 244, 246
-.palette
-  DB 134
-
-MapStampBusinessDoor: ;7 bytes
-  DB 2;width
-  DB 2;height
-.tiles
-  DB 133, 134
-  DB 149, 150
-.palette
-  DB 130
-
-MapStampComputerStand: ;5 bytes
-  DB 2;width
-  DB 1;height
-.tiles
-  DB 240, 241
-.palette
-  DB 130
-
-MapStampPublicComputer: ;10 bytes
-  DB 2;width
-  DB 2;height
-.tiles
-  DB 208, 209
-  DB 224, 225
-.palettes
-  DB 0, 0
-  DB 6, 6
-
-MAP_CHUNK_VETERANCITYCLINIC EQU 0
-MAP_CHUNK_VETERANCITYCLINIC_1 EQU 1
+MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC EQU 0
+MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC_1 EQU 1
 
 MapBusinessesChunks: ;4 bytes
-  DW MapChunkVeteranCityClinic
-  DW MapChunkVeteranCityClinic1
+  DW MapBusinessesChunkVeteranCityClinic
+  DW MapBusinessesChunkVeteranCityClinic1
 
 ;Map Chunks, 212 bytes
-MapChunkVeteranCityClinic:
+MapBusinessesChunkVeteranCityClinic:
 .tile:    DB 0
 .palette: DB 1
-.north:   DB MAP_CHUNK_VETERANCITYCLINIC
-.east:    DB MAP_CHUNK_VETERANCITYCLINIC_1
-.south:   DB MAP_CHUNK_VETERANCITYCLINIC
-.west:    DB MAP_CHUNK_VETERANCITYCLINIC
+.north:   DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC
+.east:    DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC_1
+.south:   DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC
+.west:    DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;Border3
   DB 17;x1
@@ -213,31 +161,31 @@ MapChunkVeteranCityClinic:
   DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Couch
   DB 18;x
   DB 16;y
-  DW MapStampCouchVert
+  DW GBStampCouchVert
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_NONE ;Couch2
   DB 27;x
   DB 14;y
-  DW MapStampCouchHoriz
+  DW GBStampCouchHoriz
 
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;PublicComputer (3)
   DB 24;x
   DB 8;y
-  DW MapStampBusinessDoor
+  DW GBStampBusinessDoor
 
   DB 0;END VeteranCityClinic background objects, 100 bytes
 
-MapSpritesVeteranCityClinic:
+MapBusinessesSpritesVeteranCityClinic:
 
   DB 0;END VeteranCityClinic sprite objects, 1 bytes
 
-MapChunkVeteranCityClinic1:
+MapBusinessesChunkVeteranCityClinic1:
 .tile:    DB 0
 .palette: DB 1
-.north:   DB MAP_CHUNK_VETERANCITYCLINIC_1
-.east:    DB MAP_CHUNK_VETERANCITYCLINIC_1
-.south:   DB MAP_CHUNK_VETERANCITYCLINIC_1
-.west:    DB MAP_CHUNK_VETERANCITYCLINIC
+.north:   DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC_1
+.east:    DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC_1
+.south:   DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC_1
+.west:    DB MAP_BUSINESSES_CHUNK_VETERANCITYCLINIC
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (5)
   DB 0;x1
@@ -316,14 +264,14 @@ MapChunkVeteranCityClinic1:
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Couch2 (2)
   DB 8;x1
   DB 22;y1
-  DW MapStampComputerStand
+  DW GBStampComputerStand
   DB 16;x2
   DB 23;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SCRIPT ;PublicComputer
   DB 8;x1
   DB 20;y1
-  DW MapStampPublicComputer
+  DW GBStampPublicComputer
   DB 16;x2
   DB 22;y2
   DB 0;UsePublicComputer
@@ -331,14 +279,14 @@ MapChunkVeteranCityClinic1:
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_NONE ;Couch2 (1)
   DB 8;x1
   DB 18;y1
-  DW MapStampComputerStand
+  DW GBStampComputerStand
   DB 16;x2
   DB 19;y2
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SCRIPT ;PublicComputer (1)
   DB 8;x1
   DB 16;y1
-  DW MapStampPublicComputer
+  DW GBStampPublicComputer
   DB 16;x2
   DB 18;y2
   DB 1;UsePublicComputer
@@ -346,11 +294,11 @@ MapChunkVeteranCityClinic1:
   DB MAP_OBJ_STAMP | MAP_COLLISION_SOLID ;PublicComputer (2)
   DB 8;x
   DB 8;y
-  DW MapStampBusinessDoor
+  DW GBStampBusinessDoor
 
   DB 0;END VeteranCityClinic1 background objects, 110 bytes
 
-MapSpritesVeteranCityClinic1:
+MapBusinessesSpritesVeteranCityClinic1:
 
   DB 0;END VeteranCityClinic1 sprite objects, 1 bytes
 

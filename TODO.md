@@ -1,5 +1,6 @@
 Priority
 
+- separate palettes and stamps from object data
 - load/interact characters and items from map data
   - handle sprite collisions
 - using the computer
@@ -116,7 +117,6 @@ Map System
 - map text should be clipped (or converted to stamps or turned off completely)
 - map scripts should also have collision check
 - use Unity's collision trigger property for finer control over GB collisions
-- separate palettes and stamps from object data
 - palette 0 is used for UI, should not be exported
 - chunks should be exported as tile arrays when more efficient than objects
 - print errors for more than 255 chunks, text, doors, etc. when exporting a scene

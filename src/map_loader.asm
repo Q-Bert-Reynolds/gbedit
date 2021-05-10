@@ -4,6 +4,7 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
+INCLUDE "maps/map_stamps.asm"
 ; ROUTINES THAT SWITCH TO A BANK, DO SOME WORK, AND SWITCH BACK
 ; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]
@@ -39,29 +40,38 @@ SECTION "Map Loader", ROM0
 ; GetCurrentMap                returns address in hl, bank in a
 ; FixMapScroll                 HACK: called after moving right or down to solve off-by-one collision issues
 
-MAP_OVERWORLD  EQU 0
-MAP_HOUSES     EQU 1
-MAP_BUSINESSES EQU 2
-
+MAP_OVERWORLD   EQU 0
+MAP_HOUSES      EQU 1
+MAP_BUSINESSES  EQU 2
+MAP_VETERANPARK EQU 3
+MAP_MOUNTAINS   EQU 4
 MapBanks:
   DB BANK(MapOverworld)
   DB BANK(MapHouses)
   DB BANK(MapBusinesses)
+  DB BANK(MapMountains)
+  DB BANK(MapVeteranPark)
 
 MapAddresses:
   DW MapOverworld
   DW MapHouses
   DW MapBusinesses
+  DW MapMountains
+  DW MapVeteranPark
 
 MapTileBanks:
   DB BANK(_OverworldTiles)
   DB BANK(_HousesTiles)
   DB BANK(_BusinessesTiles)
+  DB BANK(_OverworldTiles)
+  DB BANK(_ForestTiles)
 
 MapTileAddresses:
   DW _OverworldTiles
   DW _HousesTiles
   DW _BusinessesTiles
+  DW _OverworldTiles
+  DW _ForestTiles
 
 GetMapText::;a = text index, returns text in str_buffer
   ld b, 0

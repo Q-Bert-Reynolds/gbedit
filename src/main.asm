@@ -10,9 +10,13 @@ INCLUDE "src/beisbol.inc"
 RUN_TESTS: MACRO
 
   DISPLAY_ON
-  ld a, SIM_BANK
+  ; ld a, SIM_BANK
+  ; call SetBank
+  ; TEST_SIM 250, -15, 10
+  call LoadFontTiles
+  ld a, MAPS_BANK
   call SetBank
-  TEST_SIM 250, -15, 10
+  call TestMap
 ENDM
 
 TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down

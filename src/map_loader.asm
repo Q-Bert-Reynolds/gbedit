@@ -4,7 +4,7 @@ MAP_LOADER SET 1
 INCLUDE "src/beisbol.inc"
 
 SECTION "Map Loader", ROM0
-INCLUDE "maps/map_stamps.asm"
+INCLUDE "maps/map_stamps.gbstamp"
 ; ROUTINES THAT SWITCH TO A BANK, DO SOME WORK, AND SWITCH BACK
 ; GetScreenCollision           bc = xy pixel offset (-127,127), returns z if no collision, collision type in a, extra data in b
 ; GetMapChunkCollision         hl = chunk address, de = xy, returns z if no collision, collision type in a, extra data in [hl]

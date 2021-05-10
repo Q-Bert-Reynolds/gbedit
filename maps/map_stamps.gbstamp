@@ -1,0 +1,486 @@
+GBStamps:
+GBStampBusinessDoor: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 133, 134
+  DB 149, 150
+.palette
+  DB 130
+
+GBStampComputerStand: ;5 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 240, 241
+.palette
+  DB 130
+
+GBStampCouchHoriz: ;18 bytes
+  DB 5;width
+  DB 3;height
+.tiles
+  DB 211, 212, 213, 212, 214
+  DB 227, 228, 229, 228, 230
+  DB 243, 244, 245, 244, 246
+.palette
+  DB 134
+
+GBStampCouchVert: ;13 bytes
+  DB 2;width
+  DB 5;height
+.tiles
+  DB 128, 129
+  DB 144, 177
+  DB 160, 161
+  DB 176, 177
+  DB 192, 193
+.palette
+  DB 135
+
+GBStampPublicComputer: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 208, 209
+  DB 224, 225
+.palettes
+  DB 0, 0
+  DB 6, 6
+
+GBStampBed: ;34 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 203, 219, 219, 220
+  DB 204, 237, 237, 221
+  DB 218, 237, 237, 221
+  DB 234, 235, 235, 236
+.palettes
+  DB 4, 4, 4, 4
+  DB 4, 4, 4, 4
+  DB 4, 4, 4, 4
+  DB 3, 3, 3, 3
+
+GBStampBigTV: ;42 bytes
+  DB 5;width
+  DB 4;height
+.tiles
+  DB 168, 178, 178, 178, 179
+  DB 200, 255, 142, 143, 201
+  DB 200, 157, 255, 255, 201
+  DB 216, 186, 186, 186, 217
+.palettes
+  DB 5, 5, 5, 5, 5
+  DB 2, 4, 5, 4, 2
+  DB 2, 5, 4, 4, 2
+  DB 2, 2, 2, 2, 2
+
+GBStampDesk: ;34 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 176, 177, 178, 179
+  DB 192, 193, 194, 195
+  DB 208, 209, 210, 211
+  DB 224, 225, 240, 240
+.palettes
+  DB 5, 6, 5, 5
+  DB 2, 2, 5, 5
+  DB 2, 2, 2, 2
+  DB 2, 2, 2, 2
+
+GBStampExit: ;7 bytes
+  DB 4;width
+  DB 1;height
+.tiles
+  DB 189, 190, 190, 191
+.palette
+  DB 130
+
+GBStampFloor: ;19 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 240, 241, 242, 240
+  DB 240, 242, 240, 241
+  DB 242, 240, 241, 240
+  DB 241, 240, 240, 242
+.palette
+  DB 130
+
+GBStampPlant: ;18 bytes
+  DB 2;width
+  DB 4;height
+.tiles
+  DB 138, 139
+  DB 154, 155
+  DB 170, 171
+  DB 244, 245
+.palettes
+  DB 1, 1
+  DB 1, 1
+  DB 2, 2
+  DB 2, 2
+
+GBStampRug: ;50 bytes
+  DB 6;width
+  DB 4;height
+.tiles
+  DB 232, 250, 250, 250, 250, 233
+  DB 246, 232, 250, 250, 233, 251
+  DB 246, 248, 247, 247, 249, 251
+  DB 248, 247, 247, 247, 247, 249
+.palettes
+  DB 3, 3, 3, 3, 3, 3
+  DB 3, 7, 7, 7, 7, 3
+  DB 3, 7, 7, 7, 7, 3
+  DB 3, 3, 3, 3, 3, 3
+
+GBStampShelf: ;18 bytes
+  DB 2;width
+  DB 4;height
+.tiles
+  DB 168, 179
+  DB 184, 185
+  DB 200, 201
+  DB 216, 217
+.palettes
+  DB 5, 5
+  DB 2, 2
+  DB 2, 2
+  DB 2, 2
+
+GBStampStairsDown: ;9 bytes
+  DB 2;width
+  DB 3;height
+.tiles
+  DB 198, 199
+  DB 214, 215
+  DB 230, 231
+.palette
+  DB 132
+
+GBStampStairsUp: ;18 bytes
+  DB 2;width
+  DB 4;height
+.tiles
+  DB 134, 135
+  DB 150, 151
+  DB 166, 166
+  DB 183, 167
+.palettes
+  DB 4, 4
+  DB 4, 3
+  DB 3, 3
+  DB 3, 3
+
+GBStampStool: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 226, 227
+  DB 224, 225
+.palette
+  DB 130
+
+GBStampTable: ;19 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 130, 132, 132, 131
+  DB 146, 254, 254, 147
+  DB 146, 254, 254, 147
+  DB 162, 148, 148, 163
+.palette
+  DB 130
+
+GBStampTrashCan: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 228, 229
+  DB 244, 245
+.palette
+  DB 130
+
+GBStampTrashCanWall: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 212, 213
+  DB 244, 245
+.palettes
+  DB 5, 5
+  DB 2, 2
+
+GBStampTV: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 128, 129
+  DB 144, 145
+.palette
+  DB 131
+
+GBStampWindow: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 164, 165
+  DB 180, 181
+.palette
+  DB 132
+
+GBStampBusinessFacade: ;66 bytes
+  DB 8;width
+  DB 4;height
+.tiles
+  DB 152, 190, 190, 190, 190, 190, 190, 168
+  DB 152, 180, 180, 180, 180, 180, 180, 168
+  DB 152, 164, 162, 163, 164, 164, 164, 168
+  DB 176, 177, 178, 179, 177, 177, 177, 182
+.palettes
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+
+GBStampBusinessRoof: ;35 bytes
+  DB 8;width
+  DB 4;height
+.tiles
+  DB 147, 130, 130, 130, 130, 130, 130, 189
+  DB 144, 250, 249, 250, 249, 250, 249, 150
+  DB 144, 249, 250, 249, 250, 249, 250, 150
+  DB 205, 146, 146, 146, 146, 146, 146, 175
+.palette
+  DB 131
+
+GBStampFence: ;5 bytes
+  DB 1;width
+  DB 2;height
+.tiles
+  DB 210
+  DB 240
+.palette
+  DB 130
+
+GBStampFlowerBed: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 156, 172
+  DB 172, 156
+.palettes
+  DB 2, 5
+  DB 5, 2
+
+GBStampForest: ;19 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 192, 196, 197, 193
+  DB 211, 212, 213, 214
+  DB 197, 193, 192, 196
+  DB 213, 214, 211, 212
+.palette
+  DB 129
+
+GBStampHomePlate: ;84 bytes
+  DB 9;width
+  DB 9;height
+.tiles
+  DB 253, 253, 237, 238, 239, 173, 253, 253, 253
+  DB 253, 174, 254, 254, 247, 254, 173, 253, 253
+  DB 218, 254, 254, 254, 248, 254, 254, 173, 253
+  DB 234, 254, 254, 248, 215, 254, 254, 254, 173
+  DB 254, 247, 248, 254, 216, 232, 248, 247, 252
+  DB 186, 254, 254, 254, 254, 248, 254, 254, 185
+  DB 202, 254, 254, 254, 248, 254, 254, 254, 201
+  DB 253, 158, 254, 254, 247, 254, 254, 157, 253
+  DB 253, 253, 221, 222, 254, 219, 220, 253, 253
+.palette
+  DB 133
+
+GBStampHomePlateSm: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 215, 254
+  DB 216, 232
+.palette
+  DB 133
+
+GBStampHouse: ;66 bytes
+  DB 8;width
+  DB 4;height
+.tiles
+  DB 128, 129, 130, 130, 130, 130, 133, 134
+  DB 144, 145, 146, 146, 146, 146, 149, 150
+  DB 160, 161, 162, 163, 164, 164, 165, 166
+  DB 176, 177, 178, 179, 177, 177, 177, 182
+.palettes
+  DB 3, 3, 3, 3, 3, 3, 3, 3
+  DB 3, 3, 3, 3, 3, 3, 3, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+  DB 3, 4, 4, 4, 4, 4, 4, 3
+
+GBStampHouseDoor: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 162, 163
+  DB 178, 179
+.palette
+  DB 132
+
+GBStampHouseRoofLowerLeft: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 144, 145
+  DB 160, 161
+.palettes
+  DB 3, 4
+  DB 3, 4
+
+GBStampHouseRoofLowerRight: ;10 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 149, 150
+  DB 165, 166
+.palettes
+  DB 3, 3
+  DB 4, 3
+
+GBStampHouseRoofUpperLeft: ;5 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 128, 129
+.palette
+  DB 131
+
+GBStampHouseRoofUpperRight: ;5 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 133, 134
+.palette
+  DB 131
+
+GBStampHouseWallBottomLeft: ;6 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 176, 177
+.palettes
+  DB 3, 4
+
+GBStampHouseWallBottomRight: ;6 bytes
+  DB 2;width
+  DB 1;height
+.tiles
+  DB 177, 182
+.palettes
+  DB 4, 3
+
+GBStampMound: ;28 bytes
+  DB 5;width
+  DB 5;height
+.tiles
+  DB 139, 140, 254, 142, 143
+  DB 155, 254, 215, 254, 159
+  DB 254, 254, 231, 232, 254
+  DB 187, 254, 254, 254, 191
+  DB 203, 204, 254, 206, 207
+.palette
+  DB 133
+
+GBStampRock: ;11 bytes
+  DB 4;width
+  DB 2;height
+.tiles
+  DB 195, 193, 197, 198
+  DB 227, 228, 229, 230
+.palette
+  DB 130
+
+GBStampRubber: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 215, 254
+  DB 231, 232
+.palette
+  DB 133
+
+GBStampSecondBase: ;84 bytes
+  DB 9;width
+  DB 9;height
+.tiles
+  DB 235, 236, 253, 253, 253, 253, 253, 253, 253
+  DB 254, 254, 235, 236, 253, 253, 253, 253, 253
+  DB 254, 254, 254, 254, 173, 253, 253, 253, 253
+  DB 254, 254, 254, 254, 254, 173, 253, 253, 253
+  DB 254, 254, 254, 254, 254, 254, 173, 253, 253
+  DB 254, 254, 254, 216, 254, 254, 254, 217, 253
+  DB 254, 254, 254, 254, 254, 254, 254, 233, 253
+  DB 187, 254, 254, 254, 254, 254, 254, 254, 217
+  DB 203, 204, 254, 254, 254, 254, 254, 254, 233
+.palette
+  DB 133
+
+GBStampSignStamp: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 183, 184
+  DB 199, 200
+.palette
+  DB 131
+
+GBStampTree: ;34 bytes
+  DB 4;width
+  DB 4;height
+.tiles
+  DB 195, 196, 197, 198
+  DB 211, 212, 213, 214
+  DB 227, 228, 229, 230
+  DB 243, 244, 245, 246
+.palettes
+  DB 1, 1, 1, 1
+  DB 1, 1, 1, 1
+  DB 1, 1, 1, 1
+  DB 2, 2, 2, 2
+
+GBStampTrunk: ;7 bytes
+  DB 2;width
+  DB 2;height
+.tiles
+  DB 164, 165
+  DB 180, 181
+.palette
+  DB 130
+
+GBStampWaterRock: ;9 bytes
+  DB 3;width
+  DB 2;height
+.tiles
+  DB 192, 197, 193
+  DB 227, 229, 230
+.palette
+  DB 134
+
+GBStampWildFlowers: ;14 bytes
+  DB 3;width
+  DB 2;height
+.tiles
+  DB 171, 167, 171
+  DB 167, 171, 167
+.palettes
+  DB 3, 3, 1
+  DB 1, 2, 2
+

@@ -31,6 +31,7 @@ Bugs
 - big list of "real names" to use in place of ID and OT
 - cut off sprites with the text box using an LCD interrupt (see https://gbdev.io/pandocs/#faux-layer-textbox-status-bar)
 - print stats, records, rolédex
+- PS/2 and USB keyboard support
 
 Optimization
 

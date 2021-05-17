@@ -6,7 +6,7 @@ MapOverworld:: ;6721 bytes total
   DW MapOverworldChunks ;6421 bytes
   DW MapOverworldScripts ;6 bytes
 
-MapOverworldPalettes: ;64 bytes
+MapOverworldPalettes:: ;64 bytes
   RGB 31, 31, 31
   RGB 30, 28, 19
   RGB 18, 7, 9
@@ -61,7 +61,7 @@ MAP_OVERWORLD_TEXT_SOMETHINGQUIPPY EQU 10
 MAP_OVERWORLD_TEXT_INDIE_BALL_PLATEAU EQU 11
 MAP_OVERWORLD_TEXT_ROUTE_2 EQU 12
 MAP_OVERWORLD_TEXT_PEPPER_FIELD EQU 13
-MapOverworldText: ;200 bytes
+MapOverworldText:: ;200 bytes
   DB "BILLET TOWN\nBASEBALL ACADEMY",0
   DB "Academy",0
   DB "BILLET FIELD\nOpen 24/7",0
@@ -77,7 +77,7 @@ MapOverworldText: ;200 bytes
   DB "ROUTE 2",0
   DB "Pepper Field",0
 
-MapOverworldDoors: ;35 bytes
+MapOverworldDoors:: ;35 bytes
 .doorDoorToDocsLab
   DB MAP_OVERWORLD
   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
@@ -197,7 +197,7 @@ MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2 EQU 72
 MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2 EQU 73
 MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10 EQU 74
 
-MapOverworldChunks: ;150 bytes
+MapOverworldChunks:: ;150 bytes
   DW MapOverworldChunkBilletTownSW
   DW MapOverworldChunkBilletTownSE
   DW MapOverworldChunkBilletTownNE
@@ -275,13 +275,13 @@ MapOverworldChunks: ;150 bytes
   DW MapOverworldChunkCenterFieldChunk10
 
 ;Map Chunks, 6271 bytes
-MapOverworldChunkBilletTownSW:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
-.east:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
+MapOverworldChunkBilletTownSW::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
+.east::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (6)
   DB 31;x1
@@ -414,17 +414,17 @@ MapOverworldChunkBilletTownSW:
 
   DB 0;END BilletTownSW background objects, 128 bytes
 
-MapOverworldSpritesBilletTownSW:
+MapOverworldSpritesBilletTownSW::
 
   DB 0;END BilletTownSW sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownSE:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
-.east:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
+MapOverworldChunkBilletTownSE::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
+.east::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (4)
   DB 0;x1
@@ -754,17 +754,17 @@ MapOverworldChunkBilletTownSE:
 
   DB 0;END BilletTownSE background objects, 301 bytes
 
-MapOverworldSpritesBilletTownSE:
+MapOverworldSpritesBilletTownSE::
 
   DB 0;END BilletTownSE sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownNE:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
-.east:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
+MapOverworldChunkBilletTownNE::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
+.east::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
 
   DB MAP_OBJ_TILE | MAP_COLLISION_SOLID ;House (4) 1,1
   DB 15;x1
@@ -1225,17 +1225,17 @@ MapOverworldChunkBilletTownNE:
 
   DB 0;END BilletTownNE background objects, 419 bytes
 
-MapOverworldSpritesBilletTownNE:
+MapOverworldSpritesBilletTownNE::
 
   DB 0;END BilletTownNE sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownNW:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
-.east:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
+MapOverworldChunkBilletTownNW::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
+.east::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (1)
   DB 18;x1
@@ -1589,7 +1589,7 @@ MapOverworldChunkBilletTownNW:
 
   DB 0;END BilletTownNW background objects, 326 bytes
 
-MapOverworldSpritesBilletTownNW:
+MapOverworldSpritesBilletTownNW::
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Controller
   DB 186;x1
@@ -1599,13 +1599,13 @@ MapOverworldSpritesBilletTownNW:
 
   DB 0;END BilletTownNW sprite objects, 6 bytes
 
-MapOverworldChunkInfieldChunk:
-.tile:    DB 254
-.palette: DB 5
-.north:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
-.east:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
+MapOverworldChunkInfieldChunk::
+.tile::    DB 254
+.palette:: DB 5
+.north::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
+.east::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (21)
   DB 31;x1
@@ -1793,17 +1793,17 @@ MapOverworldChunkInfieldChunk:
 
   DB 0;END InfieldChunk background objects, 172 bytes
 
-MapOverworldSpritesInfieldChunk:
+MapOverworldSpritesInfieldChunk::
 
   DB 0;END InfieldChunk sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
-.west:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
+MapOverworldChunkCenterFieldChunk::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
+.west::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
   DB 12;x1
@@ -1836,17 +1836,17 @@ MapOverworldChunkCenterFieldChunk:
 
   DB 0;END CenterFieldChunk background objects, 36 bytes
 
-MapOverworldSpritesCenterFieldChunk:
+MapOverworldSpritesCenterFieldChunk::
 
   DB 0;END CenterFieldChunk sprite objects, 1 bytes
 
-MapOverworldChunkRightFieldChunk:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
-.west:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
+MapOverworldChunkRightFieldChunk::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
+.west::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
   DB 8;x1
@@ -1882,17 +1882,17 @@ MapOverworldChunkRightFieldChunk:
 
   DB 0;END RightFieldChunk background objects, 38 bytes
 
-MapOverworldSpritesRightFieldChunk:
+MapOverworldSpritesRightFieldChunk::
 
   DB 0;END RightFieldChunk sprite objects, 1 bytes
 
-MapOverworldChunkLeftFieldChunk:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
-.south:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
+MapOverworldChunkLeftFieldChunk::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
+.south::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
   DB 0;x1
@@ -1922,17 +1922,17 @@ MapOverworldChunkLeftFieldChunk:
 
   DB 0;END LeftFieldChunk background objects, 33 bytes
 
-MapOverworldSpritesLeftFieldChunk:
+MapOverworldSpritesLeftFieldChunk::
 
   DB 0;END LeftFieldChunk sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownSWWater:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
-.east:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
+MapOverworldChunkBilletTownSWWater::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSW
+.east::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (14)
   DB 0;x1
@@ -2027,17 +2027,17 @@ MapOverworldChunkBilletTownSWWater:
 
   DB 0;END BilletTownSWWater background objects, 96 bytes
 
-MapOverworldSpritesBilletTownSWWater:
+MapOverworldSpritesBilletTownSWWater::
 
   DB 0;END BilletTownSWWater sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownSEWater:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
-.east:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
+MapOverworldChunkBilletTownSEWater::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSE
+.east::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
   DB 0;x1
@@ -2118,17 +2118,17 @@ MapOverworldChunkBilletTownSEWater:
 
   DB 0;END BilletTownSEWater background objects, 84 bytes
 
-MapOverworldSpritesBilletTownSEWater:
+MapOverworldSpritesBilletTownSEWater::
 
   DB 0;END BilletTownSEWater sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
+MapOverworldChunkRoute1West::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNW
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (10)
   DB 28;x1
@@ -2229,17 +2229,17 @@ MapOverworldChunkRoute1West:
 
   DB 0;END Route1West background objects, 101 bytes
 
-MapOverworldSpritesRoute1West:
+MapOverworldSpritesRoute1West::
 
   DB 0;END Route1West sprite objects, 1 bytes
 
-MapOverworldChunkRoute1East:
-.tile:    DB 255
-.palette: DB 3
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
+MapOverworldChunkRoute1East::
+.tile::    DB 255
+.palette:: DB 3
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNNE
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_GRASS ;GameObject (6)
   DB 12;x1
@@ -2400,17 +2400,17 @@ MapOverworldChunkRoute1East:
 
   DB 0;END Route1East background objects, 157 bytes
 
-MapOverworldSpritesRoute1East:
+MapOverworldSpritesRoute1East::
 
   DB 0;END Route1East sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk1:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
-.west:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
+MapOverworldChunkCenterFieldChunk1::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
+.west::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (2)
   DB 0;x1
@@ -2421,17 +2421,17 @@ MapOverworldChunkCenterFieldChunk1:
 
   DB 0;END CenterFieldChunk1 background objects, 18 bytes
 
-MapOverworldSpritesCenterFieldChunk1:
+MapOverworldSpritesCenterFieldChunk1::
 
   DB 0;END CenterFieldChunk1 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West1:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
+MapOverworldChunkRoute1West1::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (12)
   DB 28;x1
@@ -2506,17 +2506,17 @@ MapOverworldChunkRoute1West1:
 
   DB 0;END Route1West1 background objects, 78 bytes
 
-MapOverworldSpritesRoute1West1:
+MapOverworldSpritesRoute1West1::
 
   DB 0;END Route1West1 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1ToVeteranCityWest:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
+MapOverworldChunkRoute1ToVeteranCityWest::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_LEDGE ;GameObject (13)
   DB 0;x1
@@ -2635,17 +2635,17 @@ MapOverworldChunkRoute1ToVeteranCityWest:
 
   DB 0;END Route1ToVeteranCityWest background objects, 121 bytes
 
-MapOverworldSpritesRoute1ToVeteranCityWest:
+MapOverworldSpritesRoute1ToVeteranCityWest::
 
   DB 0;END Route1ToVeteranCityWest sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West3:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
-.east:    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
+MapOverworldChunkRoute1West3::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
+.east::    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_1
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (12)
   DB 0;x1
@@ -2878,17 +2878,17 @@ MapOverworldChunkRoute1West3:
 
   DB 0;END Route1West3 background objects, 214 bytes
 
-MapOverworldSpritesRoute1West3:
+MapOverworldSpritesRoute1West3::
 
   DB 0;END Route1West3 sprite objects, 1 bytes
 
-MapOverworldChunkVeteranCityClinicAndShop:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
+MapOverworldChunkVeteranCityClinicAndShop::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1TOVETERANCITYWEST
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (13)
   DB 0;x1
@@ -3120,17 +3120,17 @@ MapOverworldChunkVeteranCityClinicAndShop:
 
   DB 0;END VeteranCityClinicAndShop background objects, 222 bytes
 
-MapOverworldSpritesVeteranCityClinicAndShop:
+MapOverworldSpritesVeteranCityClinicAndShop::
 
   DB 0;END VeteranCityClinicAndShop sprite objects, 1 bytes
 
-MapOverworldChunkVeteranCityClubhouse:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
-.south:   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
+MapOverworldChunkVeteranCityClubhouse::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
+.south::   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (8)
   DB 28;x1
@@ -3463,17 +3463,17 @@ MapOverworldChunkVeteranCityClubhouse:
 
   DB 0;END VeteranCityClubhouse background objects, 308 bytes
 
-MapOverworldSpritesVeteranCityClubhouse:
+MapOverworldSpritesVeteranCityClubhouse::
 
   DB 0;END VeteranCityClubhouse sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West6:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
+MapOverworldChunkRoute1West6::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (25)
   DB 28;x1
@@ -3663,17 +3663,17 @@ MapOverworldChunkRoute1West6:
 
   DB 0;END Route1West6 background objects, 174 bytes
 
-MapOverworldSpritesRoute1West6:
+MapOverworldSpritesRoute1West6::
 
   DB 0;END Route1West6 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West7:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
-.east:    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
+MapOverworldChunkRoute1West7::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
+.east::    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_3
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (14)
   DB 10;x1
@@ -3800,17 +3800,17 @@ MapOverworldChunkRoute1West7:
 
   DB 0;END Route1West7 background objects, 126 bytes
 
-MapOverworldSpritesRoute1West7:
+MapOverworldSpritesRoute1West7::
 
   DB 0;END Route1West7 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West8:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
+MapOverworldChunkRoute1West8::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (27)
   DB 4;x1
@@ -4069,17 +4069,17 @@ MapOverworldChunkRoute1West8:
 
   DB 0;END Route1West8 background objects, 234 bytes
 
-MapOverworldSpritesRoute1West8:
+MapOverworldSpritesRoute1West8::
 
   DB 0;END Route1West8 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West9:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
+MapOverworldChunkRoute1West9::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_6
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (36)
   DB 0;x1
@@ -4162,17 +4162,17 @@ MapOverworldChunkRoute1West9:
 
   DB 0;END Route1West9 background objects, 82 bytes
 
-MapOverworldSpritesRoute1West9:
+MapOverworldSpritesRoute1West9::
 
   DB 0;END Route1West9 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West10:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
+MapOverworldChunkRoute1West10::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_8
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;House (13)
   DB 10;x1
@@ -4410,17 +4410,17 @@ MapOverworldChunkRoute1West10:
 
   DB 0;END Route1West10 background objects, 216 bytes
 
-MapOverworldSpritesRoute1West10:
+MapOverworldSpritesRoute1West10::
 
   DB 0;END Route1West10 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West11:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
+MapOverworldChunkRoute1West11::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_9
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (38)
   DB 0;x1
@@ -4519,17 +4519,17 @@ MapOverworldChunkRoute1West11:
 
   DB 0;END Route1West11 background objects, 97 bytes
 
-MapOverworldSpritesRoute1West11:
+MapOverworldSpritesRoute1West11::
 
   DB 0;END Route1West11 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West12:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
+MapOverworldChunkRoute1West12::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_10
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_11
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_12
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (40)
   DB 16;x1
@@ -4690,17 +4690,17 @@ MapOverworldChunkRoute1West12:
 
   DB 0;END Route1West12 background objects, 148 bytes
 
-MapOverworldSpritesRoute1West12:
+MapOverworldSpritesRoute1West12::
 
   DB 0;END Route1West12 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West33:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
-.west:    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
+MapOverworldChunkRoute1West33::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
+.west::    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLINICANDSHOP
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Tree (1)
   DB 4;x1
@@ -4727,17 +4727,17 @@ MapOverworldChunkRoute1West33:
 
   DB 0;END Route1West33 background objects, 33 bytes
 
-MapOverworldSpritesRoute1West33:
+MapOverworldSpritesRoute1West33::
 
   DB 0;END Route1West33 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West34:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
-.west:    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
+MapOverworldChunkRoute1West34::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_33
+.west::    DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (18)
   DB 0;x1
@@ -4803,17 +4803,17 @@ MapOverworldChunkRoute1West34:
 
   DB 0;END Route1West34 background objects, 68 bytes
 
-MapOverworldSpritesRoute1West34:
+MapOverworldSpritesRoute1West34::
 
   DB 0;END Route1West34 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West35:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
-.east:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
+MapOverworldChunkRoute1West35::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
+.east::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_VETERANCITYCLUBHOUSE
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (20)
   DB 25;x1
@@ -4918,17 +4918,17 @@ MapOverworldChunkRoute1West35:
 
   DB 0;END Route1West35 background objects, 104 bytes
 
-MapOverworldSpritesRoute1West35:
+MapOverworldSpritesRoute1West35::
 
   DB 0;END Route1West35 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West36:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
+MapOverworldChunkRoute1West36::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_7
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (9)
   DB 29;x1
@@ -5051,17 +5051,17 @@ MapOverworldChunkRoute1West36:
 
   DB 0;END Route1West36 background objects, 123 bytes
 
-MapOverworldSpritesRoute1West36:
+MapOverworldSpritesRoute1West36::
 
   DB 0;END Route1West36 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West41:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_43
-.east:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
+MapOverworldChunkRoute1West41::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_43
+.east::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
   DB 0;x1
@@ -5233,17 +5233,17 @@ MapOverworldChunkRoute1West41:
 
   DB 0;END Route1West41 background objects, 163 bytes
 
-MapOverworldSpritesRoute1West41:
+MapOverworldSpritesRoute1West41::
 
   DB 0;END Route1West41 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West42:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
+MapOverworldChunkRoute1West42::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_36
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (16)
   DB 16;x1
@@ -5431,17 +5431,17 @@ MapOverworldChunkRoute1West42:
 
   DB 0;END Route1West42 background objects, 180 bytes
 
-MapOverworldSpritesRoute1West42:
+MapOverworldSpritesRoute1West42::
 
   DB 0;END Route1West42 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West43:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_43
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
+MapOverworldChunkRoute1West43::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_43
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (21)
   DB 12;x1
@@ -5650,17 +5650,17 @@ MapOverworldChunkRoute1West43:
 
   DB 0;END Route1West43 background objects, 199 bytes
 
-MapOverworldSpritesRoute1West43:
+MapOverworldSpritesRoute1West43::
 
   DB 0;END Route1West43 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West44:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
+MapOverworldChunkRoute1West44::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_42
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_44
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Tree (23) 2,2
   DB 18;x1
@@ -5778,31 +5778,31 @@ MapOverworldChunkRoute1West44:
 
   DB 0;END Route1West44 background objects, 118 bytes
 
-MapOverworldSpritesRoute1West44:
+MapOverworldSpritesRoute1West44::
 
   DB 0;END Route1West44 sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk2:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
+MapOverworldChunkCenterFieldChunk2::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
 
   DB 0;END CenterFieldChunk2 background objects, 11 bytes
 
-MapOverworldSpritesCenterFieldChunk2:
+MapOverworldSpritesCenterFieldChunk2::
 
   DB 0;END CenterFieldChunk2 sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk7:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
-.west:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
+MapOverworldChunkCenterFieldChunk7::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_1
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
+.west::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (3)
   DB 0;x1
@@ -5813,17 +5813,17 @@ MapOverworldChunkCenterFieldChunk7:
 
   DB 0;END CenterFieldChunk7 background objects, 18 bytes
 
-MapOverworldSpritesCenterFieldChunk7:
+MapOverworldSpritesCenterFieldChunk7::
 
   DB 0;END CenterFieldChunk7 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West231:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
+MapOverworldChunkRoute1West231::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSWWATER
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (38)
   DB 13;x1
@@ -5834,17 +5834,17 @@ MapOverworldChunkRoute1West231:
 
   DB 0;END Route1West231 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West231:
+MapOverworldSpritesRoute1West231::
 
   DB 0;END Route1West231 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West233:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
+MapOverworldChunkRoute1West233::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (39)
   DB 15;x1
@@ -5855,17 +5855,17 @@ MapOverworldChunkRoute1West233:
 
   DB 0;END Route1West233 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West233:
+MapOverworldSpritesRoute1West233::
 
   DB 0;END Route1West233 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West236:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
+MapOverworldChunkRoute1West236::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_7
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (11)
   DB 0;x1
@@ -5892,45 +5892,45 @@ MapOverworldChunkRoute1West236:
 
   DB 0;END Route1West236 background objects, 32 bytes
 
-MapOverworldSpritesRoute1West236:
+MapOverworldSpritesRoute1West236::
 
   DB 0;END Route1West236 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West237:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
+MapOverworldChunkRoute1West237::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_231
 
   DB 0;END Route1West237 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West237:
+MapOverworldSpritesRoute1West237::
 
   DB 0;END Route1West237 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West238:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
+MapOverworldChunkRoute1West238::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_237
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
 
   DB 0;END Route1West238 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West238:
+MapOverworldSpritesRoute1West238::
 
   DB 0;END Route1West238 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West239:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
+MapOverworldChunkRoute1West239::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_233
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (40)
   DB 13;x1
@@ -5941,17 +5941,17 @@ MapOverworldChunkRoute1West239:
 
   DB 0;END Route1West239 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West239:
+MapOverworldSpritesRoute1West239::
 
   DB 0;END Route1West239 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West240:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
+MapOverworldChunkRoute1West240::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (41)
   DB 11;x1
@@ -5962,31 +5962,31 @@ MapOverworldChunkRoute1West240:
 
   DB 0;END Route1West240 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West240:
+MapOverworldSpritesRoute1West240::
 
   DB 0;END Route1West240 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West241:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
-.east:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
+MapOverworldChunkRoute1West241::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_238
+.east::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_239
 
   DB 0;END Route1West241 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West241:
+MapOverworldSpritesRoute1West241::
 
   DB 0;END Route1West241 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West242:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
-.east:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_245
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
+MapOverworldChunkRoute1West242::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
+.east::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_245
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (54)
   DB 16;x1
@@ -5998,17 +5998,17 @@ MapOverworldChunkRoute1West242:
 
   DB 0;END Route1West242 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West242:
+MapOverworldSpritesRoute1West242::
 
   DB 0;END Route1West242 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West243:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
+MapOverworldChunkRoute1West243::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_240
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
   DB 28;x1
@@ -6035,17 +6035,17 @@ MapOverworldChunkRoute1West243:
 
   DB 0;END Route1West243 background objects, 32 bytes
 
-MapOverworldSpritesRoute1West243:
+MapOverworldSpritesRoute1West243::
 
   DB 0;END Route1West243 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West244:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
+MapOverworldChunkRoute1West244::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (21)
   DB 28;x1
@@ -6078,17 +6078,17 @@ MapOverworldChunkRoute1West244:
 
   DB 0;END Route1West244 background objects, 39 bytes
 
-MapOverworldSpritesRoute1West244:
+MapOverworldSpritesRoute1West244::
 
   DB 0;END Route1West244 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West245:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
+MapOverworldChunkRoute1West245::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_243
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_SOLID ;GameObject (13)
   DB 4;x1
@@ -6372,17 +6372,17 @@ MapOverworldChunkRoute1West245:
 
   DB 0;END Route1West245 background objects, 265 bytes
 
-MapOverworldSpritesRoute1West245:
+MapOverworldSpritesRoute1West245::
 
   DB 0;END Route1West245 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West246:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_245
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
+MapOverworldChunkRoute1West246::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_245
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_244
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
   DB 0;x1
@@ -6414,31 +6414,31 @@ MapOverworldChunkRoute1West246:
 
   DB 0;END Route1West246 background objects, 37 bytes
 
-MapOverworldSpritesRoute1West246:
+MapOverworldSpritesRoute1West246::
 
   DB 0;END Route1West246 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West247:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
+MapOverworldChunkRoute1West247::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
 
   DB 0;END Route1West247 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West247:
+MapOverworldSpritesRoute1West247::
 
   DB 0;END Route1West247 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West248:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
+MapOverworldChunkRoute1West248::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_246
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (48)
   DB 0;x1
@@ -6456,31 +6456,31 @@ MapOverworldChunkRoute1West248:
 
   DB 0;END Route1West248 background objects, 25 bytes
 
-MapOverworldSpritesRoute1West248:
+MapOverworldSpritesRoute1West248::
 
   DB 0;END Route1West248 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West249:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
+MapOverworldChunkRoute1West249::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
 
   DB 0;END Route1West249 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West249:
+MapOverworldSpritesRoute1West249::
 
   DB 0;END Route1West249 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West250:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
+MapOverworldChunkRoute1West250::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_248
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (50)
   DB 20;x1
@@ -6498,31 +6498,31 @@ MapOverworldChunkRoute1West250:
 
   DB 0;END Route1West250 background objects, 25 bytes
 
-MapOverworldSpritesRoute1West250:
+MapOverworldSpritesRoute1West250::
 
   DB 0;END Route1West250 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West251:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
+MapOverworldChunkRoute1West251::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
 
   DB 0;END Route1West251 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West251:
+MapOverworldSpritesRoute1West251::
 
   DB 0;END Route1West251 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West252:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
+MapOverworldChunkRoute1West252::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_250
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Sign (51)
   DB 0;x1
@@ -6533,17 +6533,17 @@ MapOverworldChunkRoute1West252:
 
   DB 0;END Route1West252 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West252:
+MapOverworldSpritesRoute1West252::
 
   DB 0;END Route1West252 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West253:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
+MapOverworldChunkRoute1West253::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_251
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (19)
   DB 6;x1
@@ -6555,59 +6555,59 @@ MapOverworldChunkRoute1West253:
 
   DB 0;END Route1West253 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West253:
+MapOverworldSpritesRoute1West253::
 
   DB 0;END Route1West253 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West254:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
+MapOverworldChunkRoute1West254::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_252
 
   DB 0;END Route1West254 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West254:
+MapOverworldSpritesRoute1West254::
 
   DB 0;END Route1West254 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West255:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
+MapOverworldChunkRoute1West255::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_253
 
   DB 0;END Route1West255 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West255:
+MapOverworldSpritesRoute1West255::
 
   DB 0;END Route1West255 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West256:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
+MapOverworldChunkRoute1West256::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_254
 
   DB 0;END Route1West256 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West256:
+MapOverworldSpritesRoute1West256::
 
   DB 0;END Route1West256 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West257:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
+MapOverworldChunkRoute1West257::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_255
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (20)
   DB 8;x1
@@ -6619,45 +6619,45 @@ MapOverworldChunkRoute1West257:
 
   DB 0;END Route1West257 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West257:
+MapOverworldSpritesRoute1West257::
 
   DB 0;END Route1West257 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West258:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
+MapOverworldChunkRoute1West258::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_256
 
   DB 0;END Route1West258 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West258:
+MapOverworldSpritesRoute1West258::
 
   DB 0;END Route1West258 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West259:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
+MapOverworldChunkRoute1West259::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_257
 
   DB 0;END Route1West259 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West259:
+MapOverworldSpritesRoute1West259::
 
   DB 0;END Route1West259 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West260:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
+MapOverworldChunkRoute1West260::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_259
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_260
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_258
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_NONE ;GameObject (21)
   DB 12;x1
@@ -6669,17 +6669,17 @@ MapOverworldChunkRoute1West260:
 
   DB 0;END Route1West260 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West260:
+MapOverworldSpritesRoute1West260::
 
   DB 0;END Route1West260 sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownSEWater1:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
-.east:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
+MapOverworldChunkBilletTownSEWater1::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK
+.east::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
   DB 0;x1
@@ -6728,17 +6728,17 @@ MapOverworldChunkBilletTownSEWater1:
 
   DB 0;END BilletTownSEWater1 background objects, 51 bytes
 
-MapOverworldSpritesBilletTownSEWater1:
+MapOverworldSpritesBilletTownSEWater1::
 
   DB 0;END BilletTownSEWater1 sprite objects, 1 bytes
 
-MapOverworldChunkBilletTownSEWater2:
-.tile:    DB 188
-.palette: DB 7
-.north:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
-.south:   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
-.west:    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
+MapOverworldChunkBilletTownSEWater2::
+.tile::    DB 188
+.palette:: DB 7
+.north::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_236
+.south::   DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_2
+.west::    DB MAP_OVERWORLD_CHUNK_BILLETTOWNSEWATER_1
 
   DB MAP_OBJ_TILE_FILL | MAP_COLLISION_WATER ;GameObject (10)
   DB 0;x1
@@ -6779,17 +6779,17 @@ MapOverworldChunkBilletTownSEWater2:
 
   DB 0;END BilletTownSEWater2 background objects, 44 bytes
 
-MapOverworldSpritesBilletTownSEWater2:
+MapOverworldSpritesBilletTownSEWater2::
 
   DB 0;END BilletTownSEWater2 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West175:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
-.south:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
+MapOverworldChunkRoute1West175::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
+.south::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1EAST
 
   DB MAP_OBJ_STAMP_FILL | MAP_COLLISION_SOLID ;Fence (3)
   DB 0;x1
@@ -6800,17 +6800,17 @@ MapOverworldChunkRoute1West175:
 
   DB 0;END Route1West175 background objects, 18 bytes
 
-MapOverworldSpritesRoute1West175:
+MapOverworldSpritesRoute1West175::
 
   DB 0;END Route1West175 sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk9:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
-.south:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
-.west:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
+MapOverworldChunkCenterFieldChunk9::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
+.south::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
+.west::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
   DB 12;x1
@@ -6826,17 +6826,17 @@ MapOverworldChunkCenterFieldChunk9:
 
   DB 0;END CenterFieldChunk9 background objects, 21 bytes
 
-MapOverworldSpritesCenterFieldChunk9:
+MapOverworldSpritesCenterFieldChunk9::
 
   DB 0;END CenterFieldChunk9 sprite objects, 1 bytes
 
-MapOverworldChunkRightFieldChunk1:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
-.east:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
-.west:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
+MapOverworldChunkRightFieldChunk1::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
+.east::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
+.west::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
   DB 8;x1
@@ -6866,17 +6866,17 @@ MapOverworldChunkRightFieldChunk1:
 
   DB 0;END RightFieldChunk1 background objects, 33 bytes
 
-MapOverworldSpritesRightFieldChunk1:
+MapOverworldSpritesRightFieldChunk1::
 
   DB 0;END RightFieldChunk1 sprite objects, 1 bytes
 
-MapOverworldChunkLeftFieldChunk1:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
-.south:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
+MapOverworldChunkLeftFieldChunk1::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_9
+.south::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_1
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_41
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
   DB 12;x1
@@ -6900,17 +6900,17 @@ MapOverworldChunkLeftFieldChunk1:
 
   DB 0;END LeftFieldChunk1 background objects, 28 bytes
 
-MapOverworldSpritesLeftFieldChunk1:
+MapOverworldSpritesLeftFieldChunk1::
 
   DB 0;END LeftFieldChunk1 sprite objects, 1 bytes
 
-MapOverworldChunkInfieldChunk1:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
-.east:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
+MapOverworldChunkInfieldChunk1::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
+.east::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_1
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_34
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_35
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
   DB 16;x1
@@ -7007,31 +7007,31 @@ MapOverworldChunkInfieldChunk1:
 
   DB 0;END InfieldChunk1 background objects, 93 bytes
 
-MapOverworldSpritesInfieldChunk1:
+MapOverworldSpritesInfieldChunk1::
 
   DB 0;END InfieldChunk1 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West37:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
-.east:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
-.south:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
+MapOverworldChunkRoute1West37::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
+.east::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
+.south::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_1
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_37
 
   DB 0;END Route1West37 background objects, 11 bytes
 
-MapOverworldSpritesRoute1West37:
+MapOverworldSpritesRoute1West37::
 
   DB 0;END Route1West37 sprite objects, 1 bytes
 
-MapOverworldChunkRoute1West202:
-.tile:    DB 255
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
+MapOverworldChunkRoute1West202::
+.tile::    DB 255
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_202
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_175
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;Fence (4) 0,1
   DB 30;x1
@@ -7048,17 +7048,17 @@ MapOverworldChunkRoute1West202:
 
   DB 0;END Route1West202 background objects, 23 bytes
 
-MapOverworldSpritesRoute1West202:
+MapOverworldSpritesRoute1West202::
 
   DB 0;END Route1West202 sprite objects, 1 bytes
 
-MapOverworldChunkRightFieldChunk2:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
-.east:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
-.west:    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
+MapOverworldChunkRightFieldChunk2::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
+.east::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_249
+.west::    DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (3)
   DB 8;x1
@@ -7094,17 +7094,17 @@ MapOverworldChunkRightFieldChunk2:
 
   DB 0;END RightFieldChunk2 background objects, 38 bytes
 
-MapOverworldSpritesRightFieldChunk2:
+MapOverworldSpritesRightFieldChunk2::
 
   DB 0;END RightFieldChunk2 sprite objects, 1 bytes
 
-MapOverworldChunkLeftFieldChunk2:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
-.south:   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
+MapOverworldChunkLeftFieldChunk2::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
+.south::   DB MAP_OVERWORLD_CHUNK_INFIELDCHUNK_2
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_241
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (7)
   DB 12;x1
@@ -7128,17 +7128,17 @@ MapOverworldChunkLeftFieldChunk2:
 
   DB 0;END LeftFieldChunk2 background objects, 28 bytes
 
-MapOverworldSpritesLeftFieldChunk2:
+MapOverworldSpritesLeftFieldChunk2::
 
   DB 0;END LeftFieldChunk2 sprite objects, 1 bytes
 
-MapOverworldChunkInfieldChunk2:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
-.east:    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
-.south:   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
-.west:    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
+MapOverworldChunkInfieldChunk2::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
+.east::    DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
+.south::   DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_247
+.west::    DB MAP_OVERWORLD_CHUNK_ROUTE1WEST_242
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (12)
   DB 16;x1
@@ -7235,17 +7235,17 @@ MapOverworldChunkInfieldChunk2:
 
   DB 0;END InfieldChunk2 background objects, 93 bytes
 
-MapOverworldSpritesInfieldChunk2:
+MapOverworldSpritesInfieldChunk2::
 
   DB 0;END InfieldChunk2 sprite objects, 1 bytes
 
-MapOverworldChunkCenterFieldChunk10:
-.tile:    DB 253
-.palette: DB 1
-.north:   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
-.east:    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
-.south:   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
-.west:    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
+MapOverworldChunkCenterFieldChunk10::
+.tile::    DB 253
+.palette:: DB 1
+.north::   DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
+.east::    DB MAP_OVERWORLD_CHUNK_CENTERFIELDCHUNK_10
+.south::   DB MAP_OVERWORLD_CHUNK_RIGHTFIELDCHUNK_2
+.west::    DB MAP_OVERWORLD_CHUNK_LEFTFIELDCHUNK_2
 
   DB MAP_OBJ_TILE | MAP_COLLISION_NONE ;GameObject (5)
   DB 12;x1
@@ -7267,11 +7267,11 @@ MapOverworldChunkCenterFieldChunk10:
 
   DB 0;END CenterFieldChunk10 background objects, 26 bytes
 
-MapOverworldSpritesCenterFieldChunk10:
+MapOverworldSpritesCenterFieldChunk10::
 
   DB 0;END CenterFieldChunk10 sprite objects, 1 bytes
 
-MapOverworldScripts: ;6 bytes
+MapOverworldScripts:: ;6 bytes
   DB BANK(RivalHouseSign)
   DW RivalHouseSign
   DB BANK(YourHouseSign)

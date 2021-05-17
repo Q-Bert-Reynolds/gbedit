@@ -14,7 +14,7 @@ RUN_TESTS: MACRO
   ; call SetBank
   ; TEST_SIM 250, -15, 10
   call LoadFontTiles
-  ld a, MAPS_BANK
+  ld a, WORLD_BANK
   call SetBank
   call TestMap
 ENDM

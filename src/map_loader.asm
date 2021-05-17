@@ -971,6 +971,7 @@ DrawMapToScreen::
   ret
 
 DrawMapChunk:; hl = chunk address, de=xy, bc=wh
+  ld [_breakpoint], a
 .testWidth
   ld a, b;w
   and a
@@ -1029,7 +1030,6 @@ DrawMapChunk:; hl = chunk address, de=xy, bc=wh
     ld d, a
     ld a, [hli];y
     ld e, a
-    
     ld a, b;map object type and collision
     push af;map object type and collision
     and a, MAP_OBJ_TYPE_MASK

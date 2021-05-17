@@ -1,5 +1,5 @@
-GBStamps:
-GBStampBusinessDoor: ;7 bytes
+GBStamps::
+GBStampBusinessDoor:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -8,7 +8,7 @@ GBStampBusinessDoor: ;7 bytes
 .palette
   DB 130
 
-GBStampComputerStand: ;5 bytes
+GBStampComputerStand:: ;5 bytes
   DB 2;width
   DB 1;height
 .tiles
@@ -16,7 +16,7 @@ GBStampComputerStand: ;5 bytes
 .palette
   DB 130
 
-GBStampCouchHoriz: ;18 bytes
+GBStampCouchHoriz:: ;18 bytes
   DB 5;width
   DB 3;height
 .tiles
@@ -26,7 +26,7 @@ GBStampCouchHoriz: ;18 bytes
 .palette
   DB 134
 
-GBStampCouchVert: ;13 bytes
+GBStampCouchVert:: ;13 bytes
   DB 2;width
   DB 5;height
 .tiles
@@ -38,7 +38,7 @@ GBStampCouchVert: ;13 bytes
 .palette
   DB 135
 
-GBStampPublicComputer: ;10 bytes
+GBStampPublicComputer:: ;10 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -48,7 +48,7 @@ GBStampPublicComputer: ;10 bytes
   DB 0, 0
   DB 6, 6
 
-GBStampBed: ;34 bytes
+GBStampBed:: ;34 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -62,7 +62,7 @@ GBStampBed: ;34 bytes
   DB 4, 4, 4, 4
   DB 3, 3, 3, 3
 
-GBStampBigTV: ;42 bytes
+GBStampBigTV:: ;42 bytes
   DB 5;width
   DB 4;height
 .tiles
@@ -76,7 +76,7 @@ GBStampBigTV: ;42 bytes
   DB 2, 5, 4, 4, 2
   DB 2, 2, 2, 2, 2
 
-GBStampDesk: ;34 bytes
+GBStampDesk:: ;34 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -90,7 +90,7 @@ GBStampDesk: ;34 bytes
   DB 2, 2, 2, 2
   DB 2, 2, 2, 2
 
-GBStampExit: ;7 bytes
+GBStampExit:: ;7 bytes
   DB 4;width
   DB 1;height
 .tiles
@@ -98,7 +98,7 @@ GBStampExit: ;7 bytes
 .palette
   DB 130
 
-GBStampFloor: ;19 bytes
+GBStampFloor:: ;19 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -109,7 +109,7 @@ GBStampFloor: ;19 bytes
 .palette
   DB 130
 
-GBStampPlant: ;18 bytes
+GBStampPlant:: ;18 bytes
   DB 2;width
   DB 4;height
 .tiles
@@ -123,7 +123,7 @@ GBStampPlant: ;18 bytes
   DB 2, 2
   DB 2, 2
 
-GBStampRug: ;50 bytes
+GBStampRug:: ;50 bytes
   DB 6;width
   DB 4;height
 .tiles
@@ -137,7 +137,7 @@ GBStampRug: ;50 bytes
   DB 3, 7, 7, 7, 7, 3
   DB 3, 3, 3, 3, 3, 3
 
-GBStampShelf: ;18 bytes
+GBStampShelf:: ;18 bytes
   DB 2;width
   DB 4;height
 .tiles
@@ -151,7 +151,7 @@ GBStampShelf: ;18 bytes
   DB 2, 2
   DB 2, 2
 
-GBStampStairsDown: ;9 bytes
+GBStampStairsDown:: ;9 bytes
   DB 2;width
   DB 3;height
 .tiles
@@ -161,7 +161,7 @@ GBStampStairsDown: ;9 bytes
 .palette
   DB 132
 
-GBStampStairsUp: ;18 bytes
+GBStampStairsUp:: ;18 bytes
   DB 2;width
   DB 4;height
 .tiles
@@ -175,7 +175,7 @@ GBStampStairsUp: ;18 bytes
   DB 3, 3
   DB 3, 3
 
-GBStampStool: ;7 bytes
+GBStampStool:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -184,7 +184,7 @@ GBStampStool: ;7 bytes
 .palette
   DB 130
 
-GBStampTable: ;19 bytes
+GBStampTable:: ;19 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -195,7 +195,7 @@ GBStampTable: ;19 bytes
 .palette
   DB 130
 
-GBStampTrashCan: ;7 bytes
+GBStampTrashCan:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -204,7 +204,7 @@ GBStampTrashCan: ;7 bytes
 .palette
   DB 130
 
-GBStampTrashCanWall: ;10 bytes
+GBStampTrashCanWall:: ;10 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -214,7 +214,7 @@ GBStampTrashCanWall: ;10 bytes
   DB 5, 5
   DB 2, 2
 
-GBStampTV: ;7 bytes
+GBStampTV:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -223,7 +223,7 @@ GBStampTV: ;7 bytes
 .palette
   DB 131
 
-GBStampWindow: ;7 bytes
+GBStampWindow:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -232,7 +232,7 @@ GBStampWindow: ;7 bytes
 .palette
   DB 132
 
-GBStampBusinessFacade: ;66 bytes
+GBStampBusinessFacade:: ;66 bytes
   DB 8;width
   DB 4;height
 .tiles
@@ -246,7 +246,7 @@ GBStampBusinessFacade: ;66 bytes
   DB 3, 4, 4, 4, 4, 4, 4, 3
   DB 3, 4, 4, 4, 4, 4, 4, 3
 
-GBStampBusinessRoof: ;35 bytes
+GBStampBusinessRoof:: ;35 bytes
   DB 8;width
   DB 4;height
 .tiles
@@ -257,7 +257,7 @@ GBStampBusinessRoof: ;35 bytes
 .palette
   DB 131
 
-GBStampFence: ;5 bytes
+GBStampFence:: ;5 bytes
   DB 1;width
   DB 2;height
 .tiles
@@ -266,7 +266,7 @@ GBStampFence: ;5 bytes
 .palette
   DB 130
 
-GBStampFlowerBed: ;10 bytes
+GBStampFlowerBed:: ;10 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -276,7 +276,7 @@ GBStampFlowerBed: ;10 bytes
   DB 2, 5
   DB 5, 2
 
-GBStampForest: ;19 bytes
+GBStampForest:: ;19 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -287,7 +287,7 @@ GBStampForest: ;19 bytes
 .palette
   DB 129
 
-GBStampHomePlate: ;84 bytes
+GBStampHomePlate:: ;84 bytes
   DB 9;width
   DB 9;height
 .tiles
@@ -303,7 +303,7 @@ GBStampHomePlate: ;84 bytes
 .palette
   DB 133
 
-GBStampHomePlateSm: ;7 bytes
+GBStampHomePlateSm:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -312,7 +312,7 @@ GBStampHomePlateSm: ;7 bytes
 .palette
   DB 133
 
-GBStampHouse: ;66 bytes
+GBStampHouse:: ;66 bytes
   DB 8;width
   DB 4;height
 .tiles
@@ -326,7 +326,7 @@ GBStampHouse: ;66 bytes
   DB 3, 4, 4, 4, 4, 4, 4, 3
   DB 3, 4, 4, 4, 4, 4, 4, 3
 
-GBStampHouseDoor: ;7 bytes
+GBStampHouseDoor:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -335,7 +335,7 @@ GBStampHouseDoor: ;7 bytes
 .palette
   DB 132
 
-GBStampHouseRoofLowerLeft: ;10 bytes
+GBStampHouseRoofLowerLeft:: ;10 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -345,7 +345,7 @@ GBStampHouseRoofLowerLeft: ;10 bytes
   DB 3, 4
   DB 3, 4
 
-GBStampHouseRoofLowerRight: ;10 bytes
+GBStampHouseRoofLowerRight:: ;10 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -355,7 +355,7 @@ GBStampHouseRoofLowerRight: ;10 bytes
   DB 3, 3
   DB 4, 3
 
-GBStampHouseRoofUpperLeft: ;5 bytes
+GBStampHouseRoofUpperLeft:: ;5 bytes
   DB 2;width
   DB 1;height
 .tiles
@@ -363,7 +363,7 @@ GBStampHouseRoofUpperLeft: ;5 bytes
 .palette
   DB 131
 
-GBStampHouseRoofUpperRight: ;5 bytes
+GBStampHouseRoofUpperRight:: ;5 bytes
   DB 2;width
   DB 1;height
 .tiles
@@ -371,7 +371,7 @@ GBStampHouseRoofUpperRight: ;5 bytes
 .palette
   DB 131
 
-GBStampHouseWallBottomLeft: ;6 bytes
+GBStampHouseWallBottomLeft:: ;6 bytes
   DB 2;width
   DB 1;height
 .tiles
@@ -379,7 +379,7 @@ GBStampHouseWallBottomLeft: ;6 bytes
 .palettes
   DB 3, 4
 
-GBStampHouseWallBottomRight: ;6 bytes
+GBStampHouseWallBottomRight:: ;6 bytes
   DB 2;width
   DB 1;height
 .tiles
@@ -387,7 +387,7 @@ GBStampHouseWallBottomRight: ;6 bytes
 .palettes
   DB 4, 3
 
-GBStampMound: ;28 bytes
+GBStampMound:: ;28 bytes
   DB 5;width
   DB 5;height
 .tiles
@@ -399,7 +399,7 @@ GBStampMound: ;28 bytes
 .palette
   DB 133
 
-GBStampRock: ;11 bytes
+GBStampRock:: ;11 bytes
   DB 4;width
   DB 2;height
 .tiles
@@ -408,7 +408,7 @@ GBStampRock: ;11 bytes
 .palette
   DB 130
 
-GBStampRubber: ;7 bytes
+GBStampRubber:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -417,7 +417,7 @@ GBStampRubber: ;7 bytes
 .palette
   DB 133
 
-GBStampSecondBase: ;84 bytes
+GBStampSecondBase:: ;84 bytes
   DB 9;width
   DB 9;height
 .tiles
@@ -433,7 +433,7 @@ GBStampSecondBase: ;84 bytes
 .palette
   DB 133
 
-GBStampSignStamp: ;7 bytes
+GBStampSignStamp:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -442,7 +442,7 @@ GBStampSignStamp: ;7 bytes
 .palette
   DB 131
 
-GBStampTree: ;34 bytes
+GBStampTree:: ;34 bytes
   DB 4;width
   DB 4;height
 .tiles
@@ -456,7 +456,7 @@ GBStampTree: ;34 bytes
   DB 1, 1, 1, 1
   DB 2, 2, 2, 2
 
-GBStampTrunk: ;7 bytes
+GBStampTrunk:: ;7 bytes
   DB 2;width
   DB 2;height
 .tiles
@@ -465,7 +465,7 @@ GBStampTrunk: ;7 bytes
 .palette
   DB 130
 
-GBStampWaterRock: ;9 bytes
+GBStampWaterRock:: ;9 bytes
   DB 3;width
   DB 2;height
 .tiles
@@ -474,7 +474,7 @@ GBStampWaterRock: ;9 bytes
 .palette
   DB 134
 
-GBStampWildFlowers: ;14 bytes
+GBStampWildFlowers:: ;14 bytes
   DB 3;width
   DB 2;height
 .tiles

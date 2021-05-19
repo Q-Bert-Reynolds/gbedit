@@ -9,14 +9,15 @@ INCLUDE "src/beisbol.inc"
 
 RUN_TESTS: MACRO
 
-  DISPLAY_ON
+  ; DISPLAY_ON
   ; ld a, SIM_BANK
   ; call SetBank
   ; TEST_SIM 250, -15, 10
   call LoadFontTiles
-  ld a, WORLD_BANK
-  call SetBank
-  call TestMap
+  call KeyboardDemo
+  ; ld a, WORLD_BANK
+  ; call SetBank
+  ; call TestMap
 ENDM
 
 TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down
@@ -67,7 +68,7 @@ SECTION "LCDC", ROM0[$0048]
 SECTION "TimerOverflow", ROM0[$0050]
   reti
 SECTION "Serial", ROM0[$0058]
-  reti
+  jp SerialInterrupt
 SECTION "p1thru4", ROM0[$0060]
   reti
 
@@ -136,7 +137,7 @@ Main::
   ld [rLCDC], a
 
 .setupInterrupts
-  ld a, IEF_VBLANK
+  ld a, IEF_VBLANK | IEF_SERIAL
   ld [rIE], a
   ei
 

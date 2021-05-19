@@ -115,6 +115,18 @@ Trampoline:: ;b = bank, hl = address, can only use de and RAM for args, can't re
   call SetBank
   ret
 
+SerialInterrupt::
+  push af
+  push bc
+  push de
+  push hl
+  call KeyboardInterrupt
+  pop hl 
+  pop de
+  pop bc
+  pop af
+  reti
+
 LCDInterrupt::
   push af
   push bc

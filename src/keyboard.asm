@@ -1,3 +1,7 @@
+PS2_START_BIT  EQU %00000100
+PS2_PARITY_BIT EQU %00000010
+PS2_FINISH_BIT EQU %00000001
+
 SECTION "PS/2 Keyboard Vars", WRAM0
 ;PS/2 scan codes are 11 bits (S0123456 7PFxxxxx):
 ; - (S)tart (always 0)
@@ -6,8 +10,10 @@ SECTION "PS/2 Keyboard Vars", WRAM0
 ; - (F)inish Bit (always 1)
 ps2_bits_received:: DB
 ps2_bits_processed:: DB
+ps2_bit_errors:: DB;xxxxxSPF, set if (S)tart, (P)arity, or (F)inish bits have errors
 ps2_buffer:: DW;S0123456 7PFxxxxx, shifted right by 11-ps2_bits_processed
 ps2_scan_code:: DB
+ps2_timeout:: DB
 
 SECTION "PS/2 Keyboard Code", ROM0
 PS2KeyboardInterrupt::
@@ -31,15 +37,12 @@ PS2KeyboardInterrupt::
   ld a, [ps2_bits_received]
   add a, 8
   ld [ps2_bits_received], a
-  xor a
-  ld [rSB], a
 
   call ProcessScanCode
 
   ld a, %10000000
   ld [rSC], a;request transfer using keyboard clock
     
-
   pop hl
   pop de
   pop bc
@@ -47,6 +50,7 @@ PS2KeyboardInterrupt::
   ret
 
 ProcessScanCode::
+  ld e, 0;errors
   ld a, [ps2_bits_processed]
   ld b, a
   ld a, [ps2_bits_received]
@@ -54,6 +58,8 @@ ProcessScanCode::
   cp a, 11
   ret c;return early if there aren't 11 bits to process
 
+  xor a
+  ld [ps2_timeout], a
   ld a, [ps2_buffer]
   ld h, a
   ld a, [ps2_buffer+1]
@@ -82,16 +88,20 @@ ProcessScanCode::
 .testStartBit
   bit 7, h;bit 7 of h is start bit
   jr z, .shiftDataIntoFirstByte;start bit should always be 0
-.startBitError;TODO
+.startBitError
+  ld e, PS2_START_BIT
 
 .shiftDataIntoFirstByte
   sla l;shift data bit 7 left out of l into carry
   rl h;rotate data bit 7 left from carry into h, start bit out
 
-.testStopBit
-  bit 6, l;bit 6 (bit 5 shifted left) is of l is stop bit
-  jr nz, .reverseAndCountDataBits;stop bit should always be 1
-.stopBitError;TODO
+.testFnishBit
+  bit 6, l;bit 6 (bit 5 shifted left) is of l is finish bit
+  jr nz, .reverseAndCountDataBits;finish bit should always be 1
+.finishBitError
+  ld a, PS2_FINISH_BIT
+  or a, e
+  ld e, a
 
 ;data (h) is 01234567, needs to be 76543210 in a
 ;we can count bits as we do so to test Parity Bit 
@@ -117,8 +127,46 @@ ProcessScanCode::
   inc c;add parity bit to sum
 .bit7Not1
   bit 0, c
-  ret nz
-.parityBitError;TODO
+  jr nz, .storeErrors
+.parityBitError
+  ld a, PS2_PARITY_BIT
+  or a, e
+  ld e, a
+
+.storeErrors
+  ld a, e
+  ld [ps2_bit_errors], a
+
+.incrementBitsProcessed
+  ld a, [ps2_bits_processed]
+  add a, 11
+  ld [ps2_bits_processed], a
+
+.testCountReset
+  ld a, [ps2_bits_received]
+  cp a, 88
+  ret nz;if bits received isn't a multiple of 8 and 11, return early
+  ;fall through
+
+PS2ResetBits::
+  xor a
+  ld [ps2_bits_received], a
+  ld [ps2_bits_processed], a
+  ret
+
+PS2KeyboardUpdate::;wait for V-Blank first
+  ld a, [ps2_timeout]
+  inc a
+  ld [ps2_timeout], a
+  cp a, 60
+  ret c
+
+  call ProcessScanCode
+
+  xor a
+  ld [ps2_timeout], a
+  ld [ps2_bits_received], a
+  ld [ps2_bits_processed], a
   ret
 
 HexNumbers: DB "0123456789ABCDEF"
@@ -131,54 +179,82 @@ KeyboardDemo::
   DISPLAY_ON
   ei
 
+  xor a
+  ld [rSB], a
   ld a, %10000000
   ld [rSC], a
+  ld [ps2_scan_code], a
 .loop
     ld a, [ps2_scan_code]
     push af;scan code
     call gbdk_WaitVBL
-    
+    ; call PS2KeyboardUpdate
     pop bc;old scan code
-    ld a, [ps2_scan_code]
-    cp a, b
-    ; jr z, .loop;no need to draw if there's no scan code change
+    call DrawKeyboardDebugData
 
-  .drawScanCode
-    ld hl, HexNumbers
-    ld de, 0
-    ld b, a;scan code
-    and $F0
-    swap a
-    inc a
-    ld e, a
-    add hl, de
-    ld a, [hl]
-    ld [_SCRN0], a
+    call UpdateInput
+    ld a, [button_state]
+    and a, PADF_A
+    jr z, .loop
 
-    ld hl, HexNumbers
-    ld de, 0
-    ld a, b
-    and $0F
-    inc a
-    ld e, a
-    add hl, de
-    ld a, [hl]
-    ld [_SCRN0+1], a
-
-    ld a, [ps2_bits_received]
-    ld h, 0
-    ld l, a
-    ld de, str_buffer
-    call str_Number
-    ld hl, BlankSpace
-    ld de, str_buffer
-    call str_Append
-
-    ld a, DRAW_FLAGS_BKG
-    ld hl, str_buffer
-    ld de, $0001
-    call DrawText
+    call PS2ResetBits
+    ld b, 0
+    call DrawKeyboardDebugData
 
     jp .loop
+  ret
 
+DrawKeyboardDebugData: ;b = old scan code
+  ld a, [ps2_scan_code]
+  cp a, b
+  ret z;no need to draw if there's no scan code change
+  ld b, a;scan code
+
+.drawScanCode
+  ld hl, HexNumbers
+  ld de, 0
+  and $F0
+  swap a
+  ld e, a
+  add hl, de
+  ld a, [hl]
+  ld [_SCRN0], a
+
+  ld hl, HexNumbers
+  ld de, 0
+  ld a, b
+  and $0F
+  ld e, a
+  add hl, de
+  ld a, [hl]
+  ld [_SCRN0+1], a
+
+.drawErrors
+  ld hl, HexNumbers
+  ld de, 0
+  ld a, [ps2_bit_errors]
+  and $0F
+  inc a
+  ld e, a
+  add hl, de
+  ld a, [hl]
+  ld [_SCRN0+3], a
+
+.drawBytesReceived
+  ld a, [ps2_bits_received]
+  srl a
+  srl a
+  srl a
+  ld h, 0
+  ld l, a
+  ld de, str_buffer
+  call str_Number
+  ld hl, BlankSpace
+  ld de, str_buffer
+  call str_Append
+
+  ld a, DRAW_FLAGS_BKG
+  ld hl, str_buffer
+  ld de, $0001
+  call DrawText
   ret

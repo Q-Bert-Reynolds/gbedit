@@ -9,7 +9,8 @@ SECTION "PS/2 Keyboard Vars", WRAM0
 ; - Odd (P)arity Bit - if the sum of bits 1-A (data bits + parity) is even, error
 ; - (F)inish Bit (always 1)
 ps2_scan_code:: DB
-ps2_timeout:: DB
+ps2_interrupt_count:: DB
+ps2_interrupt_started:: DB
 
 SECTION "PS/2 Keyboard Code", ROM0
 PS2KeyboardInterrupt::
@@ -18,6 +19,12 @@ PS2KeyboardInterrupt::
   push de
   push hl
 
+  ld a, [ps2_interrupt_count]
+  inc a
+  ld [ps2_interrupt_count], a
+  ld a, 1
+  ld [ps2_interrupt_started], a
+
   ld a, [rSB]
   ld b, a
   ; bit 7, a;test start bit
@@ -25,22 +32,29 @@ PS2KeyboardInterrupt::
   and a
   jr nz, .loadLastDataBit
   ld b, %10000000;if byte is 0, flip start bit to detect shift
-
 .loadLastDataBit
     ld a, [rSB]
     cp a, b
     jr z, .loadLastDataBit
   ld h, a;store data bits
+  ld b, a
 
+  cp a, $FF
+  jr nz, .loadParityBit
+  ld b, %01111111;if byte is all 1s, parity bit will also be 1, so flip bit 7 to detect shift
 .loadParityBit
     ld a, [rSB]
-    cp a, h
+    cp a, b
     jr z, .loadParityBit
   ld l, a;store parity
+  ld b, a
 
+  cp a, $FF
+  jr nz, .loadFinishBit
+  ld b, %01111111;if byte is all 1s, since stop bit is also 1, flip bit 7 to detect shift
 .loadFinishBit
     ld a, [rSB]
-    cp a, l
+    cp a, b
     jr z, .loadFinishBit
   and a, %00000001
   ; jr z, .finishBitError
@@ -48,6 +62,8 @@ PS2KeyboardInterrupt::
 .allBitsRead
   xor a
   ld [rSC], a;stop waiting for bits
+  ld [rSB], a
+  ld [ps2_interrupt_started], a
   ld a, %10000000
   ld [rSC], a;ask for bits using keyboard clock 
 
@@ -84,6 +100,8 @@ PS2KeyboardInterrupt::
 
 HexNumbers: DB "0123456789ABCDEF"
 BlankSpace: DB "                ",0
+StartedText: DB "STARTED",0
+StoppedText: DB "STOPPED",0
 KeyboardDemo::
   di
   DISPLAY_OFF
@@ -98,10 +116,7 @@ KeyboardDemo::
   ld [rSC], a
   ld [ps2_scan_code], a
 .loop
-    ld a, [ps2_scan_code]
-    push af;scan code
     call gbdk_WaitVBL
-    pop bc;old scan code
     call DrawKeyboardDebugData
 
     call UpdateInput
@@ -114,11 +129,8 @@ KeyboardDemo::
     jp .loop
   ret
 
-DrawKeyboardDebugData: ;b = old scan code
+DrawKeyboardDebugData:
   ld a, [ps2_scan_code]
-  cp a, b
-  ret z;no need to draw if there's no scan code change
-  ld b, a;scan code
 
 .drawScanCode
   ld hl, HexNumbers
@@ -139,22 +151,8 @@ DrawKeyboardDebugData: ;b = old scan code
   ld a, [hl]
   ld [_SCRN0+1], a
 
-.drawErrors
-  ld hl, HexNumbers
-  ld de, 0
-  ld a, [ps2_bit_errors]
-  and $0F
-  inc a
-  ld e, a
-  add hl, de
-  ld a, [hl]
-  ld [_SCRN0+3], a
-
-.drawBytesReceived
-  ld a, [ps2_bits_received]
-  srl a
-  srl a
-  srl a
+.drawCount
+  ld a, [ps2_interrupt_count]
   ld h, 0
   ld l, a
   ld de, str_buffer
@@ -166,5 +164,19 @@ DrawKeyboardDebugData: ;b = old scan code
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
   ld de, $0001
+  ld bc, 1
+  call DrawText
+
+.drawStartStop
+  ld hl, StoppedText
+  ld a, [ps2_interrupt_started]
+  and a
+  jr z, .drawStop
+.drawStart
+  ld hl, StartedText
+.drawStop
+  ld a, DRAW_FLAGS_BKG
+  ld de, $0002
+  ld bc, 1
   call DrawText
   ret

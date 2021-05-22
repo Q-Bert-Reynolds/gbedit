@@ -95,6 +95,7 @@ PS2KeyboardInterrupt::;de not used
     dec b;bits left
     jr nz, .reverseAndCountLoop
 .storeScanCode
+  and %01111111;HACK; upper bit is often wrong
   ld [ps2_scan_code], a
 
   ld a, c

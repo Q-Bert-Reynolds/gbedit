@@ -8,10 +8,6 @@ SECTION "PS/2 Keyboard Vars", WRAM0
 ; - Data Bits (0-7) in reverse order, 
 ; - Odd (P)arity Bit - if the sum of bits 1-A (data bits + parity) is even, error
 ; - (F)inish Bit (always 1)
-ps2_bits_received:: DB
-ps2_bits_processed:: DB
-ps2_bit_errors:: DB;xxxxxSPF, set if (S)tart, (P)arity, or (F)inish bits have errors
-ps2_buffer:: DW;S0123456 7PFxxxxx, shifted right by 11-ps2_bits_processed
 ps2_scan_code:: DB
 ps2_timeout:: DB
 
@@ -21,87 +17,39 @@ PS2KeyboardInterrupt::
   push bc
   push de
   push hl
-  ld a, [ps2_bits_received]
-  and a, %00001111;received % 16
+
   ld a, [rSB]
-  jr nz, .secondByte
-
-.firstByte
-  ld [ps2_buffer], a
-  jr .incrementBits
-
-.secondByte
-  ld [ps2_buffer+1], a
-
-.incrementBits
-  ld a, [ps2_bits_received]
-  add a, 8
-  ld [ps2_bits_received], a
-
-  call ProcessScanCode
-
-  ld a, %10000000
-  ld [rSC], a;request transfer using keyboard clock
-    
-  pop hl
-  pop de
-  pop bc
-  pop af
-  ret
-
-ProcessScanCode::
-  ld e, 0;errors
-  ld a, [ps2_bits_processed]
   ld b, a
-  ld a, [ps2_bits_received]
-  sub a, b;unprocessed = received - processed
-  cp a, 11
-  ret c;return early if there aren't 11 bits to process
-
-  xor a
-  ld [ps2_timeout], a
-  ld a, [ps2_buffer]
-  ld h, a
-  ld a, [ps2_buffer+1]
-  ld l, a;hl = [ps2_buffer]
-
-  ld a, b;processed bits
-  and a, %00001111;processed % 16
-  cp a, 8
-  jr c, .shiftBits
-
-.swapBytes
-  sub a, 8
-  ld b, l
-  ld l, h
-  ld h, b
-
-.shiftBits
+  ; bit 7, a;test start bit
+  ; jr nz, .startBitError
   and a
-  jr z, .testStartBit
-.shiftBitsLoop
-    sla l;shift l left into carry
-    rl h;rotate h left through carry
-    dec a
-    jr nz, .shiftBitsLoop
+  jr nz, .loadLastDataBit
+  ld b, %10000000;if byte is 0, flip start bit to detect shift
 
-.testStartBit
-  bit 7, h;bit 7 of h is start bit
-  jr z, .shiftDataIntoFirstByte;start bit should always be 0
-.startBitError
-  ld e, PS2_START_BIT
+.loadLastDataBit
+    ld a, [rSB]
+    cp a, b
+    jr z, .loadLastDataBit
+  ld h, a;store data bits
 
-.shiftDataIntoFirstByte
-  sla l;shift data bit 7 left out of l into carry
-  rl h;rotate data bit 7 left from carry into h, start bit out
+.loadParityBit
+    ld a, [rSB]
+    cp a, h
+    jr z, .loadParityBit
+  ld l, a;store parity
 
-.testFnishBit
-  bit 6, l;bit 6 (bit 5 shifted left) is of l is finish bit
-  jr nz, .reverseAndCountDataBits;finish bit should always be 1
-.finishBitError
-  ld a, PS2_FINISH_BIT
-  or a, e
-  ld e, a
+.loadFinishBit
+    ld a, [rSB]
+    cp a, l
+    jr z, .loadFinishBit
+  and a, %00000001
+  ; jr z, .finishBitError
+
+.allBitsRead
+  xor a
+  ld [rSC], a;stop waiting for bits
+  ld a, %10000000
+  ld [rSC], a;ask for bits using keyboard clock 
 
 ;data (h) is 01234567, needs to be 76543210 in a
 ;we can count bits as we do so to test Parity Bit 
@@ -117,56 +65,21 @@ ProcessScanCode::
   .bit0Not1
     dec b;bits left
     jr nz, .reverseAndCountLoop
-
 .storeScanCode
   ld [ps2_scan_code], a
+  
+; .testParityBit
+;   bit 7, l;bit 7 (bit 6 shifted left) of l is parity bit
+;   jr z, .bit7Not1
+;   inc c;add parity bit to sum
+; .bit7Not1
+;   bit 0, c
+;   jr nz, .noError
 
-.testParityBit
-  bit 7, l;bit 7 (bit 6 shifted left) of l is parity bit
-  jr z, .bit7Not1
-  inc c;add parity bit to sum
-.bit7Not1
-  bit 0, c
-  jr nz, .storeErrors
-.parityBitError
-  ld a, PS2_PARITY_BIT
-  or a, e
-  ld e, a
-
-.storeErrors
-  ld a, e
-  ld [ps2_bit_errors], a
-
-.incrementBitsProcessed
-  ld a, [ps2_bits_processed]
-  add a, 11
-  ld [ps2_bits_processed], a
-
-.testCountReset
-  ld a, [ps2_bits_received]
-  cp a, 88
-  ret nz;if bits received isn't a multiple of 8 and 11, return early
-  ;fall through
-
-PS2ResetBits::
-  xor a
-  ld [ps2_bits_received], a
-  ld [ps2_bits_processed], a
-  ret
-
-PS2KeyboardUpdate::;wait for V-Blank first
-  ld a, [ps2_timeout]
-  inc a
-  ld [ps2_timeout], a
-  cp a, 60
-  ret c
-
-  call ProcessScanCode
-
-  xor a
-  ld [ps2_timeout], a
-  ld [ps2_bits_received], a
-  ld [ps2_bits_processed], a
+  pop hl
+  pop de
+  pop bc
+  pop af
   ret
 
 HexNumbers: DB "0123456789ABCDEF"
@@ -188,7 +101,6 @@ KeyboardDemo::
     ld a, [ps2_scan_code]
     push af;scan code
     call gbdk_WaitVBL
-    ; call PS2KeyboardUpdate
     pop bc;old scan code
     call DrawKeyboardDebugData
 
@@ -197,9 +109,7 @@ KeyboardDemo::
     and a, PADF_A
     jr z, .loop
 
-    call PS2ResetBits
-    ld b, 0
-    call DrawKeyboardDebugData
+  .pressedAbutton
 
     jp .loop
   ret

@@ -14,14 +14,13 @@ ps2_interrupt_started:: DB
 ps2_errors:: DB;xxxxxSPF shows (S)tart, (P)arity, and (F)inish
 
 SECTION "PS/2 Keyboard Code", ROM0
-PS2KeyboardInterrupt::
+INCLUDE "src/PS2toASCII.asm"
+PS2KeyboardInterrupt::;de not used
   push af
   ld a, [rSB]; do this ASAP
   push bc
   ld b, a;store first 8 bits of scan code (S0123456)
-  push de
-  push hl
-  
+
   xor a
   ld [ps2_errors], a
 
@@ -33,14 +32,16 @@ PS2KeyboardInterrupt::
 .loadLastDataBit
   ld a, b
   and a
-  ld a, %10000001;make request with internal clock
-  ld [rSC], a;stop waiting for bits
+  ld a, %10000001
+  ld [rSC], a;ask for bits using internal clock 
   jr nz, .loadLastDataBitLoop
   ld b, %10000000;if byte is 0, flip start bit to detect shift
 .loadLastDataBitLoop
     ld a, [rSB]
     cp a, b
     jr z, .loadLastDataBitLoop
+
+  push hl
   ld h, a;store data bits
   ld b, a
 
@@ -70,15 +71,16 @@ PS2KeyboardInterrupt::
 
 .allBitsRead
   xor a
-  ld [rSB], a
+  ld [rSB], a;done reading bits
+  nop
   ld a, %10000000
   ld [rSC], a;ask for bits using keyboard clock 
   ld a, [ps2_interrupt_count]
   inc a
   ld [ps2_interrupt_count], a
 
-;data (h) is 01234567, needs to be 76543210 in a
-;we can count bits as we do so to test Parity Bit 
+; ;data (h) is 01234567, needs to be 76543210 in a
+; ;we can count bits as we do so to test Parity Bit 
 .reverseAndCountDataBits
   ld b, 8;bits left
   ld c, 0;bit sum
@@ -94,14 +96,10 @@ PS2KeyboardInterrupt::
     jr nz, .reverseAndCountLoop
 .storeScanCode
   ld [ps2_scan_code], a
-  
+
+  ld a, c
 .testParityBit
-  bit 0, l
-  jr z, .testDataBitSumPlusParity
-.parityBitSet
-  inc c;add parity bit to sum
-.testDataBitSumPlusParity
-  bit 0, c
+  xor a, l;Bit 0 of l is parity, and bit 0 of a is even/odd. These should never be equal.
   jr nz, .restoreRegistersAndReturn
 .parityBitError
   ld a, [ps2_errors]
@@ -110,7 +108,6 @@ PS2KeyboardInterrupt::
 
 .restoreRegistersAndReturn
   pop hl
-  pop de
   pop bc
   pop af
   ret
@@ -126,7 +123,7 @@ KeyboardDemo::
   xor a
   ld [rSB], a
   ld a, %10000000
-  ld [rSC], a
+  ld [rSC], a;ask for bits using keyboard clock 
   ld [ps2_scan_code], a
 .loop
     call gbdk_WaitVBL
@@ -142,13 +139,30 @@ KeyboardDemo::
     jp .loop
   ret
 
+DrawBinaryString:;b = byte to draw, hl = screen location
+  ld c, 8
+.loop
+    LCD_WAIT_VRAM
+    ld a, "1"
+    sla b
+    jr c, .setBuffer
+    ld a, "0"
+  .setBuffer
+    ld [hli], a
+    dec c
+    jr nz, .loop
+  ret
+
 
 HexNumbers: DB "0123456789ABCDEF"
-BlankSpace: DB "                ",0
-
+BlankSpace: DB "  ",0
+InterruptsText: DB " interrupts ",0
 DrawKeyboardDebugData:
-
+  LCD_WAIT_VRAM
 .drawScanCode
+  ld a, "$"
+  ld [_SCRN0], a
+
   ld hl, HexNumbers
   ld d, 0
   ld a, [ps2_scan_code]
@@ -157,7 +171,7 @@ DrawKeyboardDebugData:
   ld e, a
   add hl, de
   ld a, [hl]
-  ld [_SCRN0], a
+  ld [_SCRN0+1], a
 
   ld hl, HexNumbers
   ld d, 0
@@ -166,10 +180,10 @@ DrawKeyboardDebugData:
   ld e, a
   add hl, de
   ld a, [hl]
-  ld [_SCRN0+1], a
+  ld [_SCRN0+2], a
 
-.drawCount
-  ld a, [ps2_interrupt_count]
+
+  ld a, [ps2_scan_code]
   ld h, 0
   ld l, a
   ld de, str_buffer
@@ -180,9 +194,40 @@ DrawKeyboardDebugData:
 
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
-  ld de, $0001
+  ld de, $0500
   ld bc, 1
   call DrawText
+
+  ld hl, _SCRN0+10
+  ld a, [ps2_scan_code]
+  ld b, a
+  call DrawBinaryString
+
+.drawInterruptCount
+  ld a, [ps2_interrupt_count]
+  ld h, 0
+  ld l, a
+  ld de, str_buffer
+  call str_Number
+  ld hl, InterruptsText
+  ld de, str_buffer
+  call str_Append
+
+  ld a, DRAW_FLAGS_BKG
+  ld hl, str_buffer
+  ld de, $0003
+  ld bc, 1
+  call DrawText
+
+.drawKeyASCII
+  ld hl, PS2toASCIIKeymap
+  ld a, [ps2_scan_code]
+  ld b, 0
+  ld c, a
+  add hl, bc
+  LCD_WAIT_VRAM
+  ld a, [hl]
+  ld [_SCRN0+32*8], a
 
 .drawErrors
   ld hl, str_buffer

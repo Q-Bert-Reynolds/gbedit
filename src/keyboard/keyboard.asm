@@ -4,6 +4,14 @@ KB_MODE_USB_HID EQU 1
 PS2_START_BIT_ERROR  EQU %100
 PS2_PARITY_BIT_ERROR EQU %010
 PS2_FINISH_BIT_ERROR EQU %001
+
+KB_MOD_RELEASE  EQU %00000001 ;$PS2 code $F0
+KB_MOD_EXTENDED EQU %00000010 ;$PS2 code $E0
+KB_MOD_SUPER    EQU %00000100
+KB_MOD_ALT      EQU %00001000
+KB_MOD_CTRL     EQU %00010000
+KB_MOD_SHIFT    EQU %00100000
+
 INCLUDE "src/keyboard/usb_hid_keys.asm";USB HID key codes
 INCLUDE "src/keyboard/ps2_keys.asm";PS/2 keys codes
 
@@ -19,13 +27,14 @@ kb_buffer_write:: DB
 kb_buffer_read:: DB;TODO: r/w only use 4 bit, could be one byte
 kb_interrupt_count:: DB
 kb_errors:: DB;xxxxxSPF shows (S)tart, (P)arity, and (F)inish
+kb_modifiers:: DB ;xxSCAUER - (S)hift, (C)trl, (A)lt, S(U)per, (E)xtended key flag, (R)elease key flag
 
 SECTION "PS/2 Keyboard Code", ROM0
 INCLUDE "src/keyboard/ascii_keymaps.asm"
 
 PS2KeyboardInterrupt::;de not used
   push af
-  ld a, [rSB]; do this ASAP
+  ld a, [rSB]; load now before the first 3 bits get shifted out
   push bc
   ld b, a;store first 8 bits of scan code (S0123456)
 
@@ -37,11 +46,12 @@ PS2KeyboardInterrupt::;de not used
 .startBitError
   ld a, PS2_START_BIT_ERROR
   ld [kb_errors], a
+
 .loadLastDataBit
-  ld a, b
-  and a
   ld a, %10000001
   ld [rSC], a;ask for bits using internal clock 
+  ld a, b;scan code
+  and a
   jr nz, .loadLastDataBitLoop
   ld b, %10000000;if byte is 0, flip start bit to detect shift
 .loadLastDataBitLoop
@@ -126,9 +136,6 @@ PS2KeyboardInterrupt::;de not used
   ld a, [kb_scan_code]
   ld [hl], a
 
-  and %01111111;HACK; upper bit is often wrong
-  ld [kb_scan_code], a
-
 .restoreRegistersAndReturn
   pop hl
   pop bc
@@ -147,26 +154,43 @@ KeyboardDemo::
   xor a
   ld [_x], a
   ld [_y], a
+  ld [_i], a
   ld [rSB], a
   ld a, %10000000
   ld [rSC], a;ask for bits using keyboard clock 
   ld [kb_scan_code], a
+  ld b, 0
 .loop
     call gbdk_WaitVBL
-    call PrintKeyPresses
-    ; call DrawKeyboardDebugData
-
+    ld a, [_i]
+    bit 0, a
+    jr z, .drawDebug
+  .processKeys
+    call ProcessPS2Keys
+    jr .updateInput
+  .drawDebug
+    call DrawKeyboardDebugData
+  .updateInput
     call UpdateInput
-    ld a, [button_state]
+    ld a, [last_button_state]
     and a, PADF_A
     jr z, .loop
+    ld a, [button_state]
+    and a, PADF_A
+    jr nz, .loop
 
   .pressedAbutton
-
+    ld a, " "
+    ld bc, 32*32+20*18
+    ld hl, _SCRN0
+    call mem_SetVRAM
+    ld a, [_i]
+    xor a, 1
+    ld [_i], a
     jp .loop
   ret
 
-PrintKeyPresses:
+ProcessPS2Keys:
   ld a, [kb_buffer_write]
   ld b, a;b = write index
   ld a, [kb_buffer_read]
@@ -179,15 +203,130 @@ PrintKeyPresses:
     ld hl, kb_buffer
     add hl, de;[hl] = current scan code
     ld a, [hli];scan code
-    ; cp a, $E0;check extended code
-    ; cp a, $F0;check release code
 
+  .checkExtendedKeyPrefix
+    cp a, PS2_EXTENDED_KEY_PREFIX
+    jr nz, .checkReleaseKeyPrefix
+    ld a, [kb_modifiers]
+    or a, KB_MOD_EXTENDED
+    ld [kb_modifiers], a
+    ret
+
+  .checkReleaseKeyPrefix
+    cp a, PS2_RELEASED_KEY_PREFIX
+    jr nz, .checkModifiers
+    ld a, [kb_modifiers]
+    or a, KB_MOD_RELEASE
+    ld [kb_modifiers], a
+    ret
+
+  .checkModifiers
+    ld h, a;h = scan code
+    ld a, [kb_modifiers]
+    and a, ~KB_MOD_EXTENDED;ignore mod extended for now
+    ld [kb_modifiers], a
+
+    and a, KB_MOD_RELEASE
+    jr z, .keyDown
+  .keyUp
+      ld a, [kb_modifiers]
+      and a, ~KB_MOD_RELEASE
+      ld [kb_modifiers], a
+
+      ld a, h
+      cp a, PS2_KEY_SHIFT_LEFT
+      jr z, .releasedShift
+      cp a, PS2_KEY_SHIFT_RIGHT
+      jr z, .releasedShift
+      cp a, PS2_KEY_CTRL_LEFT
+      jr z, .releasedCtrl
+      cp a, PS2_KEY_CTRL_RIGHT
+      jr z, .releasedCtrl
+      cp a, PS2_KEY_ALT_LEFT
+      jr z, .releasedAlt
+      cp a, PS2_KEY_ALT_RIGHT
+      jr z, .releasedAlt
+      cp a, PS2_KEY_SUPER_LEFT
+      jr z, .releasedSuper
+      cp a, PS2_KEY_SUPER_RIGHT
+      jr z, .releasedSuper
+    .releasedOtherKey
+      ret
+    .releasedShift
+      ld a, [kb_modifiers]
+      and a, ~KB_MOD_SHIFT
+      ld [kb_modifiers], a
+      ret
+    .releasedCtrl
+      ld a, [kb_modifiers]
+      and a, ~KB_MOD_CTRL
+      ld [kb_modifiers], a
+      ret
+    .releasedAlt
+      ld a, [kb_modifiers]
+      and a, ~KB_MOD_ALT
+      ld [kb_modifiers], a
+      ret
+    .releasedSuper
+      ld a, [kb_modifiers]
+      and a, ~KB_MOD_SUPER
+      ld [kb_modifiers], a
+      ret
+
+  .keyDown
+      ld a, h
+      cp a, PS2_KEY_SHIFT_LEFT
+      jr z, .pressedShift
+      cp a, PS2_KEY_SHIFT_RIGHT
+      jr z, .pressedShift
+      cp a, PS2_KEY_CTRL_LEFT
+      jr z, .pressedCtrl
+      cp a, PS2_KEY_CTRL_RIGHT
+      jr z, .pressedCtrl
+      cp a, PS2_KEY_ALT_LEFT
+      jr z, .pressedAlt
+      cp a, PS2_KEY_ALT_RIGHT
+      jr z, .pressedAlt
+      cp a, PS2_KEY_SUPER_LEFT
+      jr z, .pressedSuper
+      cp a, PS2_KEY_SUPER_RIGHT
+      jr z, .pressedSuper
+    .pressedOtherKey
+      jr .drawCharacter
+    .pressedShift
+      ld a, [kb_modifiers]
+      or a, KB_MOD_SHIFT
+      ld [kb_modifiers], a
+      ret
+    .pressedCtrl
+      ld a, [kb_modifiers]
+      or a, KB_MOD_CTRL
+      ld [kb_modifiers], a
+      ret
+    .pressedAlt
+      ld a, [kb_modifiers]
+      or a, KB_MOD_ALT
+      ld [kb_modifiers], a
+      ret
+    .pressedSuper
+      ld a, [kb_modifiers]
+      or a, KB_MOD_SUPER
+      ld [kb_modifiers], a
+      ret
+
+  .drawCharacter
     push bc
     push de
   .lookupASCII
-    ld hl, PS2toASCIIKeymap
     ld b, 0
-    ld c, a
+    ld c, h;scan code
+    ld hl, PS2toASCIIKeymap
+    ld a, [kb_modifiers]
+    and a, KB_MOD_SHIFT
+    jr z, .unshifted
+  .shifted
+    ld hl, PS2toASCIIShiftedKeymap
+  .unshifted
     add hl, bc
     ld a, [hl];ASCII value
     ld [str_buffer], a
@@ -226,7 +365,7 @@ PrintKeyPresses:
 
   .checkDone
     cp a, b;if read == write, done
-    jr nz, .loop
+    jp nz, .loop
 
   ld a, e
   ld [kb_buffer_read], a

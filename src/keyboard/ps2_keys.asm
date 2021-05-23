@@ -1,6 +1,9 @@
 IF !DEF(PS2_KEYS)
 PS2_KEYS SET 1
 
+PS2_EXTENDED_KEY_PREFIX EQU $E0
+PS2_RELEASED_KEY_PREFIX EQU $F0
+
 ;No press prefix. Release prefix is $F0
 PS2_KEY_ESC                  EQU $76
 PS2_KEY_F1                   EQU $05
@@ -119,7 +122,7 @@ PS2_KEY_RIGHT_ARROW          EQU $74
 PS2_KEY_PRINT_SCREEN_INIT    EQU $12
 PS2_KEY_PRINT_SCREEN_SEND    EQU $7C;Print screen presses 12, presses 7C, releases 7C, releases 12
 
-;Huge sequence, no prefix, no release
-PS2_KEY_PAUSE_BREAK          EQU $E11477E1F014E077 ;($None)                                                
+;$E1 prefix, CTRL, NUM LOCK, $E1 prefix, release CTRL, $E0 prefix, NUM LOCK
+PS2_KEY_PAUSE_BREAK          EQU $E11477E1F014E077
 
 ENDC ;PS2_KEYS

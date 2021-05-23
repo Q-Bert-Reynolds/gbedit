@@ -5,7 +5,7 @@ INCLUDE "src/hardware.inc"
 INCLUDE "src/memory1.asm"
 INCLUDE "src/strings.asm"
 INCLUDE "src/gbdk.asm"
-INCLUDE "src/keyboard.asm"
+INCLUDE "src/keyboard/keyboard.asm"
 INCLUDE "src/math.asm"
 
 INCLUDE "src/charmap.asm"

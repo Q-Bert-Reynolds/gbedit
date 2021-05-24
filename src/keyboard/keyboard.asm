@@ -28,16 +28,25 @@ kb_buffer_read:: DB;TODO: r/w only use 4 bit, could be one byte
 kb_interrupt_count:: DB
 kb_errors:: DB;xxxxxSPF shows (S)tart, (P)arity, and (F)inish
 kb_modifiers:: DB ;xxSCAUER - (S)hift, (C)trl, (A)lt, S(U)per, (E)xtended key flag, (R)elease key flag
-
+;WRAM used but defined elsewhere:
+;   _x and _y for character position on screen
+;   _i is the toggle between typing and debug displays
+;   _j is the toggle between interrupt methods
 SECTION "PS/2 Keyboard Code", ROM0
 INCLUDE "src/keyboard/ascii_keymaps.asm"
 
-PS2KeyboardInterrupt::;de not used
-  push af
+PS2KeyboardInterrupt::
   ld a, [rSB]; load now before the first 3 bits get shifted out
-  push bc
   ld b, a;store first 8 bits of scan code (S0123456)
+  ld a, [_j]
+  bit 0, a
+  jp z, PS2KeyboardPollingInterrupt
+  ;fall through to rotating interrupt otherwise
+PS2KeyboardRotatingInterrupt:;rSB in b
 
+  ret
+
+PS2KeyboardPollingInterrupt:;rSB in b
   xor a
   ld [kb_errors], a
 
@@ -59,8 +68,6 @@ PS2KeyboardInterrupt::;de not used
     cp a, b
     jr z, .loadLastDataBitLoop
 
-  push de
-  push hl
   ld d, a;store data bits
   ld b, a
 
@@ -136,11 +143,6 @@ PS2KeyboardInterrupt::;de not used
   ld a, [kb_scan_code]
   ld [hl], a
 
-.restoreRegistersAndReturn
-  pop hl
-  pop bc
-  pop de
-  pop af
   ret
 
 KeyboardDemo::
@@ -172,14 +174,14 @@ KeyboardDemo::
     call DrawKeyboardDebugData
   .updateInput
     call UpdateInput
-    ld a, [last_button_state]
-    and a, PADF_A
-    jr z, .loop
+  .testAButton
     ld a, [button_state]
     and a, PADF_A
-    jr nz, .loop
-
-  .pressedAbutton
+    jr z, .testBButton
+    ld a, [last_button_state]
+    and a, PADF_A
+    jr nz, .testBButton
+  .pressedAButton
     ld a, " "
     ld bc, 32*32+20*18
     ld hl, _SCRN0
@@ -187,6 +189,18 @@ KeyboardDemo::
     ld a, [_i]
     xor a, 1
     ld [_i], a
+
+  .testBButton
+    ld a, [button_state]
+    and a, PADF_B
+    jr z, .loop
+    ld a, [last_button_state]
+    and a, PADF_B
+    jr nz, .loop
+  .pressedBButton
+    ld a, [_j]
+    xor a, 1
+    ld [_j], a
     jp .loop
   ret
 
@@ -388,6 +402,8 @@ DrawBinaryString:;b = byte to draw, hl = screen location
 
 HexNumbers: DB "0123456789ABCDEF"
 BlankSpace: DB "  ",0
+PollingText: DB "POLLING ",0
+RotatingText: DB "ROTATING",0
 InterruptsText: DB " interrupts ",0
 DrawKeyboardDebugData:
   LCD_WAIT_VRAM
@@ -414,6 +430,16 @@ DrawKeyboardDebugData:
   ld a, [hl]
   ld [_SCRN0+2], a
 
+  ld a, [_j]
+  ld hl, PollingText
+  bit 0, a
+  jr z, .showPollingRotatingText
+  ld hl, RotatingText
+.showPollingRotatingText
+  ld a, DRAW_FLAGS_BKG
+  ld de, 1
+  ld bc, 1
+  call DrawText
 
   ld a, [kb_scan_code]
   ld h, 0

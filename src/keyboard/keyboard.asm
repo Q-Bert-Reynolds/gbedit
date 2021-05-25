@@ -1,28 +1,26 @@
+INCLUDE "src/keyboard/usb_hid_keys.asm";USB HID key codes
+INCLUDE "src/keyboard/ps2_keys.asm";PS/2 keys codes
+
 KB_MODE_PS2     EQU 0
 KB_MODE_USB_HID EQU 1
 
-PS2_START_BIT_ERROR  EQU %100
-PS2_PARITY_BIT_ERROR EQU %010
-PS2_FINISH_BIT_ERROR EQU %001
+PS2_ERROR_UNKNOWN_CODE EQU %10000
+PS2_ERROR_KEYBOARD     EQU %01000
+PS2_ERROR_START_BIT    EQU %00100
+PS2_ERROR_PARITY_BIT   EQU %00010
+PS2_ERROR_FINISH_BIT   EQU %00001
 
 KB_FLAG_RELEASE  EQU %00000001 ;$PS2 code $F0
 KB_FLAG_EXTENDED EQU %00000010 ;$PS2 code $E0
 
-KB_MOD_SCROLL_LOCK EQU %00000001;modifier flags for locks need to match PS2_LED flags
-KB_MOD_NUM_LOCK    EQU %00000010
-KB_MOD_CAPS_LOCK   EQU %00000100
+KB_MOD_SCROLL_LOCK EQU PS2_LED_SCROLL_LOCK
+KB_MOD_NUM_LOCK    EQU PS2_LED_NUM_LOCK
+KB_MOD_CAPS_LOCK   EQU PS2_LED_CAPS_LOCK
 KB_MOD_SUPER       EQU %00001000
 KB_MOD_ALT         EQU %00010000
 KB_MOD_CTRL        EQU %00100000
 KB_MOD_SHIFT       EQU %01000000
 KB_MOD_FUNCTION    EQU %10000000
-
-PS2_LED_SCROLL_LOCK EQU %001
-PS2_LED_NUM_LOCK    EQU %010
-PS2_LED_CAPS_LOCK   EQU %100
-
-INCLUDE "src/keyboard/usb_hid_keys.asm";USB HID key codes
-INCLUDE "src/keyboard/ps2_keys.asm";PS/2 keys codes
 
 SECTION "PS/2 Keyboard Vars", WRAM0
 ;PS/2 scan codes are 11 bits (S0123456 7PFxxxxx):
@@ -57,7 +55,7 @@ PS2KeyboardInterrupt::
   bit 7, b;test start bit, should always be 0
   jr z, .loadLastDataBit
 .startBitError
-  ld a, PS2_START_BIT_ERROR
+  ld a, PS2_ERROR_START_BIT
   ld [kb_error], a
 
 .loadLastDataBit
@@ -96,7 +94,7 @@ PS2KeyboardInterrupt::
   jr nz, .allBitsRead
 .finishBitError
   ld a, [kb_error]
-  or a, PS2_FINISH_BIT_ERROR
+  or a, PS2_ERROR_FINISH_BIT
   ld [kb_error], a
 
 .allBitsRead
@@ -132,7 +130,7 @@ PS2KeyboardInterrupt::
   jr nz, .writeScanCodeToBuffer
 .parityBitError
   ld a, [kb_error]
-  or a, PS2_PARITY_BIT_ERROR
+  or a, PS2_ERROR_PARITY_BIT
   ld [kb_error], a
 
 .writeScanCodeToBuffer
@@ -180,9 +178,10 @@ KeyboardDemo::
   DISPLAY_ON
   ei
   
+  ld a, 5
+  ld [_y], a
   xor a
   ld [_x], a
-  ld [_y], a
   ld [_i], a
   ld [rSB], a
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
@@ -191,7 +190,7 @@ KeyboardDemo::
   ld b, 0
 .loop
     call gbdk_WaitVBL
-    call ProcessPS2Keys
+    ; call ProcessPS2Keys
     call DrawKeyboardDebugData
     call UpdateInput
   .testAButton
@@ -295,18 +294,27 @@ DrawHexNumber:;a = number, bc = screen address
   ret
 
 BlankSpace: DB "  ",0
-InterruptsText: DB " interrupts ",0
-ErrorsText: DB " errors     ",0
-ClearedDashesText: DB "____________"
+InterruptsText: DB " int ",0
+ErrorsText: DB " err",0
+ClearedDashesText: DB "_____",0
 ShiftText: DB "shift",0
 DrawKeyboardDebugData:
-  LCD_WAIT_VRAM
-.drawScanCode
-
+.drawKeyASCII
+  ld hl, PS2toASCIIKeymap
   ld a, [kb_scan_code]
-  ld bc, _SCRN0
+  ld b, 0
+  ld c, a
+  add hl, bc
+  LCD_WAIT_VRAM
+  ld a, [hl]
+  ld [_SCRN0], a
+
+.drawScanCodeHex
+  ld a, [kb_scan_code]
+  ld bc, _SCRN0+5
   call DrawHexNumber
 
+.drawScanCodeDecimal
   ld a, [kb_scan_code]
   ld h, 0
   ld l, a
@@ -318,45 +326,68 @@ DrawKeyboardDebugData:
 
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
-  ld de, $0500
+  ld de, $0800
   ld bc, 1
   call DrawText
 
-  ld hl, _SCRN0+10
+.drawScanCodeBinary
+  ld hl, _SCRN0+12
   ld a, [kb_scan_code]
   ld b, a
   call DrawBinaryNumber
 
-.drawBuffer
+.drawScanCodeBuffer
+  ld a, "S"
+  ld [_SCRN0+32], a
   ld hl, kb_scan_code_buffer
   ld a, 8
-  ld bc, _SCRN0+32
-.drawBufferLoop
+  ld bc, _SCRN0+32+2
+.drawScanCodeBufferLoop
     push af; scan codes left to draw
     ld a, [hli]
     push hl
     call DrawHexNumber
-    inc bc
     pop hl
     pop af
     dec a
-    jr nz, .drawBufferLoop
+    jr nz, .drawScanCodeBufferLoop
+
+.drawErrorBuffer
+  ld a, "E"
+  ld [_SCRN0+32*2], a
+  ld hl, kb_error_buffer
+  ld a, 8
+  ld bc, _SCRN0+32*2+2
+.drawErrorBufferLoop
+    push af; scan codes left to draw
+    ld a, [hli]
+    push hl
+    call DrawHexNumber
+    pop hl
+    pop af
+    dec a
+    jr nz, .drawErrorBufferLoop
 
   ld a, " "
-  ld hl, _SCRN0+32*2
+  ld hl, str_buffer
   ld bc, 20
-  call mem_SetVRAM
+  call mem_Set
 
-  ld hl, _SCRN0+32*2
+  ld hl, str_buffer
   ld a, [kb_buffer_write]
   ld b, 0
   ld c, a
   add hl, bc
   add hl, bc
-  add hl, bc
-  LCD_WAIT_VRAM
+  inc hl
+  inc hl
   ld a, ARROW_UP
   ld [hl], a
+
+  ld hl, str_buffer
+  ld de, _SCRN0+32*3
+  ld bc, 20
+  call mem_CopyVRAM
 
 .drawInterruptCount
   ld a, [kb_interrupt_count]
@@ -368,41 +399,46 @@ DrawKeyboardDebugData:
   ld de, str_buffer
   call str_Append
 
-  ld a, DRAW_FLAGS_BKG
-  ld hl, str_buffer
-  ld de, $0003
-  ld bc, 1
-  call DrawText
-
-.drawKeyASCII
-  ld hl, PS2toASCIIKeymap
-  ld a, [kb_scan_code]
-  ld b, 0
-  ld c, a
-  add hl, bc
-  LCD_WAIT_VRAM
-  ld a, [hl]
-  ld [_SCRN0+32*8], a
-
-.drawErrors
+.drawError
   ld a, [kb_error_count]
   ld h, 0
   ld l, a
-  ld de, str_buffer
+  ld de, name_buffer
   call str_Number
+  ld hl, name_buffer
+  ld de, str_buffer
+  call str_Append
   ld hl, ErrorsText
   ld de, str_buffer
   call str_Append
 
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
-  ld de, 15
+  ld de, 4
   ld bc, 1
   call DrawText
 
   ld hl, str_buffer
   ld a, [kb_error]
   ld b, a
+
+.testUnknownCodeError
+  bit 4, b
+  ld a, "U"
+  jr nz, .drawUnknownCodeError
+.noUnknownCodeError
+  ld a, "_"
+.drawUnknownCodeError
+  ld [hli], a
+
+.testKeyboardError
+  bit 3, b
+  ld a, "K"
+  jr nz, .drawKeyboardError
+.noKeyboardError
+  ld a, "_"
+.drawKeyboardError
+  ld [hli], a
 
 .testStartBitError
   bit 2, b
@@ -437,6 +473,7 @@ DrawKeyboardDebugData:
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
   ld bc, 1
-  ld de, 16
+  ld d, 16
+  ld e, 4
   call DrawText
   ret

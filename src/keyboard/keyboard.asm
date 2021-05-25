@@ -152,6 +152,7 @@ PS2KeyboardInterrupt::
   ld [hl], a
 
 .incrementWriteHead
+  ld a, [kb_buffer_write]
   inc a
   and a, %00000111;a%8
   ld [kb_buffer_write], a

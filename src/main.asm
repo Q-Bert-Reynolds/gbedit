@@ -75,16 +75,22 @@ SECTION "p1thru4", ROM0[$0060]
 SECTION "Main", ROM0[$0150]
 Main::
 .gbcCheck ;must happen first
-  cp a, $FF;is this a Pocket
+  cp a, BOOTUP_A_MGB;is this a Pocket
   jr z, .gbp
-  cp a, $11;is this a GBC
+  ; NOTE: Never actually checking for DMG. 
+  ;       Assumes DMG if other tests fail. 
+  ;       Used to check emulators.
+  ;       https://github.com/ISSOtm/Aevilia-GB/blob/master/home.asm
+  ; cp a, BOOTUP_A_DMG
+  ; jr z, .dmg
+  cp a, BOOTUP_A_CGB;is this a GBC
   ld a, 0;don't xor here
   jr nz, .setSysInfo
   bit 0, b;is it also a GBA
   jr z, .gbc
-.gba
+.gba;BOOTUP_B_AGB
   or a, SYS_INFO_GBA
-.gbc
+.gbc;BOOTUP_B_CGB
   or a, SYS_INFO_GBC
   jr .setSysInfo
 .gbp

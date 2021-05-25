@@ -1,6 +1,43 @@
 IF !DEF(PS2_KEYS)
 PS2_KEYS SET 1
 
+;Commands
+PS2_RESEND EQU $FE ;ask to be resent last scan code, response is previously sent byte resend
+PS2_ECHO   EQU $EE ;response is echo or resend
+
+PS2_ENABLE_SCANNING  EQU $F4 ;keyboard will send scan codes, response is ack or resend
+PS2_DISABLE_SCANNING EQU $F5 ;keyboard won't send scan codes, response is ack or resend
+PS2_SET_DEFAULT      EQU $F6 ;Set default parameters, response is ack or resend
+PS2_RESET_AND_TEST   EQU $FF ;Reset and start self-test, response is 0xAA (self-test passed), 0xFC or 0xFD (self test failed), or resend
+
+;Sets typematic rate and delay
+; 0 to 4 	Repeat rate (00000b = 30 Hz, ..., 11111b = 2 Hz)
+; 5 to 6 	Delay before keys repeat (00b = 250 ms, 01b = 500 ms, 10b = 750 ms, 11b = 1000 ms)
+; 7 	Must be zero
+PS2_TYPEMATIC EQU $F3;data = %0DDRRRRR, response is ack or resend
+
+;identifies keyboard/mouse, scanning must be disabled first
+; https://wiki.osdev.org/%228042%22_PS/2_Controller#Detecting_PS.2F2_Device_Types
+PS2_IDENTIFY EQU $F2;response is ack followed by 0 to 2 bytes
+
+;enable/disable keyboard (C)aps, (N)um, and (S)croll lock lights
+PS2_LED_CONTROL EQU $ED;data = %xxxxxCNS, response is ack or resend
+PS2_LED_SCROLL_LOCK EQU %001
+PS2_LED_NUM_LOCK    EQU %010
+PS2_LED_CAPS_LOCK   EQU %100
+
+;get/set current scan code set
+PS2_SCAN_CODE EQU $F0;data is scan code set or 0 for get, response is ack (followed by current set if getting) or resend
+PS2_SCAN_CODE_GET   EQU 0
+PS2_SCAN_CODE_SET_1 EQU 1
+PS2_SCAN_CODE_SET_2 EQU 2;make sure this is the scan code set used
+PS2_SCAN_CODE_SET_3 EQU 3
+
+;Response Codes
+PS2_NULL   EQU $00;also an error
+PS2_ERROR  EQU $FF
+PS2_ACK    EQU $FA
+
 PS2_EXTENDED_KEY_PREFIX EQU $E0
 PS2_RELEASED_KEY_PREFIX EQU $F0
 

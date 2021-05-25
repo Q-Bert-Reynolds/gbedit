@@ -170,7 +170,7 @@ str_AppendChar:
 .loop
     ld a, [hli]
     and a
-    jr nz .loop
+    jr nz, .loop
   xor a
   ld [hld], a
   pop af;char

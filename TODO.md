@@ -1,5 +1,6 @@
 Priority
 
+- finish the PS/2 and USB keyboard detour
 - separate palettes and stamps from object data
 - load/interact characters and items from map data
   - handle sprite collisions

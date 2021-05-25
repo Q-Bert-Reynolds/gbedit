@@ -23,6 +23,9 @@
 ;   str_Append
 ;     Appends one string to another
 ;     Entry: hl = append string, de = dest string
+;   str_AppendChar
+;     Appends a character to a string
+;     Entry: a = character, hl = string
 ;   str_Replace
 ;     Replaces string bc in source hl with string af in destination de
 ;     Entry: hl = src string, de = dest string, bc = replace string, af = with string
@@ -152,6 +155,27 @@ str_Append::
   dec de
   call str_Copy
   ret 
+
+;***************************************************************************
+;
+; str_AppendChar - Appends char a to hl
+;
+; input:
+;   a - character
+;   hl - string
+;
+;***************************************************************************
+str_AppendChar:
+  push af;char
+.loop
+    ld a, [hli]
+    and a
+    jr nz .loop
+  xor a
+  ld [hld], a
+  pop af;char
+  ld [hl], a
+  ret
 
 ;***************************************************************************
 ;

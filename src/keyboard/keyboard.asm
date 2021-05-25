@@ -26,7 +26,8 @@ kb_buffer:: DS 8
 kb_buffer_write:: DB
 kb_buffer_read:: DB;TODO: r/w only use 4 bit, could be one byte
 kb_interrupt_count:: DB
-kb_errors:: DB;xxxxxSPF shows (S)tart, (P)arity, and (F)inish
+kb_error_code:: DB;xxxxxSPF shows (S)tart, (P)arity, and (F)inish
+kb_error_count:: DB
 kb_modifiers:: DB ;xxSCAUER - (S)hift, (C)trl, (A)lt, S(U)per, (E)xtended key flag, (R)elease key flag
 ;WRAM used but defined elsewhere:
 ;   _x and _y for character position on screen
@@ -39,13 +40,13 @@ PS2KeyboardInterrupt::
   ld b, a;store first 8 bits of scan code (S0123456)
 
   xor a
-  ld [kb_errors], a
+  ld [kb_error_code], a
 
   bit 7, b;test start bit, should always be 0
   jr z, .loadLastDataBit
 .startBitError
   ld a, PS2_START_BIT_ERROR
-  ld [kb_errors], a
+  ld [kb_error_code], a
 
 .loadLastDataBit
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
@@ -82,9 +83,9 @@ PS2KeyboardInterrupt::
   and a, %00000001
   jr nz, .allBitsRead
 .finishBitError
-  ld a, [kb_errors]
+  ld a, [kb_error_code]
   or a, PS2_FINISH_BIT_ERROR
-  ld [kb_errors], a
+  ld [kb_error_code], a
 
 .allBitsRead
   xor a
@@ -116,11 +117,20 @@ PS2KeyboardInterrupt::
   ld a, c
 .testParityBit
   xor a, e;Bit 0 of e is parity, and bit 0 of a is even/odd. These should never be equal.
-  jr nz, .writeScanCodeToBuffer
+  jr nz, .checkAllErrors
 .parityBitError
-  ld a, [kb_errors]
+  ld a, [kb_error_code]
   or a, PS2_PARITY_BIT_ERROR
-  ld [kb_errors], a
+  ld [kb_error_code], a
+
+.checkAllErrors;errors in a
+  ld a, [kb_error_code]
+  and a;if no errors, write scan code to buffer
+  jr z, .writeScanCodeToBuffer
+  ld a, [kb_error_count]
+  inc a
+  ld [kb_error_count], a
+  ; jr .askForNextBits ;write scan code even with errors
 
 .writeScanCodeToBuffer
   ld hl, kb_buffer
@@ -384,32 +394,46 @@ DrawBinaryString:;b = byte to draw, hl = screen location
 
 
 HexNumbers: DB "0123456789ABCDEF"
+DrawHexNumber:;a = number, bc = screen address
+  push af;number to draw
+  and $F0;upper nibble only
+  swap a;(ie. a/16)
+  ld hl, HexNumbers
+  ld d, 0
+  ld e, a
+  add hl, de
+  LCD_WAIT_VRAM
+  ld a, [hl]
+  ld [bc], a;upper nibble in first screen address
+
+  inc bc;lower nibble goes in next screen address
+
+  pop af;number to draw
+  and $0F;lower nibble only (ie. a%16)
+  ld hl, HexNumbers
+  ld d, 0
+  ld e, a
+  add hl, de
+  LCD_WAIT_VRAM
+  ld a, [hl]
+  ld [bc], a
+
+  inc bc;increment screen address so numbers can be drawn sequentially
+
+  ret
+
 BlankSpace: DB "  ",0
 InterruptsText: DB " interrupts ",0
+ErrorsText: DB " errors     ",0
+ClearedDashesText: DB "____________"
+ShiftText: DB "shift",0
 DrawKeyboardDebugData:
   LCD_WAIT_VRAM
 .drawScanCode
-  ld a, "$"
-  ld [_SCRN0], a
 
-  ld hl, HexNumbers
-  ld d, 0
   ld a, [kb_scan_code]
-  and $F0
-  swap a
-  ld e, a
-  add hl, de
-  ld a, [hl]
-  ld [_SCRN0+1], a
-
-  ld hl, HexNumbers
-  ld d, 0
-  ld a, [kb_scan_code]
-  and $0F
-  ld e, a
-  add hl, de
-  ld a, [hl]
-  ld [_SCRN0+2], a
+  ld bc, _SCRN0
+  call DrawHexNumber
 
   ld a, [kb_scan_code]
   ld h, 0
@@ -430,6 +454,37 @@ DrawKeyboardDebugData:
   ld a, [kb_scan_code]
   ld b, a
   call DrawBinaryString
+
+.drawBuffer
+  ld hl, kb_buffer
+  ld a, 8
+  ld bc, _SCRN0+32
+.drawBufferLoop
+    push af; scan codes left to draw
+    ld a, [hli]
+    push hl
+    call DrawHexNumber
+    inc bc
+    pop hl
+    pop af
+    dec a
+    jr nz, .drawBufferLoop
+
+  ld a, " "
+  ld hl, _SCRN0+32*2
+  ld bc, 20
+  call mem_SetVRAM
+
+  ld hl, _SCRN0+32*2
+  ld a, [kb_buffer_write]
+  ld b, 0
+  ld c, a
+  add hl, bc
+  add hl, bc
+  add hl, bc
+  LCD_WAIT_VRAM
+  ld a, ARROW_UP
+  ld [hl], a
 
 .drawInterruptCount
   ld a, [kb_interrupt_count]
@@ -458,8 +513,23 @@ DrawKeyboardDebugData:
   ld [_SCRN0+32*8], a
 
 .drawErrors
+  ld a, [kb_error_count]
+  ld h, 0
+  ld l, a
+  ld de, str_buffer
+  call str_Number
+  ld hl, ErrorsText
+  ld de, str_buffer
+  call str_Append
+
+  ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
-  ld a, [kb_errors]
+  ld de, 15
+  ld bc, 1
+  call DrawText
+
+  ld hl, str_buffer
+  ld a, [kb_error_code]
   ld b, a
 
 .testStartBitError

@@ -191,7 +191,7 @@ KeyboardDemo::
   ld b, 0
 .loop
     call gbdk_WaitVBL
-    ; call ProcessPS2Keys
+    call ProcessPS2Keys
     call DrawKeyboardDebugData
     call UpdateInput
   .testAButton
@@ -233,7 +233,9 @@ ProcessPS2Keys:
     add hl, de;[hl] = current scan code
     ld a, [hli];scan code
     push de;store read index
+    push bc;store write index
     call PS2HandleKeycode
+    pop bc;restore write index
     pop de;restore read index
 
   .incrementReadIndex
@@ -241,15 +243,13 @@ ProcessPS2Keys:
     inc a
     and a, %00000111;read%8
     ld e, a;de = read index
+    ld [kb_buffer_read], a
 
   .checkDone
     cp a, b;if read == write, done
     jp nz, .loop
 
-  ld a, e
-  ld [kb_buffer_read], a
   ret
-
 
 DrawBinaryNumber:;b = byte to draw, hl = screen location
   ld c, 8
@@ -474,7 +474,7 @@ DrawKeyboardDebugData:
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
   ld bc, 1
-  ld d, 16
+  ld d, 15
   ld e, 4
   call DrawText
   ret

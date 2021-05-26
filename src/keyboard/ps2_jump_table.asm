@@ -1,27 +1,3 @@
-PS2ExtendedJumpTable::
-DW PS2HandleEndKey;PS2_KEY_END EQU $69
-DW PS2HandleError;$6A
-DW PS2HandleArrowKey;PS2_KEY_LEFT_ARROW EQU $6B
-DW PS2HandleHomeKey;PS2_KEY_HOME EQU $6C
-DW PS2HandleError;$6D
-DW PS2HandleError;$6E
-DW PS2HandleError;$6F
-DW PS2HandleInsertKey;PS2_KEY_INSERT EQU $70
-DW PS2HandleDeleteKey;PS2_KEY_DELETE EQU $71
-DW PS2HandleArrowKey;PS2_KEY_DOWN_ARROW EQU $72
-DW PS2HandleError;$73
-DW PS2HandleArrowKey;PS2_KEY_RIGHT_ARROW EQU $74
-DW PS2HandleArrowKey;PS2_KEY_UP_ARROW EQU $75
-DW PS2HandleError;$76
-DW PS2HandleError;$77
-DW PS2HandleError;$78
-DW PS2HandleError;$79
-DW PS2HandlePageDown;PS2_KEY_PAGE_DOWN EQU $7A
-DW PS2HandleError;$7B
-DW PS2HandlePrintScreen; PS2_KEY_PRINT_SCREEN_SEND EQU $7C;Print screen presses 12, presses 7C, releases 7C, releases 12
-DW PS2HandlePageUp;PS2_KEY_PAGE_UP EQU $7D
-;any extended scan code values less than $7E will use this table
-
 PS2JumpTable::
 DW PS2HandleError;PS2_NULL EQU $00
 DW PS2HandleFunctionKey;PS2_KEY_F9 EQU $01
@@ -99,10 +75,10 @@ DW PS2HandleCharacter;PS2_KEY_O EQU $44
 DW PS2HandleCharacter;PS2_KEY_0 EQU $45
 DW PS2HandleCharacter;PS2_KEY_9 EQU $46
 DW PS2HandleError;$47
-DW PS2HandleCharacter;PS2_KEY_L EQU $4B
+DW PS2HandleError;$48
 DW PS2HandleCharacter;PS2_KEY_PERIOD EQU $49
 DW PS2HandleCharacter;PS2_KEY_SLASH EQU $4A
-DW PS2HandleError;$4B
+DW PS2HandleCharacter;PS2_KEY_L EQU $4B
 DW PS2HandleCharacter;PS2_KEY_SEMI_COLON EQU $4C
 DW PS2HandleCharacter;PS2_KEY_P EQU $4D
 DW PS2HandleCharacter;PS2_KEY_MINUS EQU $4E
@@ -165,6 +141,30 @@ DW PS2HandleError;$82
 DW PS2HandleFunctionKey;PS2_KEY_F7 EQU $83
 ;any scan code values less than $84 will use this table
 
+PS2ExtendedJumpTable::
+DW PS2HandleEndKey;PS2_KEY_END EQU $69
+DW PS2HandleError;$6A
+DW PS2HandleArrowKey;PS2_KEY_LEFT_ARROW EQU $6B
+DW PS2HandleHomeKey;PS2_KEY_HOME EQU $6C
+DW PS2HandleError;$6D
+DW PS2HandleError;$6E
+DW PS2HandleError;$6F
+DW PS2HandleInsertKey;PS2_KEY_INSERT EQU $70
+DW PS2HandleDeleteKey;PS2_KEY_DELETE EQU $71
+DW PS2HandleArrowKey;PS2_KEY_DOWN_ARROW EQU $72
+DW PS2HandleError;$73
+DW PS2HandleArrowKey;PS2_KEY_RIGHT_ARROW EQU $74
+DW PS2HandleArrowKey;PS2_KEY_UP_ARROW EQU $75
+DW PS2HandleError;$76
+DW PS2HandleError;$77
+DW PS2HandleError;$78
+DW PS2HandleError;$79
+DW PS2HandlePageDown;PS2_KEY_PAGE_DOWN EQU $7A
+DW PS2HandleError;$7B
+DW PS2HandlePrintScreen; PS2_KEY_PRINT_SCREEN_SEND EQU $7C;Print screen presses 12, presses 7C, releases 7C, releases 12
+DW PS2HandlePageUp;PS2_KEY_PAGE_UP EQU $7D
+;any extended scan code values less than $7E will use this table
+
 PS2HandleKeycode::;a = scan code
   cp a, PS2_EXTENDED_KEY_PREFIX;$E0
   jp z, PS2HandleExtendedKey
@@ -183,13 +183,13 @@ PS2HandleKeycode::;a = scan code
 
   ld b, 0
   ld c, a;scan code
-
-  call PS2CheckExtendedFlag
   ld hl, PS2JumpTable
+ 
+  call PS2CheckExtendedFlag
   jr z, .lookupAddress;if not extended, lookup
 
-.extendedKeys
-  ld a, c;otherwise check a few special cases
+.extendedKeys;otherwise check a few special cases
+  ld a, c;scan code
   cp a, PS2_KEY_SUPER_LEFT; $1F
   jp z, PS2HandleSuper
   cp a, PS2_KEY_ALT_RIGHT            ;$11
@@ -213,6 +213,7 @@ PS2HandleKeycode::;a = scan code
   ld hl, PS2ExtendedJumpTable-$69;nice
 .lookupAddress
   add hl, bc
+  add hl, bc;addresses are 2 bytes, add index twice
   ld a, [hli]
   ld b, a;lower byte of jump address
   ld a, [hl]
@@ -281,30 +282,33 @@ PS2HandleShift:
   call PS2CheckReleaseFlag
   ret nz
   ret
+
 PS2HandleAlt:
   call PS2CheckReleaseFlag
   ret nz
   ret
+
 PS2HandleSuper:
   call PS2CheckReleaseFlag
   ret nz
   ret
+
 PS2HandleCtrl:
   call PS2CheckReleaseFlag
   ret nz
   ret
+
 PS2HandleFn:
   call PS2CheckReleaseFlag
   ret nz
   ret
 
 PS2HandleCharacter:;a = scan code
-  call PS2CheckReleaseFlag
-  ret nz;if release flag set, return early
-
-.lookupASCII
   ld b, 0
   ld c, a;scan code
+  call PS2CheckReleaseFlag
+  ret nz;if release flag set, return early
+.lookupASCII
   ld hl, PS2toASCIIKeymap
   ld a, [kb_modifiers]
   and a, KB_MOD_SHIFT
@@ -317,7 +321,7 @@ PS2HandleCharacter:;a = scan code
   ;fall through to DrawCharacter
 
 DrawCharacter:;a = ASCII value
-  ld [str_buffer], a
+  ld [tile_buffer], a
 
   ld a, [_y]
   ld e, a
@@ -340,10 +344,8 @@ DrawCharacter:;a = ASCII value
   ld [_y], a
 .setTiles
   ld hl, $0101
-  ld bc, str_buffer
+  ld bc, tile_buffer
   call gbdk_SetBkgTiles
-  pop de
-  pop bc
   ret
 
 ;TODO these should toggle lock bits in kb_modifiers
@@ -353,11 +355,13 @@ PS2HandleCapsLock:
   ret nz;if release flag set, return early
   ;if previous keycode is not caps lock, toggle caps lock in kb_modifiers, toggle light
   ret
+
 PS2HandleScrollLock:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
   ;if previous keycode is not scroll lock, toggle caps lock in kb_modifiers, toggle light
   ret
+
 PS2HandleNumLock:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early

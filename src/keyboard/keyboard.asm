@@ -4,11 +4,12 @@ INCLUDE "src/keyboard/ps2_keys.asm";PS/2 keys codes
 KB_MODE_PS2     EQU 0
 KB_MODE_USB_HID EQU 1
 
-PS2_ERROR_UNKNOWN_CODE EQU %10000
-PS2_ERROR_KEYBOARD     EQU %01000
-PS2_ERROR_START_BIT    EQU %00100
-PS2_ERROR_PARITY_BIT   EQU %00010
-PS2_ERROR_FINISH_BIT   EQU %00001
+PS2_ERROR_TIMEOUT      EQU %100000
+PS2_ERROR_UNKNOWN_CODE EQU %010000
+PS2_ERROR_KEYBOARD     EQU %001000
+PS2_ERROR_START_BIT    EQU %000100
+PS2_ERROR_PARITY_BIT   EQU %000010
+PS2_ERROR_FINISH_BIT   EQU %000001
 
 KB_FLAG_RELEASE  EQU %00000001 ;$PS2 code $F0
 KB_FLAG_EXTENDED EQU %00000010 ;$PS2 code $E0
@@ -34,77 +35,90 @@ kb_error_buffer:: DS 8;holds last 8 errors codes
 kb_buffer_write:: DB
 kb_buffer_read:: DB;TODO: r/w only use 4 bit, could be one byte
 kb_interrupt_count:: DB
-kb_error:: DB;xxxUKSPF - (U)nknown Scan Code, (K)eyboard $00 or $FF, (S)tart Bit, (P)arity Bit, (F)inish Bit
+kb_error:: DB;xxTUKSPF - (T)imeout, (U)nknown Scan Code, (K)eyboard $00 or $FF, (S)tart Bit, (P)arity Bit, (F)inish Bit
 kb_error_count:: DB
 kb_modifiers:: DB ;FSCAUPNL - (F)unction, (S)hift, (C)trl, (A)lt, S(U)per, Ca(P)s Lock, (N)um Lock, Scro(L)l Lock
 kb_flags:: DB;xxxxxxER - (E)xtended key flag, (R)elease key flag
 ;WRAM used but defined elsewhere:
 ;   _x and _y for character position on screen
 ;   _i is the toggle between typing and debug displays
+
 SECTION "PS/2 Keyboard Code", ROM0
-INCLUDE "src/keyboard/ascii_keymaps.asm"
+INCLUDE "src/keyboard/ps2_ascii_keymaps.asm"
+INCLUDE "src/keyboard/ps2_handlers.asm"
 INCLUDE "src/keyboard/ps2_jump_table.asm"
 
+;TODO: Instead of loading the next 3 bits one at a time, go ahead and load all 3.
+;      If rSB is S0123456 at interrupt start, it should be 234567PF after shifting 3 times.
 PS2KeyboardInterrupt::
   ld a, [rSB]; load now before the first 3 bits get shifted out
   ld b, a;store first 8 bits of scan code (S0123456)
 
-  xor a;reset current error code
-  ld [kb_error], a
-
-  bit 7, b;test start bit, should always be 0
-  jr z, .loadLastDataBit
-.startBitError
-  ld a, PS2_ERROR_START_BIT
-  ld [kb_error], a
-
-.loadLastDataBit
+.waitForLastBits
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
-  ld [rSC], a;ask for bits using keyboard clock 
-  ld a, b;scan code
-  and a
-  jr nz, .loadLastDataBitLoop
-  ld b, %10000000;if byte is 0, flip start bit to detect shift
-.loadLastDataBitLoop
+  ld [rSC], a      ;ask for more bits using keyboard clock 
+  xor a
+  ld [kb_error], a ;reset current error code
+  ld a, b          ;S0123456
+  swap a           ;3456S012
+  rrca             ;23456S01
+  and a, %11111001 ;23456xxx, bit 7 and parity unknown
+  or  a, %00000001 ;23456xxF, finish bit is always 1
+  ld c, a          ;expected value after shift
+  ld e, 255
+.pollBitsLoop
     ld a, [rSB]
-    cp a, b
-    jr z, .loadLastDataBitLoop
+    ld d, a;actual value
+    and a, %11111001;exit condition
+    cp a, c;if bits & exit == expected, done
+    jr z, .allBitsRead
+    dec e
+    jr z, .timeout
+    jr .pollBitsLoop
+.timeout
+  ld a, [kb_error]
+  or a, PS2_ERROR_TIMEOUT
+  ld [kb_error], a
+  
+.allBitsRead
+  ld c, d;replace incomplete expected value with actual value (234567PF)
+  ld a, SCF_TRANSFER_STOP | SCF_CLOCK_EXTERNAL
+  ld [rSC], a;stop asking for stuff, use external clock
+  xor a
+  ld [rSB], a;clear serial bits
+  ld a, [kb_interrupt_count]
+  inc a
+  ld [kb_interrupt_count], a
 
-  ld d, a;store data bits
-  ld b, a
+.testStartBit
+  bit 7, b;test start bit, should always be 0
+  jr z, .testFinishBit
+.startBitError
+  ld a, [kb_error]
+  or a, PS2_ERROR_START_BIT
+  ld [kb_error], a
 
-  cp a, $FF
-  jr nz, .loadParityBit
-  ld b, %01111111;if byte is all 1s, parity bit will also be 1, so flip bit 7 to detect shift
-.loadParityBit
-    ld a, [rSB]
-    cp a, b
-    jr z, .loadParityBit
-  ld e, a;bit 0 is parity
-  ld b, a
-
-  cp a, $FF
-  jr nz, .loadFinishBit
-  ld b, %01111111;if byte is all 1s, since stop bit is also 1, flip bit 7 to detect shift
-.loadFinishBit
-    ld a, [rSB]
-    cp a, b
-    jr z, .loadFinishBit
-  and a, %00000001
-  jr nz, .allBitsRead
+.testFinishBit
+  bit 0, c;test finish bit, should always be 1
+  jr nz, .storeParityBit
 .finishBitError
   ld a, [kb_error]
   or a, PS2_ERROR_FINISH_BIT
   ld [kb_error], a
 
-.allBitsRead
-  xor a
-  ld [rSB], a;done reading bits
-  ld a, SCF_TRANSFER_STOP | SCF_CLOCK_EXTERNAL
-  ld [rSC], a;stop asking for stuff, use external clock
-  ld a, [kb_interrupt_count]
-  inc a
-  ld [kb_interrupt_count], a
+.storeParityBit
+  ld a, c
+  srl a;bit 0 is parity
+  and a, %00000001
+  ld e, a
+
+.storeDataBits
+  sla b  ;0123456x
+  ld a, c;234567PF
+  srl a  ;x234567P
+  srl a  ;xx234567
+  or a, b;01234567
+  ld d, a;data bits
 
 ; ;data (d) is 01234567, needs to be 76543210 in a
 ; ;we can count bits as we do so to test Parity Bit 
@@ -124,9 +138,10 @@ PS2KeyboardInterrupt::
 .storeScanCode
   ld [kb_scan_code], a
 
-  ld a, c
 .testParityBit
-  xor a, e;Bit 0 of e is parity, and bit 0 of a is even/odd. These should never be equal.
+  ld a, c;bit sum
+  and a, %00000001
+  cp a, e;bit 0 of e is parity, and bit 0 of a is even/odd. These should never be equal.
   jr nz, .writeScanCodeToBuffer
 .parityBitError
   ld a, [kb_error]
@@ -168,7 +183,6 @@ PS2KeyboardInterrupt::
 .askForNextBits
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a;stop asking for stuff, use external clock
-
   ret
 
 KeyboardDemo::
@@ -422,6 +436,15 @@ DrawKeyboardDebugData:
   ld hl, str_buffer
   ld a, [kb_error]
   ld b, a
+
+.testTimeoutError
+  bit 5, b
+  ld a, "T"
+  jr nz, .drawTimeoutError
+.noTimeoutError
+  ld a, "_"
+.drawTimeoutError
+  ld [hli], a
 
 .testUnknownCodeError
   bit 4, b

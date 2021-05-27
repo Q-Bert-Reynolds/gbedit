@@ -31,10 +31,10 @@
 ;   gbdk_WaitVBL       - halts until v-blank
 ;   gbdk_SetWinTiles   - sets window tiles, hl=wh, de=xy, bc=source
 ;   gbdk_SetBkgTiles   - sets background tiles, hl=wh, de=xy, bc=source
-;   gbdk_CopyTilesTo      - jump only, stack=(return,wh), bc=src, hl=dst, de=xy
+;   gbdk_CopyTilesTo   - jump only, stack=(return,wh), bc=src, hl=dst, de=xy
 ;   gbdk_GetWinTiles   - gets window tiles, hl=wh, de=xy, bc=source
 ;   gbdk_GetBkgTiles   - gets background tiles, hl=wh, de=xy, bc=source
-;   gbdk_CopyTilesFrom      - jump only, stack=(return,wh), bc=dest, hl=src, de=xy
+;   gbdk_CopyTilesFrom - jump only, stack=(return,wh), bc=dest, hl=src, de=xy
 ;   gbdk_Delay         - pauses for de miliseconds
 ;   gbdk_CPUSlow       - sets GBC CPU speed to DMG 
 ;   gbdk_CPUFast       - sets GBC CPU speed to 2x

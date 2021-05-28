@@ -13,7 +13,6 @@ RUN_TESTS: MACRO
   ; ld a, SIM_BANK
   ; call SetBank
   ; TEST_SIM 250, -15, 10
-  call LoadFontTiles
   call KeyboardDemo
   ; ld a, WORLD_BANK
   ; call SetBank

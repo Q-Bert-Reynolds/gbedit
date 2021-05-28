@@ -68,7 +68,7 @@ PS2HandleExtendedKey:
   ret
 
 PS2HandleAcknowledge:
-  ;TODO
+  ;shouldn't be getting ACK since GB can't send commands
   xor a;ACK shouldn't have flags
   ld [kb_flags], a
   ret
@@ -162,12 +162,7 @@ PS2HandleCtrl:
 .finish
   ld [kb_modifiers], a
   ret
-
-PS2HandleFn:
-  call PS2CheckReleaseFlag
-  ret nz
-  ret
-
+  
 PS2HandleCharacter:;a = scan code
   ld b, 0
   ld c, a;scan code
@@ -183,35 +178,7 @@ PS2HandleCharacter:;a = scan code
 .unshifted
   add hl, bc
   ld a, [hl];ASCII value
-  ;fall through to DrawCharacter
-
-DrawCharacter:;a = ASCII value
-  ld [tile_buffer], a
-
-  ld a, [_y]
-  ld e, a
-  ld a, [_x]
-  ld d, a;de = xy
-.testXWrap
-  inc a
-  ld [_x], a
-  cp a, 20
-  jr c, .setTiles
-  xor a
-  ld [_x], a
-.testYWrap
-  ld a, [_y]
-  inc a
-  ld [_y], a
-  cp a, 18
-  jr c, .setTiles
-  ld a, 5
-  ld [_y], a
-.setTiles
-  ld hl, $0101
-  ld bc, tile_buffer
-  call gbdk_SetBkgTiles
-  ret
+  jp DrawCharacter
 
 ;TODO these should toggle lock bits in kb_modifiers
 ;     should also disable and enable keyboard lights
@@ -243,7 +210,7 @@ PS2HandleBackspace:
   ld a, 19
   push af
   ld a, [_y]
-  cp 5
+  dec a
   jr nc, .setY
   ld a, 17
 .setY
@@ -279,7 +246,7 @@ PS2HandleEnter:
   cp a, 18
   jr c, .setY
 .wrapY
-  ld a, 5
+  xor a
 .setY
   ld [_y], a
   ret

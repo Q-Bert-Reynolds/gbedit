@@ -238,8 +238,29 @@ PS2HandleBackspace:
   ret nz;if release flag set, return early
   ld a, [_x]
   dec a
-  and a, %00000111
+  jr nc, .setX
+.wrapX
+  ld a, 19
+  push af
+  ld a, [_y]
+  cp 5
+  jr nc, .setY
+  ld a, 17
+.setY
+  ld [_y], a
+  pop af
+.setX
   ld [_x], a
+  cp a, %00000111
+  ld a, " "
+  ld [tile_buffer], a
+  ld a, [_y]
+  ld e, a
+  ld a, [_x]
+  ld d, a;de = xy
+  ld hl, $0101
+  ld bc, tile_buffer
+  call gbdk_SetBkgTiles  
   ret 
 
 PS2HandleEscape:
@@ -255,7 +276,11 @@ PS2HandleEnter:
   ld [_x], a
   ld a, [_y]
   inc a
-  and a, %00000111
+  cp a, 18
+  jr c, .setY
+.wrapY
+  ld a, 5
+.setY
   ld [_y], a
   ret
 

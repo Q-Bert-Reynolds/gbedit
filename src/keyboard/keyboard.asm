@@ -48,11 +48,17 @@ INCLUDE "src/keyboard/ps2_ascii_keymaps.asm"
 INCLUDE "src/keyboard/ps2_handlers.asm"
 INCLUDE "src/keyboard/ps2_jump_table.asm"
 
-;TODO: Instead of loading the next 3 bits one at a time, go ahead and load all 3.
-;      If rSB is S0123456 at interrupt start, it should be 234567PF after shifting 3 times.
 PS2KeyboardInterrupt::
   ld a, [rSB]; load now before the first 3 bits get shifted out
   ld b, a;store first 8 bits of scan code (S0123456)
+  
+.testStartBit
+  bit 7, b;test start bit, should always be 0
+  jr z, .waitForLastBits
+.startBitError
+  ld a, PS2_ERROR_START_BIT
+  ld [kb_error], a
+  jp .checkAllErrors;bail early if start bit not 0
 
 .waitForLastBits
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
@@ -84,19 +90,6 @@ PS2KeyboardInterrupt::
   ld c, d;replace incomplete expected value with actual value (234567PF)
   ld a, SCF_TRANSFER_STOP | SCF_CLOCK_EXTERNAL
   ld [rSC], a;stop asking for stuff, use external clock
-  xor a
-  ld [rSB], a;clear serial bits
-  ld a, [kb_interrupt_count]
-  inc a
-  ld [kb_interrupt_count], a
-
-.testStartBit
-  bit 7, b;test start bit, should always be 0
-  jr z, .testFinishBit
-.startBitError
-  ld a, [kb_error]
-  or a, PS2_ERROR_START_BIT
-  ld [kb_error], a
 
 .testFinishBit
   bit 0, c;test finish bit, should always be 1
@@ -181,8 +174,13 @@ PS2KeyboardInterrupt::
   ld [kb_error_count], a
 
 .askForNextBits
+  ld a, [kb_interrupt_count]
+  inc a
+  ld [kb_interrupt_count], a
+  xor a
+  ld [rSB], a;clear serial bits
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
-  ld [rSC], a;stop asking for stuff, use external clock
+  ld [rSC], a;start next transfer using external clock
   ret
 
 KeyboardDemo::
@@ -235,6 +233,7 @@ ProcessPS2Keys:
   cp a, b
   ret z;if read == write, done
 
+  ld c, 3;process maximum 3 scan codes per frame
 .loop
     ld hl, kb_error_buffer
     add hl, de;[hl] = current error
@@ -247,9 +246,9 @@ ProcessPS2Keys:
     add hl, de;[hl] = current scan code
     ld a, [hli];scan code
     push de;store read index
-    push bc;store write index
+    push bc;store write index, num left
     call PS2HandleKeycode
-    pop bc;restore write index
+    pop bc;restore write index, num left
     pop de;restore read index
 
   .incrementReadIndex
@@ -260,10 +259,11 @@ ProcessPS2Keys:
     ld [kb_buffer_read], a
 
   .checkDone
+    dec c;if max scan codes read, done
+    ret z
     cp a, b;if read == write, done
-    jp nz, .loop
-
-  ret
+    ret z
+    jp .loop
 
 DrawBinaryNumber:;b = byte to draw, hl = screen location
   ld c, 8
@@ -497,7 +497,7 @@ DrawKeyboardDebugData:
   ld a, DRAW_FLAGS_BKG
   ld hl, str_buffer
   ld bc, 1
-  ld d, 15
+  ld d, 14
   ld e, 4
   call DrawText
   ret

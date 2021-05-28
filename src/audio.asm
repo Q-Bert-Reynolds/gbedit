@@ -1,9 +1,7 @@
-INCLUDE "src/beisbol.inc"
-INCLUDE "src/gbt_player/gbt_player.inc"
-
 IF !DEF(AUDIO_ASM)
 AUDIO_ASM SET 1
 
+INCLUDE "src/gbt_player/gbt_player.inc"
 INCLUDE "src/gbt_player/gbt_player.asm"
 INCLUDE "src/gbt_player/gbt_player_bank1.asm"
 
@@ -29,11 +27,7 @@ PLAY_SFX: MACRO ;\1 load address
   ei
 ENDM
 
-INCLUDE "music/intro_lights.asm"
-INCLUDE "music/charge_fanfare.asm"
-INCLUDE "music/take_me_out_to_the_ballgame.asm"
-INCLUDE "music/hurrah_for_our_national_game.asm"
-INCLUDE "music/tessie.asm"
+; INCLUDE "music/name_of_song.asm"
 
 INCLUDE "src/sfx.asm"
 

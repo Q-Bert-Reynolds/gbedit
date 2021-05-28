@@ -13,7 +13,7 @@ def parse_all():
 
 def parse_files(root, files):
   name = os.path.basename(root)
-  if name in ["img", "players", "coaches", "maps"]:
+  if name in ["img"]:
     for name in files:
       path = os.path.join(root, name)
       img_to_asm(path)
@@ -137,32 +137,15 @@ def folder_to_asm (root, files):
     img_name = os.path.basename(base)
     rows, cols, hex_vals, colors, palettemap = gb_encode(img)
 
-    if "avatar" in img_name:
-      parts = [
-        "_idle_down","_idle_up","_idle_right",
-        "_walk_down","_walk_up","_walk_right"
-      ] 
-      for p in range(len(parts)):
-        part_name = parts[p]
-        tilemaps[img_name + part_name] = []
-        properties[img_name + part_name] = []
-        dimensions[img_name + part_name] = (2, 2)#this seems unnecessary
-        for i in range(p*64, (p+1)*64, 16):
-          tile = "".join(hex_vals[i:i+16])
-          flips, index = addTileGetFlipsIndex(tile, tileset)
-          properties[img_name + part_name].append(flips)
-          tilemaps[img_name + part_name].append("{:02X}".format(index))
-      
-    else:
-      tilemaps[img_name] = []
-      palettemaps[img_name] = palettemap
-      colorset[img_name] = colors
-      dimensions[img_name] = (rows, cols)
-      for i in range(0, len(hex_vals), 16):
-        tile = "".join(hex_vals[i:i+16])
-        if tile not in tileset:
-          tileset.append(tile)
-        tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
+    tilemaps[img_name] = []
+    palettemaps[img_name] = palettemap
+    colorset[img_name] = colors
+    dimensions[img_name] = (rows, cols)
+    for i in range(0, len(hex_vals), 16):
+      tile = "".join(hex_vals[i:i+16])
+      if tile not in tileset:
+        tileset.append(tile)
+      tilemaps[img_name].append("{:02X}".format(tileset.index(tile)))
   
   image_set_to_asm(root, name, tileset, tilemaps, dimensions, properties, palettemaps, colorset)
 
@@ -170,7 +153,6 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, pal
   if len(tileset) == 0:
     return
   
-  name = name.replace("demo_", "").replace("home_", "").replace("away_", "")
   tilesPath = pathlib.PurePath(root, name + ".tiles").as_posix()
   if len(tileset) > 256:
     print("Error: " + tilesPath + " has " + str(len(tileset)) + " tiles.")
@@ -194,9 +176,8 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, pal
 
     for img_name in tilemaps.keys():
       rows, cols = dimensions[img_name]
-      if "avatar" not in img_name:
-        asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
-        asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
+      asm_file.write("_" + img_name.upper() + "_ROWS EQU " + str(rows) + "\n")
+      asm_file.write("_" + img_name.upper() + "_COLUMNS EQU " + str(cols) + "\n")
       tilemapPath = pathlib.PurePath(root, img_name + ".tilemap").as_posix()
       asm_file.write("_" + PascalCase(img_name)+"TileMap: INCBIN \"")
       asm_file.write(tilemapPath+"\"\n")
@@ -206,16 +187,6 @@ def image_set_to_asm (root, name, tileset, tilemaps, dimensions, properties, pal
         for i in range(0, len(tilemaps[img_name]), cols):
           hex_string += "".join(tilemaps[img_name][i:i+cols])
         bin_file.write(bytes.fromhex(hex_string))
-
-      if "avatar" in img_name:
-        propmapPath = pathlib.PurePath(root, img_name + ".propmap").as_posix()
-        asm_file.write("_" + PascalCase(img_name)+"PropMap: INCBIN \"")
-        asm_file.write(propmapPath+"\"\n")
-        with open(os.path.join(root, img_name) + ".propmap", "wb") as bin_file:
-          hex_string = ""
-          for i in range(0, len(properties[img_name])):
-            hex_string += "".join(properties[img_name][i])
-          bin_file.write(bytes.fromhex(hex_string))
 
     asm_file.write("ENDC\n")
 
@@ -300,7 +271,7 @@ def png_to_gb (path, base, name):
   rows, cols, hex_vals, colors, palettemap = gb_encode(img)
   tile_count = rows*cols
 
-  if name in ["ui_font", "simulation"] or "maps" in path:
+  if name in ["ui_font"]:
     tileset = []
     for i in range(0, len(hex_vals), 16):
       tile = "".join(hex_vals[i:i+16])

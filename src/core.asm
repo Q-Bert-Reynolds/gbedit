@@ -1,7 +1,5 @@
 SECTION "Core", ROM0
 
-; GetTypeString                   a = type, string in name_buffer
-; GetStatusString                 a = status mask, string in name_buffer
 ; SetBank                         a = bank ;TODO: handle more than 255 banks
 ; Trampoline                      b = bank, hl = address, can only use de and RAM for args, can't return anything in a
 ; UpdateInput
@@ -12,23 +10,17 @@ SECTION "Core", ROM0
 ; CopyToTileBuffer                hl=wh, de=xy, bc=firstTile
 ; SetBkgTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
 ; SetWinTilesWithOffset           hl=wh, de=xy, bc=in_tiles, a=offset
-; DrawSaveStats                   draw flags, de = xy
-; ShowRoledex
-; LoadSimulation                  a = ball speed b = spray angle c = launch angle
-; ShowPlayBallIntro               a = unsigned player(0) or team(1), [_a] = player num or coach id
 ; SetSpriteTiles                  bc = count, hl = map, de = offset\props
 ; SetSpriteTilesProps             bc = offset\count, hl = tilemap, de = propmap
 ; MoveSprites                     bc = xy in screen space, hl = wh in tiles, a = first sprite index
 ; SetSpriteTilesXY                bc = xy in screen space, hl = wh in tiles, de = tilemap, a = VRAM offset
-; SetHPBarTiles                   de = player, hl = address
-; SetAgeTiles                     de = player, hl = address
-; SetMovePPTiles                  a = move, de = player, hl = tile address
+; FlipTileMapX                    hl=wh; bc=in_tiles, de=out_tiles
+; ReverseByte                     reverses a
 ; ScrollXYToTileXY                returns xy in de
 ; DistanceToScreenOrVRAMEdge      tile xy in de, returns wh in hl
 ; CopyBkgToWin
 ; CopyWinToBuffer
 ; CopyBufferToWin
-; ShowSaveGame
 ; GetZeroPaddedNumber             a = number, returns padded number in str_buffer, affects str_buffer, all registers
 ; SignedRandom                    a = bitmask, returns signed random bytes in d and e
 ; SetPalettesIndirect             hl = palettes in PAL_SET (SGB) fromat
@@ -37,65 +29,11 @@ SECTION "Core", ROM0
 ; CopyPalettesTo                  hl = destination
 ; CopyPalettesFrom                hl = source
 
-TypeStrings::
-  DB "", 0
-  DB "Normal", 0
-  DB "Fire", 0
-  DB "Water", 0
-  DB "Electric", 0
-  DB "Grass", 0
-  DB "Ice", 0
-  DB "Fighting", 0
-  DB "Poison", 0
-  DB "Ground", 0
-  DB "Flying", 0
-  DB "Psychic", 0
-  DB "Bug", 0
-  DB "Rock", 0
-  DB "Ghost", 0
-  DB "Dragon", 0
-
-StatusStrings::
-  DB "OK", 0
-  DB "BRN", 0
-  DB "FRZ", 0
-  DB "PAR", 0
-  DB "PSN", 0
-  DB "SLP", 0
-
 CancelString::    DB "CANCEL", 0
 YesNoText::       DB "YES\nNO",0
 SaveGameText:     DB "Would you like to\nSAVE the game?",0
 NowSavingText:    DB "Now saving...",0
 SavedTheGameText: DB "%s saved\nthe game.",0
-
-GetTypeString:: ;a = type, string in name_buffer
-  ld b, 0
-  ld c, a
-  ld hl, TypeStrings
-  call str_FromArray
-  ld de, name_buffer
-  call str_Copy
-  ret
-
-GetStatusString:: ;a = status mask, string in name_buffer
-  ld bc, 0
-  and a
-  jr z, .exit
-  ld bc, 8
-.loop
-    cp a, %10000000
-    jr z, .exit
-    sla a
-    dec bc
-    jr nz, .loop
-.exit
-  ld hl, StatusStrings
-  ld de, name_buffer
-  call str_FromArray
-  ld de, name_buffer
-  call str_Copy
-  ret
 
 SetBank:: ;a = BANK ;TODO: handle more than 255 banks
   ld [loaded_bank], a
@@ -175,7 +113,7 @@ UpdateTime::
 
 .testGameState
   ld a, [game_state]
-  and a
+  and a, GAME_STATE_CLOCK_STARTED
   ret z;if game hasn't started, don't increment game time
 
 .incrementSeconds
@@ -241,20 +179,6 @@ ENDR
 
   pop hl
   pop bc
-  ret
-
-DrawStateMap::;a = draw flags
-  ld b, a;draw flags
-  ld a, [loaded_bank]
-  push af;bank
-  ld a, UI_BANK
-  call SetBank
-
-  ld a, b;draw flags
-  call UIDrawStateMap
-
-  pop af;bank
-  call SetBank
   ret
 
 ClearTiles:: ;a = tile, display should be off
@@ -345,55 +269,6 @@ SetWinTilesWithOffset:: ;hl=wh, de=xy, bc=in_tiles, a=offset
   call CopyToTileBufferWithOffset
   ld bc, tile_buffer
   call gbdk_SetWinTiles
-  ret
-
-DrawSaveStats::;draw flags, de = xy
-  push af;draw flags
-  push de;xy
-  ld a, [loaded_bank]
-  ld b, a;old bank
-  ld a, UI_BANK
-  call SetBank
-
-  pop de;xy
-  pop af;draw flags
-  push bc;old bank
-  call UIDrawSaveStats
-
-  pop af;old bank
-  call SetBank
-  ret
-
-ShowRoledex::
-  ld a, ROLEDEX_BANK
-  call SetBank
-
-  call ShowRoledexUI
-  
-  ld a, WORLD_BANK
-  call SetBank
-  ret
-
-LoadSimulation::;a = ball speed b = spray angle c = launch angle
-  push af;ball speed
-  ld a, SIM_BANK
-  call SetBank
-
-  pop af;ball speed
-  call RunSimulation
-  
-  ld a, PLAY_BALL_BANK
-  call SetBank
-  ret
-
-ShowPlayBallIntro:: ;[_a] = player num or coach id
-  ld a, PLAY_BALL_INTRO_BANK
-  call SetBank
-
-  call PlayBallIntro
-
-  ld a, PLAY_BALL_BANK
-  call SetBank
   ret
 
 SetSpriteTiles:: ;bc = count, hl = map, de = offset\props
@@ -611,7 +486,7 @@ SetSpriteTilesXY:: ;bc = xy in screen space, hl = wh in tiles, de = tilemap, a =
 
   ret
 
-FlipTileMapX:;hl=wh; bc=in_tiles, de=out_tiles
+FlipTileMapX::;hl=wh; bc=in_tiles, de=out_tiles
   push hl;wh
   xor a
   ld [_j], a
@@ -650,7 +525,7 @@ FlipTileMapX:;hl=wh; bc=in_tiles, de=out_tiles
   pop hl
   ret
 
-ReverseByte:;byte in a
+ReverseByte::;byte in a
   push bc
   ld b,a    ; a = 76543210
   rlca
@@ -667,189 +542,6 @@ ReverseByte:;byte in a
   and $66
   xor b     ; a = 01234567
   pop bc
-  ret
-
-GetHealthPct::;hl = player, returns HP * 96 / maxHP in de
-  push hl;player
-  call GetPlayerHP
-  ld d, h
-  ld e, l
-  ld a, 96;is divisible by 6, easier than multiplying by 100
-  call math_Multiply
-  ld d, h
-  ld e, l;hp*96
-  pop hl;player
-  call GetPlayerMaxHP
-  ld b, h
-  ld c, l;maxHP
-  ld h, d
-  ld l, e;hp*96
-  call math_Divide16;de (remainder hl) = hl / bc
-  ret;de = HP * 96 / maxHP
-
-AnimateHealth::;[_j] = selected player, b=start pct, c=end pct
-  PUSH_VAR _a
-  PUSH_VAR _b
-  ld a, b
-  ld [_a], a
-  ld a, c
-  ld [_b], a
-.loop
-    ld hl, name_buffer
-    ld a, [_a]
-    ld d, 0
-    ld e, a
-    call SetHPBarTilesFromPct;hl = address, de = health pct
-    call gbdk_WaitVBL
-    ld d, 4
-    ld a, [_j]
-    add a, a
-    inc a
-    ld e, a
-    ld h, 8
-    ld l, 1
-    ld bc, name_buffer
-    call gbdk_SetWinTiles
-    ld a, [_b]
-    ld b, a
-    ld a, [_a]
-    cp a, b
-    jr z, .exit
-    jr c, .less
-  .greater
-    dec a
-    ld [_a], a
-    jr .loop
-  .less
-    inc a
-    ld [_a], a
-    jr .loop
-.exit
-  POP_VAR _b
-  POP_VAR _a
-  ret
-
-SetHPBarTiles::;de = player, hl = address
-  push hl;address
-  ld h, d
-  ld l, e
-  call GetHealthPct
-  pop hl;address
-  ;fall through
-SetHPBarTilesFromPct::;hl = address, de = health pct
-  ld a, 128
-  ld [hli], a
-
-  ld b, 6
-  ld c, 16
-.loop
-    ld a, c;tile*16
-    sub a, e;hp pct
-    jr nc, .drawPartial
-    ld a, 129
-    ld [hli], a
-    jr .next
-  .drawPartial;c-e < 16
-    cp 16
-    jr nc, .drawEmpty
-    srl a;(c-e)/2 < 8
-    ld d, a
-    ld a, 129
-    add a, d
-    ld [hli], a
-    jr .next
-  .drawEmpty
-    ld a, 137
-    ld [hli], a
-  .next
-    ld a, c
-    add a, 16
-    ld c, a
-    
-    dec b
-    ld a, b
-    and a
-    jr nz, .loop  
-
-  ld a, 138
-  ld [hli], a
-
-  ret
-
-SetAgeTiles::;de = player, hl = address
-  push hl;address
-  push de;player
-  ld a, AGE
-  ld [hl], a
-
-  pop hl;player
-  call GetPlayerAge
-  ld h, 0
-  ld l, a
-  pop de; address
-  cp 100
-  jr z, .age100
-  inc de
-.age100
-  call str_Number
-  ld a, " "
-  ld [de], a
-  ret
-
-SetMovePPTiles::;a = move, b = move mask, de = player, hl = tile address
-  push hl;address
-  push de;player
-
-  pop hl;player
-  push hl;player  
-  push af;move
-  ld d, b;move mask
-  push de;move mask
-  call GetPlayerMove
-  pop de;move mask
-  pop af;move
-  pop hl;player
-  call GetPlayerMovePP
-  ld h, 0
-  ld l, a
-  ld de, str_buffer
-  cp 10
-  jr nc, .twoDigitPP
-  ld a, " "
-  ld [de], a
-  inc de
-.twoDigitPP
-  call str_Number
-
-  ld hl, name_buffer
-  ld a, "/"
-  ld [hli], a
-  xor a
-  ld [hld], a
-  ld de, str_buffer
-  call str_Append
-
-  ld hl, move_data.pp
-  ld a, [hl]
-  ld de, name_buffer
-  cp 10
-  jr nc, .twoDigitMaxPP
-  ld a, " "
-  ld [de], a
-  inc de
-.twoDigitMaxPP
-  ld a, [hl]
-  ld h, 0
-  ld l, a
-  call str_Number
-  ld hl, name_buffer
-  ld de, str_buffer
-  call str_Append
-
-  ld hl, str_buffer
-  pop de; address
-  call str_Copy
-
   ret
 
 ScrollXYToTileXY::;returns xy in de
@@ -1047,46 +739,6 @@ CopyBufferToWin::
   xor a
   ld [rSVBK], a
   ld [rVBK], a
-  ret
-
-ShowSaveGame::
-  ld d, 4
-  ld e, 0
-  ld a, DRAW_FLAGS_WIN
-  call DrawSaveStats
-
-  ld de, 12;(0,12)
-  ld hl, SaveGameText
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call RevealText
-
-  ld bc, 7;(0,7)
-  ld a, DRAW_FLAGS_WIN
-  call AskYesNo
-  cp a, 1;if yes, save game
-  ret nz
-  
-  ld bc, 12
-  ld hl, NowSavingText
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call DisplayTextAtPos
-
-  call SaveGame
-  ld de, 1000
-  call gbdk_Delay;HACK: artificial delay because it's doesn't take long yet
-
-  ld hl, SavedTheGameText
-  ld bc, user_name
-  ld de, str_buffer
-  call str_Replace
-  ld de, 12;(0,12)
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  ld hl, str_buffer
-  call RevealText
-  
-  ld de, $1210
-  ld a, DRAW_FLAGS_PAD_TOP | DRAW_FLAGS_WIN
-  call FlashNextArrow
   ret
 
 GetZeroPaddedNumber::;a = number, returns padded number in str_buffer, affects str_buffer, all registers

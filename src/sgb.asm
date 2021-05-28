@@ -122,11 +122,7 @@ ENDM
 
 SECTION "Super GameBoy Banked", ROMX, BANK[SGB_BANK]
 
-IF DEF(_HOME)
-INCLUDE "img/home_version/home_version_sgb_border.asm"
-ELSE
-INCLUDE "img/away_version/away_version_sgb_border.asm"
-ENDC
+INCLUDE "img/sgb_border.asm"
 
 ; Initialization packets extracted from the official documentation
 DataSnd0: DB $79, $5D, $08, $00, $0B, $8C, $D0, $F4, $60, $00, $00, $00, $00, $00, $00, $00
@@ -139,7 +135,7 @@ DataSnd6: DB $79, $1B, $08, $00, $0B, $EA, $EA, $EA, $EA, $EA, $A9, $01, $CD, $4
 DataSnd7: DB $79, $10, $08, $00, $0B, $4C, $20, $08, $EA, $EA, $EA, $EA, $EA, $60, $EA, $EA
 
 ; Super Game boy command packets
-sgb_PalSetDefault:    PAL_SET PALETTE_CALVIN, PALETTE_GREY, PALETTE_UI, PALETTE_SEPIA
+sgb_PalSetDefault:    PAL_SET PALETTE_SEPIA, PALETTE_GREY, PALETTE_UI, PALETTE_SEPIA
 sgb_MltReqTwoPlayers: MLT_REQ 2
 sgb_MltReqOnePlayer:  MLT_REQ 1
 
@@ -159,15 +155,15 @@ sgb_Init::
   call  _sgb_PacketTransfer       ; Freezes the visualization of the Super Game Boy screen to hide the graphic garbage during the VRAM transfers  
 
   ld de, sgb_ChrTrn1
-  ld hl, VersionSgbBorderTiles
+  ld hl, SgbBorderTiles
   call _sgb_VRAMTransfer          ; Copies first 128 tiles of the frame (256 Game Boy tiles) to SNES RAM
 
   ld de, sgb_ChrTrn2
-  ld hl, VersionSgbBorderTiles+$1000
+  ld hl, SgbBorderTiles+$1000
   call _sgb_VRAMTransfer          ; Copies second 128 tiles of the frame (256 Game Boy tiles) SNES RAM
 
   ld de, sgb_PctTrn
-  ld hl, VersionSgbBorderTileMap
+  ld hl, SgbBorderTileMap
   call _sgb_VRAMTransfer          ; Copies frame map to SNES RAM 
 
   ld de, sgb_PalTrn
@@ -252,8 +248,8 @@ sgb_MaskEnCancel: MASK_EN 0
 
 sgb_SetDefaultBorder::
   ld a, SGB_BANK
-  ld hl, VersionSgbBorderTiles
-  ld de, VersionSgbBorderTileMap
+  ld hl, SgbBorderTiles
+  ld de, SgbBorderTileMap
 sgb_SetBorder:: ;a = bank, hl = tiles, de = tile map
   ld b, a;bank
   ld a, [sys_info]

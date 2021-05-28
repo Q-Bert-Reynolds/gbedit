@@ -1,53 +1,11 @@
-TESTS_ENABLED    EQU 1
-INTRO_ENABLED    EQU 1
-TITLE_ENABLED    EQU 1
-NEW_GAME_ENABLED EQU 1
-WORLD_ENABLED    EQU 1
-PLAY_ENABLED     EQU 1
-
-INCLUDE "src/beisbol.inc"
-
-RUN_TESTS: MACRO
-
-  ; DISPLAY_ON
-  ; ld a, SIM_BANK
-  ; call SetBank
-  ; TEST_SIM 250, -15, 10
-  call KeyboardDemo
-  ; ld a, WORLD_BANK
-  ; call SetBank
-  ; call TestMap
-ENDM
-
-TEST_SIM: MACRO ;\1 = speed, \2 = deg left/right, \3 = deg up/down
-  ld a, \1
-  ld b, \2
-  ld c, \3
-  call RunSimulation;a = exit velocity b = spray angle c = launch angle
-ENDM
-
-TEST_ANNOUNCER: MACRO ;\1 = angle left or right
-  ld hl, str_buffer
-  xor a
-  ld [hl], a
-  ld b, \1
-  call AppendOutfieldLocationTextByAngle
-  ld hl, str_buffer
-  call RevealTextAndWait
-ENDM
+INCLUDE "src/gb.inc"
 
 SECTION "Header", ROM0[$100]
 Entry:
   nop
   jp Main
   NINTENDO_LOGO
-IF DEF(_HOME)
-  DB "BEISBOL HOME",0,0,0    ;Cart name - 15bytes
-ELIF DEF(_AWAY)
-  DB "BEISBOL AWAY",0,0,0    ;Cart name - 15bytes
-ELSE
-  DB "BEISBOL DEMO",0,0,0    ;Cart name - 15bytes
-ENDC
+  DB "TEXT EDITOR",0,0,0,0   ;Cart name - 15bytes
   DB CART_COMPATIBLE_DMG_GBC ;$143
   DB 0,0                     ;$144 - Licensee code (not important)
   DB CART_INDICATOR_SGB      ;$146 - SGB Support indicator
@@ -151,83 +109,16 @@ Main::
   call SetBank
   call sgb_Init
   SET_DEFAULT_PALETTE
-
-.seed ;load temp data
-  ld a, TEMP_BANK
-  call SetBank
-  call Seed
   
-.loadGame
-  call LoadOptions
-  call CheckSave
-  jp z, .finishLoading
-  call LoadGame
-  ld a, PADF_DOWN
-  ld [last_map_button_state], a
-.finishLoading
-
-IF TESTS_ENABLED == 1
-  RUN_TESTS
-  DISPLAY_OFF
-  ld a, 1
-  ld [rVBK], a
-  CLEAR_SCREEN 0
-  xor a
-  ld [rSCX], a
-  ld [rSCY], a
-  ld [rVBK], a
-ENDC
-
-.start ;show intro credits, batting animation
-IF INTRO_ENABLED == 1
-  ld a, START_BANK
-  call SetBank
-  call Start
-  HIDE_ALL_SPRITES
-ENDC
-
-IF TITLE_ENABLED == 1
-.title ;show title drop, version slide, cycle of players, new game/continue screen
-  ld a, TITLE_BANK
-  call SetBank
-  call Title ;sets z if new game pressed
-  jr nz, .startClock
-ENDC
-
-IF NEW_GAME_ENABLED == 1
-.newGame
-  ld a, NEW_GAME_BANK
-  call SetBank
-  call NewGame
-  ld a, TEMP_BANK
-  call SetBank
-  call Seed
-ENDC
-
 .startClock
   ld a, GAME_STATE_CLOCK_STARTED
   ld [game_state], a
 
 .mainLoop
-IF WORLD_ENABLED == 1
-  .world; walk around, find a game, repeat
-    ld a, [game_state]
-    and a, ~GAME_STATE_PLAY_BALL
-    ld [game_state], a
-    ld a, WORLD_BANK
-    call SetBank
-    call Overworld
-ENDC
-
-IF PLAY_ENABLED == 1
-  .baseball
-    ld a, [game_state]
-    or a, GAME_STATE_PLAY_BALL
-    ld [game_state], a
-    ld a, PLAY_BALL_BANK
-    call SetBank
-    call StartGame
-ENDC
+    call KeyboardDemo
+    ; ld a, EDITOR_BANK
+    ; call SetBank
+    ; call OpenEditor
     jr .mainLoop; TODO: if game finished, exit
 
   xor a

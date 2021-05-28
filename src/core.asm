@@ -139,7 +139,7 @@ LCDInterrupt::
   ld h, b
   ld l, a
   ld bc, EndLCDInterrupt
-  push bc ;put return addres on stack before jumping
+  push bc ;put return address on stack before jumping
   jp hl
 EndLCDInterrupt::
   pop hl 

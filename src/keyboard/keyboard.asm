@@ -31,9 +31,9 @@ SECTION "PS/2 Keyboard Vars", WRAM0
 ; - (F)inish Bit (always 1)
 kb_scan_code:: DB
 kb_scan_code_buffer:: DS 8;holds last 8 scan codes
-kb_error_buffer:: DS 8;holds last 8 errors codes
+kb_error_buffer:: DS 8;holds last 8 error codes
 kb_buffer_write:: DB
-kb_buffer_read:: DB;TODO: r/w only use 4 bit, could be one byte
+kb_buffer_read:: DB
 kb_interrupt_count:: DB
 kb_error:: DB;xxTUKSPF - (T)imeout, (U)nknown Scan Code, (K)eyboard $00 or $FF, (S)tart Bit, (P)arity Bit, (F)inish Bit
 kb_error_count:: DB
@@ -116,7 +116,6 @@ ProcessPS2Keys:
   cp a, b
   ret z;if read == write, done
 
-  ld c, 3;process maximum 3 scan codes per frame
 .loop
     ld hl, kb_error_buffer
     add hl, de;[hl] = current error
@@ -129,9 +128,9 @@ ProcessPS2Keys:
     add hl, de;[hl] = current scan code
     ld a, [hli];scan code
     push de;store read index
-    push bc;store write index, num left
+    push bc;store write index
     call PS2HandleKeycode
-    pop bc;restore write index, num left
+    pop bc;restore write index
     pop de;restore read index
 
   .incrementReadIndex
@@ -142,8 +141,6 @@ ProcessPS2Keys:
     ld [kb_buffer_read], a
 
   .checkDone
-    dec c;if max scan codes read, done
-    ret z
     cp a, b;if read == write, done
     jp nz, .loop
   ret

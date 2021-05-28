@@ -1,3 +1,6 @@
+;4 CPU cycles at 4.194304 MHz is 0.953674316 μs
+;PS/2 keyboard clock is ~100 μs between clock pulses
+
 PS2KeyboardInterrupt::
   ld a, [rSB]; load now before the first 3 bits get shifted out
   ld b, a;store first 8 bits of scan code (S0123456)
@@ -21,7 +24,7 @@ PS2KeyboardInterrupt::
   and a, %11111001 ;23456xxx, bit 7 and parity unknown
   or  a, %00000001 ;23456xxF, finish bit is always 1
   ld c, a          ;expected value after shift
-  ld e, 255
+  ld e, 255          ;timer
 .pollBitsLoop
     ld a, [rSB]
     ld d, a;actual value

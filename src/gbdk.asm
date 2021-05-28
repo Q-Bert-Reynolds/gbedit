@@ -1,5 +1,7 @@
-; GBDK-like functions
-;  Started 30-Dec-19
+; gbdk.asm
+;
+; This is just the assembly parts of GBDK converted to work with RGBDS.
+; Pretty sure the [license is MIT](https://github.com/gbdk-2020/gbdk-2020).
 ;
 ; Initials: NB = Nolan Baker, GBDK = Pascal Felber & Michael Hope
 ; V1.0 - 30-Dec-19 : Original Release - NB, based on GBDK 2.96

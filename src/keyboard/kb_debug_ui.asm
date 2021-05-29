@@ -46,8 +46,13 @@ InterruptsText: DB " int ",0
 ErrorsText: DB " err",0
 ClearedDashesText: DB "_____",0
 ShiftText: DB "shift",0
+
 DrawKeyboardDebugData:
-.drawKeyASCII
+  ld a, [kb_mode]
+  cp a, KB_MODE_PS2
+  jr nz, .drawIGASCII
+
+.drawPS2ASCII
   ld hl, PS2toASCIIKeymap
   ld a, [kb_scan_code]
   ld b, 0
@@ -56,6 +61,15 @@ DrawKeyboardDebugData:
   LCD_WAIT_VRAM
   ld a, [hl]
   ld [_SCRN1], a
+  ld a, "P"
+  ld [_SCRN1+2], a
+  jr .drawScanCodeHex
+
+.drawIGASCII
+  ld a, [kb_scan_code]
+  ld [_SCRN1], a
+  ld a, "I"
+  ld [_SCRN1+2], a
 
 .drawScanCodeHex
   ld a, [kb_scan_code]
@@ -115,7 +129,7 @@ DrawKeyboardDebugData:
     pop af
     dec a
     jr nz, .drawErrorBufferLoop
-
+    
   ld a, " "
   ld hl, str_buffer
   ld bc, 20

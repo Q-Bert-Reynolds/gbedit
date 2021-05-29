@@ -1,8 +1,9 @@
 INCLUDE "src/keyboard/usb_hid_keys.asm";USB HID key codes
 INCLUDE "src/keyboard/ps2_keys.asm";PS/2 keys codes
 
-KB_MODE_PS2     EQU 0
-KB_MODE_USB_HID EQU 1
+KB_MODE_NONE EQU 0
+KB_MODE_PS2  EQU 1
+KB_MODE_IGKB EQU 2
 
 PS2_ERROR_TIMEOUT      EQU %100000
 PS2_ERROR_UNKNOWN_CODE EQU %010000
@@ -39,6 +40,7 @@ kb_error:: DB;xxTUKSPF - (T)imeout, (U)nknown Scan Code, (K)eyboard $00 or $FF, 
 kb_error_count:: DB
 kb_modifiers:: DB ;FSCAUPNL - (F)unction, (S)hift, (C)trl, (A)lt, S(U)per, Ca(P)s Lock, (N)um Lock, Scro(L)l Lock
 kb_flags:: DB;xxxxxxER - (E)xtended key flag, (R)elease key flag
+kb_mode:: DB
 ;WRAM used but defined elsewhere:
 ;   _x and _y for character position on screen
 ;   _i is the toggle between typing and debug displays
@@ -48,7 +50,9 @@ INCLUDE "src/keyboard/ps2_ascii_keymaps.asm"
 INCLUDE "src/keyboard/ps2_handlers.asm"
 INCLUDE "src/keyboard/ps2_jump_table.asm"
 INCLUDE "src/keyboard/ps2_interrupt.asm"
-INCLUDE "src/keyboard/ps2_debug.asm"
+INCLUDE "src/keyboard/igkb_handlers.asm"
+INCLUDE "src/keyboard/kb_debug_ui.asm"
+INCLUDE "src/keyboard/kb_handlers.asm"
 
 KeyboardDemo::
   di
@@ -72,42 +76,86 @@ KeyboardDemo::
   ld [kb_scan_code], a
   ld [rSB], a
 
+  ld a, KB_MODE_IGKB
+  ld [kb_mode], a
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a;ask for bits using keyboard clock 
-  ld b, 0
 .loop
     call gbdk_WaitVBL
-    call ProcessPS2Keys
-    call gbdk_WaitVBL
+    call ProcessKeyCodes
     call DrawKeyboardDebugData
     call UpdateInput
   .testAButton
     ld a, [button_state]
     and a, PADF_A
-    jr z, .loop
+    jr z, .testBButton
     ld a, [last_button_state]
     and a, PADF_A
-    jr nz, .loop
-  .pressedAButton;clear screen
-    ld a, " "
-    ld bc, 32*32+20*18
-    ld hl, _SCRN1
-    call mem_SetVRAM
+    jr nz, .testBButton
+  .pressedAButton
     ld a, [_i]
     xor a, 1
     ld [_i], a
-    jr z, .hideDebug
+    jr nz, .hideDebug
   .showDebug
     ld a, 104
     ld [rWY], a
-    jp .loop
+    jp .testBButton
   .hideDebug
     ld a, 144
     ld [rWY], a
+
+  .testBButton
+    ld a, [button_state]
+    and a, PADF_B
+    jp z, .loop
+    ld a, [last_button_state]
+    and a, PADF_B
+    jp nz, .loop
+  .pressedBButton
+    call ToggleKBMode
     jp .loop
   ret
 
-ProcessPS2Keys:
+ToggleKBMode::
+  xor a
+  ld [rSC], a;stop transfer
+  ld a, [kb_mode]
+  and a, %0000001
+  inc a
+  ld [kb_mode], a
+.checkPS2
+  cp a, KB_MODE_PS2
+  ret z
+  ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
+  ld [rSC], a ;ask for more bits using keyboard clock   
+  ret
+
+ProcessKeyCodes:
+  ld a, [kb_mode]
+.processPS2
+  cp a, KB_MODE_PS2
+  jr z, ProcessPS2KeyCodes
+.processIGKB
+  cp a, KB_MODE_IGKB
+  ret nz;unknown mode
+  ;fall through to process IG key codes
+
+ProcessIGKeyCodes:
+  xor a
+  ld [rSB], a
+  ld a, SCF_TRANSFER_START | SCF_CLOCK_INTERNAL
+  ld [rSC], a ;ask for byte using gb clock
+  ld de, 5
+  call gbdk_Delay
+  ld a, [rSB]
+  and a
+  ret z
+  cp a, $FF
+  ret z
+  jp IGKBHandleCode
+
+ProcessPS2KeyCodes
   ld a, [kb_buffer_write]
   ld b, a;b = write index
   ld a, [kb_buffer_read]
@@ -145,7 +193,7 @@ ProcessPS2Keys:
     jp nz, .loop
   ret
 
-DrawCharacter:;a = ASCII value
+DrawCharacter::;a = ASCII value
   ld [tile_buffer], a
 
   ld a, [_y]

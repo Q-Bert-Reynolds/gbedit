@@ -62,9 +62,6 @@ SerialInterrupt::
   ld a, [kb_mode]
   cp a, KB_MODE_PS2
   jr nz, .done
-  ld a, [rSC]
-  and a, SCF_CLOCK
-  jr z, .done;ERROR: ps2 kb doesn't use internal clock
   call PS2KeyboardInterrupt
 .done
   pop hl 

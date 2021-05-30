@@ -1,4 +1,4 @@
-DrawBinaryNumber:;b = byte to draw, hl = screen location
+DrawBinaryNumber::;b = number, hl = screen address
   ld c, 8
 .loop
     LCD_WAIT_VRAM
@@ -13,7 +13,7 @@ DrawBinaryNumber:;b = byte to draw, hl = screen location
   ret
 
 HexNumbers: DB "0123456789ABCDEF"
-DrawHexNumber:;a = number, bc = screen address
+DrawHexNumber::;a = number, bc = screen address
   push af;number to draw
   and $F0;upper nibble only
   swap a;(ie. a/16)

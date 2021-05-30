@@ -75,9 +75,12 @@ KeyboardDemo::
   ld [_i], a
   ld [kb_scan_code], a
   ld [rSB], a
-
-  ld a, KB_MODE_IGKB
-  ld [kb_mode], a
+  
+  call DetectKeyboard
+  ld a, [kb_mode]
+  cp a, KB_MODE_PS2
+  jr nz, .loop
+.usePS2Clock
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a;ask for bits using keyboard clock 
 .loop
@@ -117,6 +120,22 @@ KeyboardDemo::
     jp .loop
   ret
 
+DetectKeyboard::
+  ld a, KB_MODE_PS2
+  ld [kb_mode], a;assume PS2 keyboard connected
+  xor a
+  ld [rSB], a
+  ld a, SCF_TRANSFER_START | SCF_CLOCK_INTERNAL
+  ld [rSC], a ;ask for byte using gb clock
+  ld de, 5
+  call gbdk_Delay
+  ld a, [kb_error]
+  cp a, PS2_ERROR_TIMEOUT | PS2_ERROR_PARITY_BIT | PS2_ERROR_FINISH_BIT
+  ret nz;if magic error code not received, PS2 connected
+  ld a, KB_MODE_IGKB
+  ld [kb_mode], a
+  ret
+
 ToggleKBMode::
   xor a
   ld [rSC], a;stop transfer
@@ -126,7 +145,7 @@ ToggleKBMode::
   ld [kb_mode], a
 .checkPS2
   cp a, KB_MODE_PS2
-  ret z
+  ret nz
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a ;ask for more bits using keyboard clock   
   ret
@@ -155,7 +174,7 @@ ProcessIGKeyCodes:
   ret z
   jp IGKBHandleCode
 
-ProcessPS2KeyCodes
+ProcessPS2KeyCodes:
   ld a, [kb_buffer_write]
   ld b, a;b = write index
   ld a, [kb_buffer_read]

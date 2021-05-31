@@ -47,7 +47,7 @@ ErrorsText: DB " err",0
 ClearedDashesText: DB "_____",0
 ShiftText: DB "shift",0
 
-DrawKeyboardDebugData:
+DrawKeyboardDebugData::
   ld a, [kb_mode]
   cp a, KB_MODE_PS2
   jr nz, .drawIGASCII
@@ -75,6 +75,7 @@ DrawKeyboardDebugData:
   ld a, [kb_scan_code]
   ld bc, _SCRN1+5
   call DrawHexNumber
+
 
 .drawScanCodeDecimal
   ld a, [kb_scan_code]

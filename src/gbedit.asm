@@ -1,7 +1,7 @@
 SECTION "Keyboard Demo", ROM0
 INCLUDE "src/keyboard/kb_debug_ui.asm"
-AliceText: INCBIN "data/Alice.txt"
-DB, 0;string terminator
+AliceText:: INCBIN "data/Alice.txt"
+AliceTextEnd:: DB, 0;string terminator
 
 DrawCharacter::;a = ASCII value
   ld [tile_buffer], a
@@ -75,17 +75,22 @@ KeyboardDemo::
   DISPLAY_ON
   ei
 
+
   ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_NO_SPACE
   ld hl, AliceText
   ld de, 0
   ld bc, -1
   call DrawText
 
-  ; ld a, 7
-  ; ld [rWX], a
-  ; ld a, 104
-  ; ld [rWY], a
-  ; SHOW_WIN
+  call SaveLine
+
+  PLAY_SONG tessie_data, 1
+
+  ld a, 7
+  ld [rWX], a
+  ld a, 144
+  ld [rWY], a
+  SHOW_WIN
   
   xor a
   ld [_x], a

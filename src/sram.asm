@@ -1,73 +1,59 @@
-SECTION "Main Save", SRAM, BANK[MAIN_SRAM_BANK]
-sram_user_name:: DS NAME_LENGTH
-sram_text_speed: DB
-sram_hours: DW
-sram_minutes: DB
-sram_seconds: DB
-sram_main_save_end:
-
+SECTION "Text File", SRAM, BANK[MAIN_SRAM_BANK]
+sram_text_file:DS 8192
+sram_text_file_end::
 SECTION "Save/Load Code", ROM0
-LoadGame::
+LoadLine::;loads line number bc into line_buffer, address in line_address
   di
   ENABLE_RAM_MBC5
 
   ;load user and rival names
   SWITCH_RAM_MBC5 MAIN_SRAM_BANK
-  ld hl, sram_user_name
-  ld de, user_name
-  ld bc, sram_main_save_end - sram_user_name
-  call mem_Copy
+  ; ld hl, sram_user_name
+  ; ld de, user_name
+  ; ld bc, sram_main_save_end - sram_user_name
+  ; call mem_Copy
 
   DISABLE_RAM_MBC5
   reti
-
-CheckSave::;returns z if no save
-  ENABLE_RAM_MBC5
-  SWITCH_RAM_MBC5 MAIN_SRAM_BANK
-  ld hl, sram_user_name
-  ld de, name_buffer
-  ld bc, NAME_LENGTH
-  call mem_Copy
-  DISABLE_RAM_MBC5
-
-.checkLength
-  ld hl, name_buffer
-  call str_Length
-  ld a, d
-  and a
-  jp nz, .noSaveFile
-  ld a, e
-  and a
-  jp z, .noSaveFile
-
-  ld hl, name_buffer
-  ld b, NAME_LENGTH
-.testLettersLoop
-    ld a, [hli]
-    cp a, 128
-    jr nc, .noSaveFile
-    and a
-    jr z, .saveExists
-    dec b
-    jr nz, .testLettersLoop
-
-.saveExists
-  ld a, 1
-  or a
-  ret
-.noSaveFile
-  xor a
-  ret
   
-SaveGame::
+SaveLine::;saves line_buffer to SRAM at line_bank:line_address
+  ;overwrites old line at that address
+  ;shifts all subsequent lines (even across banks)
   di
   ENABLE_RAM_MBC5
 
-  SWITCH_RAM_MBC5 MAIN_SRAM_BANK
-  ld hl, user_name
-  ld de, sram_user_name
-  ld bc, sram_main_save_end - sram_user_name
+
+  ld a, [line_address]
+  ld d, a
+  ld a, [line_address+1]
+  ld e, a
+  ld a, [line_bank]
+  ld [rRAMB], a
+  push af;line bank
+
+  ld hl, AliceText
+  ld bc, AliceTextEnd - AliceText
+  ld de, sram_text_file
   call mem_Copy
+  
+  pop af;line bank
+.bankLoop
+    ; push af;bank
+    ; ld [rRAMB], a
+
+  ; .addressLoop ;copy until de == 8192 or "\n" found
+      ld a, 26;End of File character
+      ld [de], a
+      ; inc de
+      ; ld a, d
+      ; cp a, $20
+      ; jp nz, .addressLoop
+
+    ; ld de, sram_text_file
+    ; pop af;bank
+    ; inc a 
+    ; cp a, 5
+    ; jr nz, .bankLoop
 
   DISABLE_RAM_MBC5
   reti

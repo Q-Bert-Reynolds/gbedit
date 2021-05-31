@@ -9,7 +9,10 @@ sys_info:: DB
 game_state:: DB
 
 ;text editor
-line:: DW
+line_buffer:: DS 1024
+line_bank:: DB
+line_address:: DW
+line_index:: DW
 column:: DB
 
 ;UI

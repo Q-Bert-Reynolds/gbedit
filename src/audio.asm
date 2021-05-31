@@ -5,6 +5,10 @@ INCLUDE "src/gbt_player/gbt_player.inc"
 INCLUDE "src/gbt_player/gbt_player.asm"
 INCLUDE "src/gbt_player/gbt_player_bank1.asm"
 
+;INCLUDE "music/file_name.asm"; file_name_data is address to load with PLAY_SONG
+INCLUDE "music/tessie.asm";tessie_data
+
+;PLAY_SONG file_name_data, 1; loops a song called file_name 
 PLAY_SONG: MACRO ;\1 load address, \2 loop
   di
   ld a, BANK(\1)

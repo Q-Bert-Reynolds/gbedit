@@ -88,9 +88,10 @@ str_Length::
 
 ;***************************************************************************
 ;
-; str_FromArray - gets string by index
+; str_FromArray - gets string at index bc using separator a
 ;
 ; input:
+;   a  - separatior (0 for strings, '\n' for lines, ' ' for words)
 ;   bc - index
 ;   hl - string array
 ; output:
@@ -98,18 +99,19 @@ str_Length::
 ;
 ;***************************************************************************
 str_FromArray::
+  ld d, a;separator
   inc bc
   jr .test
-.loop; find end of string
-    ld a, [hli]
-    and a
-    jr nz, .loop
-  .test; check bc == 0
+.loop; find separator
+    ld a, [hli];get next character
+    cp a, d;is it a separator?
+    jr nz, .loop; if not, check the next character
+  .test; if so, check bc == 0
     xor a
     dec bc
-    cp b
+    cp a, b
     jr nz, .loop
-    cp c
+    cp a, c
     jr nz, .loop
   ret 
 
@@ -118,6 +120,7 @@ str_FromArray::
 ; str_CopyLine - Copies line
 ;
 ; input:
+;   a  - end character
 ;   hl - string
 ;   de - dest
 ; output:

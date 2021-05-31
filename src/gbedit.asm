@@ -60,10 +60,6 @@ RemoveCharacter::
   call gbdk_SetBkgTiles  
   ret 
 
-
-CursorTile:
-DB 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-
 KeyboardDemo::
   di
   DISPLAY_OFF
@@ -71,10 +67,10 @@ KeyboardDemo::
   ld a, " "
   call ClearScreen
 
-  ld hl, CursorTile
+  ld a, 1;cursor will be a 1 pixel vertical line
   ld de, _VRAM8000
   ld bc, 16
-  call mem_CopyVRAM
+  call mem_SetVRAM
 
   DISPLAY_ON
   ei

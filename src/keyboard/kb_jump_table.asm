@@ -1,3 +1,73 @@
+IGKBJumpTable::;starts at 41
+DW IGKBHandleEscape;USB_KEY_ESC EQU $29 ; Keyboard ESCAPE
+DW IGKBHandleBackspace;USB_KEY_BACKSPACE EQU $2a ; Keyboard DELETE (Backspace)
+DW IGKBHandleTab;USB_KEY_TAB EQU $2b ; Keyboard Tab
+DW IGKBHandleCharacter;USB_KEY_SPACE EQU $2c ; Keyboard Spacebar
+DW IGKBHandleCharacter;USB_KEY_MINUS EQU $2d ; Keyboard - and _
+DW IGKBHandleCharacter;USB_KEY_EQUAL EQU $2e ; Keyboard = and +
+DW IGKBHandleCharacter;USB_KEY_LEFTBRACE EQU $2f ; Keyboard [ and {
+DW IGKBHandleCharacter;USB_KEY_RIGHTBRACE EQU $30 ; Keyboard ] and }
+DW IGKBHandleCharacter;USB_KEY_BACKSLASH EQU $31 ; Keyboard \ and |
+DW IGKBHandleCharacter;USB_KEY_HASHTILDE EQU $32 ; Keyboard Non-US # and ~
+DW IGKBHandleCharacter;USB_KEY_SEMICOLON EQU $33 ; Keyboard ; and :
+DW IGKBHandleCharacter;USB_KEY_APOSTROPHE EQU $34 ; Keyboard ' and "
+DW IGKBHandleCharacter;USB_KEY_GRAVE EQU $35 ; Keyboard ` and ~
+DW IGKBHandleCharacter;USB_KEY_COMMA EQU $36 ; Keyboard , and <
+DW IGKBHandleCharacter;USB_KEY_DOT EQU $37 ; Keyboard . and >
+DW IGKBHandleCharacter;USB_KEY_SLASH EQU $38 ; Keyboard / and ?
+DW IGKBHandleCapsLock;USB_KEY_CAPSLOCK EQU $39 ; Keyboard Caps Lock
+DW IGKBHandleError
+DW IGKBHandleFunctionKey;USB_KEY_F1 EQU $3a ; Keyboard F1
+DW IGKBHandleFunctionKey;USB_KEY_F2 EQU $3b ; Keyboard F2
+DW IGKBHandleFunctionKey;USB_KEY_F3 EQU $3c ; Keyboard F3
+DW IGKBHandleFunctionKey;USB_KEY_F4 EQU $3d ; Keyboard F4
+DW IGKBHandleFunctionKey;USB_KEY_F5 EQU $3e ; Keyboard F5
+DW IGKBHandleFunctionKey;USB_KEY_F6 EQU $3f ; Keyboard F6
+DW IGKBHandleFunctionKey;USB_KEY_F7 EQU $40 ; Keyboard F7
+DW IGKBHandleFunctionKey;USB_KEY_F8 EQU $41 ; Keyboard F8
+DW IGKBHandleFunctionKey;USB_KEY_F9 EQU $42 ; Keyboard F9
+DW IGKBHandleFunctionKey;USB_KEY_F10 EQU $43 ; Keyboard F10
+DW IGKBHandleFunctionKey;USB_KEY_F11 EQU $44 ; Keyboard F11
+DW IGKBHandleFunctionKey;USB_KEY_F12 EQU $45 ; Keyboard F12
+DW IGKBHandleError
+DW IGKBHandlePrintScreen;USB_KEY_SYSRQ EQU $46 ; Keyboard Print Screen
+DW IGKBHandleScrollLock;USB_KEY_SCROLLLOCK EQU $47 ; Keyboard Scroll Lock
+DW IGKBHandlePauseKey;USB_KEY_PAUSE EQU $48 ; Keyboard Pause
+DW IGKBHandleInsertKey;USB_KEY_INSERT EQU $49 ; Keyboard Insert
+DW IGKBHandleHomeKey;USB_KEY_HOME EQU $4a ; Keyboard Home
+DW IGKBHandlePageUp;USB_KEY_PAGEUP EQU $4b ; Keyboard Page Up
+DW IGKBHandleDelete;USB_KEY_DELETE EQU $4c ; Keyboard Delete Forward
+DW IGKBHandleEndKey;USB_KEY_END EQU $4d ; Keyboard End
+DW IGKBHandlePageDown;USB_KEY_PAGEDOWN EQU $4e ; Keyboard Page Down
+DW IGKBHandleArrowKey;USB_KEY_RIGHT EQU $4f ; Keyboard Right Arrow
+DW IGKBHandleArrowKey;USB_KEY_LEFT EQU $50 ; Keyboard Left Arrow
+DW IGKBHandleArrowKey;USB_KEY_DOWN EQU $51 ; Keyboard Down Arrow
+DW IGKBHandleArrowKey;USB_KEY_UP EQU $52 ; Keyboard Up Arrow
+DW IGKBHandleError
+DW IGKBHandleNumLock;USB_KEY_NUMLOCK EQU $53 ; Keyboard Num Lock and Clear
+DW IGKBHandleCharacter;USB_KEY_KPSLASH EQU $54 ; Keypad /
+DW IGKBHandleCharacter;USB_KEY_KPASTERISK EQU $55 ; Keypad *
+DW IGKBHandleCharacter;USB_KEY_KPMINUS EQU $56 ; Keypad -
+DW IGKBHandleCharacter;USB_KEY_KPPLUS EQU $57 ; Keypad +
+DW IGKBHandleEnter;USB_KEY_KPENTER EQU $58 ; Keypad ENTER
+DW IGKBHandleCharacter;USB_KEY_KP1 EQU $59 ; Keypad 1 and End
+DW IGKBHandleCharacter;USB_KEY_KP2 EQU $5a ; Keypad 2 and Down Arrow
+DW IGKBHandleCharacter;USB_KEY_KP3 EQU $5b ; Keypad 3 and PageDn
+DW IGKBHandleCharacter;USB_KEY_KP4 EQU $5c ; Keypad 4 and Left Arrow
+DW IGKBHandleCharacter;USB_KEY_KP5 EQU $5d ; Keypad 5
+DW IGKBHandleCharacter;USB_KEY_KP6 EQU $5e ; Keypad 6 and Right Arrow
+DW IGKBHandleCharacter;USB_KEY_KP7 EQU $5f ; Keypad 7 and Home
+DW IGKBHandleCharacter;USB_KEY_KP8 EQU $60 ; Keypad 8 and Up Arrow
+DW IGKBHandleCharacter;USB_KEY_KP9 EQU $61 ; Keypad 9 and Page Up
+DW IGKBHandleCharacter;USB_KEY_KP0 EQU $62 ; Keypad 0 and Insert
+DW IGKBHandleCharacter;USB_KEY_KPDOT EQU $63 ; Keypad . and Delete
+DW IGKBHandleError
+DW IGKBHandleError;USB_KEY_102ND EQU $64 ; Keyboard Non-US \ and |
+DW IGKBHandleError;USB_KEY_COMPOSE EQU $65 ; Keyboard Application
+DW IGKBHandleError;USB_KEY_POWER EQU $66 ; Keyboard Power
+DW IGKBHandleCharacter;USB_KEY_KPEQUAL EQU $67 ; Keypad =
+;skips all media keys, modifiers, and uncommon keys
+
 PS2JumpTable::
 DW PS2HandleError;PS2_NULL EQU $00
 DW PS2HandleFunctionKey;PS2_KEY_F9 EQU $01
@@ -141,7 +211,7 @@ DW PS2HandleError;$82
 DW PS2HandleFunctionKey;PS2_KEY_F7 EQU $83
 ;any scan code values less than $84 will use this table
 
-PS2ExtendedJumpTable::
+PS2ExtendedJumpTable::;skips multimedia keys
 DW PS2HandleEndKey;PS2_KEY_END EQU $69
 DW PS2HandleError;$6A
 DW PS2HandleArrowKey;PS2_KEY_LEFT_ARROW EQU $6B

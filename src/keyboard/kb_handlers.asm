@@ -1,3 +1,22 @@
+; KBHandleCharacter
+; KBHandleTab
+; KBHandleEnter
+; KBHandleBackspace
+
+KBHandleCharacter::;a = character in ASCII
+  jp DrawCharacter
+
+KBHandleTab::
+  ld c, 4
+.loop
+    push bc
+    ld a, " "
+    call DrawCharacter
+    pop bc
+    dec c
+    jr nz, .loop
+  ret
+
 KBHandleEnter::
   xor a
   ld [_x], a
@@ -12,29 +31,15 @@ KBHandleEnter::
   ret
 
 KBHandleBackspace::
-  ld a, [_x]
-  dec a
-  jr nc, .setX
-.wrapX
-  ld a, 19
-  push af
-  ld a, [_y]
-  dec a
-  jr nc, .setY
-  ld a, 17
-.setY
-  ld [_y], a
-  pop af
-.setX
-  ld [_x], a
-  cp a, %00000111
-  ld a, " "
-  ld [tile_buffer], a
-  ld a, [_y]
-  ld e, a
-  ld a, [_x]
-  ld d, a;de = xy
-  ld hl, $0101
-  ld bc, tile_buffer
-  call gbdk_SetBkgTiles  
-  ret 
+  ld a, -1
+  jp RemoveCharacter
+
+KBHandleDelete::
+  ld a, 1
+  jp RemoveCharacter
+
+KBHandleFunctionKey::;a = function key
+  ret
+
+KBHandleEscape::
+  ret

@@ -95,21 +95,13 @@ PS2HandleError:;a = scan code
 PS2HandleFunctionKey:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ;TODO
-  ret 
+  ;TODO convert scan code to function key number
+  jp KBHandleFunctionKey
 
 PS2HandleTab:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ld c, 4
-.loop
-    push bc
-    ld a, " "
-    call DrawCharacter
-    pop bc
-    dec c
-    jr nz, .loop
-  ret 
+  jp KBHandleTab
 
 PS2HandleShift:
   call PS2CheckReleaseFlag
@@ -178,26 +170,26 @@ PS2HandleCharacter:;a = scan code
 .unshifted
   add hl, bc
   ld a, [hl];ASCII value
-  jp DrawCharacter
+  jp KBHandleCharacter
 
 ;TODO these should toggle lock bits in kb_modifiers
 ;     should also disable and enable keyboard lights
 PS2HandleCapsLock:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ;if previous keycode is not caps lock, toggle caps lock in kb_modifiers, toggle light
+  ;if previous keycode is not caps lock, toggle caps lock in kb_modifiers
   ret
 
 PS2HandleScrollLock:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ;if previous keycode is not scroll lock, toggle caps lock in kb_modifiers, toggle light
+  ;if previous keycode is not scroll lock, toggle caps lock in kb_modifiers
   ret
 
 PS2HandleNumLock:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ;if previous keycode is not num lock, toggle caps lock in kb_modifiers, toggle light
+  ;if previous keycode is not num lock, toggle caps lock in kb_modifiers
   ret 
 
 PS2HandleBackspace:
@@ -208,8 +200,7 @@ PS2HandleBackspace:
 PS2HandleEscape:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
-  ;TODO
-  ret 
+  jp KBHandleEscape 
 
 PS2HandleEnter:
   call PS2CheckReleaseFlag
@@ -250,7 +241,6 @@ PS2HandlePageUp:
   call PS2CheckReleaseFlag
   ret nz;if release flag set, return early
   ret
-
 
 PS2HandlePrintScreen:
   call PS2CheckReleaseFlag

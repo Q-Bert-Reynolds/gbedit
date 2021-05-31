@@ -2,9 +2,13 @@
 ;PS/2 keyboard clock is ~100 μs between clock pulses
 
 PS2KeyboardInterrupt::
-  ld a, [rSB]; load now before the first 3 bits get shifted out
+  ld a, [kb_mode]
+  cp a, KB_MODE_PS2
+  ret nz;if not in PS/2 mode, exit early
+
+  ld a, [rSB]
   ld b, a;store first 8 bits of scan code (S0123456)
-  
+
 .testStartBit
   bit 7, b;test start bit, should always be 0
   jr z, .waitForLastBits

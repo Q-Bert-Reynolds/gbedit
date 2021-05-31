@@ -5,6 +5,7 @@ KB_MODE_NONE EQU 0
 KB_MODE_PS2  EQU 1
 KB_MODE_IGKB EQU 2
 
+;kb_error
 PS2_ERROR_TIMEOUT      EQU %100000
 PS2_ERROR_UNKNOWN_CODE EQU %010000
 PS2_ERROR_KEYBOARD     EQU %001000
@@ -15,21 +16,27 @@ PS2_ERROR_FINISH_BIT   EQU %000001
 KB_FLAG_RELEASE  EQU %00000001 ;$PS2 code $F0
 KB_FLAG_EXTENDED EQU %00000010 ;$PS2 code $E0
 
-KB_MOD_SCROLL_LOCK EQU PS2_LED_SCROLL_LOCK
-KB_MOD_NUM_LOCK    EQU PS2_LED_NUM_LOCK
-KB_MOD_CAPS_LOCK   EQU PS2_LED_CAPS_LOCK
+;kb_modifiers
+KB_MOD_SCROLL_LOCK EQU PS2_LED_SCROLL_LOCK;001
+KB_MOD_NUM_LOCK    EQU PS2_LED_NUM_LOCK   ;010
+KB_MOD_CAPS_LOCK   EQU PS2_LED_CAPS_LOCK  ;100
 KB_MOD_SUPER       EQU %00001000
 KB_MOD_ALT         EQU %00010000
 KB_MOD_CTRL        EQU %00100000
 KB_MOD_SHIFT       EQU %01000000
 KB_MOD_FUNCTION    EQU %10000000
 
-SECTION "PS/2 Keyboard Vars", WRAM0
+SECTION "Keyboard Vars", WRAM0
 ;PS/2 scan codes are 11 bits (S0123456 7PFxxxxx):
 ; - (S)tart (always 0)
-; - Data Bits (0-7) in reverse order, 
+; - Data Bits (0-7) in reverse order
 ; - Odd (P)arity Bit - if the sum of bits 1-A (data bits + parity) is even, error
 ; - (F)inish Bit (always 1)
+;insideGadgets' USB scan codes are 8-bit
+; - most data sent directly as ASCII, including shifted keys
+; - some data comes through as USB HID codes
+; - the rest are incorrectly converted ASCII codes that can sometimes be converted back to HID codes
+
 kb_scan_code:: DB
 kb_scan_code_buffer:: DS 8;holds last 8 scan codes
 kb_error_buffer:: DS 8;holds last 8 error codes
@@ -41,84 +48,14 @@ kb_error_count:: DB
 kb_modifiers:: DB ;FSCAUPNL - (F)unction, (S)hift, (C)trl, (A)lt, S(U)per, Ca(P)s Lock, (N)um Lock, Scro(L)l Lock
 kb_flags:: DB;xxxxxxER - (E)xtended key flag, (R)elease key flag
 kb_mode:: DB
-;WRAM used but defined elsewhere:
-;   _x and _y for character position on screen
-;   _i is the toggle between typing and debug displays
 
-SECTION "PS/2 Keyboard Code", ROM0
+SECTION "Keyboard Code", ROM0
+INCLUDE "src/keyboard/kb_jump_table.asm"
+INCLUDE "src/keyboard/kb_handlers.asm"
 INCLUDE "src/keyboard/ps2_ascii_keymaps.asm"
 INCLUDE "src/keyboard/ps2_handlers.asm"
-INCLUDE "src/keyboard/ps2_jump_table.asm"
 INCLUDE "src/keyboard/ps2_interrupt.asm"
 INCLUDE "src/keyboard/igkb_handlers.asm"
-INCLUDE "src/keyboard/kb_debug_ui.asm"
-INCLUDE "src/keyboard/kb_handlers.asm"
-
-KeyboardDemo::
-  di
-  call LoadFontTiles
-  DISPLAY_OFF
-  ld a, " "
-  call ClearScreen
-  DISPLAY_ON
-  ei
-
-  ld a, 7
-  ld [rWX], a
-  ld a, 104
-  ld [rWY], a
-  SHOW_WIN
-  
-  xor a
-  ld [_x], a
-  ld [_y], a
-  ld [_i], a
-  ld [kb_scan_code], a
-  ld [rSB], a
-  
-  call DetectKeyboard
-  ld a, [kb_mode]
-  cp a, KB_MODE_PS2
-  jr nz, .loop
-.usePS2Clock
-  ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
-  ld [rSC], a;ask for bits using keyboard clock 
-.loop
-    call gbdk_WaitVBL
-    call ProcessKeyCodes
-    call DrawKeyboardDebugData
-    call UpdateInput
-  .testAButton
-    ld a, [button_state]
-    and a, PADF_A
-    jr z, .testBButton
-    ld a, [last_button_state]
-    and a, PADF_A
-    jr nz, .testBButton
-  .pressedAButton
-    ld a, [_i]
-    xor a, 1
-    ld [_i], a
-    jr nz, .hideDebug
-  .showDebug
-    ld a, 104
-    ld [rWY], a
-    jp .testBButton
-  .hideDebug
-    ld a, 144
-    ld [rWY], a
-
-  .testBButton
-    ld a, [button_state]
-    and a, PADF_B
-    jp z, .loop
-    ld a, [last_button_state]
-    and a, PADF_B
-    jp nz, .loop
-  .pressedBButton
-    call ToggleKBMode
-    jp .loop
-  ret
 
 DetectKeyboard::
   ld a, KB_MODE_PS2
@@ -134,20 +71,6 @@ DetectKeyboard::
   ret nz;if magic error code not received, PS2 connected
   ld a, KB_MODE_IGKB
   ld [kb_mode], a
-  ret
-
-ToggleKBMode::
-  xor a
-  ld [rSC], a;stop transfer
-  ld a, [kb_mode]
-  and a, %0000001
-  inc a
-  ld [kb_mode], a
-.checkPS2
-  cp a, KB_MODE_PS2
-  ret nz
-  ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
-  ld [rSC], a ;ask for more bits using keyboard clock   
   ret
 
 ProcessKeyCodes:
@@ -210,32 +133,4 @@ ProcessPS2KeyCodes:
   .checkDone
     cp a, b;if read == write, done
     jp nz, .loop
-  ret
-
-DrawCharacter::;a = ASCII value
-  ld [tile_buffer], a
-
-  ld a, [_y]
-  ld e, a
-  ld a, [_x]
-  ld d, a;de = xy
-.testXWrap
-  inc a
-  ld [_x], a
-  cp a, 20
-  jr c, .setTiles
-  xor a
-  ld [_x], a
-.testYWrap
-  ld a, [_y]
-  inc a
-  ld [_y], a
-  cp a, 18
-  jr c, .setTiles
-  xor a
-  ld [_y], a
-.setTiles
-  ld hl, $0101
-  ld bc, tile_buffer
-  call gbdk_SetBkgTiles
   ret

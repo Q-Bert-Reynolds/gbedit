@@ -58,12 +58,7 @@ SerialInterrupt::
   push bc
   push de
   push hl
-.ps2Keyboard
-  ld a, [kb_mode]
-  cp a, KB_MODE_PS2
-  jr nz, .done
   call PS2KeyboardInterrupt
-.done
   pop hl 
   pop de
   pop bc

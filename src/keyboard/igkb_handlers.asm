@@ -3,22 +3,22 @@ IGKBHandleCode::;a = scan code
   cp a, 137
   jr nz, .handlePeriod
   ld a, " "
-  jp DrawCharacter
+  jp KBHandleCharacter
 .handlePeriod
   cp a, 148
   jr nz, .handleApostrophe
   ld a, "."
-  jp DrawCharacter
+  jp KBHandleCharacter
 .handleApostrophe
   cp a, 145
   jr nz, .handleComma
   ld a, "'"
-  jp DrawCharacter
+  jp KBHandleCharacter
 .handleComma
   cp a, 147
   jr nz, .handleEnter
   ld a, ","
-  jp DrawCharacter
+  jp KBHandleCharacter
 .handleEnter
   cp a, 133
   jr nz, .handleBackspace
@@ -31,13 +31,90 @@ IGKBHandleCode::;a = scan code
   cp a, 132
   jr nz, .handleNumber
   ld a, "0"
-  call DrawCharacter
+  call KBHandleCharacter
 .handleNumber
   cp a, 123
   jr c, .handleCharacter
-  cp a, 133
+  cp a, 132
   jr nc, .handleCharacter
   sub a, 74
 .handleCharacter
-  call DrawCharacter
+; For all other characters, IG does the following to get the keycode:
+;   ASCIICode += char((unsigned char)HIDCode + (shift ? 61 : 93));
+; ASCII ends at 127, so anything above that must be readjusted
+  jp nc, .handleOther
+  call KBHandleCharacter
+.handleOther
+  ;The shift trick that IG does fucks up most special keys.
+  ;assuming that shift key not pressed
+  sub a, 93;HID codes >40
+  ld b, 0
+  ld c, a
+  ld hl, IGKBJumpTable
+  add hl, bc
+  add hl, bc
+  ld a, [hli]
+  ld b, a
+  ld a, [hl]
+  ld h, a
+  ld l, b
+  jp hl
+
+IGKBHandleEnter:
+  jp KBHandleEnter
+
+IGKBHandleCharacter:
+  ret
+
+IGKBHandleEscape:
+  jp KBHandleEscape
+
+IGKBHandleBackspace:
+  jp KBHandleBackspace
+
+IGKBHandleTab:
+  jp KBHandleTab
+
+IGKBHandleFunctionKey:
+  ret
+
+IGKBHandlePrintScreen:
+  ret
+
+IGKBHandleScrollLock:
+  ret
+
+IGKBHandleNumLock:
+  ret
+
+IGKBHandleCapsLock:
+  ret
+
+IGKBHandlePauseKey:
+  ret
+
+IGKBHandleInsertKey:
+  ret
+
+IGKBHandleHomeKey:
+  ret
+
+IGKBHandlePageUp:
+  ret
+
+IGKBHandleDelete:
+  ret
+
+IGKBHandleEndKey:
+  ret
+
+IGKBHandlePageDown:
+  ret
+
+IGKBHandleArrowKey:
+  ret
+
+
+IGKBHandleError:;a = scan code
+  ;TODO
   ret

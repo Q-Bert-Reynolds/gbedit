@@ -8,6 +8,10 @@ sys_info:: DB
 ;game state
 game_state:: DB
 
+;text editor
+line:: DW
+column:: DB
+
 ;UI
 list_selection:: DB
 

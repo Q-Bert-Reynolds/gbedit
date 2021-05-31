@@ -1,5 +1,7 @@
 SECTION "Keyboard Demo", ROM0
 INCLUDE "src/keyboard/kb_debug_ui.asm"
+AliceText: INCBIN "data/Alice.txt"
+DB, 0;string terminator
 
 DrawCharacter::;a = ASCII value
   ld [tile_buffer], a
@@ -58,20 +60,36 @@ RemoveCharacter::
   call gbdk_SetBkgTiles  
   ret 
 
+
+CursorTile:
+DB 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
 KeyboardDemo::
   di
-  call LoadFontTiles
   DISPLAY_OFF
+  call LoadFontTiles
   ld a, " "
   call ClearScreen
+
+  ld hl, CursorTile
+  ld de, _VRAM8000
+  ld bc, 16
+  call mem_CopyVRAM
+
   DISPLAY_ON
   ei
 
-  ld a, 7
-  ld [rWX], a
-  ld a, 104
-  ld [rWY], a
-  SHOW_WIN
+  ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_NO_SPACE
+  ld hl, AliceText
+  ld de, 0
+  ld bc, -1
+  call DrawText
+
+  ; ld a, 7
+  ; ld [rWX], a
+  ; ld a, 104
+  ; ld [rWY], a
+  ; SHOW_WIN
   
   xor a
   ld [_x], a
@@ -88,6 +106,7 @@ KeyboardDemo::
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a;ask for bits using keyboard clock 
 .loop
+    call DrawCursor
     call gbdk_WaitVBL
     call ProcessKeyCodes
     call DrawKeyboardDebugData
@@ -137,3 +156,29 @@ ToggleKBMode::
   ld a, SCF_TRANSFER_START | SCF_CLOCK_EXTERNAL
   ld [rSC], a ;ask for more bits using keyboard clock   
   ret
+
+DrawCursor::
+  ld hl, oam_buffer
+  ld a, [vbl_timer]
+  cp a, 30
+  jr c, .hide
+.show
+  ld a, [_y]
+  add a, 16
+  ld [hli], a
+  ld a, [_x]
+  add a, 8
+  ld [hli], a
+  xor a
+  ld [hli], a
+  ld [hli], a
+  ret
+.hide
+  xor a
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ld [hli], a
+  ret
+
+  

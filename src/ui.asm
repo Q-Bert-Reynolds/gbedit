@@ -234,6 +234,9 @@ DrawText:: ;a = draw flags, hl = text, de = xy, bc = max lines
     push de;xy
     ld de, tile_buffer
     call str_CopyLine
+    xor a
+    cp a, c;if length of line is 0, next line
+    jr z, .checkDone
     pop de;xy
     pop af;draw flags
     push af;draw flags
@@ -244,14 +247,18 @@ DrawText:: ;a = draw flags, hl = text, de = xy, bc = max lines
     ld bc, tile_buffer
     call SetTiles
     pop hl;line
+  .checkDone
     dec hl
     ld a, [hli]
     and a
     jr z, .exit
     pop de;xy
     inc e
-    inc e;y+=2
     pop af;draw flags
+    bit 2, a;DRAW_FLAGS_NO_SPACE
+    jr nz, .nextLine
+    inc e;y+=2
+  .nextLine
     pop bc;max lines
     dec c
     ret z

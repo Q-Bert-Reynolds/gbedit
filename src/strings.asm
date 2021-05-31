@@ -17,7 +17,7 @@
 ;     Entry: bc = index, hl = string array
 ;     Return: hl = string at index bc
 ;   str_CopyLine 
-;     Copies line (\n) from hl to de
+;     Copies l(\n) from hl to de
 ;     Entry: hl = src string, de = dest string
 ;     Return: bc = length of line, hl = start of next line
 ;   str_Append
@@ -129,7 +129,7 @@ str_CopyLine::
   ld bc, 0
 .loop
     ld a, [hli]
-    cp 128;"\n"
+    cp "\n"
     ret z
     and a
     ret z

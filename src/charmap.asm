@@ -14,4 +14,3 @@ charmap "ț", 15 ; to
 charmap "ᚠ", 16 ; age
 charmap "↵", 30 ; end/return
 charmap "é",  127
-charmap "\n", 128

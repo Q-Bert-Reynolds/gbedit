@@ -7,6 +7,8 @@ TODO:
 - add on-screen kb (in palce of debug info)
   - auto hide on-screen kb when external kb recognized
   - when kb visible, DPad selects kb keys
+    - A button selects presses key
+    - B button is backspace key
   - when kb hidden, DPad moves cursor
     - holding select should highlight characters
       - could be a second character set for DMG, but HBlank would be cooler

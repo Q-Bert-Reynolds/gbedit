@@ -21,7 +21,8 @@ Entry:
 SECTION "VBlank", ROM0[$0040]
   jp VBLInterrupt
 SECTION "LCDC", ROM0[$0048]
-  jp LCDInterrupt
+  ; jp LCDInterrupt
+  jp HighlightInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
   reti
 SECTION "Serial", ROM0[$0058]

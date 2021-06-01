@@ -34,7 +34,7 @@ SaveLine::;saves line_buffer to SRAM at line_bank:line_address
   ld hl, AliceText
   ld bc, AliceTextEnd - AliceText
   ld de, sram_text_file
-  call mem_Copy
+  call mem_Copy;save text file to SRAM
   
   pop af;line bank
 .bankLoop
@@ -52,7 +52,7 @@ SaveLine::;saves line_buffer to SRAM at line_bank:line_address
     ; ld de, sram_text_file
     ; pop af;bank
     ; inc a 
-    ; cp a, 5
+    ; cp a, MAX_RAM_BANKS+1
     ; jr nz, .bankLoop
 
   DISABLE_RAM_MBC5

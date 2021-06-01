@@ -13,7 +13,11 @@ line_buffer:: DS 1024
 line_bank:: DB
 line_address:: DW
 line_index:: DW
-column:: DB
+line_column:: DB
+selection_x1:: DB
+selection_y1:: DB
+selection_x2:: DB
+selection_y2:: DB
 
 ;UI
 list_selection:: DB

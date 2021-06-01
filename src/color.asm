@@ -1,10 +1,13 @@
 ;DMG
 DMG_PAL_BDLW EQU %11100100 ;normal
+DMG_PAL_WLDB EQU %00011011 ;inverted
 DMG_PAL_BDLL EQU %11100101 ;good for testing palettes
 DMG_PAL_DLWW EQU %10010000 ;dark,  light, white, white/transparent
 DMG_PAL_BDWW EQU %11100000 ;black, dark,  white, white/transparent
 DMG_PAL_BLWW EQU %11010000 ;black, light, white, white/transparent
 DMG_PAL_BLBW EQU %11011100 ;black, light, black, white/transparent
+DMG_PAL_NORMAL EQU DMG_PAL_BDLW
+DMG_PAL_INVERT EQU DMG_PAL_WLDB
 
 ;CGB/SGB
 WHITE_R EQU 29

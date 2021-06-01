@@ -65,6 +65,7 @@ SerialInterrupt::
   pop af
   reti
 
+;horizontal blank interrupt, 87-204 clock cycles (22-51 CPU cycles)
 LCDInterrupt::
   push af
   push bc
@@ -86,6 +87,7 @@ EndLCDInterrupt::
   pop af
   reti
 
+;vertical blank interrupt can be up to 4560 clock cycles (1140 CPU cyclees)
 VBLInterrupt::
   push af
   push bc

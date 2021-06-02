@@ -1,5 +1,7 @@
 SECTION "Keyboard Demo", ROM0
 INCLUDE "src/keyboard/kb_debug_ui.asm"
+INCLUDE "img/sprite_font.asm"
+
 AliceText:: INCBIN "data/Alice.txt"
 AliceTextEnd:: DB, 0;string terminator
 
@@ -44,19 +46,27 @@ HighlightInterrupt::; only highlights whole lines, sprites cover the other
   ld [rLYC], a
   ld a, [selection_y2]
   cp a, b
-  jr z, .notHighlighted;if y1 == y2
   ld a, [selection_x1]
+  jr z, .firstLineIsLastLine;if y1 == y2
   cp a, 10
-  jp c, .highlighted;use sprites to highlight on DMG/SGB?
+  jp c, .highlighted
   jp .notHighlighted
-
+.firstLineIsLastLine
+  ld b, a;x1
+  ld a, [selection_x2]
+  sub a, b
+  inc a
+  cp a, 10
+  jp nc, .highlighted
+  jp .notHighlighted
+  
 .lastLine
   ld a, [rLY]
   add a, 8
   ld [rLYC], a
   ld a, [selection_x2]
   cp a, 10
-  jp c, .notHighlighted;use sprites to highlight on DMG/SGB?
+  jp c, .notHighlighted
   jp .highlighted
 
 .afterLastLine
@@ -83,14 +93,24 @@ KeyboardDemo::
   ld a, " "
   call ClearScreen
 
-  ld a, 1;cursor will be a 1 pixel vertical line
+  ld hl, _SpriteFontTiles
   ld de, _VRAM8000
+  ld bc, _SPRITE_FONT_TILE_COUNT*16
+  call mem_CopyVRAM
+
+  ld a, 1;cursor will be a 1 pixel vertical line
+  ld hl, _VRAM8000
   ld bc, 16
   call mem_SetVRAM
 
+
+  ld a, DMG_PAL_BLWW
+  ld [rOBP0], a;normal
+  ld a, DMG_PAL_WLBW
+  ld [rOBP1], a;highlighted
+
   DISPLAY_ON
   ei
-
 
   ld a, DRAW_FLAGS_BKG | DRAW_FLAGS_NO_SPACE
   ld hl, AliceText
@@ -105,11 +125,11 @@ KeyboardDemo::
 .setupInterrupt
   ld a, 2
   ld [selection_x1], a
-  ld a, 2
+  ld a, 3
   ld [selection_y1], a
-  ld a, 3
+  ld a, 16
   ld [selection_x2], a
-  ld a, 3
+  ld a, 7
   ld [selection_y2], a
   
   ld b, IEF_LCDC
@@ -146,6 +166,7 @@ KeyboardDemo::
   ld [rSC], a;ask for bits using keyboard clock 
 .loop
     call DrawCursor
+    call DrawHighlight
     call gbdk_WaitVBL
     call ProcessKeyCodes
     call DrawKeyboardDebugData
@@ -268,6 +289,7 @@ DrawCursor::
   ld [hli], a
   xor a
   ld [hli], a
+  ld a, OAMF_PAL1
   ld [hli], a
   ret
 .hide
@@ -278,4 +300,86 @@ DrawCursor::
   ld [hli], a
   ret
 
+DrawHighlight::;DMG and SGB use sprites to highlight the first and last row
+  ld a, 1
+  ld [sprite_first_tile], a
+  ld a, [selection_y1]
+  ld e, a
+  ld a, [selection_y2]
+  cp a, e
+  jr nz, .differentRows
   
+.sameRow
+  ld a, [selection_x1]
+  ld d, a
+  ld a, [selection_x2]
+  sub a, d;x2-x1
+  inc a
+  cp a, 10
+  jr nc, .sameRowNoHighlight
+.sameRowHighlight
+  ld h, a;width
+  ld a, OAMF_PAL1;highlight
+  ld [sprite_props], a
+  jp HighlightTiles
+
+.sameRowUnHighlight
+  ld a, [selection_x2]
+  ld d, a;x
+  ld a, 20
+  sub a, d;width
+  ld h, a;width
+  ld a, OAMF_PAL0;normal
+  ld [sprite_props], a
+  call HighlightTiles
+
+  ld d, 0
+  ld a, [selection_y1]
+  ld h, a;width
+  ld a, OAMF_PAL0;normal
+  ld [sprite_props], a
+  jp HighlightTiles
+
+.differentRows;e = y1
+  ld a, [selection_x1]
+  ld d, a;d = x1
+  ld a, 20
+  sub a, d;20-x1
+  ld h, a;width
+  push af
+  call HighlightTiles
+
+  pop af
+  ld [sprite_first_tile], a
+  ld d, 0
+  ld a, [selection_y2]
+  ld e, a
+  ld a, [selection_x2]
+  inc a
+  ld h, a
+  ;fall through to hightlight
+HighlightTiles:;de = xy, h = width
+  ld l, 1
+  push de;xy
+  push hl;wh
+  ld bc, str_buffer
+  call gbdk_GetBkgTiles
+
+  pop hl;wh
+  pop bc;xy
+  inc b
+  sla b
+  sla b
+  sla b
+  inc c
+  inc c
+  sla c
+  sla c
+  sla c
+
+  xor a
+  ld [sprite_flags], a
+  ld de, str_buffer
+  call SetSpriteTilesXY
+
+  ret

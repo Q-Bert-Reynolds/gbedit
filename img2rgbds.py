@@ -271,7 +271,7 @@ def png_to_gb (path, base, name):
   rows, cols, hex_vals, colors, palettemap = gb_encode(img)
   tile_count = rows*cols
 
-  if name in ["ui_font"]:
+  if "font" in name:
     tileset = []
     for i in range(0, len(hex_vals), 16):
       tile = "".join(hex_vals[i:i+16])

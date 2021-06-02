@@ -6,6 +6,7 @@ DMG_PAL_DLWW EQU %10010000 ;dark,  light, white, white/transparent
 DMG_PAL_BDWW EQU %11100000 ;black, dark,  white, white/transparent
 DMG_PAL_BLWW EQU %11010000 ;black, light, white, white/transparent
 DMG_PAL_BLBW EQU %11011100 ;black, light, black, white/transparent
+DMG_PAL_WLBW EQU %00011100 ;white, light, black, white/transparent
 DMG_PAL_NORMAL EQU DMG_PAL_BDLW
 DMG_PAL_INVERT EQU DMG_PAL_WLDB
 

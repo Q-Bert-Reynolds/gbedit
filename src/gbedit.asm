@@ -1,3 +1,9 @@
+SECTION "Highlight Interrupt Variables", HRAM[$FF8A]
+selection_x1:: DB
+selection_y1:: DB
+selection_x2:: DB
+selection_y2:: DB
+
 SECTION "Keyboard Demo", ROM0
 INCLUDE "src/keyboard/kb_debug_ui.asm"
 INCLUDE "img/sprite_font.asm"
@@ -5,86 +11,121 @@ INCLUDE "img/sprite_font.asm"
 AliceText:: INCBIN "data/Alice.txt"
 AliceTextEnd:: DB, 0;string terminator
 
-HighlightInterrupt::; only highlights whole lines, sprites cover the other 
+HighlightInterrupt::
   push af
   push bc
-  ld a, [rLY]
+  ldh a, [rLY]
   inc a;check next line
   srl a
   srl a
   srl a;tileY = LY/8
   ld b, a;tileY
-  ld a, [selection_y1]
+  ldh a, [selection_y1]
   cp a, b
-  jr z, .firstLine;if LY == y1
-  jr nc, .beforeFirstLine;if LY < y1
-  ld a, [selection_y2]
+  jp z, .firstLine;if LY == y1
+  jp nc, .beforeFirstLine;if LY < y1
+  ldh a, [selection_y2]
   cp a, b
-  jr z, .lastLine;if LY == y2
-  jr c, .afterLastLine; if LY > y2
+  jp z, .lastLine;if LY == y2
+  jp c, .afterLastLine; if LY > y2
 
 .middleLines;otherwise
   sla a
   sla a
   sla a;selection_y2*8
   dec a;y2*8-1
-  ld [rLYC], a
-  jr .highlighted
+  ldh [rLYC], a
+  jp .highlighted
 
 .beforeFirstLine
   sla a
   sla a
   sla a;selection_y1*8
   dec a;y1*8-1
-  ld [rLYC], a
-  jr .notHighlighted
+  ldh [rLYC], a
+  jp .notHighlighted
 
 .firstLine;a = selection_y1
-  ld b, a;selection_y1
-  ld a, [rLY]
+  ldh a, [rLY]
   add a, 8
-  ld [rLYC], a
-  ld a, [selection_y2]
-  cp a, b
-  ld a, [selection_x1]
-  jr z, .firstLineIsLastLine;if y1 == y2
-  cp a, 10
-  jp c, .highlighted
-  jp .notHighlighted
-.firstLineIsLastLine
-  ld b, a;x1
-  ld a, [selection_x2]
-  sub a, b
-  inc a
-  cp a, 10
-  jp nc, .highlighted
-  jp .notHighlighted
+  ldh [rLYC], a
+  
+  ld a, [rSTAT]
+  ld c, a
+  xor STATF_MODE00 | STATF_MODE10 ; Need to remove Mode 0 to avoid STAT blocking
+  ldh [rSTAT], a
+  xor a
+  ldh [rIF], a
+
+  ld a, DMG_PAL_NORMAL
+  ld [rBGP], a
+  halt ; Halt with intterrupts disabled to sync with Mode 2
+  nop  ; avoid halt bug
+
+  ldh a, [selection_x1]
+  sla a
+  sla a
+  sla a
+.wait
+    dec a
+    jr nz, .wait
+  
+  ld a, DMG_PAL_INVERT
+  ldh [rBGP], a
+
+  ; ldh a, [selection_y2]
+  ; ld c, a
+  ; ldh a, [selection_y1]
+  ; cp a, c
+  ; jr nz, .waitForEnd
+
+  ld a, c
+  ld [rSTAT], a
+  jp .done
+
+; .waitForEnd
+;   ldh a, [selection_x2]
+;   sla a
+;   sla a
+;   sla a
+; .wait2
+;     dec a
+;     jr nz, .wait2
+
+;   ld a, DMG_PAL_INVERT
+;   ldh [rBGP], a
   
 .lastLine
-  ld a, [rLY]
+  ldh a, [rLY]
   add a, 8
   ld [rLYC], a
-  ld a, [selection_x2]
+  ldh a, [selection_x2]
   cp a, 10
   jp c, .notHighlighted
   jp .highlighted
 
 .afterLastLine
   xor a
-  ld [rLYC], a
+  ldh [rLYC], a
 
 .notHighlighted
   ld a, DMG_PAL_NORMAL
-  jr .setPalette
+  jp .setPalette
 
 .highlighted
   ld a, DMG_PAL_INVERT
 
 .setPalette
-  ld [rBGP], a
+  ldh [rBGP], a
+
+.done
+  ldh a, [rIF]
+  and ~IEF_LCDC
+  ldh [rIF], a
   pop bc
   pop af
   reti
+
 
 KeyboardDemo::
   di
@@ -124,24 +165,17 @@ KeyboardDemo::
 
 .setupInterrupt
   ld a, 2
-  ld [selection_x1], a
+  ldh [selection_x1], a
   ld a, 3
-  ld [selection_y1], a
+  ldh [selection_y1], a
   ld a, 16
-  ld [selection_x2], a
+  ldh [selection_x2], a
   ld a, 7
-  ld [selection_y2], a
+  ldh [selection_y2], a
   
-  ld b, IEF_LCDC
-  ld a, [rIE]
-  or a, b
-  ld [rIE], a
-  
+  ld a, STATF_LYCF
+  ldh [rSTAT], a
   xor a
-  ld [rLYC], a
-
-  ld a, STATF_LYC
-  ld [rSTAT], a
 
 .setupMenu
   ld a, 7
@@ -166,7 +200,6 @@ KeyboardDemo::
   ld [rSC], a;ask for bits using keyboard clock 
 .loop
     call DrawCursor
-    call DrawHighlight
     call gbdk_WaitVBL
     call ProcessKeyCodes
     call DrawKeyboardDebugData
@@ -298,88 +331,4 @@ DrawCursor::
   ld [hli], a
   ld [hli], a
   ld [hli], a
-  ret
-
-DrawHighlight::;DMG and SGB use sprites to highlight the first and last row
-  ld a, 1
-  ld [sprite_first_tile], a
-  ld a, [selection_y1]
-  ld e, a
-  ld a, [selection_y2]
-  cp a, e
-  jr nz, .differentRows
-  
-.sameRow
-  ld a, [selection_x1]
-  ld d, a
-  ld a, [selection_x2]
-  sub a, d;x2-x1
-  inc a
-  cp a, 10
-  jr nc, .sameRowNoHighlight
-.sameRowHighlight
-  ld h, a;width
-  ld a, OAMF_PAL1;highlight
-  ld [sprite_props], a
-  jp HighlightTiles
-
-.sameRowUnHighlight
-  ld a, [selection_x2]
-  ld d, a;x
-  ld a, 20
-  sub a, d;width
-  ld h, a;width
-  ld a, OAMF_PAL0;normal
-  ld [sprite_props], a
-  call HighlightTiles
-
-  ld d, 0
-  ld a, [selection_y1]
-  ld h, a;width
-  ld a, OAMF_PAL0;normal
-  ld [sprite_props], a
-  jp HighlightTiles
-
-.differentRows;e = y1
-  ld a, [selection_x1]
-  ld d, a;d = x1
-  ld a, 20
-  sub a, d;20-x1
-  ld h, a;width
-  push af
-  call HighlightTiles
-
-  pop af
-  ld [sprite_first_tile], a
-  ld d, 0
-  ld a, [selection_y2]
-  ld e, a
-  ld a, [selection_x2]
-  inc a
-  ld h, a
-  ;fall through to hightlight
-HighlightTiles:;de = xy, h = width
-  ld l, 1
-  push de;xy
-  push hl;wh
-  ld bc, str_buffer
-  call gbdk_GetBkgTiles
-
-  pop hl;wh
-  pop bc;xy
-  inc b
-  sla b
-  sla b
-  sla b
-  inc c
-  inc c
-  sla c
-  sla c
-  sla c
-
-  xor a
-  ld [sprite_flags], a
-  ld de, str_buffer
-  call SetSpriteTilesXY
-
   ret

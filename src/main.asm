@@ -21,7 +21,6 @@ Entry:
 SECTION "VBlank", ROM0[$0040]
   jp VBLInterrupt
 SECTION "LCDC", ROM0[$0048]
-  ; jp LCDInterrupt
   jp HighlightInterrupt
 SECTION "TimerOverflow", ROM0[$0050]
   reti
@@ -101,7 +100,7 @@ Main::
   ld [rLCDC], a
 
 .setupInterrupts
-  ld a, IEF_VBLANK | IEF_SERIAL
+  ld a, IEF_VBLANK | IEF_SERIAL | IEF_LCDC
   ld [rIE], a
   ei
 

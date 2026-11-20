@@ -1,27 +1,16 @@
-import os
+"""Generate the C constants shared with the assembly editor code."""
+from pathlib import Path
+
 
 def main():
-  if os.path.isfile("src/constants.h"):
-    h_change = os.path.getmtime("src/constants.h")
-    if os.path.getmtime("src/constants.asm") < h_change and os.path.getmtime("./build.py") < h_change:
-      print('Skipping "constants.asm". Generated header is up to date.')
-      return
+    lines = ["#ifndef CONSTANTS\n#define CONSTANTS\n\n"]
+    for line in Path("src/constants.asm").read_text(encoding="utf8").splitlines(True):
+        line = line.replace("DEF ", "#define ").replace(" EQU ", " ")
+        line = line.replace(";", "//").replace(" %", " 0b").replace(" $", " 0x")
+        lines.append(line)
+    lines.append("\n#endif // CONSTANTS\n")
+    Path("src/constants.h").write_text("".join(lines), encoding="utf8")
 
-  with open("src/constants.asm", encoding="utf8") as in_file:
-    with open("src/constants.h", "w+", encoding="utf8") as out_file:
-
-      out_file.write("#ifndef CONSTANTS\n")
-      out_file.write("#define CONSTANTS\n\n")
-
-      for line in in_file:
-        line = line.replace("DEF ", "#define ")
-        line = line.replace(" EQU ", " ")
-        line = line.replace(";", "//")
-        line = line.replace(" %", " 0b")
-        line = line.replace(" $", " 0x")
-        out_file.write(line)
-
-      out_file.write("\n#endif //CONSTANTS\n")
 
 if __name__ == "__main__":
-  main()
+    main()

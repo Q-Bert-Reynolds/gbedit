@@ -1,67 +1,10 @@
 NEWCHARMAP latin1
 
-;SDCC converts unicode to ascii for you and breaks the charmap
-;As a workaround translate.py replaces unicode chars with <strings>: 
-charmap "<dots>", 10
-charmap "<ball>", 11
-charmap "<arrow left>", 12
-charmap "<arrow right>", 13
-charmap "<arrow right off>", 14
-charmap "<top left>", 17
-charmap "<top right>", 18
-charmap "<bottom left>", 19
-charmap "<bottom right>", 20
-charmap "<_>", 21
-charmap "<|>", 22
-charmap "<base empty>", 23
-charmap "<base occupied>", 24
-charmap "<K>", 27
-charmap "<down arrow>", 28
-charmap "<up arrow>", 29
-charmap "<return>", 30
-charmap "<+>", 31
-charmap "<i`>", 237
-charmap "<u:>", 252
-charmap "<u`>", 250
-charmap "<o`>", 243
-charmap "<a`>", 225
-charmap "<!>", 161
-charmap "<?>", 191
-charmap "<n~>", 241
-charmap "<e`>", 233
-
-;ui tiles not covered by ASCII tabe
-charmap "<P>", 1 ; pitcher
-charmap "<C>", 2 ; catcher
-charmap "<1B>", 3 ; first
-charmap "<2B>", 4 ; second
-charmap "<3B>", 5 ; third
-charmap "<SS>", 6 ; short
-charmap "<LF>", 7 ; left
-charmap "<CF>", 8 ; center
-charmap "<RF>", 9 ; right
-charmap "◌", 10 ; dotted circle
-charmap "○", 11 ; baseball
+;Font tile indices for keyboard glyphs, Latin-1, and printable ASCII.
+charmap "<", 60
 charmap "◀", 12
 charmap "▶", 13
-charmap "▷", 14
-charmap "<to>", 15
-charmap "<yr>", 16
-charmap "┌", 17
-charmap "┐", 18
-charmap "└", 19
-charmap "┘", 20
-charmap "─", 21
-charmap "│", 22
-charmap "◇", 23
-charmap "◆", 24
-charmap "<ERA>", 25
-charmap "<BA>", 26
-charmap "ꓘ", 27
-charmap "▼", 28 ;bottom of the inning
-charmap "▲", 29 ;top of the inning
-charmap "↵", 30 ;end/return
-charmap "┼", 31
+charmap "▲", 29
 charmap "í", 237
 charmap "ü", 252
 charmap "ú", 250
@@ -71,9 +14,6 @@ charmap "¡", 161
 charmap "¿", 191
 charmap "ñ", 241
 charmap "é", 233
-charmap "\n", 128
-
-; Standard printable ASCII characters that RGBDS 0.8 no longer provides for us
 charmap " ", 32
 charmap "!", 33
 charmap "\"", 34
@@ -102,7 +42,6 @@ charmap "8", 56
 charmap "9", 57
 charmap ":", 58
 charmap ";", 59
-charmap "<", 60
 charmap "=", 61
 charmap ">", 62
 charmap "?", 63
@@ -169,3 +108,4 @@ charmap "\{", 123
 charmap "|", 124
 charmap "\}", 125
 charmap "~", 126
+charmap "\n", 10

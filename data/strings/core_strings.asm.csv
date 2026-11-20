@@ -1,6 +1,0 @@
-Label,Comment,English-en,Spanish-es,French-fr,Italian-it,Portuguese-pt,German-de,Japanese-ja
-CancelString,menu strings,CANCEL,CANCELAR,ANNULER,ANNULLA,CANCELAR,ABBRECHEN,キャンセル
-YesNoText,,YES\nNO,SÍ\nNO,OUI\nNON,SÌ\nNO,SIM\nNÃO,JA\nNEIN,はい\nいいえ
-SaveGameText,,Would you like to\nSAVE the game?,¿Quieres GUARDAR\nla partida?,Voulez-vous\nSAUVEGARDER?,Vuoi SALVARE\nla partita?,Deseja\nSALVAR o jogo?,Möchtest du das\nSpiel SPEICHERN?,ゲームを\nセーブしますか？
-NowSavingText,,Now saving...,Guardando...,Sauvegarde en cours...,Salvataggio in corso...,Salvando agora...,Wird gespeichert...,セーブ中...
-SavedTheGameText,,%s saved\nthe game.,%s guardó\nla partida.,%s a sauvegardé\nla partie.,%s ha salvato\nla partita.,%s salvou\no jogo.,%s hat das Spiel\ngespeichert.,%sは\nゲームをセーブした。

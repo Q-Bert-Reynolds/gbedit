@@ -97,7 +97,6 @@ PS2HandleError:;a = scan code
 .clearFlags
   xor a
   ld [kb_flags], a
-  ld [kb_button_state], a
   ret 
 
 PS2HandleFunctionKey:

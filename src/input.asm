@@ -3,55 +3,11 @@ _last_button_state::
 last_button_state:: DB
 _button_state::
 button_state:: DB
-kb_button_state:: DB
 pad_latch: DB;buttons pressed since PadPressed was last called
 pad_latch_last: DB
 
 SECTION "Input Code", ROM0
-;macros
-;   UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS   JumpAddress, buttons8
-;   JUMP_TO_IF_BUTTONS                    JumpAddress, buttons8
-;   EXITABLE_DELAY                        JumpAddress, buttons8, frames8
-
-;subroutines
-;   UpdateInput
-;   WaitPadUp
-;   WaitPadUpOrFrames                     a = frames
-;   LatchPad                              called from VBlank, ORs new presses into pad_latch
-;   PadPressed                            returns gamepad buttons pressed since the last call in a
-
 DEF INPUT_REPEAT EQU 6
-
-MACRO UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS ; \1=address, \2=buttons
-  call UpdateInput
-  JUMP_TO_IF_BUTTONS \1, \2
-ENDM
-
-MACRO JUMP_TO_IF_BUTTONS ; \1=address, \2=buttons
-  ldh a, [last_button_state]
-  and a
-  jr nz, .skip\@
-  ldh a, [button_state]
-  and \2
-  jp nz, \1
-.skip\@
-ENDM
-
-MACRO EXITABLE_DELAY ; \1=address, \2=buttons, \3=frames
-  ld a, \3
-.loop\@
-    push af
-    UPDATE_INPUT_AND_JUMP_TO_IF_BUTTONS .jump\@, \2
-    call gbdk_WaitVBL
-    pop af
-    dec a
-    jr nz, .loop\@
-  jr .exit\@
-.jump\@
-  pop af
-  jp \1
-.exit\@
-ENDM
 
 UpdateInput::;https://gbdev.io/pandocs/Joypad_Input.html
   PUSH_ALL
@@ -84,36 +40,7 @@ ENDR
 
   ;read keyboard
   TRAMPOLINE ProcessKeyCodes
-  ldh a, [kb_button_state]
-  ld b, a
-  ldh a, [button_state]
-  or a, b
-  ldh [button_state], a 
-
   POP_ALL
-  ret
-
-WaitPadUp::
-  call gbdk_WaitVBL
-  call UpdateInput
-  ldh a, [last_button_state]
-  and a
-  jr nz, WaitPadUp
-  ret
-
-WaitPadUpOrFrames::; a = frames
-  push af;frames
-  call gbdk_WaitVBL
-  call UpdateInput
-  ldh a, [last_button_state]
-  and a
-  jr z, .exit
-  pop af;frames
-  dec a
-  jr nz, WaitPadUpOrFrames
-  push af;frames
-.exit
-  pop af;frames
   ret
 
 LatchPad::;called from VBlank, ORs newly pressed buttons into pad_latch

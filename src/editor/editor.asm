@@ -1,4 +1,4 @@
-INCLUDE "src/beisbol.inc"
+INCLUDE "src/text_editor.inc"
 
 INCLUDE "src/editor/text_buffer.asm"
 INCLUDE "src/editor/osk.asm"

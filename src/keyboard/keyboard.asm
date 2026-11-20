@@ -8,9 +8,6 @@ DEF KB_TYPE_IGKB EQU 2
 
 ;kb_mode
 DEF KB_MODE_NONE    EQU 0
-DEF KB_MODE_BUTTONS EQU 1
-DEF KB_MODE_TYPING  EQU 2
-DEF KB_MODE_DEMO    EQU 3
 DEF KB_MODE_EDITOR  EQU 4;key presses are queued as key events
 
 DEF KB_EVENT_COUNT EQU 16;must be a power of 2
@@ -86,7 +83,6 @@ INCLUDE "src/keyboard/igkb_handlers.asm"
 
 DetectKeyboard::
   xor a
-  ld [kb_button_state], a
   ld a, KB_TYPE_PS2
   ld [kb_type], a;assume PS2 keyboard connected
   xor a
@@ -114,7 +110,6 @@ SetKeyboardMode::;a = mode
 .clearFlags
   xor a
   ld [kb_flags], a
-  ld [kb_button_state], a
 .setMode
   ld a, b
   ld [kb_mode], a

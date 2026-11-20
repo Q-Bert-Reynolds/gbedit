@@ -1,30 +1,8 @@
-# files created in /img, /data, and /music
-# img/**/*.asm
-# img/**/*.tilemap
-# img/**/*.propmap
-# img/**/*.tiles
-# maps/**/*.asm
-# maps/**/*.tilemap
-# data/**/*.c
-# data/**/*.asm
-# data/**.inc
-# music/*.asm
-# music/*.bak
-
-# generated GameBoy files
-# bin/*
-# build/*
-# *.gb
-# *.gbc
-# *.map
-# *.lst
-# *.sym
-# *.1bpp
-# *.2bpp
-bin/*.sav
-
-# Tiled map editor
-*.tiled-session
+# Generated editor build output
+build/
+bin/*
+src/constants.h
+src/editor/_editor.asm
 
 # generated python
 __pycache__/*

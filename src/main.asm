@@ -1,4 +1,4 @@
-INCLUDE "src/beisbol.inc"
+INCLUDE "src/text_editor.inc"
 
 SECTION "Crash Handler RST", ROM0[$0038]
   jp Main
@@ -15,7 +15,7 @@ Entry:
   DB CART_ROM_MBC5_RAM_BAT   ;$147 - Cart type
   DB CART_ROM_1024KB         ;$148 - ROM Size 
   DB CART_SRAM_32KB          ;$149 - RAM Size
-  CART_DEST                  ;$14a - Destination code
+  DB CART_DEST_NON_JAPANESE   ;$14a - Destination code
   DB $33                     ;$14b - Old licensee code
   DB 0                       ;$14c - Mask ROM version
   DB 0                       ;$14d - Complement check (important)
@@ -52,17 +52,10 @@ Main::
   ld hl, _RAM
   ld bc, (_RAMBANK-_RAM)*2
   call mem_Set;clear WRAM
-  ld a, KB_MODE_BUTTONS
+  ld a, KB_MODE_NONE
   TRAMPOLINE SetKeyboardMode
   ld sp, stack_bottom
 
-.setupAudio
-  ld hl, rAUDENA
-  ld [hl], AUDENA_OFF
-  ld a, $FF
-  ldh [rAUDTERM], a
-  ldh [rAUDVOL], a
-  
 .setupDrawing
   xor a
   call ClearScreen
@@ -77,25 +70,6 @@ Main::
   ldh [rIE], a
   ei
   TRAMPOLINE DetectKeyboard
-
-.loadOptions
-  call LoadOptions
-
-.startClock
-  ld a, GAME_STATE_CLOCK_STARTED
-  ld [game_state], a
-
-IF TESTS_ENABLED
-  RUN_TESTS
-  DISPLAY_OFF
-  ld a, 1
-  ldh [rVBK], a
-  CLEAR_SCREEN 0
-  xor a
-  ldh [rSCX], a
-  ldh [rSCY], a
-  ldh [rVBK], a
-ENDC
 
 .start
   TRAMPOLINE _Editor;never returns

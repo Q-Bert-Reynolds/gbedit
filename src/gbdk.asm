@@ -301,8 +301,6 @@ ENDM
 SECTION "GBDK WRAM Vars", WRAM0, ALIGN[8]
 ;ensure OAM buffer starts at $XX00 and is not in switchable WRAM, see gbdk_SetupDMATransfer
 oam_buffer:: DS 4*40
-rand_hi:: DB
-rand_lo:: DB
 
 SECTION "GBDK Code", ROM0
 ;***************************************************************************
@@ -606,68 +604,7 @@ gbdk_CPUFast::
   jr shift_speed
 
 
-;***************************************************************************
-;
-; gbdk_Random - generates a random number
-;
-; Random number generator using the linear congruential method
-;    X(n+1) = (a*X(n)+c) mod m
-; with a = 17, m = 16 and c = $5C93 (arbitrarily)
-; The seed value is also chosen arbitrarily as $a27e
-;
-; Ref : D. E. Knuth, "The Art of Computer Programming" , Volume 2
-;
-; Note D is the low byte, E the high byte. This is intentional because
-; the high byte can be slightly 'more random' than the low byte, and I presume
-; most will cast the return value to a UBYTE. As if someone will use this, tha!
-;
-; output: de - random number (word)
-; registers used: a, hl, de
-;***************************************************************************
-gbdk_Random::
-  ld a, [rand_lo]
-  ld l, a
-  ld e, a  ; Save rand_lo
-  ld a, [rand_hi]
-  ld d, a  ; Save rand_hi
-
-  add hl, hl;rand * 2
-  add hl, hl;rand * 4
-  add hl, hl;rand * 8
-  add hl, hl;rand * 16
-  add hl, de;rand * 17
-
-  ld de, $5C93
-  add hl, de;rand = (17 * rand) + $5C93
-
-  ld a, l  ; rand_lo*17 + $93
-  ld [rand_lo], a
-  ld d, a  ; Return register
-  ld a, h  ; rand_hi*17 + $5C
-  ld [rand_hi], a
-  ld e, a  ; Return register
-
-  ret
-
-;***************************************************************************
-; gbdk_Seed - sets the random seed value to hl
-;
-; input: hl
-; registers used: a, hl
-;***************************************************************************
-gbdk_Seed::
- ld a, h
- ld [rand_lo], a
- ld a, l
- ld [rand_hi], a
- ret
-
-
-;***************************************************************************
-;
-; gbdk_SetupDMATransfer - loads DMA routine into HRAM
-;
-;***************************************************************************
+;Copy the sprite DMA routine to HRAM.
 gbdk_SetupDMATransfer::
   COPY_TO_HRAM gbdk_DMATransfer, .DMATransfer, .DMATransferEnd
   ret

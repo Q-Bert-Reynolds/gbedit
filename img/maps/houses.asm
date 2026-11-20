@@ -1,4 +1,0 @@
-IF !DEF(_HOUSES_TILE_COUNT)
-DEF _HOUSES_TILE_COUNT EQU 128
-_HousesTiles: INCBIN "img/maps/houses.tiles"
-ENDC
